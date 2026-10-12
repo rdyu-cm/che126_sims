@@ -3,8 +3,8 @@
 > **New chat? Start here.**
 > - **Phase:** design complete and approved for documentation. **Nothing is implemented yet.**
 > - **Rule from the user:** every design decision goes through the user. Ask, record, then build. Any new design choice that comes up during implementation is a checkpoint for the user too.
-> - **Next action:** all design decisions are made. Plan approval, then implementation phase 0.
-> - **First implementation step:** copy this file into the repo as `docs/TLDR.md` (short resume) + `docs/decisions.md` (full register + facts + caveats), so it travels across machines.
+> - **Next action:** implementation phase 0 (see "Implementation order"); the docs part of phase 0 is already done.
+> - **Docs:** `docs/TLDR.md` is the short resume. This file is the full register, facts, and caveats. Keep both current.
 > - **Last updated:** 2026-10-12.
 
 ## Context
