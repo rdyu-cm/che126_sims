@@ -20,7 +20,13 @@ No system builders or LAMMPS templates exist yet.
 - Work on a feature branch in a worktree, not on `main`.
 - Pushing feature branches is fine. Merges to `main` need user approval.
 
-**Next step:** phase 2, the amorphous PE/iPP builders. Open user decisions are listed in `decisions.md` under "Pending user decisions".
+**In progress (paused 2026-10-16):** phase 2 amorphous builders. An implementer was running in local worktree `../che126_sims-phase2` (branch `feat/phase2-builders`, not pushed). If that work is gone, restart phase 2 from the D22 spec. Phase 3 decisions D23–D25 are made (LAMMPS stable_22Jul2025_update6, Apptainer, KOKKOS+GPU+OPENMP, 21-step, AA 12 Å).
+
+**Next decisions to ask:**
+- Analysis definitions: crystallinity metric (recommend local chain-alignment P2), Tm from ramp (recommend crystallinity midpoint + V/H check), pore width (recommend 50%-density surfaces), κ fit region (recommend dropping 20% near each slab, R² ≥ 0.98).
+- Phase 4 crystal source.
+
+The user was mid-clarification on the analysis questions.
 
 **Setup on any machine:**
 ```

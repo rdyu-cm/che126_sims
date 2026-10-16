@@ -3,7 +3,7 @@
 > **New chat? Start here.**
 > - **Phase:** implementation. Phases 0 and 1 are done; the `sepsim run` wrapper and the core analysis library are also done (built in parallel).
 > - **Rule from the user:** every design decision goes through the user. Ask, record, then build. Any new design choice that comes up during implementation is a checkpoint for the user too.
-> - **Next action:** phase 2 (amorphous PE/iPP builders at AA/UA/CG). Open decisions still waiting on the user are listed under "Pending user decisions".
+> - **Next action:** finish or restart phase 2 (see TLDR). Then ask the analysis-definition questions; the user was mid-clarification.
 > - **Docs:** `docs/TLDR.md` is the short resume. This file is the full register, facts, and caveats. Keep both current.
 > - **Last updated:** 2026-10-16 (phase 1 force fields done: OPLS/2020 replaces the L-OPLS hybrid; UA explicit methine H; flexible UA backbone; LAMMPS via CLI + manifest).
 
@@ -63,6 +63,10 @@ This repo holds the Python build and analysis code, LAMMPS input templates, forc
 | D19 | FF sourcing | Curated YAMLs in `forcefields/`, one per FF, holding only the types we use. Every number cites its primary paper and carries a verbatim upstream excerpt line in `forcefields/_reference/`; tests check YAML against the excerpts. Sources: moltemplate (MIT), SPICA-tools (MIT), and wesbarnett/trappeua (no license; numeric lines only, attributed). TraPPE's mixing rule, 1-4 exclusion and 14 Å cutoff are cited to Martin & Siepmann 1998 without line-level verification (paywalled). |
 | D20 | SPICA settings | `special_bonds lj 0.0 0.0 1.0 angle yes` and a 15 Å LJ cutoff, per SPICA's official `setup_lmp.py`. moltemplate's 0 0 0 / 9 Å is superseded. |
 | D21 | Running LAMMPS | Command line (`lmp -in deck`), not the Python API. `sepsim run` is an optional wrapper that writes `run_manifest.json`: LAMMPS version and `lmp -h` package list, deck and input hashes, git commit/dirty state, and the command. Decks stay plain LAMMPS files runnable by hand. Runs belong under the gitignored `runs/` so manifests don't mark the repo dirty. Container and pinned LAMMPS release are decided at phase 3. |
+| D22 | Amorphous builders (phase 2) | iPP is H-terminated, H–[CH2–CH(CH3)]80–H = C240H482. Chains are grown bead-by-bead in a periodic box at 0.3 g/cm³ with overlap checks, then compressed in LAMMPS. Backbone torsions start with a melt-like bias: p(t)=0.6, p(g±)=0.2, no g+g− pairs. Seeded and deterministic. |
+| D23 | LAMMPS build | Pinned **`stable_22Jul2025_update6`** (GitHub tag; checked 2026-10-16 against the release list; `stable_30Sep2026` is newer but only two weeks old). Packages: MOLECULE, KSPACE, EXTRA-MOLECULE, CG-SPICA, **KOKKOS (CUDA) + GPU + OPENMP**; the step-0 benchmark picks the accelerator per resolution and run type, and the choice is recorded in the run manifest. KOKKOS covers lj/spica and dihedral opls; the GPU package offloads only pair forces and PPPM. **Packaging:** one committed build script (tag + cmake flags), used by an **Apptainer** definition pinned to a CUDA base image. The `.sif` is rebuilt from the repo, not committed; run with `--nv`. GPU arch and CUDA version are build parameters, since the workstation hardware is unknown. |
+| D24 | Equilibration | Amorphous boxes go 0.3 g/cm³ → melt density with the **21-step protocol** (Larsen et al., Macromolecules 2011, 44, 6944; Pmax ≈ 50 kbar). The step table is to be sourced and cited in phase 3. |
+| D25 | AA nonbonded | OPLS/2020: LJ cutoff **12 Å with analytic tail corrections**, PPPM at 1e-5 relative accuracy, geometric mixing, special_bonds lj/coul 0 0 0.5. TraPPE 14 Å with tail corrections and SPICA 15 Å per their sources. Tail corrections are invalid for slab/pore systems; see the pending list. |
 
 ## Experiment matrix (decided)
 GPU-h figures are **rough guesses for 1 modern GPU** (AA 29k atoms ≈ 30 ns/day). Recalibrate after the step-0 benchmark.
@@ -127,7 +131,7 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 
 ## Pending user decisions
 - Analysis definitions: crystallinity order parameter, Tm detection from ramps, pore width, κ slab-exclusion distance.
-- Phase 3: LAMMPS container (Apptainer/Docker) vs native build; pinned LAMMPS release.
+- T2: long-range dispersion treatment for slab/pore systems (no tail correction vs LJ-PPPM), since analytic tail corrections assume a homogeneous bulk.
 - Phase 4: iPP α crystal source (paywalled coordinate table vs geometric construction + minimization + density check); PE setting angle 41° vs 45°.
 
 ## Verified facts (sources checked 2026-10-12, 2026-10-16)
