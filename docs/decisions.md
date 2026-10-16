@@ -5,7 +5,7 @@
 > - **Rule from the user:** every design decision goes through the user. Ask, record, then build. Any new design choice that comes up during implementation is a checkpoint for the user too.
 > - **Next action:** implementation phase 0 (see "Implementation order"); the docs part of phase 0 is already done.
 > - **Docs:** `docs/TLDR.md` is the short resume. This file is the full register, facts, and caveats. Keep both current.
-> - **Last updated:** 2026-10-12.
+> - **Last updated:** 2026-10-16 (design review: Tg dropped, wet-pore barostat fixed, CG density check added).
 
 ## Context
 We want to characterize the separator polymers in EV Li-ion cells, starting with PE and isotactic PP, from 25 to 160 °C using LAMMPS MD at three resolutions:
@@ -13,11 +13,11 @@ We want to characterize the separator polymers in EV Li-ion cells, starting with
 - united-atom (TraPPE-UA)
 - coarse-grained (SDK/SPICA)
 
-The properties are anything MD gives directly: density, thermal expansion (CTE), Tg, melting, crystallinity, chain mobility, pore collapse, thermal conductivity κ, and Cp. An ablation compares the dry separator with one that has electrolyte.
+The properties are anything MD gives directly: density, thermal expansion (CTE), melting, crystallinity, chain mobility, pore collapse, thermal conductivity κ, and Cp. An ablation compares the dry separator with one that has electrolyte.
 
 This repo holds the Python build and analysis code, LAMMPS input templates, force-field parameters, and the generated data files. Production runs on a separate workstation with a small budget (<500 GPU-h).
 
-**Repo today:** a uv scaffold only (`pyproject.toml` with py≥3.13, `main.py`, empty `README.md`; all untracked) at the initial commit on `main`. LAMMPS, packmol, and moltemplate are not installed locally.
+**Repo today:** a uv scaffold (`pyproject.toml` with py≥3.13, `main.py`) plus these docs, on `main`. LAMMPS, packmol, and moltemplate are not installed locally.
 
 ## Decided
 | ID | Topic | Decision |
@@ -29,23 +29,25 @@ This repo holds the Python build and analysis code, LAMMPS input templates, forc
 | D5 | Chains | 40 × C240 at all resolutions: PE C240H482 and an iPP 80-mer, both ~3.4 kg/mol. That is 722 AA atoms per chain, ~29k AA atoms, and a box ~6.4 nm (bigger than R_ee ~6 nm). UA has ~9.6k sites, CG PE ~3.2k beads. |
 | D5c | Chain-length handling | UA length series C120/C240/C480. Long CG PE at C1500–C3000 (see O2). No backmapping. |
 | D6 | Morphologies | Amorphous (rectangular box). Crystals: PE orthorhombic (rectangular) and iPP α (triclinic). Slit-pore systems. |
-| D6b | Melting | AA/UA Tm comes from a **pure crystal slab with free surfaces** (vacuum gap; the published fix for superheating). These slabs ramp to **~200 °C**, and the rate is reported. CG PE: cool/heat cycles for crystallization and crystallinity. Expect PE (~130–135 °C) below iPP (~160–165 °C), both lowered somewhat by the short chains and raised somewhat by the rate. |
+| D6b | Melting | AA/UA Tm comes from a **pure crystal slab with free surfaces** (vacuum gap; the published fix for superheating). These slabs ramp to **~200 °C**, and the rate is reported. CG PE: cool/heat cycles for crystallization and crystallinity. Expect PE (~130–135 °C) below iPP (~160–165 °C). Infinite chains have no chain-end depression, but the finite heating rate can still push Tm up somewhat. |
 | D6c | Pore walls | Ablation: amorphous walls vs crystal core + amorphous skin. |
-| D6d | Crystal build | Infinite chains bonded to their own periodic image along c, so no chain ends and the box is small. |
+| D6d | Crystal build | Infinite chains bonded to their own periodic image along c, so no chain ends and the box is small. In slabs, the chain axis lies **in-plane** (x or y); chains can't cross the vacuum gap. |
 | D7 | CG coverage | SDK PE only. PP is covered at AA/UA. |
 | D8 | Scope | Tiered T1 → T2 → T3; stop when the budget runs out (matrix below). |
-| D9 | BCs and pressure | Bulk: 3D PBC, NPT iso at **1 atm**. Pore/slab: polymer slab periodic in x,y with a gap along z in a 3D-periodic box. Barostat x,y only (1 atm dry, 20 bar wet); z is fixed, never barostatted across the gap. |
+| D9 | BCs and pressure | Bulk: 3D PBC, NPT iso at **1 atm**. Pore/slab: polymer slab periodic in x,y with a gap along z in a 3D-periodic box. **Dry:** barostat x,y only at 1 atm, z fixed (never barostat across vacuum). **Wet:** the gap is full of liquid, so NPT aniso (x, y, z independently) at 20 bar. |
 | D9c | Pore widths | AA/UA: 3, 5, 10 nm. CG PE: a dry 20–50 nm pore. |
-| D10 | Electrolyte | 1 M LiPF6 in EC/DMC, AA only, OPLS-AA, ion charges ×0.8. **NPT at 20 bar across 25–160 °C** (sealed-cell order; above DMC's ~8 bar vapor pressure). This replaces the earlier fixed-volume plan, which would have given ~800 bar. No decomposition modeled. Used in pore systems only. |
+| D10 | Electrolyte | 1 M LiPF6 in EC/DMC, AA only, OPLS-AA, ion charges ×0.8. **NPT aniso (x,y,z) at 20 bar across 25–160 °C** (sealed-cell order; above DMC's ~8 bar vapor pressure). This replaces the earlier fixed-volume plan, which would have given ~800 bar. No decomposition modeled. Used in pore systems only. |
 | D11 | T protocol | Stepwise heating ramp 25→160 °C in ~10 °C steps, with holds at ~25/90/130/160 °C. |
 | D12a | Timestep | AA 1 fs fully flexible. UA 2 fs with SHAKE on the fixed TraPPE bonds. CG 10 fs. |
 | D12b | κ | rNEMD (Müller-Plathe), branched from hold snapshots; box replicated ~3× along the flux axis, run NVE. **The κ temperatures (4 or 2) are a template parameter, chosen after the benchmark.** κ is ≈60 GPU-h of the ~405. |
 | D12c | Cp | Classical dH/dT. For AA, add a VDOS quantum-harmonic correction from a short NVE high-frequency velocity dump at the end of each hold. |
-| D12d | Replicas | 1 per system. Hold properties get block-averaged error bars. Ramp Tg/Tm get no uncertainty. |
+| D12d | Replicas | 1 per system. Hold properties get block-averaged error bars. Ramp Tm gets no uncertainty. |
 | D12e | Durations | **Lean**. AA: 1 ns per ramp step × ~14 steps (≈10 K/ns), holds 4 × 5 ns, κ branches 4 × 3 ns, so ≈50 ns per system. UA/CG run 2–5× longer at the same cost. |
-| D12f | Run structure | One NPT sweep trajectory per system gives density, CTE, Tg, classical Cp, Tm/crystallinity, pore width, MSD, bond reorientation, RDF/Rg, and VDOS. Separate runs are only the κ branches and the CG crystallization cycles. |
+| D12f | Run structure | One NPT sweep trajectory per system gives density, CTE, classical Cp, Tm/crystallinity, pore width, MSD, bond reorientation, RDF/Rg, and VDOS. Separate runs are only the κ branches and the CG crystallization cycles. |
 | D12g | Ensembles | Nosé–Hoover throughout: `fix npt`, iso for amorphous, aniso/tri for crystals, x,y-only for slabs, Tdamp 100·dt, Pdamp 1000·dt. NVE for the rNEMD and VDOS segments. |
 | D13 | Repo | Python package + CLI + templated LAMMPS inputs (layout below). |
+| D14 | Tg | **Dropped from scope** (2026-10-16). PE Tg (~−120 to −30 °C) and iPP Tg (~−10 to 0 °C) are both below 25 °C, so both polymers are rubbery across the whole range. Report that; no sub-ambient runs. |
+| D15 | CG validation | Standard SDK PE (fit near ambient). Run an **early CG density-vs-T check** against UA and experiment, and report the deviation. Revisit (e.g., tSPICA, Griffiths & Shinoda 2019) only if it's off by more than a few %. |
 
 ## Last-round decisions
 | ID | Decision |
@@ -84,7 +86,7 @@ src/sepsim/
           slab.py (slab + gap, crystal-core+skin walls), electrolyte.py (packmol fill), datafile.py
   ff/     loplsaa.py, trappe_ua.py, spica.py, electrolyte.py  # typing + coeff emission
   lammps/ render.py + templates/*.in.j2 (minimize, compress_anneal, sweep, kappa_rnemd, cg_cycle, benchmark)
-  analysis/ thermo.py (ρ, CTE, Tg/Tm bilinear fits, dH/dT), vdos.py (Cp quantum correction),
+  analysis/ thermo.py (ρ, CTE, Tm onset fits, dH/dT), vdos.py (Cp quantum correction),
           mobility.py (MSD, P2(t)), order.py (crystallinity P2), kappa.py, pore.py (z density profile)
 forcefields/<ff>/*.yaml                 # parameters + citations, single source of truth
 systems/<system_id>/{data.lmp, manifest.yaml}   # generated, committed (D3)
@@ -97,7 +99,7 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 0. Commit the scaffold to main, then create the worktree branch. Write `docs/TLDR.md` and `docs/decisions.md`. Set up uv deps and the conda env with packmol.
 1. Force-field parameter YAMLs, with every number cited. **Checkpoint:** user reviews the parameters.
 2. Builders for amorphous PE/iPP at all three resolutions, plus unit tests (atom counts, charge neutrality, tacticity, initial density).
-3. LAMMPS templates: benchmark, compress/anneal, sweep. Write `docs/LAMMPS_BUILD.md`. Hand T1 benchmark inputs to the user.
+3. LAMMPS templates: benchmark, compress/anneal, sweep. Write `docs/LAMMPS_BUILD.md`. Hand T1 benchmark inputs to the user, plus the early CG PE density-vs-T check (D15).
 4. Crystal builders (infinite chains) + κ rNEMD + CG cycle templates.
 5. Analysis modules, tested on synthetic data.
 6. T2: slab/pore + electrolyte builders. T3 extensions.
@@ -112,7 +114,7 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
   - Amorphous PE at 25 °C is ~0.85 g/cm³; iPP amorphous is ~0.85–0.86.
   - The crystal density is close to the lattice value at 25 °C.
   - Melting is ordered PE < iPP.
-  - The CTE increases above Tg.
+  - CG PE density vs T is within a few % of UA and experiment (D15).
   - The κ T-profile is linear.
 - **Analysis code:** validated on synthetic signals (known slope/kink, known MSD exponent).
 
@@ -128,7 +130,8 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 ## Physics caveats (state them in results)
 - **κ:** only AA κ is physical. UA/CG lack vibrational modes.
 - **Cp:** classical Cp is too high; the AA quantum correction addresses it.
-- **Tg/Tm from ramps:** both are rate-inflated.
+- **Tm from ramps:** rate-inflated; report the rate.
+- **Tg:** below the studied range for both polymers (D14).
 - **Amorphous C240 walls:** effectively a supercooled melt, so they represent a post-shutdown separator.
 - **Pore closure:** real closure is ≫ ns, so we measure wall mobility and narrowing trends vs width.
 - **Chain length:** C240 is far below real Mw (10⁵–10⁶ g/mol). Only density, CTE, Cp, and κ are chain-length-converged.

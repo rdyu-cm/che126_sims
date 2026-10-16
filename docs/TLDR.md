@@ -7,7 +7,7 @@
 
 The repo holds the build and analysis code, templates, and force-field parameters. Production runs on a separate workstation with a budget under 500 GPU-h.
 
-**Status (2026-10-12):** design is done; every decision is in [`decisions.md`](decisions.md). **Nothing is implemented yet.** No plan step has started.
+**Status (2026-10-16):** design is done and was re-reviewed; every decision is in [`decisions.md`](decisions.md). **Nothing is implemented yet.** No plan step has started.
 
 **Rules:**
 - Every new design choice goes to the user before it's built.
@@ -34,7 +34,7 @@ The repo holds the build and analysis code, templates, and force-field parameter
 
 **Electrolyte**
 - 1 M LiPF6 in EC/DMC, all-atom only, ion charges ×0.8, NPT at 20 bar.
-- Dry systems run at 1 atm; slabs are barostatted in x and y only.
+- Dry systems run at 1 atm; dry slabs are barostatted in x and y only, with z fixed. Wet pores are NPT aniso (x, y, z) at 20 bar.
 
 **Protocol**
 - One NPT sweep trajectory per system: ~10 °C steps of 1 ns each, plus holds of 5 ns at 25, 90, 130, and 160 °C.
@@ -42,6 +42,8 @@ The repo holds the build and analysis code, templates, and force-field parameter
 - Cp: dH/dT plus a VDOS quantum correction (all-atom).
 - Timesteps: AA 1 fs flexible / UA 2 fs with SHAKE / CG 10 fs. Nosé–Hoover thermostat; NVE for κ and VDOS.
 - 1 replica per system.
+- **Tg is out of scope:** both polymers have Tg below 25 °C.
+- Coarse-grained: standard SDK PE, with an early density-vs-T check against UA and experiment.
 
 **Budget**
 - Tiers T1 → T2 → T3; T1 + T2 ≈ 405 GPU-h. This rests on a guessed throughput, and the step-0 benchmark recalibrates it.
