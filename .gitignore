@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# LAMMPS run artifacts (raw output is not committed)
+runs/
+log.lammps
+log.*.lammps
+*.lammpstrj
+*.dcd
+restart.*
+*.restart
+
+# Build artifacts (top-level only; src/sepsim/build is a package)
+dist/
+/build/

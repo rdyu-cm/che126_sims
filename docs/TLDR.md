@@ -7,16 +7,20 @@
 
 The repo holds the build and analysis code, templates, and force-field parameters. Production runs on a separate workstation with a budget under 500 GPU-h.
 
-**Status (2026-10-16):** design is done and was re-reviewed; every decision is in [`decisions.md`](decisions.md). **Nothing is implemented yet.** No plan step has started.
+**Status (2026-10-16):** design is done; every decision is in [`decisions.md`](decisions.md). **Phase 0 is done**: the uv package skeleton exists, with `sepsim` CLI stubs and tests. No simulation code exists yet.
 
 **Rules:**
 - Every new design choice goes to the user before it's built.
 - Work on a feature branch in a worktree, not on `main`.
 - Pushing feature branches is fine. Merges to `main` need user approval.
 
-**Next step:** implementation phase 0 (see "Implementation order" in `decisions.md`):
-1. Set up uv deps and a conda env with packmol.
-2. Then phase 1: force-field parameter YAMLs, with every number cited. The user reviews them at a checkpoint.
+**Next step:** phase 1, the force-field parameter YAMLs, with every number cited. The user reviews them at a checkpoint.
+
+**Setup on any machine:**
+```
+uv sync && uv run pytest -q
+```
+No conda. LAMMPS (and packmol, for the T2 electrolyte) are installed only on the machines that build or run systems.
 
 ## Decisions at a glance
 **Systems**

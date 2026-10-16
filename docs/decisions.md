@@ -3,9 +3,9 @@
 > **New chat? Start here.**
 > - **Phase:** design complete and approved for documentation. **Nothing is implemented yet.**
 > - **Rule from the user:** every design decision goes through the user. Ask, record, then build. Any new design choice that comes up during implementation is a checkpoint for the user too.
-> - **Next action:** implementation phase 0 (see "Implementation order"); the docs part of phase 0 is already done.
+> - **Next action:** implementation phase 1, the force-field parameter YAMLs, with every number cited. The user reviews them at a checkpoint. Phase 0 is done.
 > - **Docs:** `docs/TLDR.md` is the short resume. This file is the full register, facts, and caveats. Keep both current.
-> - **Last updated:** 2026-10-16 (design review: Tg dropped, wet-pore barostat fixed, CG density check added).
+> - **Last updated:** 2026-10-16 (design review: Tg dropped, wet-pore barostat fixed, CG density check added; phase 0 done, uv-only env).
 
 ## Context
 We want to characterize the separator polymers in EV Li-ion cells, starting with PE and isotactic PP, from 25 to 160 °C using LAMMPS MD at three resolutions:
@@ -17,7 +17,7 @@ The properties are anything MD gives directly: density, thermal expansion (CTE),
 
 This repo holds the Python build and analysis code, LAMMPS input templates, force-field parameters, and the generated data files. Production runs on a separate workstation with a small budget (<500 GPU-h).
 
-**Repo today:** a uv scaffold (`pyproject.toml` with py≥3.13, `main.py`) plus these docs, on `main`. LAMMPS, packmol, and moltemplate are not installed locally.
+**Repo today:** the `sepsim` package skeleton (uv, src layout, CLI stubs, tests) plus these docs. LAMMPS and packmol are installed only on the machines that build or run systems, never in the repo (D16).
 
 ## Decided
 | ID | Topic | Decision |
@@ -46,6 +46,7 @@ This repo holds the Python build and analysis code, LAMMPS input templates, forc
 | D12f | Run structure | One NPT sweep trajectory per system gives density, CTE, classical Cp, Tm/crystallinity, pore width, MSD, bond reorientation, RDF/Rg, and VDOS. Separate runs are only the κ branches and the CG crystallization cycles. |
 | D12g | Ensembles | Nosé–Hoover throughout: `fix npt`, iso for amorphous, aniso/tri for crystals, x,y-only for slabs, Tdamp 100·dt, Pdamp 1000·dt. NVE for the rNEMD and VDOS segments. |
 | D13 | Repo | Python package + CLI + templated LAMMPS inputs (layout below). |
+| D16 | Environment | **uv only, no conda.** The Python env comes from `pyproject.toml` + `uv.lock` (`uv sync`). The repo carries only git-transferable content. External binaries (LAMMPS; packmol, needed only for the T2 electrolyte fill) are installed on the compute or build machine and documented, not managed here. The dev machine is not a compute machine. |
 | D14 | Tg | **Dropped from scope** (2026-10-16). PE Tg (~−120 to −30 °C) and iPP Tg (~−10 to 0 °C) are both below 25 °C, so both polymers are rubbery across the whole range. Report that; no sub-ambient runs. |
 | D15 | CG validation | Standard SDK PE (fit near ambient). Run an **early CG density-vs-T check** against UA and experiment, and report the deviation. Revisit (e.g., tSPICA, Griffiths & Shinoda 2019) only if it's off by more than a few %. |
 
@@ -96,7 +97,7 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 ```
 
 ## Implementation order (after approval; each phase ends with a user check)
-0. Commit the scaffold to main, then create the worktree branch. Write `docs/TLDR.md` and `docs/decisions.md`. Set up uv deps and the conda env with packmol.
+0. **Done (2026-10-16).** Committed the scaffold, wrote the docs, and set up the uv package skeleton: `sepsim` CLI stubs, deps, lockfile, tests, ruff.
 1. Force-field parameter YAMLs, with every number cited. **Checkpoint:** user reviews the parameters.
 2. Builders for amorphous PE/iPP at all three resolutions, plus unit tests (atom counts, charge neutrality, tacticity, initial density).
 3. LAMMPS templates: benchmark, compress/anneal, sweep. Write `docs/LAMMPS_BUILD.md`. Hand T1 benchmark inputs to the user, plus the early CG PE density-vs-T check (D15).
