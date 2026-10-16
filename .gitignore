@@ -16,3 +16,6 @@ restart.*
 # Build artifacts (top-level only; src/sepsim/build is a package)
 dist/
 /build/
+
+# Local copies of papers (copyrighted; never committed)
+/references/
