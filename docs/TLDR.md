@@ -22,10 +22,9 @@ No system builders or LAMMPS templates exist yet.
 
 **In progress (paused 2026-10-16):** phase 2 amorphous builders. An implementer was running in local worktree `../che126_sims-phase2` (branch `feat/phase2-builders`, not pushed). If that work is gone, restart phase 2 from the D22 spec. Phase 3 decisions D23–D25 are made (LAMMPS stable_22Jul2025_update6, Apptainer, KOKKOS+GPU+OPENMP, 21-step, AA 12 Å).
 
-**Next decisions to ask:**
-- Phase 4 crystal source (iPP coordinates) and the PE setting angle.
+**Waiting on the user:** the iPP α coordinate table from Hikosaka & Seto 1973 or Natta & Corradini 1960 (D27).
 
-Analysis definitions are decided (D26).
+Analysis definitions (D26) are being implemented on `feat/analysis-definitions`.
 
 **Setup on any machine:**
 ```
