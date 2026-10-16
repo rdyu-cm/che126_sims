@@ -3,7 +3,7 @@
 > **New chat? Start here.**
 > - **Phase:** implementation. Phases 0 and 1 are done; the `sepsim run` wrapper and the core analysis library are also done (built in parallel).
 > - **Rule from the user:** every design decision goes through the user. Ask, record, then build. Any new design choice that comes up during implementation is a checkpoint for the user too.
-> - **Next action:** finish or restart phase 2 (see TLDR). Then ask the analysis-definition questions; the user was mid-clarification.
+> - **Next action:** finish phase 2 (see TLDR). Analysis definitions are decided (D26) and ready to implement.
 > - **Docs:** `docs/TLDR.md` is the short resume. This file is the full register, facts, and caveats. Keep both current.
 > - **Last updated:** 2026-10-16 (phase 1 force fields done: OPLS/2020 replaces the L-OPLS hybrid; UA explicit methine H; flexible UA backbone; LAMMPS via CLI + manifest).
 
@@ -67,6 +67,7 @@ This repo holds the Python build and analysis code, LAMMPS input templates, forc
 | D23 | LAMMPS build | Pinned **`stable_22Jul2025_update6`** (GitHub tag; checked 2026-10-16 against the release list; `stable_30Sep2026` is newer but only two weeks old). Packages: MOLECULE, KSPACE, EXTRA-MOLECULE, CG-SPICA, **KOKKOS (CUDA) + GPU + OPENMP**; the step-0 benchmark picks the accelerator per resolution and run type, and the choice is recorded in the run manifest. KOKKOS covers lj/spica and dihedral opls; the GPU package offloads only pair forces and PPPM. **Packaging:** one committed build script (tag + cmake flags), used by an **Apptainer** definition pinned to a CUDA base image. The `.sif` is rebuilt from the repo, not committed; run with `--nv`. GPU arch and CUDA version are build parameters, since the workstation hardware is unknown. |
 | D24 | Equilibration | Amorphous boxes go 0.3 g/cm³ → melt density with the **21-step protocol** (Larsen et al., Macromolecules 2011, 44, 6944; Pmax ≈ 50 kbar). The step table is to be sourced and cited in phase 3. |
 | D25 | AA nonbonded | OPLS/2020: LJ cutoff **12 Å with analytic tail corrections**, PPPM at 1e-5 relative accuracy, geometric mixing, special_bonds lj/coul 0 0 0.5. TraPPE 14 Å with tail corrections and SPICA 15 Å per their sources. Tail corrections are invalid for slab/pore systems; see the pending list. |
+| D26 | Analysis definitions | **Crystallinity:** local chain-alignment P2. Each backbone segment's mean P2 with neighbouring segments within a cutoff; segments above a threshold count as crystalline. Report the crystalline fraction and the largest cluster. Cutoff and threshold are cited from the literature at implementation. **Tm:** temperature where the crystalline fraction falls to half its starting value, cross-checked against the V(T)/H(T) jump. **Pore width:** distance between the 50%-of-bulk polymer-density surfaces along z, plus min/max over an x–y grid. **κ fit:** middle 60% of each half-box (20% dropped next to each slab), R² ≥ 0.98 required, both halves reported. |
 
 ## Experiment matrix (decided)
 GPU-h figures are **rough guesses for 1 modern GPU** (AA 29k atoms ≈ 30 ns/day). Recalibrate after the step-0 benchmark.
@@ -130,7 +131,6 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 - **Analysis code:** validated on synthetic signals (known slope/kink, known MSD exponent).
 
 ## Pending user decisions
-- Analysis definitions: crystallinity order parameter, Tm detection from ramps, pore width, κ slab-exclusion distance.
 - T2: long-range dispersion treatment for slab/pore systems (no tail correction vs LJ-PPPM), since analytic tail corrections assume a homogeneous bulk.
 - Phase 4: iPP α crystal source (paywalled coordinate table vs geometric construction + minimization + density check); PE setting angle 41° vs 45°.
 
