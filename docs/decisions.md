@@ -1,15 +1,15 @@
 # Design plan & decision register: PE/PP separator MD (LAMMPS, AA/UA/CG)
 
 > **New chat? Start here.**
-> - **Phase:** design complete and approved for documentation. **Nothing is implemented yet.**
+> - **Phase:** implementation. Phases 0 and 1 are done; the `sepsim run` wrapper and the core analysis library are also done (built in parallel).
 > - **Rule from the user:** every design decision goes through the user. Ask, record, then build. Any new design choice that comes up during implementation is a checkpoint for the user too.
-> - **Next action:** implementation phase 1, the force-field parameter YAMLs, with every number cited. The user reviews them at a checkpoint. Phase 0 is done.
+> - **Next action:** phase 2 (amorphous PE/iPP builders at AA/UA/CG). Open decisions still waiting on the user are listed under "Pending user decisions".
 > - **Docs:** `docs/TLDR.md` is the short resume. This file is the full register, facts, and caveats. Keep both current.
-> - **Last updated:** 2026-10-16 (design review: Tg dropped, wet-pore barostat fixed, CG density check added; phase 0 done, uv-only env).
+> - **Last updated:** 2026-10-16 (phase 1 force fields done: OPLS/2020 replaces the L-OPLS hybrid; UA explicit methine H; flexible UA backbone; LAMMPS via CLI + manifest).
 
 ## Context
 We want to characterize the separator polymers in EV Li-ion cells, starting with PE and isotactic PP, from 25 to 160 °C using LAMMPS MD at three resolutions:
-- all-atom (OPLS-AA / L-OPLS)
+- all-atom (OPLS/2020)
 - united-atom (TraPPE-UA)
 - coarse-grained (SDK/SPICA)
 
@@ -38,7 +38,7 @@ This repo holds the Python build and analysis code, LAMMPS input templates, forc
 | D9c | Pore widths | AA/UA: 3, 5, 10 nm. CG PE: a dry 20–50 nm pore. |
 | D10 | Electrolyte | 1 M LiPF6 in EC/DMC, AA only, OPLS-AA, ion charges ×0.8. **NPT aniso (x,y,z) at 20 bar across 25–160 °C** (sealed-cell order; above DMC's ~8 bar vapor pressure). This replaces the earlier fixed-volume plan, which would have given ~800 bar. No decomposition modeled. Used in pore systems only. |
 | D11 | T protocol | Stepwise heating ramp 25→160 °C in ~10 °C steps, with holds at ~25/90/130/160 °C. |
-| D12a | Timestep | AA 1 fs fully flexible. UA 2 fs with SHAKE on the fixed TraPPE bonds. CG 10 fs. |
+| D12a | Timestep | AA 1 fs fully flexible. UA 2 fs with **flexible harmonic backbone bonds** (k from the GROMACS TraPPE implementation) and SHAKE only on the explicit methine C–H; the step-0 benchmark checks energy conservation, fallback 1 fs. (LAMMPS SHAKE can't rigidify a connected backbone; revised 2026-10-16.) CG 10 fs. |
 | D12b | κ | rNEMD (Müller-Plathe), branched from hold snapshots; box replicated ~3× along the flux axis, run NVE. **The κ temperatures (4 or 2) are a template parameter, chosen after the benchmark.** κ is ≈60 GPU-h of the ~405. |
 | D12c | Cp | Classical dH/dT. For AA, add a VDOS quantum-harmonic correction from a short NVE high-frequency velocity dump at the end of each hold. |
 | D12d | Replicas | 1 per system. Hold properties get block-averaged error bars. Ramp Tm gets no uncertainty. |
@@ -57,7 +57,12 @@ This repo holds the Python build and analysis code, LAMMPS input templates, forc
 | O2 | Long CG PE: **C1500 in T1**, C3000 in T3. |
 | O3 | Tier contents **as drafted** (below). |
 | G1 | Git: **commit the existing scaffold (pyproject.toml, main.py, README.md, .python-version) to main once**, then do all work on a feature branch in a worktree. **Pushing the feature branch to the remote is OK** (at phase checkpoints). Merges to main need user approval. |
-| O4 | AA PP: **hybrid**, L-OPLS for CH2/CH3 + stock OPLS-AA for the methine CH; documented as a hybrid. PE is pure L-OPLS. |
+| O4 | ~~L-OPLS hybrid~~ **Superseded by D17** (2026-10-16). |
+| D17 | AA force field | **OPLS/2020 for both PE and iPP** (Ghahremanpour, Tirado-Rives & Jorgensen, JPCB 2022). It was refit for long and branched liquid alkanes, including CH branch points, heat capacity, and a check that hexadecane doesn't gel. One consistent FF for the PE-vs-PP comparison. Parameters come from the official 2024 JPCB SI file via moltemplate `oplsaa2024.lt`. The CT–CT–CT–CT "hydrocarbon" torsion is used, not the "butane only" variant. |
+| D18 | UA iPP tacticity | **Explicit methine H** on each CH: bond and angle terms only (OPLS CT–HC values), no LJ, zero charge, SHAKE on C–H. The CH mass becomes 12.011. No improper. Chosen because the published improper-only TraPPE-UA iPP chains didn't fold. |
+| D19 | FF sourcing | Curated YAMLs in `forcefields/`, one per FF, holding only the types we use. Every number cites its primary paper and carries a verbatim upstream excerpt line in `forcefields/_reference/`; tests check YAML against the excerpts. Sources: moltemplate (MIT), SPICA-tools (MIT), and wesbarnett/trappeua (no license; numeric lines only, attributed). TraPPE's mixing rule, 1-4 exclusion and 14 Å cutoff are cited to Martin & Siepmann 1998 without line-level verification (paywalled). |
+| D20 | SPICA settings | `special_bonds lj 0.0 0.0 1.0 angle yes` and a 15 Å LJ cutoff, per SPICA's official `setup_lmp.py`. moltemplate's 0 0 0 / 9 Å is superseded. |
+| D21 | Running LAMMPS | Command line (`lmp -in deck`), not the Python API. `sepsim run` is an optional wrapper that writes `run_manifest.json`: LAMMPS version and `lmp -h` package list, deck and input hashes, git commit/dirty state, and the command. Decks stay plain LAMMPS files runnable by hand. Runs belong under the gitignored `runs/` so manifests don't mark the repo dirty. Container and pinned LAMMPS release are decided at phase 3. |
 
 ## Experiment matrix (decided)
 GPU-h figures are **rough guesses for 1 modern GPU** (AA 29k atoms ≈ 30 ns/day). Recalibrate after the step-0 benchmark.
@@ -98,11 +103,11 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 
 ## Implementation order (after approval; each phase ends with a user check)
 0. **Done (2026-10-16).** Committed the scaffold, wrote the docs, and set up the uv package skeleton: `sepsim` CLI stubs, deps, lockfile, tests, ruff.
-1. Force-field parameter YAMLs, with every number cited. **Checkpoint:** user reviews the parameters.
+1. **Done (2026-10-16).** Force-field YAMLs (D17–D20), reference excerpts, `sepsim.ff.params` loader with conversion to LAMMPS real units, and tests (86 pass).
 2. Builders for amorphous PE/iPP at all three resolutions, plus unit tests (atom counts, charge neutrality, tacticity, initial density).
 3. LAMMPS templates: benchmark, compress/anneal, sweep. Write `docs/LAMMPS_BUILD.md`. Hand T1 benchmark inputs to the user, plus the early CG PE density-vs-T check (D15).
 4. Crystal builders (infinite chains) + κ rNEMD + CG cycle templates.
-5. Analysis modules, tested on synthetic data.
+5. **Core done (2026-10-16):** LAMMPS log parser, block averaging and fits, density, CTE, classical Cp, VDOS with quantum Cv correction, MSD, P2(t), and rNEMD κ, all tested on synthetic data. **Still to decide:** the crystallinity order parameter, Tm detection, pore-width definition, and κ slab-exclusion distance.
 6. T2: slab/pore + electrolyte builders. T3 extensions.
 
 ## Verification
@@ -116,15 +121,22 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
   - The crystal density is close to the lattice value at 25 °C.
   - Melting is ordered PE < iPP.
   - CG PE density vs T is within a few % of UA and experiment (D15).
+  - Amorphous AA PE at 25 °C shows no spurious ordering under OPLS/2020 (D17).
   - The κ T-profile is linear.
 - **Analysis code:** validated on synthetic signals (known slope/kink, known MSD exponent).
 
-## Verified facts (sources checked 2026-10-12)
+## Pending user decisions
+- Analysis definitions: crystallinity order parameter, Tm detection from ramps, pore width, κ slab-exclusion distance.
+- Phase 3: LAMMPS container (Apptainer/Docker) vs native build; pinned LAMMPS release.
+- Phase 4: iPP α crystal source (paywalled coordinate table vs geometric construction + minimization + density check); PE setting angle 41° vs 45°.
+
+## Verified facts (sources checked 2026-10-12, 2026-10-16)
 - **SPICA in LAMMPS:** the package is CG-SPICA; `pair_style lj/spica` (`lj/sdk` is an alias); `angle_style spica`.
 - **SDK models:** an SDK PE model exists (3 CH2 per bead, used for crystallization). There is no SDK PP model.
 - **Other published CG PP models:** Martini 2 (Panizon 2015) and Sigalas 2022 iPP. These were not chosen.
-- **TraPPE-UA iPP:** needs an improper torsion or explicit H to hold tacticity. The CH parameters must be checked against Martin & Siepmann 1998/99.
-- **L-OPLS (Siu 2012):** validated on linear alkanes only (see O4).
+- **TraPPE-UA iPP:** needs an improper torsion or explicit H to hold tacticity (D18). CH: σ 4.68 Å, ε/k 10 K; bends 112°/114°, k/k 62 500 K/rad²; verified against the GROMACS implementation.
+- **L-OPLS (Siu 2012):** validated on linear alkanes only; superseded by OPLS/2020 (D17).
+- **Crystal data (phase 4):** PE orthorhombic cell (Busing, 23 °C): a 7.4069, b 4.9491, c 2.5511 Å, Pnam, setting angle 41° (Bunn) or 45° (Chatani). iPP α: Natta–Corradini a 6.65, b 20.96, c 6.50 Å, β 99.8° (Turner-Jones: 6.66/20.78/6.495 Å/99.62°), 4 chains of 3₁ helices; α₂ = P2₁/c (ordered), α₁ = C2/c. No open-access iPP atom-coordinate table found, so it's a user decision at phase 4.
 - **OPLS-AA LiPF6 in EC/DMC:** density is OK. Transport is underestimated unless the ion charges are scaled (×0.8 is common).
 - **TraPPE battery-solvent extension:** exists; its ion parameters are unchecked.
 

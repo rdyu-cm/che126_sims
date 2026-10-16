@@ -1,0 +1,18 @@
+# Verbatim excerpt of an upstream force-field file (only the lines this project uses).
+# Upstream URL: https://raw.githubusercontent.com/SPICA-group/spica-tools/285a1ffa900ce5b6b7fa5b95277300031572943b/doc/source/data/spica_db.prm
+# Commit: 285a1ffa900ce5b6b7fa5b95277300031572943b
+# License: MIT License, Copyright (c) 2022 SPICA-group (spica-tools LICENSE). The MIT permission notice applies: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software ... The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.' Full text: https://raw.githubusercontent.com/SPICA-group/spica-tools/285a1ffa900ce5b6b7fa5b95277300031572943b/LICENSE
+# Retrieved: 2026-10-16
+# Format: each line is 'L<upstream line number>: <original line, unmodified>'.
+#
+L1: ########### SPICA ###########
+L2: # Version history:
+L3: #    2018.8.30  -- v1  : First release of SPICA force field derived from SDK 
+L4: #    2019.11.30 -- v1.1: SPICA force field for Proteins and Peptides
+L50: bond CM   CM      6.16   3.64   # sdk1
+L52: bond CM   CT      6.16   3.65   # sdk1
+L156: angle  CM   CM   CM      1.19    173.0              # sdk1
+L157: angle  CM   CM   CT      1.19    175.0              # sdk1
+L322: pair CM   CM   lj9_6    0.42    4.506    # sdk1
+L409: pair CT   CM   lj9_6    0.444   4.5455   # sdk1
+L414: pair CT   CT   lj9_6    0.469   4.585    # sdk1

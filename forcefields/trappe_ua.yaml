@@ -1,0 +1,189 @@
+# TraPPE-UA parameters for PE and isotactic PP, plus an explicit methine H (project choice).
+# Values are stored in TraPPE source units (energies as E/kB in K, lengths in angstrom,
+# angles in degrees). sepsim.ff.params.to_lammps_real converts them. Entries marked
+# `convention: lammps_real` are already LAMMPS real-unit coefficients and pass through.
+name: trappe_ua
+description: TraPPE united-atom alkanes (linear + branched), subset for PE and iPP.
+convention: trappe
+
+citations:
+  - key: martin1998
+    authors: M. G. Martin, J. I. Siepmann
+    title: "Transferable Potentials for Phase Equilibria. 1. United-Atom Description of n-Alkanes"
+    journal: J. Phys. Chem. B
+    volume: 102
+    pages: 2569-2577
+    year: 1998
+    doi: 10.1021/jp972543+
+  - key: martin1999
+    authors: M. G. Martin, J. I. Siepmann
+    title: "Novel Configurational-Bias Monte Carlo Method for Branched Molecules. Transferable Potentials for Phase Equilibria. 2. United-Atom Description of Branched Alkanes"
+    journal: J. Phys. Chem. B
+    volume: 103
+    pages: 4508-4517
+    year: 1999
+    doi: 10.1021/jp984742e
+  - key: ghahremanpour2022
+    authors: M. M. Ghahremanpour, J. Tirado-Rives, W. L. Jorgensen
+    title: "Refinement of the Optimized Potentials for Liquid Simulations Force Field for Thermodynamics and Dynamics of Liquid Alkanes"
+    journal: J. Phys. Chem. B
+    volume: 126
+    pages: 5896-5907
+    year: 2022
+    doi: 10.1021/acs.jpcb.2c03686
+    note: Source of the borrowed OPLS/2020 C-H bond and angle terms for the explicit methine H.
+
+upstream:
+  - file: _reference/trappeua_ffnonbonded.excerpt.txt
+    url: https://raw.githubusercontent.com/wesbarnett/trappeua/336ddc88ea1b91eba2147d2c61f5aec711437a91/trappeua.ff/ffnonbonded.itp
+  - file: _reference/trappeua_ffbonded.excerpt.txt
+    url: https://raw.githubusercontent.com/wesbarnett/trappeua/336ddc88ea1b91eba2147d2c61f5aec711437a91/trappeua.ff/ffbonded.itp
+  - file: _reference/oplsaa2024.excerpt.txt
+    url: https://raw.githubusercontent.com/jewettaij/moltemplate/031ecd4efc7abdad8d49238404de2d3ef388b37b/moltemplate/force_fields/oplsaa2024.lt
+    commit: 031ecd4efc7abdad8d49238404de2d3ef388b37b
+    license: MIT (Andrew Jewett)
+    retrieved: 2026-10-16
+# The two trappeua files share this provenance:
+trappeua_repository:
+  repository: https://github.com/wesbarnett/trappeua (GROMACS implementation by James W. Barnett)
+  commit: 336ddc88ea1b91eba2147d2c61f5aec711437a91
+  license: >-
+    no license file at the pinned commit; only the numeric parameter lines are reproduced, with
+    attribution, for verification
+  retrieved: 2026-10-16
+  note: The itp files state that some parameters were corrected per the TraPPE website.
+
+units:
+  energy: K (E/kB)
+  length: angstrom
+  angle: degree
+  mass: g/mol
+  charge: e
+  bond_k0: kJ/mol/nm^2, GROMACS harmonic E = k0/2 (r - r0)^2 (upstream itp value)
+  angle_k: K/rad^2 (k/kB), E = k/2 (theta - theta0)^2
+  dihedral_c: K, U = c0 + c1 (1 + cos phi) + c2 (1 - cos 2 phi) + c3 (1 + cos 3 phi), trans = 180 deg
+
+styles:
+  pair: lj/cut
+  mixing: arithmetic
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds: {lj: [0.0, 0.0, 0.0], coul: [0.0, 0.0, 0.0]}
+  source: {ref: martin1998}  # citation only; no excerpt line
+  note: >-
+    Lorentz-Berthelot mixing. 1-2, 1-3 and 1-4 nonbonded pairs excluded; intramolecular LJ only for
+    sites four or more bonds apart (Martin & Siepmann 1998). The LAMMPS opls dihedral reproduces
+    the TraPPE cosine series up to the constant c0.
+
+# CHx in a pattern means any of CH3, CH2, CH (never the explicit H).
+wildcards:
+  CHx: [CH3, CH2, CH]
+
+atom_types:
+  CH3:
+    description: united-atom CH3 (sp3)
+    mass: 15.035
+    charge: 0.0
+    epsilon: 98.0
+    sigma: 3.75
+    source: {ref: martin1998, file: trappeua_ffnonbonded.excerpt.txt, lines: {all: 19}}
+  CH2:
+    description: united-atom CH2 (sp3)
+    mass: 14.027
+    charge: 0.0
+    epsilon: 46.0
+    sigma: 3.95
+    source: {ref: martin1998, file: trappeua_ffnonbonded.excerpt.txt, lines: {all: 21}}
+  CH:
+    description: united-atom CH (sp3) carbon; its H is carried by the explicit H type
+    mass: 12.011
+    charge: 0.0
+    epsilon: 10.0
+    sigma: 4.68
+    source: {ref: martin1999, file: trappeua_ffnonbonded.excerpt.txt, lines: {all: 23}}
+    note: Upstream UA mass is 13.019 (= 12.011 + 1.008). We use 12.011 because the H is explicit.
+  H:
+    description: explicit methine H holding iPP tacticity (project choice, not TraPPE)
+    convention: lammps_real
+    mass: 1.008
+    charge: 0.0
+    epsilon: 0.0
+    sigma: 0.0
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {mass: 1126}}
+    origin: project choice (decisions.md), values borrowed from OPLS/2020
+
+bond_types:
+  CHx-CHy:
+    pattern: [CHx, CHx]
+    r0: 1.54
+    k0: 502416.0
+    constrained: false
+    source: {ref: martin1998, file: trappeua_ffbonded.excerpt.txt, lines: {coeffs: 17}}
+    note: >-
+      Flexible harmonic bond in production (project decision). TraPPE itself uses fixed bond
+      lengths (Martin & Siepmann 1998); the harmonic k0 follows the GROMACS implementation used as
+      our source (itp L13-L22, all CHx-CHy pairs identical). UA timestep stays 2 fs with flexible
+      backbone; step-0 benchmark checks energy conservation, fallback 1 fs (decisions.md D12a).
+  CH-H:
+    pattern: [CH, H]
+    convention: lammps_real
+    K: 340.0
+    r0: 1.09
+    constrained: true  # SHAKE; the only constrained bond in the UA model
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {coeffs: 4335}}
+    origin: project choice (decisions.md), values borrowed from OPLS/2020 CT-HC
+
+angle_types:
+  CHx-CH2-CHy:
+    pattern: [CHx, CH2, CHx]
+    theta0: 114.0
+    k: 62500.0
+    source: {ref: martin1998, file: trappeua_ffbonded.excerpt.txt, lines: {coeffs: 38}}
+    note: Same values on itp L34-L43.
+  CHx-CH-CHy:
+    pattern: [CHx, CH, CHx]
+    theta0: 112.0
+    k: 62500.0
+    source: {ref: martin1999, file: trappeua_ffbonded.excerpt.txt, lines: {coeffs: 49}}
+    note: Same values on itp L45-L54.
+  H-CH-CHx:
+    pattern: [H, CH, CHx]
+    convention: lammps_real
+    K: 37.5
+    theta0: 110.7
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {coeffs: 5734}}
+    origin: project choice (decisions.md), values borrowed from OPLS/2020 CT-CT-HC
+
+dihedral_types:
+  CHx-CH2-CH2-CHy:
+    pattern: [CHx, CH2, CH2, CHx]
+    c0: 0.0
+    c1: 355.03
+    c2: -68.19
+    c3: 791.32
+    source: {ref: martin1998, file: trappeua_ffbonded.excerpt.txt, lines: {coeffs: 105}}
+    note: Upstream stores Ryckaert-Bellemans C0..C3 in kJ/mol; same values on itp L101-L110.
+  CHx-CH2-CH-CHy:
+    pattern: [CHx, CH2, CH, CHx]
+    c0: -251.06
+    c1: 428.73
+    c2: -111.85
+    c3: 441.27
+    source: {ref: martin1999, file: trappeua_ffbonded.excerpt.txt, lines: {coeffs: 121}}
+    note: Upstream stores Ryckaert-Bellemans C0..C3 in kJ/mol; same values on itp L112-L127.
+
+recommended:
+  lj_cutoff: 14.0
+  tail_correction: true
+  source: {ref: martin1998}  # citation only; no excerpt line
+  note: TraPPE uses a 14 angstrom LJ cutoff with analytic tail corrections (Martin & Siepmann 1998).
+
+notes:
+  - >-
+    Backbone CHx-CHy bonds are flexible harmonic; only the methine CH-H bond is SHAKE-constrained.
+    UA timestep 2 fs with flexible backbone; step-0 benchmark checks energy conservation,
+    fallback 1 fs (decisions.md D12a).
+  - The explicit methine H has bond and angle terms only. No LJ, zero charge, no dihedrals, no improper.
+  - Conversion to LAMMPS real units drops c0 (constant energy offset).

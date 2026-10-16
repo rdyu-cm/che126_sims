@@ -1,0 +1,53 @@
+# Verbatim excerpt of an upstream force-field file (only the lines this project uses).
+# Upstream URL: https://raw.githubusercontent.com/jewettaij/moltemplate/031ecd4efc7abdad8d49238404de2d3ef388b37b/moltemplate/force_fields/oplsaa2024.lt
+# Commit: 031ecd4efc7abdad8d49238404de2d3ef388b37b
+# License: MIT License, Copyright (c) 2013, Andrew Jewett, University of California Santa Barbara (moltemplate LICENSE.md). The MIT permission notice applies: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software ... The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.' Full text: https://raw.githubusercontent.com/jewettaij/moltemplate/031ecd4efc7abdad8d49238404de2d3ef388b37b/LICENSE.md
+# Retrieved: 2026-10-16
+# Format: each line is 'L<upstream line number>: <original line, unmodified>'.
+#
+L1: # This file was generated automatically using:
+L2: # oplsaa2lt.py --name OPLSAA --out oplsaa2024.lt --par ../oplsaa2024_original_format/Jorgensen_et_al-2024-The_Journal_of_Physical_Chemistry_B.sup-2.par --sb ../oplsaa2024_original_format/Jorgensen_et_al-2024-The_Journal_of_Physical_Chemistry_B.sup-3.sb
+L7: # https://pubs.acs.org/doi/suppl/10.1021/acs.jpcb.3c06602
+L96:     #        Ghahremanpour, M.; Tirado-Rives, J.; Jorgensen, W. L. 
+L97:     #        J. Phys. Chem. B 2022, 126, 5896-5907.
+L98:     set type @atom:54   charge     -0.180 # C  - CT   | n-CH3 all-atom C: alkanes
+L99:     set type @atom:55   charge     -0.180 # C  - CT   | iso-CH3 all-atom C: alkanes
+L101:     set type @atom:57   charge     -0.120 # C  - CT   | CH2 all-atom C: alkanes
+L102:     set type @atom:58   charge     -0.060 # C  - CT   | CH all-atom C: alkanes
+L104:     set type @atom:60   charge      0.060 # H  - HC   | H all-atom H: alkanes
+L1120:     @atom:54   12.011
+L1121:     @atom:55   12.011
+L1123:     @atom:57   12.011
+L1124:     @atom:58   12.011
+L1126:     @atom:60   1.008
+L3122:     pair_coeff @atom:54_bCT_aCT_dCT_iCT @atom:54_bCT_aCT_dCT_iCT 0.066 3.550
+L3123:     pair_coeff @atom:55_bCT_aCT_dCT_iCT @atom:55_bCT_aCT_dCT_iCT 0.072 3.400
+L3125:     pair_coeff @atom:57_bCT_aCT_dCT_iCT @atom:57_bCT_aCT_dCT_iCT 0.066 3.510
+L3126:     pair_coeff @atom:58_bCT_aCT_dCT_iCT @atom:58_bCT_aCT_dCT_iCT 0.066 3.500
+L3128:     pair_coeff @atom:60_bHC_aHC_dHC_iHC @atom:60_bHC_aHC_dHC_iHC 0.026 2.480
+L4330:     bond_coeff @bond:CT_CT 268. 1.529 # CHARMM 22 parameter file
+L4335:     bond_coeff @bond:CT_HC 340. 1.09 # CHARMM 22 parameter file
+L5730:     angle_coeff @angle:CT_CT_CT 58.35 112.7 # CHARMM 22 parameter file
+L5734:     angle_coeff @angle:CT_CT_HC 37.5 110.7 # CHARMM 22
+L6128:     angle_coeff @angle:HC_CT_HC 33. 107.8 # CHARMM 22
+L8439:     dihedral_coeff @dihedral:CT_CT_CT_CT__2 1.100 -0.200 0.200 0.0 # butane only OPLS/2020 
+L8440:     dihedral_coeff @dihedral:CT_CT_CT_CT__1 0.850 -0.200 0.200 0.0 # hydrocarbon OPLS/2020 
+L8782:     dihedral_coeff @dihedral:HC_CT_CT_CT 0.000 0.000 0.300 0.0 # hydrocarbon 
+L8792:     dihedral_coeff @dihedral:HC_CT_CT_HC 0.000 0.000 0.300 0.0 # hydrocarbon  11/99 
+L9637:     @dihedral:CT_CT_CT_CT__2 @atom:*_b*_a*_dCT*_i* @atom:*_b*_a*_dCT*_i* @atom:*_b*_a*_dCT*_i* @atom:*_b*_a*_dCT*_i*
+L9638:     @dihedral:CT_CT_CT_CT__1 @atom:*_b*_a*_dCT*_i* @atom:*_b*_a*_dCT*_i* @atom:*_b*_a*_dCT*_i* @atom:*_b*_a*_dCT*_i*
+L10362:     units real
+L10363:     atom_style full
+L10364:     bond_style harmonic
+L10365:     angle_style harmonic
+L10366:     dihedral_style opls
+L10367:     improper_style cvff  #("harmonic" also works but coeffs should be 2x larger)
+L10368:     # NOTE: in the original oplsaa2008.lt file the pair style was
+L10369:     #   lj/cut/coul/long 11.0 11.0
+L10370:     # but with an accompanying note stating that OPLSAA/M (2015) 
+L10371:     # uses a different pair style, the one used here
+L10372:     # (as I trusted the original author)
+L10373:     pair_style lj/charmm/coul/long 9.0 11.0
+L10374:     pair_modify mix geometric
+L10375:     special_bonds lj/coul 0.0 0.0 0.5
+L10376:     kspace_style pppm 0.0001

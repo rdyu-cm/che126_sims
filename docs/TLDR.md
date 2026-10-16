@@ -1,20 +1,26 @@
 # TLDR: resume here
 
 **Project:** LAMMPS MD of Li-ion (EV) separator polymers, PE and isotactic PP, from 25 to 160 °C. Three resolutions:
-- all-atom (L-OPLS / OPLS-AA)
+- all-atom (OPLS/2020)
 - united-atom (TraPPE-UA)
 - coarse-grained (SDK/SPICA, PE only)
 
 The repo holds the build and analysis code, templates, and force-field parameters. Production runs on a separate workstation with a budget under 500 GPU-h.
 
-**Status (2026-10-16):** design is done; every decision is in [`decisions.md`](decisions.md). **Phase 0 is done**: the uv package skeleton exists, with `sepsim` CLI stubs and tests. No simulation code exists yet.
+**Status (2026-10-16):** design is done; every decision is in [`decisions.md`](decisions.md). **Done:**
+- phase 0 (uv package skeleton)
+- phase 1 (force-field YAMLs with verified sources)
+- the `sepsim run` reproducibility wrapper
+- the core analysis library
+
+No system builders or LAMMPS templates exist yet.
 
 **Rules:**
 - Every new design choice goes to the user before it's built.
 - Work on a feature branch in a worktree, not on `main`.
 - Pushing feature branches is fine. Merges to `main` need user approval.
 
-**Next step:** phase 1, the force-field parameter YAMLs, with every number cited. The user reviews them at a checkpoint.
+**Next step:** phase 2, the amorphous PE/iPP builders. Open user decisions are listed in `decisions.md` under "Pending user decisions".
 
 **Setup on any machine:**
 ```
@@ -44,7 +50,8 @@ No conda. LAMMPS (and packmol, for the T2 electrolyte) are installed only on the
 - One NPT sweep trajectory per system: ~10 °C steps of 1 ns each, plus holds of 5 ns at 25, 90, 130, and 160 °C.
 - Thermal conductivity κ: rNEMD branch runs. Whether to use 4 or 2 temperatures is decided after the benchmark.
 - Cp: dH/dT plus a VDOS quantum correction (all-atom).
-- Timesteps: AA 1 fs flexible / UA 2 fs with SHAKE / CG 10 fs. Nosé–Hoover thermostat; NVE for κ and VDOS.
+- Timesteps: AA 1 fs flexible / UA 2 fs (flexible backbone, SHAKE only on the explicit methine C–H; fallback 1 fs) / CG 10 fs.
+- LAMMPS runs from the command line; the optional `sepsim run` writes a reproducibility manifest. Nosé–Hoover thermostat; NVE for κ and VDOS.
 - 1 replica per system.
 - **Tg is out of scope:** both polymers have Tg below 25 °C.
 - Coarse-grained: standard SDK PE, with an early density-vs-T check against UA and experiment.

@@ -1,0 +1,23 @@
+# Verbatim excerpt of an upstream force-field file (only the lines this project uses).
+# Upstream URL: https://raw.githubusercontent.com/SPICA-group/spica-tools/285a1ffa900ce5b6b7fa5b95277300031572943b/src/setup_lmp.py
+# Commit: 285a1ffa900ce5b6b7fa5b95277300031572943b
+# License: MIT License, Copyright (c) 2022 SPICA-group (spica-tools LICENSE). The MIT permission notice applies: 'Permission is hereby granted, free of charge, to any person obtaining a copy of this software ... The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.' Full text: https://raw.githubusercontent.com/SPICA-group/spica-tools/285a1ffa900ce5b6b7fa5b95277300031572943b/LICENSE
+# Retrieved: 2026-10-16
+# Format: each line is 'L<upstream line number>: <original line, unmodified>'.
+#
+L431:     if sysdat.ischarged:
+L432:         print("pair_style      lj/sdk/coul/long        15.0", file=fout)
+L433:     else:
+L434:         print("pair_style      lj/sdk        15.0", file=fout)
+L435:     if sysdat.nbnds > 0:
+L436:         print("bond_style      harmonic", file=fout)
+L437:     if sysdat.nangs > 0:
+L438:         if ang_style == "hybrid":
+L439:             print("angle_style     hybrid sdk harmonic", file=fout)
+L440:         elif ang_style == "sdk":
+L441:             print("angle_style     sdk", file=fout)
+L442:         else:
+L450:     if sysdat.ischarged:
+L451:         print("special_bonds   lj/coul 0.0 0.0 1.0 angle yes", file=fout)
+L452:     else:
+L453:         print("special_bonds   lj 0.0 0.0 1.0 angle yes", file=fout)

@@ -1,0 +1,10 @@
+# Verbatim excerpt of an upstream force-field file (only the numeric parameter lines this project uses).
+# Upstream URL: https://raw.githubusercontent.com/wesbarnett/trappeua/336ddc88ea1b91eba2147d2c61f5aec711437a91/trappeua.ff/ffnonbonded.itp
+# Commit: 336ddc88ea1b91eba2147d2c61f5aec711437a91
+# License: no license file at the pinned commit (GitHub reports no license); numeric parameters reproduced with attribution for verification. Attribution: TraPPE-UA for GROMACS by James W. Barnett (https://github.com/wesbarnett/trappeua); parameters from Martin & Siepmann, J. Phys. Chem. B 102, 2569 (1998) and 103, 4508 (1999).
+# Retrieved: 2026-10-16
+# Format: each line is 'L<upstream line number>: <original line, unmodified>'.
+#
+L19:   CH3_C     CH3          15.03500   0.000    A       3.75000e-01  8.14817e-01; [CH3]-CHX
+L21:   CH2_C     CH2          14.02700   0.000    A       3.95000e-01  3.82465e-01; (CHX)2-[CH2]
+L23:   CH_C      CH           13.01900   0.000    A       4.68000e-01  8.31445e-02; (CHX)3-[CH]

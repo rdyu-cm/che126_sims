@@ -1,0 +1,155 @@
+# SDK/SPICA coarse-grained polyethylene (3 heavy atoms per bead).
+# Only the types this project uses are listed. Every number is checked against the verbatim
+# excerpt in _reference/ by tests/test_forcefields.py.
+name: sdk_cg
+description: SDK/SPICA CG alkane beads for PE (CM = -CH2CH2CH2-, CT = CH3CH2CH2- chain end).
+convention: lammps_real  # values are already LAMMPS real-unit coefficients
+
+citations:
+  - key: shinoda2007
+    authors: W. Shinoda, R. DeVane, M. L. Klein
+    title: "Multi-property fitting and parameterization of a coarse grained model for aqueous surfactants"
+    journal: Mol. Simul.
+    volume: 33
+    pages: 27-36
+    year: 2007
+    doi: 10.1080/08927020601054050
+  - key: shinoda2010
+    authors: W. Shinoda, R. DeVane, M. L. Klein
+    title: "Zwitterionic Lipid Assemblies: Molecular Dynamics Studies of Monolayers, Bilayers, and Vesicles Using a New Coarse Grain Force Field"
+    journal: J. Phys. Chem. B
+    volume: 114
+    pages: 6836-6849
+    year: 2010
+    doi: 10.1021/jp9107206
+    note: Cited by the upstream sdk.lt (EMC-generated) as the source of its parameter set.
+  - key: spica_tools
+    authors: SPICA-group
+    title: "spica-tools: setup and parameter database for the SPICA (formerly SDK) CG force field"
+    year: 2022
+    url: https://github.com/SPICA-group/spica-tools
+    note: Official SPICA tools. setup_lmp.py gives the run settings; spica_db.prm the parameters.
+
+upstream:
+  - file: _reference/sdk.excerpt.txt
+    url: https://raw.githubusercontent.com/jewettaij/moltemplate/031ecd4efc7abdad8d49238404de2d3ef388b37b/moltemplate/force_fields/sdk.lt
+    commit: 031ecd4efc7abdad8d49238404de2d3ef388b37b
+    license: MIT (Andrew Jewett)
+    retrieved: 2026-10-16
+  - file: _reference/spica_setup_lmp.excerpt.txt
+    url: https://raw.githubusercontent.com/SPICA-group/spica-tools/285a1ffa900ce5b6b7fa5b95277300031572943b/src/setup_lmp.py
+    commit: 285a1ffa900ce5b6b7fa5b95277300031572943b
+    license: MIT (SPICA-group)
+    retrieved: 2026-10-16
+  - file: _reference/spica_db.excerpt.txt
+    url: https://raw.githubusercontent.com/SPICA-group/spica-tools/285a1ffa900ce5b6b7fa5b95277300031572943b/doc/source/data/spica_db.prm
+    commit: 285a1ffa900ce5b6b7fa5b95277300031572943b
+    license: MIT (SPICA-group)
+    retrieved: 2026-10-16
+
+units:
+  energy: kcal/mol
+  length: angstrom
+  angle: degree
+  mass: g/mol
+  charge: e
+  bond_K: kcal/mol/angstrom^2, LAMMPS harmonic E = K (r - r0)^2 (1/2 already included)
+  angle_K: kcal/mol/rad^2, LAMMPS spica E = K (theta - theta0)^2 plus 1-3 LJ repulsion
+
+styles:
+  pair: lj/spica
+  mixing: none  # every cross pair is listed explicitly in pair_types
+  bond: harmonic
+  angle: spica
+  dihedral: none
+  improper: none
+  special_bonds: {lj: [0.0, 0.0, 1.0], angle: true}  # LAMMPS: special_bonds lj 0.0 0.0 1.0 angle yes
+  source: {ref: spica_tools, file: spica_setup_lmp.excerpt.txt, lines: {special_bonds: 453, pair: 434, bond: 436, angle: 441}}
+  note: >-
+    LAMMPS CG-SPICA package; lj/sdk and angle sdk are older aliases of lj/spica and angle spica.
+    PE beads are uncharged, so the uncharged branch of setup_lmp.py applies (L434, L453).
+    moltemplate sdk.lt writes special_bonds lj/coul 0 0 0 and a 9 angstrom LJ cutoff (sdk.lt L430-L431);
+    superseded by SPICA official setup_lmp.
+
+atom_types:
+  CM:
+    description: -CH2-CH2-CH2- backbone bead
+    mass: 42.0804
+    charge: 0.0
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {mass: 20}}
+  CT:
+    description: CH3-CH2-CH2- chain-end bead
+    mass: 43.0883
+    charge: 0.0
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {mass: 22}}
+
+pair_types:
+  CM-CM:
+    pattern: [CM, CM]
+    form: lj9_6
+    epsilon: 0.420
+    sigma: 4.506
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {coeffs: 73}}
+    alt_sources:
+      - {ref: spica_tools, file: spica_db.excerpt.txt, lines: {coeffs: 322}}
+  CM-CT:
+    pattern: [CM, CT]
+    form: lj9_6
+    epsilon: 0.444
+    sigma: 4.5455
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {coeffs: 75}}
+    alt_sources:
+      - {ref: spica_tools, file: spica_db.excerpt.txt, lines: {coeffs: 409}}
+  CT-CT:
+    pattern: [CT, CT]
+    form: lj9_6
+    epsilon: 0.469
+    sigma: 4.585
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {coeffs: 96}}
+    alt_sources:
+      - {ref: spica_tools, file: spica_db.excerpt.txt, lines: {coeffs: 414}}
+
+bond_types:
+  CM-CM:
+    pattern: [CM, CM]
+    K: 6.16
+    r0: 3.64
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {coeffs: 243}}
+    alt_sources:
+      - {ref: spica_tools, file: spica_db.excerpt.txt, lines: {coeffs: 50}}
+  CM-CT:
+    pattern: [CM, CT]
+    K: 6.16
+    r0: 3.65
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {coeffs: 245}}
+    alt_sources:
+      - {ref: spica_tools, file: spica_db.excerpt.txt, lines: {coeffs: 52}}
+
+angle_types:
+  CM-CM-CM:
+    pattern: [CM, CM, CM]
+    K: 1.19
+    theta0: 173.0
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {coeffs: 314}}
+    alt_sources:
+      - {ref: spica_tools, file: spica_db.excerpt.txt, lines: {coeffs: 156}}
+  CM-CM-CT:
+    pattern: [CM, CM, CT]
+    K: 1.19
+    theta0: 175.0
+    source: {ref: shinoda2007, file: sdk.excerpt.txt, lines: {coeffs: 316}}
+    alt_sources:
+      - {ref: spica_tools, file: spica_db.excerpt.txt, lines: {coeffs: 157}}
+
+dihedral_types: {}
+
+recommended:
+  lj_cutoff: 15.0
+  source: {ref: spica_tools, file: spica_setup_lmp.excerpt.txt, lines: {lj_cutoff: 434}}
+  note: >-
+    From SPICA setup_lmp.py "pair_style lj/sdk 15.0" (uncharged systems). moltemplate sdk.lt
+    writes 9.0 (LJ) / 12.0 (Coulomb); superseded by SPICA official setup_lmp.
+
+notes:
+  - PE only at CG (decision D7). A C240 chain maps to CT-(CM)78-CT.
+  - The SDK model has no dihedrals for alkanes.

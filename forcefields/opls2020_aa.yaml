@@ -1,0 +1,171 @@
+# OPLS/2020 all-atom parameters for polyethylene (PE) and isotactic polypropylene (iPP).
+# Only the types this project uses are listed. Every number is checked against the verbatim
+# excerpt in _reference/ by tests/test_forcefields.py.
+name: opls2020_aa
+description: OPLS/2020 all-atom force field, alkane subset (PE and iPP).
+convention: lammps_real  # values are already LAMMPS real-unit coefficients
+
+citations:
+  - key: ghahremanpour2022
+    authors: M. M. Ghahremanpour, J. Tirado-Rives, W. L. Jorgensen
+    title: "Refinement of the Optimized Potentials for Liquid Simulations Force Field for Thermodynamics and Dynamics of Liquid Alkanes"
+    journal: J. Phys. Chem. B
+    volume: 126
+    pages: 5896-5907
+    year: 2022
+    doi: 10.1021/acs.jpcb.2c03686
+  - key: jorgensen2024
+    authors: W. L. Jorgensen, M. Ghahremanpour, A. Saar, J. Tirado-Rives
+    title: "OPLS/2020 Force Field for Unsaturated Hydrocarbons, Alcohols, and Ethers"
+    journal: J. Phys. Chem. B
+    volume: 128
+    pages: 250-262
+    year: 2024
+    doi: 10.1021/acs.jpcb.3c06602
+    note: Supporting information .par/.sb parameter files; moltemplate oplsaa2024.lt is generated from them.
+
+upstream:
+  - file: _reference/oplsaa2024.excerpt.txt
+    url: https://raw.githubusercontent.com/jewettaij/moltemplate/031ecd4efc7abdad8d49238404de2d3ef388b37b/moltemplate/force_fields/oplsaa2024.lt
+    commit: 031ecd4efc7abdad8d49238404de2d3ef388b37b
+    license: MIT (Andrew Jewett)
+    retrieved: 2026-10-16
+
+units:
+  energy: kcal/mol
+  length: angstrom
+  angle: degree
+  mass: g/mol
+  charge: e
+  bond_K: kcal/mol/angstrom^2, LAMMPS harmonic E = K (r - r0)^2 (1/2 already included)
+  angle_K: kcal/mol/rad^2, LAMMPS harmonic E = K (theta - theta0)^2 (1/2 already included)
+  dihedral_K: kcal/mol, LAMMPS opls K1..K4
+
+styles:
+  pair: lj/cut/coul/long
+  mixing: geometric
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds: {lj: [0.0, 0.0, 0.5], coul: [0.0, 0.0, 0.5]}
+  source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {mixing: 10374, special_bonds: 10375, bond: 10364, angle: 10365, dihedral: 10366}}
+
+# `class` is the OPLS bonded class; bonded patterns below are written in classes.
+atom_types:
+  CT_CH3:
+    opls_type: 54
+    description: n-CH3 carbon (CH3 bonded to CH2; PE chain ends, iPP end methyl next to CH2)
+    class: CT
+    element: C
+    mass: 12.011
+    charge: -0.180
+    epsilon: 0.066
+    sigma: 3.550
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {charge: 98, mass: 1120, lj: 3122}}
+  CT_CH3_iso:
+    opls_type: 55
+    description: iso-CH3 carbon (CH3 bonded to CH; iPP pendant methyl)
+    class: CT
+    element: C
+    mass: 12.011
+    charge: -0.180
+    epsilon: 0.072
+    sigma: 3.400
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {charge: 99, mass: 1121, lj: 3123}}
+  CT_CH2:
+    opls_type: 57
+    description: CH2 carbon
+    class: CT
+    element: C
+    mass: 12.011
+    charge: -0.120
+    epsilon: 0.066
+    sigma: 3.510
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {charge: 101, mass: 1123, lj: 3125}}
+  CT_CH:
+    opls_type: 58
+    description: CH (methine) carbon, iPP backbone
+    class: CT
+    element: C
+    mass: 12.011
+    charge: -0.060
+    epsilon: 0.066
+    sigma: 3.500
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {charge: 102, mass: 1124, lj: 3126}}
+  HC:
+    opls_type: 60
+    description: alkane hydrogen
+    class: HC
+    element: H
+    mass: 1.008
+    charge: 0.060
+    epsilon: 0.026
+    sigma: 2.480
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {charge: 104, mass: 1126, lj: 3128}}
+
+bond_types:
+  CT-CT:
+    pattern: [CT, CT]
+    K: 268.0
+    r0: 1.529
+    source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {coeffs: 4330}}
+  CT-HC:
+    pattern: [CT, HC]
+    K: 340.0
+    r0: 1.09
+    source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {coeffs: 4335}}
+
+angle_types:
+  CT-CT-CT:
+    pattern: [CT, CT, CT]
+    K: 58.35
+    theta0: 112.7
+    source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {coeffs: 5730}}
+  CT-CT-HC:
+    pattern: [CT, CT, HC]
+    K: 37.5
+    theta0: 110.7
+    source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {coeffs: 5734}}
+  HC-CT-HC:
+    pattern: [HC, CT, HC]
+    K: 33.0
+    theta0: 107.8
+    source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {coeffs: 6128}}
+
+dihedral_types:
+  CT-CT-CT-CT:
+    pattern: [CT, CT, CT, CT]
+    K1: 0.850
+    K2: -0.200
+    K3: 0.200
+    K4: 0.0
+    source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {coeffs: 8440}}
+    note: >-
+      "hydrocarbon OPLS/2020" variant (upstream L8440). The "butane only" variant at L8439
+      (K1 = 1.100) is deliberately NOT used.
+  HC-CT-CT-CT:
+    pattern: [HC, CT, CT, CT]
+    K1: 0.000
+    K2: 0.000
+    K3: 0.300
+    K4: 0.0
+    source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {coeffs: 8782}}
+  HC-CT-CT-HC:
+    pattern: [HC, CT, CT, HC]
+    K1: 0.000
+    K2: 0.000
+    K3: 0.300
+    K4: 0.0
+    source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {coeffs: 8792}}
+
+recommended:
+  upstream_pair_style: lj/charmm/coul/long 9.0 11.0
+  upstream_kspace_style: pppm 0.0001
+  source: {ref: jorgensen2024, file: oplsaa2024.excerpt.txt, lines: {pair_style: 10373, kspace_style: 10376}}
+  note: Production cutoffs are a phase-2 choice; these are the values moltemplate ships.
+
+notes:
+  - OPLS/2020 is used for both PE and iPP (project decision; supersedes the earlier L-OPLS hybrid, O4).
+  - Alkanes need no impropers. moltemplate declares improper_style cvff (L10367) for other molecules.
+  - Groups are neutral by construction (CH3 -0.18+3*0.06, CH2 -0.12+2*0.06, CH -0.06+0.06).

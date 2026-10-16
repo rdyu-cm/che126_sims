@@ -1,0 +1,20 @@
+# Verbatim excerpt of an upstream force-field file (only the numeric parameter lines this project uses).
+# Upstream URL: https://raw.githubusercontent.com/wesbarnett/trappeua/336ddc88ea1b91eba2147d2c61f5aec711437a91/trappeua.ff/ffbonded.itp
+# Commit: 336ddc88ea1b91eba2147d2c61f5aec711437a91
+# License: no license file at the pinned commit (GitHub reports no license); numeric parameters reproduced with attribution for verification. Attribution: TraPPE-UA for GROMACS by James W. Barnett (https://github.com/wesbarnett/trappeua); parameters from Martin & Siepmann, J. Phys. Chem. B 102, 2569 (1998) and 103, 4508 (1999).
+# Retrieved: 2026-10-16
+# Format: each line is 'L<upstream line number>: <original line, unmodified>'.
+#
+L14:   CH3  CH2   1       0.1540    502416.0
+L15:   CH3  CH    1       0.1540    502416.0
+L17:   CH2  CH2   1       0.1540    502416.0
+L18:   CH2  CH    1       0.1540    502416.0
+L35:   CH3  CH2  CH2   1       114.0     519.65389
+L38:   CH2  CH2  CH2   1       114.0     519.65389
+L41:   CH   CH2  CH    1       114.0     519.65389
+L46:   CH3  CH   CH2   1       112.0     519.65389
+L49:   CH2  CH   CH2   1       112.0     519.65389
+L102:   CH3  CH2  CH2  CH2  3     8.39736  16.78632   1.13393  -26.31760   0.00000   0.00000
+L105:   CH2  CH2  CH2  CH2  3     8.39736  16.78632   1.13393  -26.31760   0.00000   0.00000
+L120:   CH   CH2  CH   CH3  3     3.28629   7.44211   1.85995  -14.67569   0.00000   0.00000
+L121:   CH   CH2  CH   CH2  3     3.28629   7.44211   1.85995  -14.67569   0.00000   0.00000
