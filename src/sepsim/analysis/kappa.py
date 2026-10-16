@@ -90,3 +90,60 @@ def kappa_rnemd(
         r2_upper=r2_up,
         heat_flux=flux,
     )
+
+
+@dataclass
+class KappaAutoResult(KappaResult):
+    """``KappaResult`` plus the automatic fit-region choice and a linearity verdict."""
+
+    exclude_A: float  # bins closer than this to either slab centre were dropped
+    linear_ok: bool  # both halves have R^2 >= min_r2
+    reason: str | None  # which half failed the linearity check; None if linear_ok
+
+
+def kappa_rnemd_auto(
+    z_bins_A,
+    T_profile_K,
+    exchanged_energy_kcalmol: float,
+    time_fs: float,
+    area_A2: float,
+    *,
+    Lz_A: float,
+    z_cold_A: float = 0.0,
+    drop_fraction: float = 0.2,
+    min_r2: float = 0.98,
+) -> KappaAutoResult:
+    """``kappa_rnemd`` with the fit region fixed by decision D26.
+
+    Each half-box (length Lz/2, between the cold and hot slab centres) is
+    trimmed by ``drop_fraction`` of its length at each slab end, i.e.
+    exclude_A = drop_fraction * Lz_A / 2, so the default fits the middle 60%
+    of each half. Both halves are reported (``kappa_lower``/``kappa_upper``);
+    ``linear_ok`` is False, with a ``reason``, if either fit has
+    R^2 < ``min_r2`` (non-linear profile: kappa not trustworthy). Units and
+    conventions as in ``kappa_rnemd``.
+    """
+    if not 0.0 <= drop_fraction < 0.5:
+        raise ValueError("drop_fraction must be in [0, 0.5)")
+    exclude = drop_fraction * 0.5 * Lz_A
+    res = kappa_rnemd(
+        z_bins_A,
+        T_profile_K,
+        exchanged_energy_kcalmol,
+        time_fs,
+        area_A2,
+        Lz_A=Lz_A,
+        exclude_A=exclude,
+        z_cold_A=z_cold_A,
+    )
+    bad = [
+        f"R^2 of {name} half = {r2:.4f} < {min_r2}"
+        for name, r2 in (("lower", res.r2_lower), ("upper", res.r2_upper))
+        if not r2 >= min_r2
+    ]
+    return KappaAutoResult(
+        **vars(res),
+        exclude_A=exclude,
+        linear_ok=not bad,
+        reason="; ".join(bad) if bad else None,
+    )
