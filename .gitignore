@@ -19,3 +19,8 @@ dist/
 
 # Local copies of papers (copyrighted; never committed)
 /references/
+
+# LAMMPS builds and Apptainer images live in ../installations (scripts/build_lammps.sh);
+# never commit them, even if SEPSIM_INSTALL_DIR points inside the repo
+/installations/
+*.sif

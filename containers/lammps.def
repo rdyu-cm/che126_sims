@@ -1,0 +1,81 @@
+# Apptainer image for the pinned LAMMPS build (decision D23, AMD ROCm/HIP).
+# How-to: docs/LAMMPS_BUILD.md.
+#
+# Runs scripts/build_lammps.sh inside a pinned ROCm devel image, so the ROCm userspace
+# comes from the image and only the amdgpu kernel driver comes from the host. Needs
+# Apptainer >= 1.2 (build-time templating and %arguments). Build from the repo root,
+# writing the .sif into the installations folder (never into the repo):
+#
+#   apptainer build --build-arg REPO="$PWD" --build-arg GPU_ARCH=gfx1030 \
+#     ../installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif \
+#     containers/lammps.def
+#
+# Run with the host GPU devices bound in (RX 6800S: see the doc for the env vars):
+#   apptainer exec --rocm <sif> lmp -in in.deck -sf gpu -pk gpu 1
+#
+# Build args (--build-arg NAME=VALUE; defaults in %arguments):
+#   ROCM_VERSION  ROCm release of the base tag rocm/dev-ubuntu-24.04:<ROCM_VERSION>-complete
+#   GPU_ARCH      AMD LLVM target, e.g. gfx1030 (required, no default)
+#   HOST_ARCH     optional Kokkos host arch ID, e.g. ZEN3 (default none = generic)
+#   REPO          absolute path of the repo checkout, for %files (pass "$PWD")
+#   JOBS          parallel build jobs (default 0 = script default)
+#
+# Templating:   https://apptainer.org/docs/user/latest/definition_files.html
+# GPU support:  https://apptainer.org/docs/user/latest/gpu.html
+# Base image:   https://hub.docker.com/r/rocm/dev-ubuntu-24.04 (tag checked 2026-10-19;
+#               "-complete" adds rocm-libs: hipFFT/rocFFT, hipCUB, rocThrust)
+
+Bootstrap: docker
+From: rocm/dev-ubuntu-24.04:{{ ROCM_VERSION }}-complete
+
+%arguments
+    ROCM_VERSION=6.4.4
+    GPU_ARCH=unset
+    HOST_ARCH=none
+    REPO=.
+    JOBS=0
+
+%files
+    {{ REPO }}/scripts/build_lammps.sh /opt/sepsim/build_lammps.sh
+
+%post
+    set -eu
+    if [ "{{ GPU_ARCH }}" = unset ]; then
+        echo "lammps.def: pass --build-arg GPU_ARCH=<gfx target>, e.g. gfx1030" >&2
+        exit 1
+    fi
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        ca-certificates git cmake make g++ libfftw3-dev openmpi-bin libopenmpi-dev
+    rm -rf /var/lib/apt/lists/*
+
+    export SEPSIM_INSTALL_DIR=/opt/installations
+    export SEPSIM_GPU_ARCH="{{ GPU_ARCH }}"
+    export SEPSIM_ROCM_PATH=/opt/rocm
+    if [ "{{ HOST_ARCH }}" != none ]; then export SEPSIM_HOST_ARCH="{{ HOST_ARCH }}"; fi
+    if [ "{{ JOBS }}" != 0 ]; then export SEPSIM_JOBS="{{ JOBS }}"; fi
+    bash /opt/sepsim/build_lammps.sh
+
+    # Keep only the install prefix; stable path /opt/lammps for PATH.
+    prefix="$(ls -d /opt/installations/lammps/*/*/install)"
+    ln -s "$prefix" /opt/lammps
+    rm -rf /opt/installations/lammps/*/src /opt/installations/lammps/*/*/build
+
+%environment
+    export PATH=/opt/lammps/bin:/opt/rocm/bin:$PATH
+
+%runscript
+    exec lmp "$@"
+
+%labels
+    org.opencontainers.image.title sepsim LAMMPS stable_22Jul2025_update6 (ROCm)
+    lammps.tag stable_22Jul2025_update6
+    lammps.rocm_version {{ ROCM_VERSION }}
+    lammps.gpu_arch {{ GPU_ARCH }}
+
+%help
+    LAMMPS stable_22Jul2025_update6 with MOLECULE KSPACE EXTRA-MOLECULE CG-SPICA
+    KOKKOS(HIP) GPU(HIP, mixed precision) OPENMP, built for one AMD GPU target.
+    Run with the host GPU devices: apptainer exec --rocm <sif> lmp -h
+    Build record: /opt/lammps/share/sepsim_build_info.txt
