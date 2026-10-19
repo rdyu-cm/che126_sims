@@ -4,8 +4,20 @@ from pathlib import Path
 
 import numpy as np
 
-_HEADER_TRIGGER = "Per MPI rank memory allocation"
 _TERMINATOR = "Loop time"
+
+
+def _is_float(token: str) -> bool:
+    try:
+        float(token)
+    except ValueError:
+        return False
+    return True
+
+
+def _is_header(line: str) -> bool:
+    tokens = line.split()
+    return bool(tokens) and tokens[0] == "Step" and not any(map(_is_float, tokens))
 
 
 def _parse_row(line: str, ncol: int) -> list[float] | None:
@@ -21,8 +33,11 @@ def _parse_row(line: str, ncol: int) -> list[float] | None:
 def read_thermo(path: str | Path) -> list[dict[str, np.ndarray]]:
     """Read every thermo block (one per ``run``/``minimize``) from a LAMMPS log.
 
-    A block starts at the line after LAMMPS's "Per MPI rank memory allocation"
-    line, which is the column header (e.g. ``Step Temp Press Volume Enthalpy``).
+    A block starts at the thermo column header: a line whose first token is
+    ``Step`` and whose tokens are all non-numeric (e.g. ``Step Temp Press``).
+    The header is used rather than the "Per MPI rank memory allocation" line
+    because LAMMPS omits the latter for ``run N pre no`` and for ``run ...
+    every`` iterations after the first.
     Rows are lines with the same number of tokens that all parse as floats;
     anything else (WARNINGs, fix output, ...) is skipped. A block ends at
     "Loop time" or at end of file (truncated run). Only one-line thermo styles
@@ -33,7 +48,6 @@ def read_thermo(path: str | Path) -> list[dict[str, np.ndarray]]:
     blocks: list[dict[str, np.ndarray]] = []
     header: list[str] | None = None
     rows: list[list[float]] = []
-    expect_header = False
 
     def close() -> None:
         if header is not None:
@@ -42,13 +56,9 @@ def read_thermo(path: str | Path) -> list[dict[str, np.ndarray]]:
 
     with open(path) as fh:
         for line in fh:
-            if expect_header:
-                if line.strip():
-                    header, rows, expect_header = line.split(), [], False
-                continue
-            if line.startswith(_HEADER_TRIGGER):
+            if _is_header(line):
                 close()
-                header, expect_header = None, True
+                header, rows = line.split(), []
             elif header is not None and line.startswith(_TERMINATOR):
                 close()
                 header = None

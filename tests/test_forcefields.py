@@ -3,6 +3,7 @@
 import re
 from pathlib import Path
 
+import numpy as np
 import pytest
 import yaml
 
@@ -274,6 +275,35 @@ def test_trappe_conversions():
     assert lmp["atoms"]["H"] == {"mass": 1.008, "charge": 0.0}
     assert lmp["atoms"]["CH"]["mass"] == 12.011
     assert all("H" not in d["pattern"] for d in ff.dihedral_types.values())
+
+
+def test_trappe_torsion_energy_matches_cosine_series_and_rb():
+    """LAMMPS dihedral_style opls energy on a phi grid vs TraPPE and GROMACS RB forms."""
+    ff = load_forcefield("trappe_ua")
+    lmp = to_lammps_real(ff)
+    phi = np.radians(np.linspace(-180.0, 180.0, 721))  # IUPAC, trans = 180 deg
+    psi = phi - np.pi  # GROMACS RB polymer convention, trans = 0
+    for name, d in ff.dihedral_types.items():
+        k = lmp["dihedral"][name]
+        e_lmp = 0.5 * (  # docs.lammps.org/dihedral_opls.html
+            k["K1"] * (1 + np.cos(phi))
+            + k["K2"] * (1 - np.cos(2 * phi))
+            + k["K3"] * (1 + np.cos(3 * phi))
+            + k["K4"] * (1 - np.cos(4 * phi))
+        )
+        u_trappe = KB_KCAL * (
+            d["c0"]
+            + d["c1"] * (1 + np.cos(phi))
+            + d["c2"] * (1 - np.cos(2 * phi))
+            + d["c3"] * (1 + np.cos(3 * phi))
+        )
+        rb = trappe_to_rb(d["c0"], d["c1"], d["c2"], d["c3"])
+        u_rb = sum(c * np.cos(psi) ** n for n, c in enumerate(rb)) / KJ_PER_KCAL
+        for ref in (u_trappe, u_rb):
+            offset = ref - e_lmp
+            assert np.ptp(offset) < 1e-9 * np.ptp(ref), name
+            assert offset[0] == pytest.approx(d["c0"] * KB_KCAL, abs=1e-9), name
+        assert np.argmin(e_lmp) == 0  # trans (phi = -180) is the global minimum
 
 
 def test_passthrough_conventions():

@@ -44,3 +44,36 @@ def test_truncated_run_kept(tmp_path):
     blocks = read_thermo(path)
     assert len(blocks) == 2
     np.testing.assert_array_equal(blocks[1]["Step"], [20, 30])
+
+
+# `run N pre no` and `run ... every` iterations after the first print the thermo
+# header without the "Per MPI rank memory allocation" line.
+LOG_NO_MEMORY = """run 10 pre no
+   Step          Temp
+        30   350
+        40   360
+Loop time of 0.5 on 4 procs for 10 steps with 100 atoms
+run 10 every 5 "print hi"
+Per MPI rank memory allocation (min/avg/max) = 5.2 | 5.2 | 5.2 Mbytes
+   Step          Temp
+        40   360
+        45   365
+Loop time of 0.2 on 4 procs for 5 steps with 100 atoms
+hi
+   Step          Temp
+        45   365
+        50   370
+Loop time of 0.2 on 4 procs for 5 steps with 100 atoms
+"""
+
+
+def test_blocks_without_memory_line(tmp_path):
+    path = tmp_path / "log.lammps"
+    path.write_text(LOG_NO_MEMORY)
+    blocks = read_thermo(path)
+    assert len(blocks) == 3
+    np.testing.assert_array_equal(blocks[0]["Step"], [30, 40])
+    np.testing.assert_allclose(blocks[0]["Temp"], [350, 360])
+    np.testing.assert_array_equal(blocks[1]["Step"], [40, 45])
+    np.testing.assert_array_equal(blocks[2]["Step"], [45, 50])
+    np.testing.assert_allclose(blocks[2]["Temp"], [365, 370])

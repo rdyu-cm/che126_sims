@@ -62,3 +62,28 @@ def test_quantum_weight_limits():
     assert quantum_weight(0.0) == 1.0
     assert quantum_weight(1e-4) == pytest.approx(1.0 - 1e-8 / 12, rel=1e-12)
     assert quantum_weight(2000.0) == 0.0
+
+
+def test_vdos_mass_weighting():
+    """Unequal masses: C(t) = 3/2 sum_a m_a cos(2 pi nu_a t), so peak areas go as the masses."""
+    dt_fs, max_lag, n_frames = 1.0, 1000, 8000
+    dnu = 1.0 / (2 * max_lag * dt_fs * 1e-3)  # 0.5 THz grid
+    nus = np.array([20, 60]) * dnu  # 10 and 30 THz, on the grid
+    masses = np.array([1.0, 4.0])
+    t = np.arange(n_frames) * dt_fs * 1e-3  # ps
+    phase = np.random.default_rng(5).uniform(0, 2 * np.pi, (2, 3))
+    v = np.cos(2 * np.pi * nus[None, :, None] * t[:, None, None] + phase)  # unit amplitude
+    res = vdos(v, masses, dt_fs, max_lag=max_lag)
+    areas = []
+    for nu in nus:
+        win = np.abs(res.freq_THz - nu) <= 5 * dnu
+        areas.append(np.trapezoid(res.g[win], res.freq_THz[win]))
+    # 3N = 6 states split 1:4 by mass (equal or no weighting would give 3:3).
+    assert areas == pytest.approx([6.0 * 1 / 5, 6.0 * 4 / 5], rel=1e-3)
+
+
+def test_reference_numbers():
+    assert quantum_weight(1.0) == pytest.approx(np.e / (np.e - 1) ** 2, rel=1e-12)
+    assert quantum_weight(1.0) == pytest.approx(0.920674, abs=1e-6)
+    u = H_J_S * 10e12 / (KB_J_PER_K * 300.0)  # 10 THz at 300 K
+    assert u == pytest.approx(1.59975, abs=1e-5)

@@ -134,28 +134,52 @@ def test_monoclinic_cell_matches_equivalent_orthorhombic():
     rm = crystallinity(pos, cid, mono, r_c=RC, threshold=THR, half_span=1)
     assert rm.fraction == pytest.approx(1.0) and rm.n_clusters == 1
     np.testing.assert_array_equal(rm.n_neighbours, ro.n_neighbours)
-    np.testing.assert_allclose(rm.p2, ro.p2, equal_nan=True)
+    np.testing.assert_allclose(rm.p2, ro.p2, atol=1e-6, equal_nan=True)  # MDAnalysis float32 box
 
 
-def test_general_search_matches_kdtree_and_brute_force():
+def test_triclinic_neighbour_search_matches_brute_force():
     rng = np.random.default_rng(4)
-    pos, cid = _random_chains(rng, 10, 20, 0.0, 20.0)
-    cell = np.diag([20.0, 20.0, 20.0])
-    a = crystallinity(pos, cid, cell, r_c=RC, threshold=THR, half_span=1, method="kdtree")
-    b = crystallinity(pos, cid, cell, r_c=RC, threshold=THR, half_span=1, method="general")
-    np.testing.assert_array_equal(a.n_neighbours, b.n_neighbours)
-    np.testing.assert_allclose(a.p2, b.p2, rtol=1e-12, equal_nan=True)
-
-    # triclinic: compare the pair set with an explicit search over many images
     tri = np.array([[20.0, 0.0, 0.0], [5.0, 19.0, 0.0], [-4.0, 3.0, 18.0]])
     x = rng.uniform(-30, 30, size=(150, 3))  # unwrapped, outside the cell
-    i, j = _neighbour_pairs(x, tri, RC, "general")
-    got = set(zip(i.tolist(), j.tolist(), strict=True))
+    i, j = _neighbour_pairs(x, tri, RC)
+    got = {(min(p, q), max(p, q)) for p, q in zip(i.tolist(), j.tolist(), strict=True)}
     shifts = np.array(list(itertools.product(range(-4, 5), repeat=3))) @ tri
     d = x[None, :, None, :] - x[:, None, None, :] + shifts[None, None, :, :]
     close = (np.linalg.norm(d, axis=-1) < RC).any(axis=-1)
     want = {(p, q) for p, q in zip(*np.nonzero(close), strict=True) if p < q}
     assert got == want and len(want) > 0
+
+
+def test_non_lower_triangular_cell_rejected():
+    pos, cid = _pe_crystal([0.0], [0.0], 10)
+    cell = np.array([[20.0, 1.0, 0.0], [0.0, 20.0, 0.0], [0.0, 0.0, 20.0]])
+    with pytest.raises(ValueError, match="lower triangular"):
+        crystallinity(pos, cid, cell, r_c=RC, threshold=THR, half_span=1)
+
+
+def test_isolated_stem_has_no_neighbours():
+    # Same-chain sites within ceil(r_c / l_proj) + h of each other are excluded, so a
+    # lone all-trans stem has nothing to align with.
+    pos, cid = _pe_crystal([10.0], [10.0], 40)
+    res = crystallinity(pos, cid, [30.0, 30.0, 80.0], r_c=RC, threshold=THR, half_span=1)
+    assert res.n_sites == 38
+    assert np.isnan(res.p2).all()
+    assert (res.n_neighbours == 0).all()
+    assert res.fraction == 0.0 and res.largest_cluster == 0
+
+
+def test_folded_stem_counts_own_chain():
+    # Two antiparallel stems of one chain (a hairpin): beyond the window, own-chain
+    # sites on the returning stem are neighbours.
+    n = 20
+    up = _pe_stem(10.0, 10.0, n)
+    down = _pe_stem(14.5, 10.0, n)[::-1]
+    pos = np.vstack([up, down])
+    res = crystallinity(
+        pos, np.zeros(2 * n), [30.0, 30.0, 80.0], r_c=RC, threshold=THR, half_span=1
+    )
+    assert res.fraction > 0.8
+    assert np.nanmin(res.p2) == pytest.approx(1.0)
 
 
 def test_crystal_straddling_periodic_boundary():
@@ -165,7 +189,7 @@ def test_crystal_straddling_periodic_boundary():
     ref = crystallinity(pos + [10.0, 10.0, 0.0], cid, cell, r_c=RC, threshold=THR, half_span=1)
     shifted = np.mod(pos - [4.0, 6.0, 7.0], cell)  # block cut by the x, y and z boundaries
     res = crystallinity(shifted, cid, cell, r_c=RC, threshold=THR, half_span=1)
-    np.testing.assert_allclose(res.p2, ref.p2, equal_nan=True)
+    np.testing.assert_allclose(res.p2, ref.p2, atol=1e-6, equal_nan=True)
     assert res.fraction == pytest.approx(1.0)
     assert res.n_clusters == 1 and res.largest_cluster == res.n_sites
 

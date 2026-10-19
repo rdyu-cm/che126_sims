@@ -16,6 +16,8 @@ def msd(positions_unwrapped, dt: float, max_lag: int | None = None):
     Returns (lag_times, msd) for lags 0..max_lag (default n_frames // 2);
     lag_times in units of ``dt``, msd in squared position units.
     Diffusion: D = slope / 6 in the linear (Fickian) regime.
+    Same algorithm as MDAnalysis ``EinsteinMSD(fft=True)``, which is not used
+    because it needs a Universe, has no max_lag and needs the ``tidynamics`` package.
     """
     r = np.asarray(positions_unwrapped, dtype=float)
     n = r.shape[0]

@@ -2,7 +2,8 @@
 
 Decision D26: each backbone site i carries a normalized chord vector u_i along
 the local chain axis; its local order is the mean second Legendre polynomial
-of the angle to the chords of its spatial neighbours,
+of the angle to the chords of its spatial neighbours on other stems (same-chain
+sites within a backbone window are excluded),
 
     p2_i = < P2(u_i . u_j) >_{j in N(i)},   P2(x) = (3 x^2 - 1) / 2,
 
@@ -25,9 +26,9 @@ Units: positions and cell in Angstrom.
 from dataclasses import dataclass
 
 import numpy as np
+from MDAnalysis.lib.distances import minimize_vectors, self_capped_distance
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import connected_components
-from scipy.spatial import cKDTree
 
 
 @dataclass
@@ -64,53 +65,34 @@ def _perpendicular_widths(h: np.ndarray) -> np.ndarray:
     )
 
 
-def _min_image(d: np.ndarray, h: np.ndarray) -> np.ndarray:
-    """Minimum-image displacement(s) via fractional wrapping (exact while |d| < w_min/2)."""
-    f = d @ np.linalg.inv(h)
-    return (f - np.round(f)) @ h
+def _box_dimensions(h: np.ndarray) -> np.ndarray:
+    """MDAnalysis box [lx, ly, lz, alpha, beta, gamma] (degrees) of a LAMMPS-style cell.
+
+    MDAnalysis puts a along x and b in the xy plane, so the cell must be lower
+    triangular (LAMMPS restricted triclinic); positions are in the same frame.
+    """
+    if np.any(np.triu(h, 1) != 0.0):
+        raise ValueError("cell must be lower triangular: a = (lx,0,0), b = (xy,ly,0)")
+    lengths = np.linalg.norm(h, axis=1)
+
+    def angle(p, q):
+        return np.degrees(np.arccos(h[p] @ h[q] / (lengths[p] * lengths[q])))
+
+    return np.array([*lengths, angle(1, 2), angle(0, 2), angle(0, 1)])
 
 
-def _wrapped_fractional(x: np.ndarray, h: np.ndarray) -> np.ndarray:
-    f = np.mod(x @ np.linalg.inv(h), 1.0)
-    return np.where(f >= 1.0, 0.0, f)  # np.mod can round up to exactly 1.0
+def _neighbour_pairs(x: np.ndarray, h: np.ndarray, r_c: float):
+    """Unique pairs (i, j) with minimum-image distance <= r_c (periodic cell ``h``).
 
-
-def _neighbour_pairs(x: np.ndarray, h: np.ndarray, r_c: float, method: str = "auto"):
-    """Unique pairs (i < j) with minimum-image distance < r_c (periodic cell ``h``).
-
-    ``method``: "kdtree" (orthorhombic only; cKDTree with ``boxsize``),
-    "general" (any cell: wrap to fractional [0,1), replicate into the 27
-    neighbouring images, plain cKDTree on the 27 N points, map image index
-    mod N), or "auto" (kdtree if the cell is diagonal). Both are exact when
-    r_c < w_min / 2, which is enforced: then every pair has at most one image
-    within r_c, and that image lies in a fractional shift of -1, 0 or +1.
+    MDAnalysis ``self_capped_distance`` (orthorhombic or triclinic; wrapped or
+    unwrapped positions). r_c < w_min / 2 is enforced, so each pair has at most
+    one image within r_c.
     """
     if r_c >= 0.5 * _perpendicular_widths(h).min():
         raise ValueError("r_c must be smaller than half the smallest perpendicular cell width")
-    orthorhombic = np.allclose(h, np.diag(np.diag(h)))
-    if method == "auto":
-        method = "kdtree" if orthorhombic else "general"
-    n = len(x)
-    f = _wrapped_fractional(x, h)
-    if method == "kdtree":
-        if not orthorhombic:
-            raise ValueError("kdtree method needs an orthorhombic cell")
-        lengths = np.diag(h)
-        w = f * lengths
-        w = np.where(w >= lengths, 0.0, w)
-        pairs = cKDTree(w, boxsize=lengths).query_pairs(r_c, output_type="ndarray")
-        return pairs[:, 0], pairs[:, 1]
-    if method != "general":
-        raise ValueError(f"unknown method {method!r}")
-    shifts = np.array([(a, b, c) for a in (-1, 0, 1) for b in (-1, 0, 1) for c in (-1, 0, 1)])
-    images = ((f[None, :, :] + shifts[:, None, :]) @ h).reshape(-1, 3)  # (27 N, 3)
-    central = f @ h
-    lists = cKDTree(images).query_ball_point(central, r_c)
-    counts = np.fromiter((len(lst) for lst in lists), dtype=np.intp, count=n)
-    i = np.repeat(np.arange(n), counts)
-    j = np.concatenate([np.asarray(lst, dtype=np.intp) for lst in lists]) % n if n else i
-    keep = i < j  # drops self (zero shift) and keeps each unordered pair once
-    return i[keep], j[keep]
+    pairs = self_capped_distance(x, r_c, box=_box_dimensions(h), return_distances=False)
+    pairs = np.asarray(pairs, dtype=np.intp).reshape(-1, 2)
+    return pairs[:, 0], pairs[:, 1]
 
 
 def chord_vectors(positions, chain_id, cell, half_span: int) -> np.ndarray:
@@ -118,8 +100,8 @@ def chord_vectors(positions, chain_id, cell, half_span: int) -> np.ndarray:
 
     Sites must be backbone sites only, ordered along the backbone within each
     chain, and each chain's sites contiguous in the arrays. The chord is taken
-    with the minimum-image convention, so wrapped or unwrapped coordinates both
-    work (requires the chord length < half the smallest cell width). The first
+    with the minimum-image convention (MDAnalysis ``minimize_vectors``), so
+    wrapped or unwrapped coordinates both work (requires the chord length < half the smallest cell width). The first
     and last h sites of each chain (chain ends) get NaN.
     """
     x = np.asarray(positions, dtype=float)
@@ -127,6 +109,7 @@ def chord_vectors(positions, chain_id, cell, half_span: int) -> np.ndarray:
     h_mat = _cell_matrix(cell)
     if half_span < 1:
         raise ValueError("half_span must be >= 1")
+    box = _box_dimensions(h_mat)
     u = np.full_like(x, np.nan)
     starts = np.flatnonzero(np.r_[True, cid[1:] != cid[:-1]])
     ends = np.r_[starts[1:], len(cid)]
@@ -135,7 +118,7 @@ def chord_vectors(positions, chain_id, cell, half_span: int) -> np.ndarray:
     for s, e in zip(starts, ends, strict=True):
         if e - s <= 2 * half_span:
             continue
-        d = _min_image(x[s + 2 * half_span : e] - x[s : e - 2 * half_span], h_mat)
+        d = minimize_vectors(x[s + 2 * half_span : e] - x[s : e - 2 * half_span], box)
         u[s + half_span : e - half_span] = d / np.linalg.norm(d, axis=1, keepdims=True)
     return u
 
@@ -148,7 +131,8 @@ def crystallinity(
     r_c: float,
     threshold: float,
     half_span: int,
-    method: str = "auto",
+    l_proj: float = 1.27,
+    exclude_window: int | None = None,
 ) -> CrystallinityResult:
     """Crystalline fraction and largest crystalline cluster from local chain alignment.
 
@@ -166,11 +150,17 @@ def crystallinity(
     about it from site to site, which lowers P2 even in a perfect crystal; the
     chord r_{i+3} - r_{i-3} spans one full turn and lies along the helix axis.
 
-    Neighbours of i: sites j (any chain) whose minimum-image distance is < r_c,
-    excluding same-chain sites with |i - j| <= 2 h (bonded/chord-overlapping)
-    and sites without a chord (the h end sites of each chain). Periodic
-    boundaries are handled for orthorhombic and triclinic cells; r_c must be
-    less than half the smallest perpendicular cell width.
+    Neighbours of i: sites j whose minimum-image distance is <= r_c, excluding
+    sites without a chord (the h end sites of each chain) and same-chain sites
+    with |i - j| <= ``exclude_window``, so p2 measures alignment with segments
+    of other stems, not with the site's own stem. Default window:
+    ceil(r_c / ``l_proj``) + h, where ``l_proj`` is the projection of one
+    backbone step on the stem axis (Angstrom; 1.27 for PE at AA/UA, ~1.08 for
+    the iPP 3_1 helix = 6.5 A / 6; set it for CG beads). Same-chain sites
+    beyond the window (a stem folded back next to its own chain) still count.
+    Neighbour search: MDAnalysis ``self_capped_distance``, orthorhombic or
+    triclinic cells; r_c must be less than half the smallest perpendicular
+    cell width.
 
     p2_i = mean_j P2(u_i . u_j), P2(x) = (3x^2 - 1)/2 (= 1 for parallel
     chords, -1/2 perpendicular, 0 on isotropic average). Site i is
@@ -184,8 +174,6 @@ def crystallinity(
     (Anwar & Schilling 2015), i.e. ~5.6 Angstrom for UA/AA PE carbons; confirm
     by calibration, and set ``threshold`` with ``calibrate_threshold`` from
     reference crystal and melt configurations of the same model.
-    ``method`` selects the neighbour search ("auto", "kdtree", "general"),
-    for testing; the answer does not depend on it.
     """
     x = np.asarray(positions, dtype=float)
     cid = np.asarray(chain_id)
@@ -199,9 +187,11 @@ def crystallinity(
     starts = np.flatnonzero(np.r_[True, cid[1:] != cid[:-1]])
     seq = np.arange(n) - np.repeat(starts, np.diff(np.r_[starts, n]))
 
-    pi, pj = _neighbour_pairs(x[idx], h_mat, r_c, method)
+    if exclude_window is None:
+        exclude_window = int(np.ceil(r_c / l_proj)) + half_span
+    pi, pj = _neighbour_pairs(x[idx], h_mat, r_c)
     i, j = idx[pi], idx[pj]
-    keep = (cid[i] != cid[j]) | (np.abs(seq[i] - seq[j]) > 2 * half_span)
+    keep = (cid[i] != cid[j]) | (np.abs(seq[i] - seq[j]) > exclude_window)
     i, j = i[keep], j[keep]
 
     p2_pair = 1.5 * np.einsum("ij,ij->i", u[i], u[j]) ** 2 - 0.5

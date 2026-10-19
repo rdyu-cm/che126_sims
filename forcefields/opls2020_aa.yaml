@@ -65,7 +65,7 @@ atom_types:
     source: {ref: ghahremanpour2022, file: oplsaa2024.excerpt.txt, lines: {charge: 98, mass: 1120, lj: 3122}}
   CT_CH3_iso:
     opls_type: 55
-    description: iso-CH3 carbon (CH3 bonded to CH; iPP pendant methyl)
+    description: iso-CH3 carbon (CH3 bonded to CH; iPP pendant methyl and chain-start CH3 bonded to a CH)
     class: CT
     element: C
     mass: 12.011

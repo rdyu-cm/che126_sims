@@ -47,15 +47,46 @@ def thermal_expansion(T, V, V_err=None, T_window=None) -> ThermalExpansion:
     alpha_V = (1/V_mean) dV/dT, with dV/dT the slope of a linear fit of V vs T
     over ``T_window`` = (T_min, T_max) inclusive (all points if None), V_mean the
     mean of V over the same points; alpha_L = alpha_V / 3 (isotropic).
+    Bulk (isotropically barostatted) boxes only; for slabs barostatted in x, y
+    use :func:`thermal_expansion_inplane`.
     Errors: sigma(alpha_V) = sigma(slope) / V_mean (V_mean error neglected).
-    Inputs: T in K, V in Angstrom^3 (per-step means; ``V_err`` their SEMs, used
-    as fit weights).
+    Inputs: T in K, V in Angstrom^3 (per-step means; ``V_err`` their SEMs from
+    :func:`sepsim.analysis.stats.timeseries_mean`, used as fit weights).
     """
     T, V, V_err = _window(T, V, V_err, T_window=T_window)
     slope, _, slope_err, _ = linear_fit(T, V, V_err)
     v_mean = float(V.mean())
     a, a_err = slope / v_mean, slope_err / v_mean
     return ThermalExpansion(a, a_err, a / 3.0, a_err / 3.0, v_mean, len(T))
+
+
+@dataclass
+class InPlaneExpansion:
+    """In-plane thermal expansion of a slab (1/K) with 1-sigma uncertainties."""
+
+    alpha_A: float  # areal, (1/A) dA/dT
+    alpha_A_err: float
+    alpha_L: float  # in-plane linear, alpha_A / 2
+    alpha_L_err: float
+    A_mean: float  # mean box area Lx * Ly over the window, Angstrom^2
+    n_points: int
+
+
+def thermal_expansion_inplane(T, A, A_err=None, T_window=None) -> InPlaneExpansion:
+    """Areal and in-plane linear expansion from the box area A = Lx * Ly of a slab.
+
+    For a slab (e.g. a membrane with vacuum or fixed walls along z) barostatted
+    only in x and y, the box volume is not the material volume, so use the
+    area: alpha_A = (1/A_mean) dA/dT from a linear fit of A vs T over
+    ``T_window`` (as :func:`thermal_expansion`), and the in-plane linear
+    coefficient alpha_L = alpha_A / 2 (isotropic in the plane).
+    Inputs: T in K, A in Angstrom^2 (per-step means; ``A_err`` their SEMs).
+    """
+    T, A, A_err = _window(T, A, A_err, T_window=T_window)
+    slope, _, slope_err, _ = linear_fit(T, A, A_err)
+    a_mean = float(A.mean())
+    a, a_err = slope / a_mean, slope_err / a_mean
+    return InPlaneExpansion(a, a_err, a / 2.0, a_err / 2.0, a_mean, len(T))
 
 
 @dataclass
@@ -75,8 +106,8 @@ def heat_capacity_classical(T, H_kcalmol, mass_gmol, H_err=None, T_window=None) 
     ``H_kcalmol`` is the total (extensive) LAMMPS enthalpy in kcal/mol (per mole
     of whole systems) and ``mass_gmol`` the total system mass in g/mol, so
     Cp [J/(g K)] = slope [kcal/(mol K)] * 4184 / mass_gmol.
-    Fit over ``T_window`` = (T_min, T_max) inclusive; ``H_err`` are SEMs used as
-    weights. This is the classical value; for AA add
+    Fit over ``T_window`` = (T_min, T_max) inclusive; ``H_err`` are SEMs (e.g.
+    :func:`sepsim.analysis.stats.timeseries_mean`) used as weights. This is the classical value; for AA add
     :func:`sepsim.analysis.vdos.quantum_cv_correction` (D12c).
     """
     T, H, H_err = _window(T, H_kcalmol, H_err, T_window=T_window)

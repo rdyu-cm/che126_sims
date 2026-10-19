@@ -19,7 +19,11 @@ import sys
 import time
 from pathlib import Path
 
+import sepsim
 from sepsim import __version__
+
+# Git state is taken from the code, so decks outside the repo still record the commit.
+CODE_DIR = Path(sepsim.__file__).resolve().parent
 
 MANIFEST_NAME = "run_manifest.json"
 HELP_NAME = "lmp_help.txt"
@@ -124,9 +128,7 @@ def git_info(directory: Path) -> dict:
 def parse_lmp_help(text: str) -> dict:
     """Extract the version line and installed-package list from ``lmp -h`` output."""
     lines = text.splitlines()
-    version = next((ln.strip() for ln in lines if "LAMMPS (" in ln), None)
-    if version is None:  # real `lmp -h` headers say "Large-scale Atomic/Molecular ..."
-        version = next((ln.strip() for ln in lines if "Large-scale Atomic/Molecular" in ln), None)
+    version = next((ln.strip() for ln in lines if "Large-scale Atomic/Molecular" in ln), None)
     packages = None
     for i, ln in enumerate(lines):
         if ln.strip() == "Installed packages:":
@@ -244,7 +246,10 @@ def run_deck(
         return 2
 
     # Git state first: nothing written yet, so our own outputs can't mark the tree dirty.
-    git = git_info(deck_abs.parent)
+    git = git_info(CODE_DIR)
+    deck_top = _git(["rev-parse", "--show-toplevel"], deck_abs.parent)
+    same_repo = deck_top == _git(["rev-parse", "--show-toplevel"], CODE_DIR)
+    deck_git = None if same_repo else git_info(deck_abs.parent)
     wd.mkdir(parents=True, exist_ok=True)
     lammps = query_lammps(probe, wd)
 
@@ -253,7 +258,8 @@ def run_deck(
         "python": sys.version,
         "platform": platform.platform(),
         "hostname": platform.node(),
-        "git": git,
+        "git": git,  # sepsim code repo
+        "deck_git": deck_git,  # deck's repo, only if it differs from the code repo
         "command": command,
         "cwd": str(wd),
         "deck": {

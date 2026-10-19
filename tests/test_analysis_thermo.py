@@ -3,7 +3,12 @@
 import numpy as np
 import pytest
 
-from sepsim.analysis.thermo import density, heat_capacity_classical, thermal_expansion
+from sepsim.analysis.thermo import (
+    density,
+    heat_capacity_classical,
+    thermal_expansion,
+    thermal_expansion_inplane,
+)
 
 
 def test_density_exact():
@@ -39,4 +44,16 @@ def test_heat_capacity_classical():
     res = heat_capacity_classical(T, H, mass)
     assert res.cp_kcalmolK == pytest.approx(slope, rel=1e-9)
     assert res.cp_JgK == pytest.approx(25.0 * 4184.0 / 10_000.0, rel=1e-9)  # 10.46 J/(g K)
+    assert res.n_points == 10
+
+
+def test_inplane_expansion_from_area():
+    T = np.arange(300.0, 400.0, 10.0)
+    alpha_L = 1e-4
+    Lx = 50.0 * (1 + alpha_L * (T - T.mean()))
+    Ly = 40.0 * (1 + alpha_L * (T - T.mean()))
+    res = thermal_expansion_inplane(T, Lx * Ly)
+    assert res.alpha_L == pytest.approx(alpha_L, rel=1e-3)  # second-order term alpha_L^2
+    assert res.alpha_A == pytest.approx(2 * res.alpha_L, rel=1e-12)
+    assert res.A_mean == pytest.approx(2000.0, rel=1e-3)
     assert res.n_points == 10

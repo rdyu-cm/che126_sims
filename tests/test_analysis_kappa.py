@@ -7,6 +7,7 @@ from sepsim.analysis.kappa import kappa_rnemd, kappa_rnemd_auto
 
 
 def _profile(kappa, E_kcalmol, t_fs, A_A2, Lz, nbins, T_cold=280.0):
+    # Self-consistency check: re-derives the flux formula kappa_rnemd uses, so not independent.
     flux = E_kcalmol * 4184.0 / 6.02214076e23 / (2 * t_fs * 1e-15 * A_A2 * 1e-20)
     grad = flux / kappa * 1e-10  # K/Angstrom
     z = (np.arange(nbins) + 0.5) * Lz / nbins

@@ -5,11 +5,16 @@ import json
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
+import sepsim
+import sepsim.run as sepsim_run
 from sepsim.cli import main
 from sepsim.run import parse_lmp_help, run_deck
+
+LMP_HEADER = "Large-scale Atomic/Molecular Massively Parallel Simulator - "  # real `lmp -h`
 
 FAKE_LMP = f"""#!{sys.executable}
 import json, os, sys
@@ -21,7 +26,7 @@ if log:
         fh.write(json.dumps(args) + "\\n")
 if args == ["-h"]:
     print("Large-scale Atomic/Molecular Massively Parallel Simulator - 29 Aug 2024 - Update 1")
-    print("LAMMPS (29 Aug 2024 - Update 1)")
+    print("Git info (stable / stable_29Aug2024_update1-0-g0123456789ab)")
     print()
     print("Installed packages:")
     print()
@@ -116,6 +121,7 @@ def test_manifest_fields_and_hashes(fake_lmp, deck, capsys):
         "platform",
         "hostname",
         "git",
+        "deck_git",
         "command",
         "cwd",
         "deck",
@@ -141,7 +147,7 @@ def test_manifest_fields_and_hashes(fake_lmp, deck, capsys):
     assert [x["path"] for x in m["inputs"]["missing"]] == [str(sim / "missing.in")]
 
     lammps = m["lammps"]
-    assert lammps["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
+    assert lammps["version"] == LMP_HEADER + "29 Aug 2024 - Update 1"
     assert lammps["packages"] == ["KSPACE", "MOLECULE", "CG-SPICA"]
     assert lammps["help_sha256"] == sha(sim / "lmp_help.txt")
 
@@ -205,7 +211,7 @@ def test_mpirun_with_trailing_args_probes_lmp(fake_lmp, deck, tmp_path):
     assert m["status"] == "finished"
     assert m["command"] == [str(mpirun), "-np", "8", str(fake_lmp), "-sf", "gpu", "-in", str(deck)]
     assert m["lammps"]["executable"] == str(fake_lmp)
-    assert m["lammps"]["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
+    assert m["lammps"]["version"] == LMP_HEADER + "29 Aug 2024 - Update 1"
     assert m["lammps"]["packages"] == ["KSPACE", "MOLECULE", "CG-SPICA"]
     assert "error" not in m["lammps"]
     assert calls(tmp_path / "calls.jsonl") == [["-h"], ["-sf", "gpu", "-in", str(deck)]]
@@ -217,7 +223,7 @@ def test_probe_falls_back_to_first_token(fake_lmp, deck, tmp_path):
     assert run_deck(deck, lmp=f"{custom} -sf gpu") == 0
     m = manifest(deck.parent)
     assert m["lammps"]["executable"] == str(custom)
-    assert m["lammps"]["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
+    assert m["lammps"]["version"] == LMP_HEADER + "29 Aug 2024 - Update 1"
     assert calls(tmp_path / "calls.jsonl") == [["-h"], ["-sf", "gpu", "-in", str(deck)]]
 
 
@@ -233,7 +239,7 @@ def test_lmp_probe_override_and_precedence(fake_lmp, deck, tmp_path, monkeypatch
     m = manifest(deck.parent)
     assert m["lammps"]["probe"] == [env, str(env_probe)]
     assert m["lammps"]["executable"] == f"{env} {env_probe}"
-    assert m["lammps"]["version"] == "LAMMPS (2 Aug 2023 - Update 1)"
+    assert m["lammps"]["version"] == LMP_HEADER + "2 Aug 2023 - Update 1"
     assert m["command"] == [str(fake_lmp), "-in", str(deck)]
     assert calls(log) == [["-h"], ["-in", str(deck)]]
 
@@ -241,7 +247,7 @@ def test_lmp_probe_override_and_precedence(fake_lmp, deck, tmp_path, monkeypatch
     assert main(["run", str(deck), "--lmp", str(fake_lmp), "--lmp-probe", str(arg_probe)]) == 0
     m = manifest(deck.parent)
     assert m["lammps"]["executable"] == str(arg_probe)
-    assert m["lammps"]["version"] == "LAMMPS (7 Feb 2024 - Update 1)"
+    assert m["lammps"]["version"] == LMP_HEADER + "7 Feb 2024 - Update 1"
     assert calls(log) == [["-h"], ["-in", str(deck)]]
 
 
@@ -251,9 +257,9 @@ def test_sepsim_lmp_env_var(fake_lmp, deck, monkeypatch):
     assert manifest(deck.parent)["command"][0] == str(fake_lmp)
 
 
-def test_git_info(fake_lmp, tmp_path):
-    repo = tmp_path / "repo"
-    repo.mkdir()
+def _git_repo(path):
+    """Init a one-commit repo at ``path``; returns a git runner bound to it."""
+    path.mkdir()
 
     def git(*args):
         return subprocess.run(
@@ -267,32 +273,65 @@ def test_git_info(fake_lmp, tmp_path):
                 "commit.gpgsign=false",
                 *args,
             ],
-            cwd=repo,
+            cwd=path,
             check=True,
             capture_output=True,
             text=True,
         ).stdout.strip()
 
     git("init", "-q", "-b", "trunk")
-    deck = repo / "in.deck"
-    deck.write_text("run 0\n")
+    (path / "in.deck").write_text("run 0\n")
     git("add", ".")
     git("commit", "-q", "-m", "init")
+    return git
+
+
+def test_code_dir_is_the_sepsim_package():
+    assert sepsim_run.CODE_DIR == Path(sepsim.__file__).resolve().parent
+
+
+def test_git_info_from_code_repo(fake_lmp, tmp_path, monkeypatch):
+    code = tmp_path / "code"
+    git = _git_repo(code)
+    monkeypatch.setattr(sepsim_run, "CODE_DIR", code)
+    deck = tmp_path / "decks" / "in.deck"  # outside any repo
+    deck.parent.mkdir()
+    deck.write_text("run 0\n")
+    monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path))
     out = tmp_path / "out"  # keep outputs outside the repo so the tree stays clean
 
     assert run_deck(deck, workdir=out, lmp=str(fake_lmp)) == 0
-    g = manifest(out)["git"]
-    assert g == {"commit": git("rev-parse", "HEAD"), "dirty": False, "branch": "trunk"}
+    m = manifest(out)
+    assert m["git"] == {"commit": git("rev-parse", "HEAD"), "dirty": False, "branch": "trunk"}
+    assert m["deck_git"] == {"commit": None, "dirty": None, "branch": None}
 
-    deck.write_text("run 1\n")
+    (code / "in.deck").write_text("run 1\n")
     assert run_deck(deck, workdir=out, lmp=str(fake_lmp)) == 0
     assert manifest(out)["git"]["dirty"] is True
 
 
+def test_deck_git_only_when_different(fake_lmp, tmp_path, monkeypatch):
+    code = tmp_path / "code"
+    _git_repo(code)
+    other = tmp_path / "other"
+    other_git = _git_repo(other)
+    out = tmp_path / "out"
+
+    monkeypatch.setattr(sepsim_run, "CODE_DIR", code)
+    assert run_deck(code / "in.deck", workdir=out, lmp=str(fake_lmp)) == 0
+    assert manifest(out)["deck_git"] is None  # deck in the code repo
+
+    assert run_deck(other / "in.deck", workdir=out, lmp=str(fake_lmp)) == 0
+    assert manifest(out)["deck_git"]["commit"] == other_git("rev-parse", "HEAD")
+
+
 def test_git_info_outside_repo(fake_lmp, deck, monkeypatch, tmp_path):
+    monkeypatch.setattr(sepsim_run, "CODE_DIR", tmp_path)
     monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path))
     run_deck(deck, lmp=str(fake_lmp), dry_run=True)
-    assert manifest(deck.parent)["git"] == {"commit": None, "dirty": None, "branch": None}
+    m = manifest(deck.parent)
+    assert m["git"] == {"commit": None, "dirty": None, "branch": None}
+    assert m["deck_git"] is None
 
 
 def test_parse_lmp_help_without_markers():
