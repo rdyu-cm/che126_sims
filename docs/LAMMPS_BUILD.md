@@ -90,7 +90,7 @@ SEPSIM_GPU_ARCH=gfx1030 scripts/build_lammps.sh
 Other knobs: `SEPSIM_ROCM_PATH` (default `$ROCM_PATH` or `/opt/rocm`), `SEPSIM_HOST_ARCH`, `SEPSIM_MPI=no`, `SEPSIM_JOBS`. `--help` lists them. The script refuses a source tree that is not at the pinned commit or has local edits.
 
 ## Pointing `sepsim run` at the binary
-`sepsim run` takes `--lmp CMD` or `$SEPSIM_LMP` (default `lmp`). It records `<last token of CMD> -h` in the manifest. Put accelerator flags after `--`, not in `CMD`. For the image, use a wrapper so the last token runs the containerized `lmp`:
+`sepsim run` takes `--lmp CMD` or `$SEPSIM_LMP` (default `lmp`). It records `<probe> -h` in the manifest, where the probe is the first token of CMD named `lmp*`/`lammps*` (else the first token). `--lmp-probe` / `$SEPSIM_LMP_PROBE` override it, e.g. `"apptainer exec --rocm img.sif lmp"`. For the image, the simplest route is a wrapper whose name starts with `lmp`:
 ```
 printf '#!/bin/sh\nexec apptainer exec --rocm %s lmp "$@"\n' "$INST/lammps-rocm6.4.4-gfx1030.sif" > "$INST/lmp-sif"
 chmod +x "$INST/lmp-sif"
