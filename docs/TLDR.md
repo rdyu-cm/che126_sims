@@ -7,24 +7,28 @@
 
 The repo holds the build and analysis code, templates, and force-field parameters. Production runs on a separate workstation with a budget under 500 GPU-h.
 
-**Status (2026-10-16):** design is done; every decision is in [`decisions.md`](decisions.md). **Done:**
-- phase 0 (uv package skeleton)
-- phase 1 (force-field YAMLs with verified sources)
-- the `sepsim run` reproducibility wrapper
-- the core analysis library
+**Status (2026-10-19, moved to a new machine):** design is done; every decision is in [`decisions.md`](decisions.md).
 
-No system builders or LAMMPS templates exist yet.
+**Done and merged into `main`:**
+- phase 0: uv package skeleton
+- phase 1: force-field YAMLs with verified sources
+- the `sepsim run` reproducibility wrapper
+- the analysis library: core, plus D26 definitions
+- crystal data for iPP α₂ (Hikosaka & Seto 1973 Table Ia) and PE
+
+**Unmerged branch:** `feat/phase2-builders` (commit `94527b9`). This is **partial, unreviewed** work from an interrupted run: `growth.py` and `topology.py` only. Resume from [`phase2_spec.md`](phase2_spec.md). Review or finish that code, or restart it.
+
+**Next steps:**
+1. Finish phase 2.
+2. Source the 21-step table (Larsen et al. 2011), confirm it with the user, then build phase 3 templates (D23–D25, D28).
+3. Phase 4 needs the crystal-slab geometry decision.
 
 **Rules:**
-- Every new design choice goes to the user before it's built.
-- Work on a feature branch in a worktree, not on `main`.
-- Pushing feature branches is fine. Merges to `main` need user approval.
-
-**In progress (paused 2026-10-16):** phase 2 amorphous builders. An implementer was running in local worktree `../che126_sims-phase2` (branch `feat/phase2-builders`, not pushed). If that work is gone, restart phase 2 from the D22 spec. Phase 3 decisions D23–D25 are made (LAMMPS stable_22Jul2025_update6, Apptainer, KOKKOS+GPU+OPENMP, 21-step, AA 12 Å).
-
-**Waiting on the user:** the iPP α coordinate table from Hikosaka & Seto 1973 or Natta & Corradini 1960 (D27).
-
-Analysis definitions (D26) are being implemented on `feat/analysis-definitions`.
+- Every new design choice goes to the user, with a plain-language recommendation, before it's built.
+- Work on feature branches in worktrees under `../che126_sims-worktrees/`, never on `main` directly.
+- Pushing feature branches is fine. Merges to `main` need user approval (squash merge).
+- Never send the user's email to outside services.
+- The copyrighted PDF lives in the gitignored `references/` and is never committed. Re-download it on the new machine if needed (Hikosaka & Seto, Polym. J. 1973, 5, 111).
 
 **Setup on any machine:**
 ```

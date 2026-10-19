@@ -1,11 +1,11 @@
 # Design plan & decision register: PE/PP separator MD (LAMMPS, AA/UA/CG)
 
 > **New chat? Start here.**
-> - **Phase:** implementation. Phases 0 and 1 are done; the `sepsim run` wrapper and the core analysis library are also done (built in parallel).
+> - **Phase:** implementation. Phases 0 and 1 are done, plus the `sepsim run` wrapper, the analysis library (core and D26) and the crystal data. Phase 2 is partial on `feat/phase2-builders`.
 > - **Rule from the user:** every design decision goes through the user. Ask, record, then build. Any new design choice that comes up during implementation is a checkpoint for the user too.
-> - **Next action:** finish phase 2 (see TLDR). Analysis definitions are decided (D26) and ready to implement.
+> - **Next action:** finish phase 2 per `docs/phase2_spec.md`, then the phase 3 templates (see TLDR).
 > - **Docs:** `docs/TLDR.md` is the short resume. This file is the full register, facts, and caveats. Keep both current.
-> - **Last updated:** 2026-10-16 (phase 1 force fields done: OPLS/2020 replaces the L-OPLS hybrid; UA explicit methine H; flexible UA backbone; LAMMPS via CLI + manifest).
+> - **Last updated:** 2026-10-19 (D22–D28 decided; packaged for the move to a new machine).
 
 ## Context
 We want to characterize the separator polymers in EV Li-ion cells, starting with PE and isotactic PP, from 25 to 160 °C using LAMMPS MD at three resolutions:
@@ -69,6 +69,7 @@ This repo holds the Python build and analysis code, LAMMPS input templates, forc
 | D25 | AA nonbonded | OPLS/2020: LJ cutoff **12 Å with analytic tail corrections**, PPPM at 1e-5 relative accuracy, geometric mixing, special_bonds lj/coul 0 0 0.5. TraPPE 14 Å with tail corrections and SPICA 15 Å per their sources. Tail corrections are invalid for slab/pore systems; see the pending list. |
 | D26 | Analysis definitions | **Crystallinity:** local chain-alignment P2 (chord vector i−1→i+1 for PE; i−3→i+3 spanning one 3₁ helix turn for iPP; r_c and threshold calibrated per resolution from reference crystal and melt, following Anwar & Schilling, Polymer 2015, 76, 307). Each backbone segment's mean P2 with neighbouring segments within a cutoff; segments above a threshold count as crystalline. Report the crystalline fraction and the largest cluster. Cutoff and threshold are cited from the literature at implementation. **Tm:** temperature where the crystalline fraction falls to half its starting value, cross-checked against the V(T)/H(T) jump. **Pore width:** distance between the 50%-of-bulk polymer-density surfaces along z, plus min/max over an x–y grid. **κ fit:** middle 60% of each half-box (20% dropped next to each slab), R² ≥ 0.98 required, both halves reported. |
 | D27 | Crystal sources (phase 4) | **PE:** orthorhombic Pnam, Busing 23 °C cell (a 7.4069, b 4.9491, c 2.5511 Å), starting setting angle **41° (Bunn 1939)**; the force field relaxes it. **iPP α:** coordinates to be **transcribed from the original paper** (Hikosaka & Seto, Polym. J. 1973, 5, 111, or Natta & Corradini, Nuovo Cimento Suppl. 1960, 15, 40), which the user fetches through the Caltech library. Transcribe with a citation and test cell, density and helix geometry. **Blocked until the user provides the table.** |
+| D28 | Run protocols (phase 3) | **Prep path:** after 21-step, NPT hold at 500 K (AA ~5 ns; UA/CG longer), then step-cool to 298 K at ~25 K/ns (~8 ns AA), recording the cooling curve as a density cross-check. Precedent: PE protocols at 40–50 K/ns. **CG PE crystallization:** quench from 500 K to ~285 K and hold ~1 µs, tracking crystallinity, then step-heat through melting for Tm. Precedents: Anwar & Schilling 2015 (UA C500, 280 K); SDK PE at 285 K (~4 µs). **Output:** thermo every 1 ps; frames every 10 ps in holds and every 100 ps in ramps; a 20 ps velocity dump at 4 fs at the end of each hold, for the VDOS. **κ:** box replicated 3× along the flux axis, 20 slabs, swaps every 200 fs, short NVT pre-equilibration then NVE, 3 ns production with the D26 linearity check (RadonPy-style recipe). |
 
 ## Experiment matrix (decided)
 GPU-h figures are **rough guesses for 1 modern GPU** (AA 29k atoms ≈ 30 ns/day). Recalibrate after the step-0 benchmark.
@@ -110,10 +111,10 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 ## Implementation order (after approval; each phase ends with a user check)
 0. **Done (2026-10-16).** Committed the scaffold, wrote the docs, and set up the uv package skeleton: `sepsim` CLI stubs, deps, lockfile, tests, ruff.
 1. **Done (2026-10-16).** Force-field YAMLs (D17–D20), reference excerpts, `sepsim.ff.params` loader with conversion to LAMMPS real units, and tests (86 pass).
-2. Builders for amorphous PE/iPP at all three resolutions, plus unit tests (atom counts, charge neutrality, tacticity, initial density).
+2. **Partial (`feat/phase2-builders`, unreviewed).** Builders for amorphous PE/iPP at all three resolutions; full spec in `docs/phase2_spec.md`.
 3. LAMMPS templates: benchmark, compress/anneal, sweep. Write `docs/LAMMPS_BUILD.md`. Hand T1 benchmark inputs to the user, plus the early CG PE density-vs-T check (D15).
 4. Crystal builders (infinite chains) + κ rNEMD + CG cycle templates.
-5. **Core done (2026-10-16):** LAMMPS log parser, block averaging and fits, density, CTE, classical Cp, VDOS with quantum Cv correction, MSD, P2(t), and rNEMD κ, all tested on synthetic data. **Still to decide:** the crystallinity order parameter, Tm detection, pore-width definition, and κ slab-exclusion distance.
+5. **Done (2026-10-16).** Log parser, block averaging and fits, density, CTE, classical Cp, VDOS with quantum Cv correction, MSD, P2(t), rNEMD κ, plus D26: crystallinity (local P2 with calibration), Tm, pore width, and the κ fit region. All tested on synthetic data. The crystal data (D27) is in `data/crystals/`.
 6. T2: slab/pore + electrolyte builders. T3 extensions.
 
 ## Verification
@@ -132,6 +133,9 @@ docs/LAMMPS_BUILD.md                    # cmake line for the workstation
 - **Analysis code:** validated on synthetic signals (known slope/kink, known MSD exponent).
 
 ## Pending user decisions
+- Phase 3: the 21-step step table (Tmax, Pmax, durations), to be sourced from Larsen et al. 2011 and confirmed with the user.
+- Phase 4: crystal-slab geometry (thickness, vacuum gap, exposed face, lateral size).
+- T2: electrolyte FF parameter set (OPLS-AA EC/DMC/LiPF6 source); pore slab thickness and lateral size.
 - T2: long-range dispersion treatment for slab/pore systems (no tail correction vs LJ-PPPM), since analytic tail corrections assume a homogeneous bulk.
 - Phase 4: waiting on the user for the iPP α coordinate table (D27).
 
