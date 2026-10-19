@@ -4,14 +4,29 @@ One binary for AMD GPUs: LAMMPS **`stable_22Jul2025_update6`** with MOLECULE, KS
 
 - Build script: [`scripts/build_lammps.sh`](../scripts/build_lammps.sh) (tag, commit check, cmake flags, doc links).
 - Container: [`containers/lammps.def`](../containers/lammps.def) runs the same script in a pinned `rocm/dev-ubuntu-24.04` image.
-- Build on the workstation, not the dev machine (D16).
+- Build and run on the compute machines, not the dev machine (D16). One image serves both; see [Two machines, one image](#two-machines-one-image).
 
-## The workstation
-ASUS ROG laptop: Ryzen 9 6900HS (16 threads), 14 GB RAM, Apptainer 1.4.5.
-- **dGPU:** Radeon RX 6800S, `gfx1032` (RDNA2), 8 GB. Use this one.
-- **iGPU:** Radeon 680M, `gfx1035`. Never use it; hide it (see [Selecting the GPU](#selecting-the-gpu)).
+## The workstations
+Two compute machines; the user's local machine only controls them.
+- **rdyu-server:** Intel i7-1255U, no usable GPU. CPU runs only. Builds the image.
+- **rdyu-rog** (ASUS ROG laptop): Ryzen 9 6900HS (16 threads), 14 GB RAM, Apptainer 1.4.5. CPU and GPU runs.
+  - **dGPU:** Radeon RX 6800S, `gfx1032` (RDNA2), 8 GB. Use this one.
+  - **iGPU:** Radeon 680M, `gfx1035`. Never use it; hide it (see [Selecting the GPU](#selecting-the-gpu)).
 
-The host ROCm install is partial (no `/opt/rocm/.info/version`; `rocm-smi` can't load `libdrm_amdgpu`). **Use the Apptainer path.** The image carries the whole ROCm userspace; the host only provides the amdgpu kernel driver.
+On rdyu-rog the host ROCm install is partial (no `/opt/rocm/.info/version`; `rocm-smi` can't load `libdrm_amdgpu`). **Use the Apptainer path.** The image carries the whole ROCm userspace; the host only provides the amdgpu kernel driver.
+
+## Two machines, one image
+Build the .sif once, on rdyu-server, and copy it to rdyu-rog (`$INST` as in [Path A](#path-a-recommended-apptainer)). HIP code compiles without a GPU. Keep `HOST_ARCH` unset (generic x86-64): a Kokkos host arch adds `-march` to the whole `lmp`, so e.g. a `ZEN3` image can die with SIGILL on the Intel server.
+```
+sudo apt-get install apptainer-suid               # rdyu-server, once
+sudo apptainer build --build-arg REPO="$PWD" --build-arg GPU_ARCH=gfx1030 \
+  "$INST/lammps-rocm6.4.4-gfx1030.sif" containers/lammps.def
+scp "$INST/lammps-rocm6.4.4-gfx1030.sif" rdyu-rog:<same path>
+```
+- **rdyu-server (CPU):** smoke-test plain CPU here first (see [Smoke check](#smoke-check)). No `--rocm`, no GPU env vars:
+  `apptainer exec <sif> mpirun -np N lmp -in deck` or `apptainer exec <sif> lmp -in deck -sf omp -pk omp N`.
+- **rdyu-rog (GPU):** with `ROCR_VISIBLE_DEVICES` and `HSA_OVERRIDE_GFX_VERSION=10.3.0` exported ([Selecting the GPU](#selecting-the-gpu)):
+  `apptainer exec --rocm <sif> lmp -in deck -sf gpu -pk gpu 1`.
 
 ## Where things go
 Everything goes in `installations/`, a sibling of the repo (`<repo>/../installations`; git worktrees resolve to the main checkout's sibling). Override with `SEPSIM_INSTALL_DIR`.
@@ -33,14 +48,14 @@ rocm-smi --showproductname                                         # if rocm-smi
 ```
 Accepted: `gfx908` (MI100), `gfx90a` (MI210/250), `gfx942` (MI300), `gfx1030` (RDNA2: W6800, V620), `gfx1100` (RDNA3: RX 7900, W7900). That is what both the bundled Kokkos 4.6.2 and ROCm 6.4 support.
 
-**This machine: `gfx1030`.** The RX 6800S reports `gfx1032`. AMD's ROCm list has no RX 6000 cards; of RDNA2 it lists only the W6800 and V620 (`gfx1030`). Kokkos 4.6.2 has no `gfx1032` arch either. The usual workaround is to build for `gfx1030` and run with `HSA_OVERRIDE_GFX_VERSION=10.3.0`, so the runtime reports the card as `gfx1030`. This is an unofficial runtime override: it is in the ROCm source (libhsakmt `topology.c`), not in AMD's docs. If it fails, nothing on the AMD support list can fix it.
+**rdyu-rog: `gfx1030`.** The RX 6800S reports `gfx1032`. AMD's ROCm list has no RX 6000 cards; of RDNA2 it lists only the W6800 and V620 (`gfx1030`). Kokkos 4.6.2 has no `gfx1032` arch either. The usual workaround is to build for `gfx1030` and run with `HSA_OVERRIDE_GFX_VERSION=10.3.0`, so the runtime reports the card as `gfx1030`. This is an unofficial runtime override: it is in the ROCm source (libhsakmt `topology.c`), not in AMD's docs. If it fails, nothing on the AMD support list can fix it.
 
 Other consumer cards: AMD supports only a few Radeon RX models (7900/7800/7700, 9070/9060). Kokkos 4.6.2 has no RDNA4 (`gfx120x`) or `gfx1101` arch, so those cards can't build KOKKOS with this tag.
 
 ## Precision: the GPU package is the main path
 - RDNA2 FP64 is **1/16 of FP32**. The W6800 (`gfx1030`) is rated 17.8 TFLOPs FP32 and 1.11 TFLOPs FP64. CDNA Instinct cards run FP64 at full rate (MI210: 22.6/22.6).
 - KOKKOS runs only in double precision. The GPU package is built with `GPU_PREC=mixed`.
-- So on this laptop, expect **GPU package (`-sf gpu`) to be the main path**, with KOKKOS-HIP (`-k on g 1 -sf kk`) as the comparison. The step-0 benchmark decides, per run type.
+- So on rdyu-rog, expect **GPU package (`-sf gpu`) to be the main path**, with KOKKOS-HIP (`-k on g 1 -sf kk`) as the comparison. The step-0 benchmark decides, per run type.
 
 **8 GB VRAM** is a constraint for the ~87k-atom κ boxes (3× replicated AA). The step-0 benchmark checks that they fit.
 
@@ -54,14 +69,14 @@ export HSA_OVERRIDE_GFX_VERSION=10.3.0
 `ROCR_VISIBLE_DEVICES` takes GPU indices or UUIDs and applies to everything on the ROCm runtime. AMD recommends it over `HIP_VISIBLE_DEVICES` on Linux. Inside the visible set, the dGPU is then HIP device 0. If the iGPU has no unique UUID, use the dGPU's index. Check with `rocminfo` under the same environment: only the RX 6800S should be listed. Apptainer passes host environment variables into the container, so set them on the host.
 
 ## Path A (recommended): Apptainer
-Host requirements:
+Host requirements (GPU runs on rdyu-rog):
 - Working amdgpu kernel driver, with `/dev/kfd` and `/dev/dri/renderD*` present.
 - Your user in the `render` and `video` groups.
 - Apptainer ≥ 1.2 (1.4.5 is installed).
 
 Kernel-driver compatibility: AMD tests ROCm 6.4 userspace against amdgpu (DKMS) KMD 6.1 to 6.4, and from ROCm 6.4 on guarantees up to a year either way. A distro kernel's in-tree amdgpu isn't on that matrix but usually works. The smoke check is the test.
 
-Build (the base image is ~5.5 GB compressed; `--fakeroot` if unprivileged builds aren't set up):
+Build (the base image is ~5.5 GB compressed; on rdyu-server use `sudo apptainer build`, elsewhere `--fakeroot` if unprivileged builds aren't set up):
 ```
 INST="${SEPSIM_INSTALL_DIR:-$(cd .. && pwd)/installations}/lammps/stable_22Jul2025_update6"
 mkdir -p "$INST"
@@ -71,10 +86,10 @@ apptainer build --build-arg REPO="$PWD" --build-arg GPU_ARCH=gfx1030 \
 Build args:
 - `GPU_ARCH` (required).
 - `ROCM_VERSION` (base `rocm/dev-ubuntu-24.04:<ver>-complete`, default `6.4.4`; rename the .sif to match).
-- `HOST_ARCH` (e.g. `ZEN3` for the 6900HS).
-- `JOBS`. The script defaults to about RAM GB / 2, so 7 here, since hipcc is memory-hungry.
+- `HOST_ARCH`: leave unset for the shared image (generic x86-64; see above).
+- `JOBS`. The script defaults to about RAM GB / 2, since hipcc is memory-hungry.
 
-Run with `--rocm`, which binds `/dev/kfd` and `/dev/dri` plus the host's basic ROCm libraries:
+GPU runs (rdyu-rog) use `--rocm`, which binds `/dev/kfd` and `/dev/dri` plus the host's basic ROCm libraries:
 ```
 apptainer exec --rocm "$INST/lammps-rocm6.4.4-gfx1030.sif" lmp -in in.deck -sf gpu -pk gpu 1
 ```
@@ -101,7 +116,7 @@ sepsim run deck.in -- -k on g 1 -sf kk            # KOKKOS-HIP
 Without a GPU-aware MPI, KOKKOS warns or segfaults with several ranks; add `-pk kokkos gpu/aware off`.
 
 ## Smoke check
-With `ROCR_VISIBLE_DEVICES` and `HSA_OVERRIDE_GFX_VERSION` exported as above (prefix each `lmp` with `apptainer exec --rocm <sif>` for the image):
+On rdyu-server run only the plain-CPU line, prefixing `lmp` with `apptainer exec <sif>`. On rdyu-rog, with `ROCR_VISIBLE_DEVICES` and `HSA_OVERRIDE_GFX_VERSION` exported as above, prefix each `lmp` with `apptainer exec --rocm <sif>` for the image:
 ```
 lmp -h | sed -n '/Installed packages:/,/^$/p'   # lists CG-SPICA EXTRA-MOLECULE GPU KOKKOS KSPACE MOLECULE OPENMP
 cat > in.smoke <<'EOF'

@@ -16,7 +16,9 @@
 # Build args (--build-arg NAME=VALUE; defaults in %arguments):
 #   ROCM_VERSION  ROCm release of the base tag rocm/dev-ubuntu-24.04:<ROCM_VERSION>-complete
 #   GPU_ARCH      AMD LLVM target, e.g. gfx1030 (required, no default)
-#   HOST_ARCH     optional Kokkos host arch ID, e.g. ZEN3 (default none = generic)
+#   HOST_ARCH     optional Kokkos host arch ID (default none = generic x86-64). Leave it
+#                 unset for the shared image: a host arch adds -march to all of lmp,
+#                 which can SIGILL on other CPUs (e.g. ZEN3 on the Intel server)
 #   REPO          absolute path of the repo checkout, for %files (pass "$PWD")
 #   JOBS          parallel build jobs (default 0 = script default)
 #

@@ -85,6 +85,7 @@ def test_dry_run_cmake_line(tmp_path):
     for flag in (
         "Kokkos_ENABLE_HIP=yes",
         "Kokkos_ARCH_AMD_GFX1030=yes",
+        "Kokkos_ENABLE_HIP_MULTIPLE_KERNEL_INSTANTIATIONS=yes",
         "GPU_API=hip",
         "HIP_PLATFORM=amd",
         "HIP_ARCH=gfx1030",
@@ -125,6 +126,16 @@ def test_def_uses_build_script_and_pinned_rocm_image():
     post = text.split("\n%post", 1)[1].split("\n%environment", 1)[0]
     assert "bash /opt/sepsim/build_lammps.sh" in post
     assert "SEPSIM_GPU_ARCH=" in post
+
+
+def test_def_host_arch_defaults_to_generic():
+    # The shared image runs on Intel and AMD CPUs, so no Kokkos host arch (-march) by
+    # default. "none" stands in for empty because template variables need a value.
+    text = DEF.read_text()
+    args = text.split("\n%arguments", 1)[1].split("\n%files", 1)[0]
+    assert re.search(r"^\s+HOST_ARCH=none$", args, re.MULTILINE)
+    post = text.split("\n%post", 1)[1].split("\n%environment", 1)[0]
+    assert 'if [ "{{ HOST_ARCH }}" != none ]; then export SEPSIM_HOST_ARCH=' in post
 
 
 def test_def_template_variables_all_have_defaults():

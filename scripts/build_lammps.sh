@@ -14,7 +14,9 @@
 #   SEPSIM_INSTALL_DIR  Root for everything this script creates. Default:
 #                       <repo>/../installations, a sibling of the main checkout
 #                       (git worktrees resolve to the same folder).
-#   SEPSIM_HOST_ARCH    Optional Kokkos host arch ID (e.g. ZEN3); default: generic.
+#   SEPSIM_HOST_ARCH    Optional Kokkos host arch ID; default: generic x86-64. Kokkos adds
+#                       the matching -march to the whole binary, so leave it unset for a
+#                       binary shared across CPUs.
 #   SEPSIM_MPI          yes|no, build with MPI (default yes; needs an MPI library).
 #   SEPSIM_JOBS         Parallel build jobs (default: min(nproc, RAM in GB / 2), since
 #                       hipcc needs ~2 GB per job).
@@ -150,6 +152,7 @@ CMAKE_ARGS+=(
   -D Kokkos_ENABLE_OPENMP=no
   -D Kokkos_ENABLE_HIP=yes
   -D "Kokkos_ARCH_${KOKKOS_GPU_ARCH}=yes"
+  -D Kokkos_ENABLE_HIP_MULTIPLE_KERNEL_INSTANTIATIONS=yes
   -D CMAKE_CXX_FLAGS=-munsafe-fp-atomics
   # KOKKOS PPPM on the GPU: the HIP backend accepts only KISS or HIPFFT (KOKKOS.cmake),
   # and the default is KISS, so request hipFFT (rocFFT underneath) explicitly.
