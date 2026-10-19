@@ -143,12 +143,31 @@ def parse_lmp_help(text: str) -> dict:
     return {"version": version, "packages": packages}
 
 
-def query_lammps(exe: str, workdir: Path) -> dict:
-    """Run ``exe -h``, save the output to ``lmp_help.txt``, and summarize it."""
-    info: dict = {"executable": exe, "help_sha256": None, "version": None, "packages": None}
+def lammps_executable(lmp_cmd: list[str]) -> str:
+    """Pick the LAMMPS binary out of a launch command such as ``mpirun -np 8 lmp -sf gpu``.
+
+    Returns the first token whose basename starts with ``lmp`` or ``lammps``, else the
+    first token (a custom executable name).
+    """
+    for token in lmp_cmd:
+        if os.path.basename(token).startswith(("lmp", "lammps")):
+            return token
+    return lmp_cmd[0]
+
+
+def query_lammps(probe: list[str], workdir: Path) -> dict:
+    """Run ``probe -h``, save the output to ``lmp_help.txt``, and summarize it."""
+    exe = shlex.join(probe)
+    info: dict = {
+        "executable": exe,
+        "probe": list(probe),
+        "help_sha256": None,
+        "version": None,
+        "packages": None,
+    }
     try:
         proc = subprocess.run(
-            [exe, "-h"], cwd=workdir, capture_output=True, timeout=120, check=False
+            [*probe, "-h"], cwd=workdir, capture_output=True, timeout=120, check=False
         )
     except (OSError, subprocess.SubprocessError) as exc:
         info["error"] = f"{type(exc).__name__}: {exc}"
@@ -196,11 +215,15 @@ def run_deck(
     lmp: str | None = None,
     extra_args: tuple[str, ...] | list[str] = (),
     dry_run: bool = False,
+    lmp_probe: str | None = None,
 ) -> int:
     """Run a LAMMPS deck via the ``lmp`` command line and write ``run_manifest.json``.
 
     ``lmp`` is a shell-style launch command (e.g. ``"mpirun -np 8 lmp -sf gpu"``);
-    default ``$SEPSIM_LMP`` or ``lmp``. Its last token is queried with ``-h``.
+    default ``$SEPSIM_LMP`` or ``lmp``. Its first token named ``lmp*``/``lammps*`` (else
+    its first token) is queried with ``-h``. ``lmp_probe`` (default ``$SEPSIM_LMP_PROBE``)
+    overrides that query command for wrappers and containers, e.g.
+    ``"apptainer exec --rocm img.sif lmp"``.
     Returns LAMMPS's exit code (0 for a dry run, 127 if LAMMPS cannot be queried).
     """
     deck_path = Path(deck)
@@ -214,11 +237,16 @@ def run_deck(
         print("sepsim run: empty LAMMPS command", file=sys.stderr)
         return 2
     command = [*lmp_cmd, "-in", str(deck_abs), *extra_args]
+    probe_cmd = lmp_probe if lmp_probe is not None else os.environ.get("SEPSIM_LMP_PROBE")
+    probe = shlex.split(probe_cmd) if probe_cmd is not None else [lammps_executable(lmp_cmd)]
+    if not probe:
+        print("sepsim run: empty LAMMPS probe command", file=sys.stderr)
+        return 2
 
     # Git state first: nothing written yet, so our own outputs can't mark the tree dirty.
     git = git_info(deck_abs.parent)
     wd.mkdir(parents=True, exist_ok=True)
-    lammps = query_lammps(lmp_cmd[-1], wd)
+    lammps = query_lammps(probe, wd)
 
     manifest = {
         "sepsim_version": __version__,
@@ -254,8 +282,10 @@ def run_deck(
         manifest.update(status="failed", exit_code=EXIT_NO_LAMMPS, end_time=_now())
         _write_manifest(wd, manifest)
         print(
-            f"sepsim run: cannot query LAMMPS executable '{lmp_cmd[-1]}': {lammps['error']}\n"
-            "Set --lmp or SEPSIM_LMP to a working LAMMPS command.",
+            f"sepsim run: cannot query LAMMPS with '{lammps['executable']} -h': "
+            f"{lammps['error']}\n"
+            "Set --lmp or SEPSIM_LMP to a working LAMMPS command, or --lmp-probe or "
+            "SEPSIM_LMP_PROBE to a command that runs the LAMMPS binary.",
             file=sys.stderr,
         )
         return EXIT_NO_LAMMPS

@@ -56,6 +56,26 @@ def fake_lmp(tmp_path, monkeypatch):
     monkeypatch.setenv("FAKE_LMP_LOG", str(tmp_path / "calls.jsonl"))
     monkeypatch.delenv("FAKE_LMP_EXIT", raising=False)
     monkeypatch.delenv("SEPSIM_LMP", raising=False)
+    monkeypatch.delenv("SEPSIM_LMP_PROBE", raising=False)
+    return exe
+
+
+FAKE_MPIRUN = f"""#!{sys.executable}
+import os, sys
+
+args = sys.argv[1:]
+if args[:1] == ["-np"]:
+    args = args[2:]
+os.execv(args[0], args)
+"""
+
+
+def make_exe(tmp_path, name, text):
+    """Write an executable script tmp_path/bin/<name>."""
+    exe = tmp_path / "bin" / name
+    exe.parent.mkdir(exist_ok=True)
+    exe.write_text(text)
+    exe.chmod(0o755)
     return exe
 
 
@@ -166,13 +186,63 @@ def test_extra_args_and_workdir(fake_lmp, deck, tmp_path):
     assert manifest(out)["inputs"]["files"] == []
 
 
-def test_launcher_prefix_uses_last_token(fake_lmp, deck, tmp_path):
-    """--lmp may carry a launcher prefix; -h goes to the last token only."""
+def test_launcher_prefix_probes_lmp_token(fake_lmp, deck, tmp_path):
+    """--lmp may carry a launcher prefix; -h goes to the lmp token only."""
     lmp = f"{shutil.which('env')} {fake_lmp}"
     assert run_deck(deck, lmp=lmp) == 0
     m = manifest(deck.parent)
     assert m["command"][:2] == [shutil.which("env"), str(fake_lmp)]
     assert m["lammps"]["executable"] == str(fake_lmp)
+    assert m["lammps"]["probe"] == [str(fake_lmp)]
+
+
+def test_mpirun_with_trailing_args_probes_lmp(fake_lmp, deck, tmp_path):
+    """`mpirun -np 8 lmp -sf gpu`: -h goes to lmp, not to the trailing `gpu`."""
+    mpirun = make_exe(tmp_path, "mpirun", FAKE_MPIRUN)
+    lmp = f"{mpirun} -np 8 {fake_lmp} -sf gpu"
+    assert run_deck(deck, lmp=lmp) == 0
+    m = manifest(deck.parent)
+    assert m["status"] == "finished"
+    assert m["command"] == [str(mpirun), "-np", "8", str(fake_lmp), "-sf", "gpu", "-in", str(deck)]
+    assert m["lammps"]["executable"] == str(fake_lmp)
+    assert m["lammps"]["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
+    assert m["lammps"]["packages"] == ["KSPACE", "MOLECULE", "CG-SPICA"]
+    assert "error" not in m["lammps"]
+    assert calls(tmp_path / "calls.jsonl") == [["-h"], ["-sf", "gpu", "-in", str(deck)]]
+
+
+def test_probe_falls_back_to_first_token(fake_lmp, deck, tmp_path):
+    """No lmp*/lammps* token: the first token is the executable."""
+    custom = make_exe(tmp_path, "mysim", FAKE_LMP)
+    assert run_deck(deck, lmp=f"{custom} -sf gpu") == 0
+    m = manifest(deck.parent)
+    assert m["lammps"]["executable"] == str(custom)
+    assert m["lammps"]["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
+    assert calls(tmp_path / "calls.jsonl") == [["-h"], ["-sf", "gpu", "-in", str(deck)]]
+
+
+def test_lmp_probe_override_and_precedence(fake_lmp, deck, tmp_path, monkeypatch):
+    """--lmp-probe beats $SEPSIM_LMP_PROBE, which beats the heuristic."""
+    env_probe = make_exe(tmp_path, "envprobe", FAKE_LMP.replace("29 Aug 2024", "2 Aug 2023"))
+    arg_probe = make_exe(tmp_path, "argprobe", FAKE_LMP.replace("29 Aug 2024", "7 Feb 2024"))
+    log = tmp_path / "calls.jsonl"
+    env = shutil.which("env")
+
+    monkeypatch.setenv("SEPSIM_LMP_PROBE", f"{env} {env_probe}")
+    assert main(["run", str(deck), "--lmp", str(fake_lmp)]) == 0
+    m = manifest(deck.parent)
+    assert m["lammps"]["probe"] == [env, str(env_probe)]
+    assert m["lammps"]["executable"] == f"{env} {env_probe}"
+    assert m["lammps"]["version"] == "LAMMPS (2 Aug 2023 - Update 1)"
+    assert m["command"] == [str(fake_lmp), "-in", str(deck)]
+    assert calls(log) == [["-h"], ["-in", str(deck)]]
+
+    log.unlink()
+    assert main(["run", str(deck), "--lmp", str(fake_lmp), "--lmp-probe", str(arg_probe)]) == 0
+    m = manifest(deck.parent)
+    assert m["lammps"]["executable"] == str(arg_probe)
+    assert m["lammps"]["version"] == "LAMMPS (7 Feb 2024 - Update 1)"
+    assert calls(log) == [["-h"], ["-in", str(deck)]]
 
 
 def test_sepsim_lmp_env_var(fake_lmp, deck, monkeypatch):

@@ -36,7 +36,7 @@ def build_parser() -> argparse.ArgumentParser:
         "run",
         help=run_help,
         description=run_help + " Arguments after `--` are passed to LAMMPS.",
-        usage="%(prog)s DECK [--workdir DIR] [--lmp CMD] [--dry-run] [-- EXTRA_LMP_ARGS...]",
+        usage="%(prog)s DECK [--workdir DIR] [--lmp CMD] [--lmp-probe CMD] [--dry-run] [-- EXTRA_LMP_ARGS...]",
     )
     run.add_argument("deck", metavar="DECK", help="LAMMPS input deck")
     run.add_argument(
@@ -45,7 +45,14 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--lmp",
         metavar="CMD",
-        help='launch command, e.g. "mpirun -np 8 lmp -sf gpu" (default: $SEPSIM_LMP or lmp)',
+        help='launch command, e.g. "mpirun -np 8 lmp -sf gpu" (default: $SEPSIM_LMP or lmp);'
+        " its first lmp*/lammps* token (else its first token) is queried with -h",
+    )
+    run.add_argument(
+        "--lmp-probe",
+        metavar="CMD",
+        help="command queried with -h for the manifest, for wrappers and containers, e.g."
+        ' "apptainer exec --rocm img.sif lmp" (default: $SEPSIM_LMP_PROBE)',
     )
     run.add_argument(
         "--dry-run", action="store_true", help="write the manifest and print the command only"
@@ -67,7 +74,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     if args.command == "run":
         return run_deck(
-            args.deck, workdir=args.workdir, lmp=args.lmp, extra_args=extra, dry_run=args.dry_run
+            args.deck,
+            workdir=args.workdir,
+            lmp=args.lmp,
+            extra_args=extra,
+            dry_run=args.dry_run,
+            lmp_probe=args.lmp_probe,
         )
     if extra:
         parser.error("arguments after `--` are only accepted by `sepsim run`")
