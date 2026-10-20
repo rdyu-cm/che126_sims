@@ -4,8 +4,11 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
-# LAMMPS run artifacts (raw output is not committed)
+# LAMMPS run artifacts (raw output is not committed); runs/ also covers results/runs/
 runs/
+logs/
+# Slurm decks + job.sh from `sepsim render --job` (synced by ssubmit, never committed)
+/jobs/
 log.lammps
 log.*.lammps
 *.lammpstrj

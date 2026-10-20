@@ -19,15 +19,15 @@ formula:
 total_mass_g_mol: 134739.84
 forcefield: {name: trappe_ua, file: trappe_ua.yaml, sha256: 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b}
 sepsim_version: 0.1.0
-git: {commit: 0bd5440501b70080509ae1f6e38246fe6b8deb15, dirty: false}
+git: {commit: aff02b72cfe662cf55fe6f1cfaceccf6e27cf0e8, dirty: false}
 overlap_minima_angstrom:
-  heavy: 3.200654648856887
-  all: 1.8147424557730525
+  heavy: 3.200100783912189
+  all: 1.8695136263935355
   local:
     bonds: [4, 6]
-    heavy_heavy: 1.4608493030582497
-    heavy_h: 1.3205037367238806
-    h_h: 0.628649342715877
+    heavy_heavy: 1.4668946741257853
+    heavy_h: 1.3569514515587262
+    h_h: 0.5687086740523359
 type_ids:
   atom: {CH3: 1, CH2: 2, CH: 3, H: 4}
   bond: {CHx-CHy: 1, CH-H: 2}
@@ -52,7 +52,7 @@ growth:
     torsion_sd_deg: 10.0
     cg_angle_temp_K: 500.0
     ipp_p_tg: 0.5
-    ipp_p_reversal: 0.4
+    ipp_p_reversal: 0.5
     ipp_local_exclusion_bonds: 6
     check_overlaps: true
     max_tries: 50
@@ -61,4 +61,4 @@ growth:
     max_restarts: 50
     min_dist: {heavy: 3.2, heavy_h: 2.2, h_h: 1.8}
     exclusion_bonds: 6
-  stats: {proposals: 1657739, backtracks: 23658, restarts: 44, dyads: 3080, reversals: 1097}
+  stats: {proposals: 3071226, backtracks: 44018, restarts: 83, dyads: 3080, reversals: 1296}

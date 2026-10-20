@@ -1,0 +1,86 @@
+{#- Force-field setup shared by every protocol. Import with context:
+    {% import "_ff.in.j2" as ff with context %}
+    ff.header()  - comment block: system, hashes, every resolved parameter
+    ff.setup()   - units, styles, special_bonds, read_data, all coefficients, neighbor, timestep
+    ff.pair()    - pair_style + pair_modify + pair_coeff + kspace (re-issue after a pair switch)
+    ff.thermo()  - thermo_style + thermo_modify, the same columns in every protocol
+    ff.shake()   - fix shake on the manifest's constrained bond types (if any)
+    ff.write(stage) - write_data <stage>.data + write_restart <stage>.restart
+-#}
+{% macro header() %}
+# sepsim {{ version }} deck: {{ protocol }}{% if preset %} (preset {{ preset }}){% endif %}
+
+# system {{ system.id }} ({{ system.resolution }}), seed {{ system.seed }}
+# manifest.yaml sha256 {{ system.manifest_sha256 }}
+{% if system.data_sha256 %}
+# data {{ system.data }} sha256 {{ system.data_sha256 }}
+{% else %}
+# data {{ system.data }} sha256 n/a: not present at render time (made by an earlier stage; run_manifest.json hashes it)
+{% endif %}
+# forcefield {{ system.forcefield }} sha256 {{ system.forcefield_sha256 }}
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+{% for key, value in p | dictsort %}
+#   {{ key }} = {{ value }}
+{% endfor %}
+{% endmacro %}
+
+{% macro pair() %}
+pair_style {{ styles.pair }} {{ p.lj_cutoff | num }}
+{% if styles.mixing != "none" or p.tail %}
+pair_modify{% if styles.mixing != "none" %} mix {{ styles.mixing }}{% endif %}{% if p.tail %} tail yes{% endif %}
+
+{% endif %}
+{% for line in coeffs.pair %}
+{{ line }}
+{% endfor %}
+{% if p.kspace_accuracy > 0 %}
+kspace_style pppm {{ p.kspace_accuracy }}
+{% endif %}
+{% endmacro %}
+
+{% macro setup() %}
+units real
+atom_style full
+boundary p p p
+{% for kind in ("bond", "angle", "dihedral", "improper") %}
+{% if styles[kind] != "none" %}
+{{ kind }}_style {{ styles[kind] }}
+{% endif %}
+{% endfor %}
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data {{ system.data }} nocoeff
+special_bonds {{ special_bonds }}
+
+{% for line in coeffs.mass %}
+{{ line }}
+{% endfor %}
+{{ pair() -}}
+{% for kind in ("bond", "angle", "dihedral") %}
+{% for line in coeffs[kind] %}
+{{ line }}
+{% endfor %}
+{% endfor %}
+
+neighbor {{ p.neighbor_skin | num }} bin
+neigh_modify delay 0 every 1 check yes
+timestep {{ p.dt_fs | num }}
+{% endmacro %}
+
+{% macro thermo() %}
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+{% endmacro %}
+
+{% macro shake() %}
+{% if shake_types %}
+fix shake all shake {{ p.shake_tol }} {{ p.shake_iter }} 0 b {{ shake_types | join(" ") }}
+{% endif %}
+{% endmacro %}
+
+{# lj/spica cannot mix, so write_data must list every I,J pair #}
+{% macro write(stage) %}
+write_data {{ stage }}.data{% if styles.mixing == "none" %} pair ij{% endif %}
+
+write_restart {{ stage }}.restart
+{% endmacro %}

@@ -80,10 +80,11 @@ class GrowthParams:
     torsion_sd_deg: float = 10.0  # D29; must be > 0
     cg_angle_temp_K: float = 500.0
     ipp_p_tg: float = 0.5  # first dyad only; (g-, t) otherwise
-    # Calibrated once so the phantom C240 UA chain has C_n ~ 5.0, the middle of the iPP
-    # theta-condition range 4.1-6.0 (Miyamoto 1969; Kinsinger & Hughes 1963,
-    # doi:10.1021/j100803a507); 0.05 grid, phantom C_n = 5.61 at 0.35, 4.71 at 0.40.
-    ipp_p_reversal: float = 0.40
+    # D42: calibrated on overlap-checked 40 x C240 UA growth at 0.3 g/cm^3 (seeds 1-3) to the
+    # iPP melt C_inf = 6.15 (SANS; Fetters, Lohse & Colby 2007, doi:10.1007/978-0-387-69002-5_25).
+    # Grown C_n: ~7.4 at 0.40, 5.84 at 0.50, 5.74 at 0.60. Overlap rejection swells iPP chains
+    # (phantom C_n 4.7 at 0.40), so phantom statistics are not the target.
+    ipp_p_reversal: float = 0.50
     # D31: smallest window that lets an ideal UA helix reversal through (derived in tests).
     ipp_local_exclusion_bonds: int = 6
     check_overlaps: bool = True  # False only for phantom-chain statistics

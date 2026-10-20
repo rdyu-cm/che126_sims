@@ -1,6 +1,6 @@
 # Building LAMMPS (D23, AMD ROCm)
 
-One binary for AMD GPUs: LAMMPS **`stable_22Jul2025_update6`** with MOLECULE, KSPACE, EXTRA-MOLECULE, CG-SPICA, KOKKOS (HIP), GPU (HIP, mixed precision) and OPENMP. The step-0 benchmark picks the accelerator per run type.
+One binary for AMD GPUs: LAMMPS **`stable_22Jul2025_update6`** with MOLECULE, KSPACE, EXTRA-MOLECULE, CG-SPICA, RIGID (`fix shake`), EXTRA-DUMP (`dump dcd`), KOKKOS (HIP), GPU (HIP, mixed precision) and OPENMP. The step-0 benchmark picks the accelerator per run type.
 
 - Build script: [`scripts/build_lammps.sh`](../scripts/build_lammps.sh) (tag, commit check, cmake flags, doc links).
 - Container: [`containers/lammps.def`](../containers/lammps.def) runs the same script in a pinned `rocm/dev-ubuntu-24.04` image.
@@ -124,7 +124,7 @@ Without a GPU-aware MPI, KOKKOS warns or segfaults with several ranks; add `-pk 
 ## Smoke check
 On rdyu-server run only the plain-CPU line, prefixing `lmp` with `apptainer exec <sif>`. On rdyu-rog, with `ROCR_VISIBLE_DEVICES` and `HSA_OVERRIDE_GFX_VERSION` exported as above, prefix each `lmp` with `apptainer exec --rocm <sif>` for the image:
 ```
-echo 'info configuration' | lmp | grep -A1 'Installed packages'   # CG-SPICA EXTRA-MOLECULE GPU KOKKOS KSPACE MOLECULE OPENMP
+echo 'info configuration' | lmp | grep -A1 'Installed packages'   # CG-SPICA EXTRA-DUMP EXTRA-MOLECULE GPU KOKKOS KSPACE MOLECULE OPENMP RIGID
 cat > in.smoke <<'EOF'
 units lj
 lattice fcc 0.8442

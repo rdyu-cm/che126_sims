@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
+from pathlib import Path
 
 from sepsim import __version__
 from sepsim.run import run_deck
@@ -11,8 +13,8 @@ from sepsim.run import run_deck
 _NOT_IMPLEMENTED = "sepsim {cmd}: not implemented yet (see docs/decisions.md, Implementation order)"
 
 _BUILD_HELP = "Build system configurations and LAMMPS data files."
+_RENDER_HELP = "Render LAMMPS input decks from Jinja templates."
 _SUBCOMMANDS = {
-    "render": "Render LAMMPS input decks from Jinja templates.",
     "analyze": "Analyze trajectories and thermo output.",
 }
 
@@ -48,6 +50,66 @@ def build_parser() -> argparse.ArgumentParser:
     cv.add_argument("--data", required=True, help="relaxed UA data file (LAMMPS write_data)")
     cv.add_argument("--source", required=True, help="UA system directory holding its manifest.yaml")
     cv.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
+    render = subparsers.add_parser("render", help=_RENDER_HELP, description=_RENDER_HELP)
+    render.set_defaults(render_parser=render)
+    protocols = render.add_subparsers(dest="protocol", metavar="protocol")
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--system", required=True, help="system directory holding manifest.yaml")
+    common.add_argument(
+        "--out",
+        help="run directory, where LAMMPS runs (default: results/runs/<system_id>/<protocol> under"
+        " the current directory); the deck reads the data file by a path relative to it",
+    )
+    common.add_argument(
+        "--set",
+        dest="overrides",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        help="override a deck parameter (repeatable); the deck header lists every parameter",
+    )
+    common.add_argument(
+        "--preset", choices=["smoke"], help="smoke: ps-scale stages (and ~100 minimize steps)"
+    )
+    job = common.add_argument_group(
+        "Slurm job (D41)",
+        "--job writes the deck and job.sh to jobs/<system_id>/<stage>/ (synced by ssubmit;"
+        " results/ is not), with the run directory (--out) under results/runs/. Run from the"
+        " project root, render before submitting, then: ~/projects/slurm-setup/bin/ssubmit"
+        " <project> jobs/<system_id>/<stage>/job.sh. Inputs made by earlier stages exist only"
+        " on the node that ran them: pin a system's stages to one node with --node.",
+    )
+    job.add_argument("--job", action="store_true", help="also write a Slurm job script")
+    job.add_argument("--partition", choices=["cpu", "gpu"], help="Slurm partition (default cpu)")
+    job.add_argument("--cpus", type=int, help="CPUs for the job, all ranks (default 4)")
+    job.add_argument("--ranks", type=int, help="MPI ranks (default: --cpus for mpi, else 1)")
+    job.add_argument("--mem", help="memory, always passed to sbatch (default 4G)")
+    job.add_argument("--time", help="wall-time limit, required with --job (e.g. 2-00:00:00)")
+    job.add_argument("--node", help="pin to one node (sbatch -w), e.g. rdyu-server")
+    job.add_argument(
+        "--accel",
+        choices=["omp", "mpi", "gpu", "kokkos"],
+        help="omp: -sf omp (threads per rank = cpus/ranks); mpi: mpirun -np RANKS in the image;"
+        " gpu: -sf gpu -pk gpu 1; kokkos: -k on g 1 -sf kk (default: omp on cpu, gpu on gpu)",
+    )
+    protocol_help = {
+        "prep": "Prep deck for an amorphous box: push-off (not CG), minimize, NVT 500 K, NPT"
+        " compression, NPT hold, step-cool to 298.15 K (D24, D28, D31). Writes OUT/in.prep.",
+        "sweep": "Temperature sweep (D11, D36): NPT 1 atm through 25-160 C, 14 steps + 4 holds"
+        " (sweep_grid_c), DCD per segment, write_data at each hold end, AA VDOS NVE"
+        " velocity dumps after each hold (D12c, D39). Writes OUT/in.sweep.",
+        "benchmark": "Benchmark (D38): NPT 500 K, 1000-step warm-up + 2000 timed steps;"
+        " --set ensemble=nve for the dt energy-drift check (100 ps NVE, --set dt_fs=...)."
+        " Writes OUT/in.benchmark.",
+    }
+    data_help = {
+        "prep": "data file to start from (default: SYSTEM/data.lmp)",
+        "sweep": "data file to start from (default: OUT/../prep/cooled.data)",
+        "benchmark": "data file to start from (default: OUT/../prep/compressed.data)",
+    }
+    for name, help_text in protocol_help.items():
+        pr = protocols.add_parser(name, help=help_text, description=help_text, parents=[common])
+        pr.add_argument("--data", help=data_help[name])
     for name, help_text in _SUBCOMMANDS.items():
         subparsers.add_parser(name, help=help_text, description=help_text)
     run_help = "Run a LAMMPS deck with `lmp` and write run_manifest.json."
@@ -104,6 +166,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("arguments after `--` are only accepted by `sepsim run`")
     if args.command == "build":
         return _build(args)
+    if args.command == "render":
+        return _render(args)
     print(_NOT_IMPLEMENTED.format(cmd=args.command), file=sys.stderr)
     return 2
 
@@ -133,6 +197,61 @@ def _build(args: argparse.Namespace) -> int:
         print(f"sepsim build {args.kind}: error: {exc}", file=sys.stderr)
         return 1
     print(sysdir)
+    return 0
+
+
+_JOB_OPTS = ("partition", "cpus", "ranks", "mem", "time", "node", "accel")
+
+
+def _render(args: argparse.Namespace) -> int:
+    if args.protocol is None:
+        args.render_parser.print_help()
+        return 2
+    import yaml
+
+    from sepsim.lammps.render import RenderError, default_data, parse_overrides, write_deck
+    from sepsim.lammps.slurm import JobError, JobOptions, job_dir_for, write_job
+
+    given = [k for k in _JOB_OPTS if getattr(args, k) is not None]
+    if given and not args.job:
+        print(f"sepsim render {args.protocol}: error: --{given[0]} needs --job", file=sys.stderr)
+        return 1
+    try:
+        manifest = yaml.safe_load((Path(args.system) / "manifest.yaml").read_text())
+        run_dir = Path(args.out or Path("results") / "runs" / manifest["id"] / args.protocol)
+        out = run_dir
+        if args.job:
+            opts = JobOptions(**{k: getattr(args, k) for k in given}).resolved()
+            project = Path.cwd().resolve()
+            run_dir = run_dir.resolve()
+            out = job_dir_for(project, run_dir)
+        data = Path(args.data) if args.data else default_data(args.protocol, args.system, run_dir)
+        # A defaulted input from an earlier stage may not exist yet (chained jobs).
+        missing_ok = args.data is None and args.protocol != "prep"
+        if missing_ok and not data.is_file():
+            print(
+                f"sepsim render {args.protocol}: warning: {data} does not exist yet"
+                " (made by an earlier stage); the deck header records no hash for it",
+                file=sys.stderr,
+            )
+        deck = write_deck(
+            args.protocol,
+            args.system,
+            out,
+            data=data,
+            overrides=parse_overrides(args.overrides),
+            preset=args.preset,
+            run_dir=run_dir,
+            require_data=not missing_ok,
+        )
+        print(deck)
+        if args.job:
+            data_ref = os.path.relpath(data.resolve(), run_dir)
+            job = write_job(args.protocol, manifest["id"], project, out, run_dir, data_ref, opts)
+            print(job)
+    except (RenderError, JobError, OSError, KeyError, yaml.YAMLError) as exc:
+        print(f"sepsim render {args.protocol}: error: {exc}", file=sys.stderr)
+        return 1
     return 0
 
 

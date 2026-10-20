@@ -488,8 +488,9 @@ def test_local_window_derived_from_reversal():
     assert window == G.GrowthParams().exclusion_bonds(mol)
 
 
-def test_phantom_ipp_cn_in_theta_range():
-    """Default ipp_p_reversal gives a phantom C_n inside the iPP theta range (4.1-6.0)."""
+def test_phantom_ipp_cn_regression():
+    """Phantom C_n at the default ipp_p_reversal (regression; D42 calibrates grown chains,
+    which overlap rejection swells to ~6, so the phantom chain sits below that)."""
     mol, ff = typed_chain("ipp", "ua", 240)
     bb = np.array(mol.backbone)
     nper, nb, n = mol.n_atoms, len(bb) - 1, PHANTOM_CHAINS
@@ -498,7 +499,7 @@ def test_phantom_ipp_cn_in_theta_range():
         pos, _, _ = G.grow_amorphous(mol, ff, n, 0.01, seed, G.GrowthParams(check_overlaps=False))
         ends = pos.reshape(n, nper, 3)[:, [bb[0], bb[-1]]]
         cn.append(np.sum((ends[:, 1] - ends[:, 0]) ** 2, axis=1).mean() / (nb * 1.54**2))
-    assert 4.1 < np.mean(cn) < 6.0
+    assert 3.0 < np.mean(cn) < 4.0  # 3.50 at 0.50
 
 
 def test_growth_stats_record_reversals(systems):

@@ -14,7 +14,17 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "build_lammps.sh"
 DEF = ROOT / "containers" / "lammps.def"
 DOC = ROOT / "docs" / "LAMMPS_BUILD.md"
-REQUIRED_PACKAGES = ["MOLECULE", "KSPACE", "EXTRA-MOLECULE", "CG-SPICA", "KOKKOS", "GPU", "OPENMP"]
+REQUIRED_PACKAGES = [
+    "MOLECULE",
+    "KSPACE",
+    "EXTRA-MOLECULE",
+    "CG-SPICA",
+    "RIGID",
+    "EXTRA-DUMP",
+    "KOKKOS",
+    "GPU",
+    "OPENMP",
+]
 PINNED_TAG = "stable_22Jul2025_update6"
 BASH = shutil.which("bash")
 needs_bash = pytest.mark.skipif(BASH is None, reason="bash not available")

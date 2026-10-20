@@ -79,7 +79,7 @@ From: rocm/dev-ubuntu-24.04:{{ ROCM_VERSION }}-complete
     lammps.gpu_arch {{ GPU_ARCH }}
 
 %help
-    LAMMPS stable_22Jul2025_update6 with MOLECULE KSPACE EXTRA-MOLECULE CG-SPICA
+    LAMMPS stable_22Jul2025_update6 with MOLECULE KSPACE EXTRA-MOLECULE CG-SPICA RIGID EXTRA-DUMP
     KOKKOS(HIP) GPU(HIP, mixed precision) OPENMP, built for one AMD GPU target.
     Run with the host GPU devices: apptainer exec --rocm <sif> lmp -in in.deck
     Config: echo 'info configuration' | apptainer exec <sif> lmp

@@ -1,0 +1,86 @@
+{#- Prep path for an amorphous box (D24, D28, D31): push-off (not CG), minimize,
+    NVT relax, NPT compression, NPT hold, step-cool. Every stage writes <stage>.data
+    and <stage>.restart in the run directory. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+{{ ff.setup() -}}
+{{ ff.thermo() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% set pdamp = p.pdamp_dt * p.dt_fs %}
+{% if p.pushoff %}
+
+# ---- Stage 1: soft-core push-off (D31): bonded terms on, no Coulomb, a ramps 0 -> {{ p.pushoff_a_max | num }}
+{% if p.kspace_accuracy > 0 %}
+kspace_style none
+{% endif %}
+pair_style soft {{ p.pushoff_rc | num }}
+# keep the full-FF ghost cutoff: soft rc + skin is shorter than LAMMPS's bonded-length estimate
+comm_modify cutoff {{ (p.lj_cutoff + p.neighbor_skin) | num }}
+pair_coeff * * 0.0
+variable A equal ramp(0,{{ p.pushoff_a_max | num }})
+fix pushoff_adapt all adapt 1 pair soft a * * v_A
+fix pushoff_nve all nve/limit {{ p.pushoff_nve_limit | num }}
+fix pushoff_lang all langevin {{ p.pushoff_t | num }} {{ p.pushoff_t | num }} {{ (100 * p.pushoff_dt_fs) | num }} {{ system.seed }}
+timestep {{ p.pushoff_dt_fs | num }}
+thermo {{ n_push(p.thermo_ps) }}
+run {{ n_push(p.pushoff_ps) }}
+unfix pushoff_lang
+unfix pushoff_nve
+unfix pushoff_adapt
+comm_modify cutoff 0.0
+# back to the full force field: a new pair_style erases all pair_coeff/pair_modify settings
+{{ ff.pair() -}}
+timestep {{ p.dt_fs | num }}
+{{ ff.write("pushoff") -}}
+{% endif %}
+
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+# ---- Stage 2: minimize with the full force field
+thermo 100
+minimize {{ p.min_etol }} {{ p.min_ftol }} {{ p.min_maxiter }} {{ p.min_maxeval }}
+{{ ff.write("minimized") -}}
+{% if shake_types %}
+
+# ---- Stage 3: SHAKE on the constrained bond types (after every force-changing fix)
+{{ ff.shake() -}}
+{% endif %}
+
+# ---- Stage 4: NVT {{ p.nvt_ps | num }} ps at {{ p.t_melt | num }} K -> relaxed.data (input for `sepsim build ua2aa`)
+thermo {{ n(p.thermo_ps) }}
+velocity all create {{ p.t_melt | num }} {{ system.seed }} mom yes rot yes dist gaussian
+fix md all nvt temp {{ p.t_melt | num }} {{ p.t_melt | num }} {{ tdamp | num }}
+run {{ n(p.nvt_ps) }}
+unfix md
+{{ ff.write("relaxed") -}}
+
+# ---- Stage 5: NPT compression at {{ p.t_melt | num }} K: {{ p.p_compress_atm | num }} atm, then {{ p.p_atm | num }} atm -> compressed.data
+fix md all npt temp {{ p.t_melt | num }} {{ p.t_melt | num }} {{ tdamp | num }} iso {{ p.p_compress_atm | num }} {{ p.p_compress_atm | num }} {{ pdamp | num }}
+run {{ n(p.compress_hi_ps) }}
+unfix md
+fix md all npt temp {{ p.t_melt | num }} {{ p.t_melt | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
+run {{ n(p.compress_ps) }}
+unfix md
+{{ ff.write("compressed") -}}
+
+# ---- Stage 6: NPT hold {{ p.hold_ps | num }} ps at {{ p.t_melt | num }} K, {{ p.p_atm | num }} atm -> hold.data, hold.dcd
+fix md all npt temp {{ p.t_melt | num }} {{ p.t_melt | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
+dump hold all dcd {{ n(p.hold_dump_ps) }} hold.dcd
+dump_modify hold unwrap yes
+run {{ n(p.hold_ps) }}
+undump hold
+unfix md
+{{ ff.write("hold") -}}
+
+# ---- Stage 7: step-cool {{ p.t_melt | num }} -> {{ p.t_final | num }} K in {{ p.cool_steps }} steps of {{ p.cool_step_ps | num }} ps at {{ p.p_atm | num }} atm -> cooled.data, cool.dcd
+dump cool all dcd {{ n(p.cool_dump_ps) }} cool.dcd
+dump_modify cool unwrap yes
+{% for t in cool_temps %}
+# cool step {{ loop.index }}/{{ p.cool_steps }}: {{ t | num }} K
+fix md all npt temp {{ t | num }} {{ t | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
+run {{ n(p.cool_step_ps) }}
+unfix md
+{% endfor %}
+undump cool
+{{ ff.write("cooled") -}}

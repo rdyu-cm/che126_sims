@@ -1,0 +1,29 @@
+{#- Throughput benchmark (D38): warm-up run, then a timed run whose Performance line gives
+    ns/day. ensemble=npt: NPT iso at bench_t, p_atm. ensemble=nve: the dt check (D12a),
+    NVE for nve_ps; keep the larger dt if |dE_tot|/KE < 1% over the timed run.
+    No output files besides log.lammps. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+{{ ff.setup() -}}
+{{ ff.thermo() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% set pdamp = p.pdamp_dt * p.dt_fs %}
+{{ ff.shake() -}}
+# velocities come from the data file (no velocity create)
+thermo {{ p.bench_thermo_steps }}
+{% if p.ensemble == "npt" %}
+fix md all npt temp {{ p.bench_t | num }} {{ p.bench_t | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
+{% else %}
+fix md all nve
+{% endif %}
+
+# ---- Warm-up: {{ p.warmup_steps }} steps ({{ p.ensemble }})
+run {{ p.warmup_steps }}
+
+{% if p.ensemble == "npt" %}
+# ---- Timed: {{ p.timed_steps }} steps (ns/day from the Performance line)
+run {{ p.timed_steps }}
+{% else %}
+# ---- Timed: NVE {{ p.nve_ps | num }} ps at dt {{ p.dt_fs | num }} fs (energy drift; ns/day from the Performance line)
+run {{ n(p.nve_ps) }}
+{% endif %}

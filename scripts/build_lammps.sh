@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build the pinned LAMMPS release for sepsim (decision D23, docs/decisions.md).
 #
-# One binary for AMD GPUs (ROCm/HIP) with MOLECULE, KSPACE, EXTRA-MOLECULE, CG-SPICA,
+# One binary for AMD GPUs (ROCm/HIP) with MOLECULE, KSPACE, EXTRA-MOLECULE, CG-SPICA, RIGID, EXTRA-DUMP,
 # KOKKOS (HIP), GPU (HIP, mixed precision) and OPENMP. Used natively and inside
 # containers/lammps.def. How-to: docs/LAMMPS_BUILD.md.
 #
@@ -53,7 +53,7 @@ LAMMPS_TAG="stable_22Jul2025_update6"
 LAMMPS_COMMIT="9c5ab448c78a14fd534619622162ba418d6a1fb1"
 LAMMPS_REPO="https://github.com/lammps/lammps.git"
 
-PACKAGES=(MOLECULE KSPACE EXTRA-MOLECULE CG-SPICA KOKKOS GPU OPENMP)
+PACKAGES=(MOLECULE KSPACE EXTRA-MOLECULE CG-SPICA RIGID EXTRA-DUMP KOKKOS GPU OPENMP)
 
 die() {
   echo "build_lammps.sh: error: $*" >&2
