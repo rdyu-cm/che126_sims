@@ -18,9 +18,15 @@ On rdyu-rog the host ROCm install is partial (no `/opt/rocm/.info/version`; `roc
 ## Two machines, one image
 Build the .sif once, on rdyu-server, and copy it to rdyu-rog (`$INST` as in [Path A](#path-a-recommended-apptainer)). HIP code compiles without a GPU. Keep `HOST_ARCH` unset (generic x86-64): a Kokkos host arch adds `-march` to the whole `lmp`, so e.g. a `ZEN3` image can die with SIGILL on the Intel server.
 ```
-sudo apt-get install apptainer-suid               # rdyu-server, once
-sudo apptainer build --build-arg REPO="$PWD" --build-arg GPU_ARCH=gfx1030 \
+sudo apt-get install apptainer-suid               # rdyu-server, once (ppa:apptainer/ppa)
+# /tmp on rdyu-server is a 7.5 GB tmpfs, too small to unpack the ROCm base image:
+# put Apptainer's temp and cache on disk (after `sudo`, which clears the environment).
+mkdir -p ~/projects/installations/apptainer/{tmp,cache}
+sudo APPTAINER_TMPDIR=$HOME/projects/installations/apptainer/tmp \
+     APPTAINER_CACHEDIR=$HOME/projects/installations/apptainer/cache \
+  apptainer build --build-arg REPO="$PWD" --build-arg GPU_ARCH=gfx1030 \
   "$INST/lammps-rocm6.4.4-gfx1030.sif" containers/lammps.def
+sudo chown $USER: "$INST/lammps-rocm6.4.4-gfx1030.sif"
 scp "$INST/lammps-rocm6.4.4-gfx1030.sif" rdyu-rog:<same path>
 ```
 - **rdyu-server (CPU):** smoke-test plain CPU here first (see [Smoke check](#smoke-check)). No `--rocm`, no GPU env vars:
@@ -105,7 +111,7 @@ SEPSIM_GPU_ARCH=gfx1030 scripts/build_lammps.sh
 Other knobs: `SEPSIM_ROCM_PATH` (default `$ROCM_PATH` or `/opt/rocm`), `SEPSIM_HOST_ARCH`, `SEPSIM_MPI=no`, `SEPSIM_JOBS`. `--help` lists them. The script refuses a source tree that is not at the pinned commit or has local edits.
 
 ## Pointing `sepsim run` at the binary
-`sepsim run` takes `--lmp CMD` or `$SEPSIM_LMP` (default `lmp`). It records `<probe> -h` in the manifest, where the probe is the first token of CMD named `lmp*`/`lammps*` (else the first token). `--lmp-probe` / `$SEPSIM_LMP_PROBE` override it, e.g. `"apptainer exec --rocm img.sif lmp"`. For the image, the simplest route is a wrapper whose name starts with `lmp`:
+`sepsim run` takes `--lmp CMD` or `$SEPSIM_LMP` (default `lmp`). It records the output of `info configuration` (fed to `<probe> -nocite -log none` on stdin) in the manifest, where the probe is the first token of CMD named `lmp*`/`lammps*` (else the first token). `--lmp-probe` / `$SEPSIM_LMP_PROBE` override it, e.g. `"apptainer exec --rocm img.sif lmp"`. For the image, the simplest route is a wrapper whose name starts with `lmp`:
 ```
 printf '#!/bin/sh\nexec apptainer exec --rocm %s lmp "$@"\n' "$INST/lammps-rocm6.4.4-gfx1030.sif" > "$INST/lmp-sif"
 chmod +x "$INST/lmp-sif"
@@ -118,7 +124,7 @@ Without a GPU-aware MPI, KOKKOS warns or segfaults with several ranks; add `-pk 
 ## Smoke check
 On rdyu-server run only the plain-CPU line, prefixing `lmp` with `apptainer exec <sif>`. On rdyu-rog, with `ROCR_VISIBLE_DEVICES` and `HSA_OVERRIDE_GFX_VERSION` exported as above, prefix each `lmp` with `apptainer exec --rocm <sif>` for the image:
 ```
-lmp -h | sed -n '/Installed packages:/,/^$/p'   # lists CG-SPICA EXTRA-MOLECULE GPU KOKKOS KSPACE MOLECULE OPENMP
+echo 'info configuration' | lmp | grep -A1 'Installed packages'   # CG-SPICA EXTRA-MOLECULE GPU KOKKOS KSPACE MOLECULE OPENMP
 cat > in.smoke <<'EOF'
 units lj
 lattice fcc 0.8442
@@ -136,7 +142,7 @@ lmp -in in.smoke                              # plain CPU
 lmp -in in.smoke -sf gpu -pk gpu 1            # GPU package; the log names the device
 lmp -in in.smoke -k on g 1 -sf kk             # KOKKOS-HIP
 ```
-All three should finish with `Total wall time` and matching initial energies (mixed precision differs in the last digits). The GPU-package log must name the RX 6800S, not the 680M. The deck smoke tests and the step-0 benchmark follow (see decisions.md, Verification).
+`lmp -h` queries GPU devices and aborts (HIP error 100) on a host without a GPU, so use `info configuration` instead. All three should finish with `Total wall time` and matching initial energies (mixed precision differs in the last digits). The GPU-package log must name the RX 6800S, not the 680M. The deck smoke tests and the step-0 benchmark follow (see decisions.md, Verification).
 
 ## Sources (checked 2026-10-19)
 - LAMMPS build options: https://docs.lammps.org/Build_extras.html (#gpu, #kokkos), https://docs.lammps.org/Build_settings.html, the tag's `cmake/presets/kokkos-hip.cmake`, and `cmake/Modules/Packages/{KOKKOS,GPU}.cmake`. KOKKOS is double precision only: https://docs.lammps.org/Speed_compare.html

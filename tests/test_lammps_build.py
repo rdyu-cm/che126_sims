@@ -172,3 +172,9 @@ def test_build_outputs_are_gitignored():
 def test_shellcheck():
     proc = subprocess.run(["shellcheck", str(SCRIPT)], capture_output=True, text=True, check=False)
     assert proc.returncode == 0, proc.stdout
+
+
+def test_def_environment_finds_rocm_libomp():
+    # lmp links ROCm's LLVM libomp.so; without this path the binary does not start.
+    env = DEF.read_text().split("\n%environment", 1)[1].split("\n%runscript", 1)[0]
+    assert "export LD_LIBRARY_PATH=/opt/rocm/lib/llvm/lib" in env

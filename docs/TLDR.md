@@ -20,12 +20,12 @@ The repo holds the build and analysis code, templates, and force-field parameter
 
 **Next steps:**
 1. Finish phase 2.
-2. Source the 21-step table (Larsen et al. 2011), confirm it with the user, then build phase 3 templates (D23–D25, D28).
+2. Build phase 3 templates (D23–D25, D28, D31): render engine, benchmark, prep (push-off → minimize → 500 K NPT compression → hold → cool), sweep.
 3. Phase 4 needs the crystal-slab geometry decision.
 
 **Rules:**
 - Every new design choice goes to the user, with a plain-language recommendation, before it's built.
-- Work on feature branches in worktrees under `../che126_sims-worktrees/`, never on `main` directly.
+- Work on feature branches in worktrees under `../worktrees/` (i.e. `projects/worktrees/`), never on `main` directly.
 - Pushing feature branches is fine. Merges to `main` need user approval (squash merge).
 - Never send the user's email to outside services.
 - The copyrighted PDF lives in the gitignored `references/` and is never committed. Re-download it on the new machine if needed (Hikosaka & Seto, Polym. J. 1973, 5, 111).

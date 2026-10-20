@@ -66,6 +66,8 @@ From: rocm/dev-ubuntu-24.04:{{ ROCM_VERSION }}-complete
 
 %environment
     export PATH=/opt/lammps/bin:/opt/rocm/bin:$PATH
+    # lmp links ROCm's LLVM OpenMP runtime (libomp.so), which is not on the default path.
+    export LD_LIBRARY_PATH=/opt/rocm/lib/llvm/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 %runscript
     exec lmp "$@"
@@ -79,5 +81,7 @@ From: rocm/dev-ubuntu-24.04:{{ ROCM_VERSION }}-complete
 %help
     LAMMPS stable_22Jul2025_update6 with MOLECULE KSPACE EXTRA-MOLECULE CG-SPICA
     KOKKOS(HIP) GPU(HIP, mixed precision) OPENMP, built for one AMD GPU target.
-    Run with the host GPU devices: apptainer exec --rocm <sif> lmp -h
+    Run with the host GPU devices: apptainer exec --rocm <sif> lmp -in in.deck
+    Config: echo 'info configuration' | apptainer exec <sif> lmp
+    (lmp -h queries GPU devices and aborts on a host without one.)
     Build record: /opt/lammps/share/sepsim_build_info.txt

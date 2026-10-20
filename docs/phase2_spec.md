@@ -14,16 +14,20 @@ Approved spec (decisions D5, D5c, D7, D12a, D17–D19, D22). Partial work is on 
 - **Packing:**
   - Grow heavy atoms bead by bead in a periodic box at 0.3 g/cm³ (parameter), with overlap checks against all placed atoms (cell list, minimum image).
   - Place hydrogens geometrically afterwards.
-  - Compression to melt density happens later in LAMMPS (21-step, D24).
+  - Compression to melt density happens later in LAMMPS (push-off, minimize, NPT compression at 500 K; D24).
 - **Growth torsions:**
   - Melt-like RIS bias: p(t) = 0.6, p(g±) = 0.2 (parameters).
   - Reject consecutive g+g−/g−g+.
+  - Each torsion gets ±10° Gaussian jitter around its RIS state (D29).
+  - Growth overlap thresholds (AA): heavy–heavy 3.0 Å, heavy–H 2.0 Å, H–H 1.6 Å (D29). LAMMPS minimization removes the close H contacts.
   - On repeated overlap failure, backtrack a few beads; restart the chain if needed.
   - Deterministic from one integer seed.
 - **Geometry:** use the FF equilibrium values.
   - **AA/UA:** C–C 1.529/1.54 Å; C–C–C 112.7°/114° (UA CH vertex 112°).
-  - **CG:** bonds 3.64/3.65 Å; angle sampled around 173°/175° (≈ 10° sd, capped at 180°).
+  - **CG:** bonds 3.64/3.65 Å; each angle drawn from the FF's own Boltzmann distribution at 500 K, P(θ) ∝ sin θ · exp(−E(θ)/kT) (D29), with E the full LAMMPS `angle_style spica` energy (D33): K(θ−θ0)² plus the 1–3 repulsion, i.e. the lj/spica energy of the end-bead pair (CM–CM or CM–CT) at r13(θ) from the two bond lengths, shifted by its minimum and zero beyond r_min. This gives melt-like chain size (C240 R_ee ≈ 66–68 Å, C1500 ≈ 180 Å) and no tight angles (min θ ≈ 65° in 40×C1500). The earlier 10° spread gave chains 4–5× too extended; the harmonic-only weight let a few angles close to ~20° (1–3 distance 1.6 Å).
   - **AA H placement:** C–H 1.09 Å, near-tetrahedral (exactness not critical; minimization follows).
+- **iPP torsions (D30):** a meso-dyad rule replaces the generic RIS bias: dyads are (t, g+) or (g−, t), and the helix hand reverses at each junction with probability `ipp_p_reversal`, calibrated so the phantom chain gives C∞ ≈ 5. `ipp_p_reversal = 0.40`. iPP growth ignores intra-chain pairs ≤ 6 bonds apart (D31); the local strain is removed by a soft-core push-off at the start of the phase 3 prep deck.
+- **AA iPP (D32):** not grown directly; produced by `sepsim build ua2aa` from a LAMMPS-relaxed UA iPP box.
 - **iPP chirality:** every CH has the same configuration. The signed volume of (methyl − C, H − C, next − prev backbone) must have a consistent sign along the chain; define it precisely and test it.
 
 ## Outputs, per system, in `systems/<system_id>/`
@@ -47,7 +51,7 @@ Approved spec (decisions D5, D5c, D7, D12a, D17–D19, D22). Partial work is on 
 ## Tests (small systems for speed)
 - **Counts:**
   - AA atoms per chain = 3n + 2.
-  - UA PE = n; UA iPP = n + n/3.
+  - UA PE = n; UA iPP = n + n/3 − 1 (the last unit's CH becomes a CH2, so there are n/3 − 1 methines).
   - CG = n/3.
   - Bond/angle/dihedral counts match the linear-chain formulas.
 - **Physical consistency:**
@@ -65,4 +69,4 @@ Approved spec (decisions D5, D5c, D7, D12a, D17–D19, D22). Partial work is on 
 - **Errors:** the data file parses back; CG iPP raises.
 
 ## Rules for the implementer
-Work in a worktree under `../che126_sims-worktrees/`. Use uv only and numpy/scipy. Ask before adding any dependency. Don't edit `docs/`. Report every design choice made beyond this spec, for user approval.
+Work in a worktree under `/home/rdyu/projects/worktrees/`. Use uv only and numpy/scipy. Ask before adding any dependency. Don't edit `docs/`. Report every design choice made beyond this spec, for user approval.

@@ -12,9 +12,7 @@ import pytest
 import sepsim
 import sepsim.run as sepsim_run
 from sepsim.cli import main
-from sepsim.run import parse_lmp_help, run_deck
-
-LMP_HEADER = "Large-scale Atomic/Molecular Massively Parallel Simulator - "  # real `lmp -h`
+from sepsim.run import parse_lmp_info, run_deck
 
 FAKE_LMP = f"""#!{sys.executable}
 import json, os, sys
@@ -24,16 +22,19 @@ log = os.environ.get("FAKE_LMP_LOG")
 if log:
     with open(log, "a") as fh:
         fh.write(json.dumps(args) + "\\n")
-if args == ["-h"]:
-    print("Large-scale Atomic/Molecular Massively Parallel Simulator - 29 Aug 2024 - Update 1")
-    print("Git info (stable / stable_29Aug2024_update1-0-g0123456789ab)")
+if args == ["-nocite", "-log", "none"] and sys.stdin.read().strip() == "info configuration":
+    print("LAMMPS (29 Aug 2024 - Update 1)")
+    print()
+    print("Info-Info-Info-Info-Info-Info-Info-Info-Info-Info-Info")
+    print("LAMMPS version: 29 Aug 2024 / 20240829")
+    print("Git info: stable / stable_29Aug2024_update1 / 0123456789ab")
     print()
     print("Installed packages:")
     print()
     print("KSPACE MOLECULE")
     print("CG-SPICA")
     print()
-    print("List of individual style options included in this LAMMPS executable")
+    print("Info-Info-Info-Info-Info-Info-Info-Info-Info-Info-Info")
     sys.exit(0)
 if "-in" in args:
     print("fake run ok")
@@ -41,6 +42,9 @@ if "-in" in args:
     sys.exit(int(os.environ.get("FAKE_LMP_EXIT", "0")))
 sys.exit(1)
 """
+
+
+INFO_CALL = [["-nocite", "-log", "none"]]
 
 
 def sha(path):
@@ -147,9 +151,10 @@ def test_manifest_fields_and_hashes(fake_lmp, deck, capsys):
     assert [x["path"] for x in m["inputs"]["missing"]] == [str(sim / "missing.in")]
 
     lammps = m["lammps"]
-    assert lammps["version"] == LMP_HEADER + "29 Aug 2024 - Update 1"
+    assert lammps["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
     assert lammps["packages"] == ["KSPACE", "MOLECULE", "CG-SPICA"]
-    assert lammps["help_sha256"] == sha(sim / "lmp_help.txt")
+    assert lammps["git"] == "stable / stable_29Aug2024_update1 / 0123456789ab"
+    assert lammps["info_sha256"] == sha(sim / "lmp_info.txt")
 
     assert (sim / "screen.out").read_text() == "fake run ok\n"
     assert (sim / "log.lammps").exists()
@@ -193,7 +198,7 @@ def test_extra_args_and_workdir(fake_lmp, deck, tmp_path):
 
 
 def test_launcher_prefix_probes_lmp_token(fake_lmp, deck, tmp_path):
-    """--lmp may carry a launcher prefix; -h goes to the lmp token only."""
+    """--lmp may carry a launcher prefix; the info query goes to the lmp token only."""
     lmp = f"{shutil.which('env')} {fake_lmp}"
     assert run_deck(deck, lmp=lmp) == 0
     m = manifest(deck.parent)
@@ -203,7 +208,7 @@ def test_launcher_prefix_probes_lmp_token(fake_lmp, deck, tmp_path):
 
 
 def test_mpirun_with_trailing_args_probes_lmp(fake_lmp, deck, tmp_path):
-    """`mpirun -np 8 lmp -sf gpu`: -h goes to lmp, not to the trailing `gpu`."""
+    """`mpirun -np 8 lmp -sf gpu`: the info query goes to lmp, not to the trailing `gpu`."""
     mpirun = make_exe(tmp_path, "mpirun", FAKE_MPIRUN)
     lmp = f"{mpirun} -np 8 {fake_lmp} -sf gpu"
     assert run_deck(deck, lmp=lmp) == 0
@@ -211,10 +216,10 @@ def test_mpirun_with_trailing_args_probes_lmp(fake_lmp, deck, tmp_path):
     assert m["status"] == "finished"
     assert m["command"] == [str(mpirun), "-np", "8", str(fake_lmp), "-sf", "gpu", "-in", str(deck)]
     assert m["lammps"]["executable"] == str(fake_lmp)
-    assert m["lammps"]["version"] == LMP_HEADER + "29 Aug 2024 - Update 1"
+    assert m["lammps"]["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
     assert m["lammps"]["packages"] == ["KSPACE", "MOLECULE", "CG-SPICA"]
     assert "error" not in m["lammps"]
-    assert calls(tmp_path / "calls.jsonl") == [["-h"], ["-sf", "gpu", "-in", str(deck)]]
+    assert calls(tmp_path / "calls.jsonl") == INFO_CALL + [["-sf", "gpu", "-in", str(deck)]]
 
 
 def test_probe_falls_back_to_first_token(fake_lmp, deck, tmp_path):
@@ -223,8 +228,8 @@ def test_probe_falls_back_to_first_token(fake_lmp, deck, tmp_path):
     assert run_deck(deck, lmp=f"{custom} -sf gpu") == 0
     m = manifest(deck.parent)
     assert m["lammps"]["executable"] == str(custom)
-    assert m["lammps"]["version"] == LMP_HEADER + "29 Aug 2024 - Update 1"
-    assert calls(tmp_path / "calls.jsonl") == [["-h"], ["-sf", "gpu", "-in", str(deck)]]
+    assert m["lammps"]["version"] == "LAMMPS (29 Aug 2024 - Update 1)"
+    assert calls(tmp_path / "calls.jsonl") == INFO_CALL + [["-sf", "gpu", "-in", str(deck)]]
 
 
 def test_lmp_probe_override_and_precedence(fake_lmp, deck, tmp_path, monkeypatch):
@@ -239,16 +244,16 @@ def test_lmp_probe_override_and_precedence(fake_lmp, deck, tmp_path, monkeypatch
     m = manifest(deck.parent)
     assert m["lammps"]["probe"] == [env, str(env_probe)]
     assert m["lammps"]["executable"] == f"{env} {env_probe}"
-    assert m["lammps"]["version"] == LMP_HEADER + "2 Aug 2023 - Update 1"
+    assert m["lammps"]["version"] == "LAMMPS (2 Aug 2023 - Update 1)"
     assert m["command"] == [str(fake_lmp), "-in", str(deck)]
-    assert calls(log) == [["-h"], ["-in", str(deck)]]
+    assert calls(log) == INFO_CALL + [["-in", str(deck)]]
 
     log.unlink()
     assert main(["run", str(deck), "--lmp", str(fake_lmp), "--lmp-probe", str(arg_probe)]) == 0
     m = manifest(deck.parent)
     assert m["lammps"]["executable"] == str(arg_probe)
-    assert m["lammps"]["version"] == LMP_HEADER + "7 Feb 2024 - Update 1"
-    assert calls(log) == [["-h"], ["-in", str(deck)]]
+    assert m["lammps"]["version"] == "LAMMPS (7 Feb 2024 - Update 1)"
+    assert calls(log) == INFO_CALL + [["-in", str(deck)]]
 
 
 def test_sepsim_lmp_env_var(fake_lmp, deck, monkeypatch):
@@ -334,5 +339,34 @@ def test_git_info_outside_repo(fake_lmp, deck, monkeypatch, tmp_path):
     assert m["deck_git"] is None
 
 
-def test_parse_lmp_help_without_markers():
-    assert parse_lmp_help("nothing useful\n") == {"version": None, "packages": None}
+def test_parse_lmp_info_without_markers():
+    assert parse_lmp_info("nothing useful\n") == {"version": None, "git": None, "packages": None}
+
+
+REAL_INFO = """LAMMPS (22 Jul 2025 - Update 6)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+
+Info-Info-Info-Info-Info-Info-Info-Info-Info-Info-Info
+Printed on Mon Oct 19 22:20:14 2026
+
+LAMMPS version: 22 Jul 2025 / 20250722
+Git info: HEAD / stable_22Jul2025_update6 / 9c5ab448c78a14fd534619622162ba418d6a1fb1
+
+OS information: Linux "Ubuntu 24.04.3 LTS" 7.0.0-38-generic x86_64
+
+Installed packages:
+
+CG-SPICA EXTRA-MOLECULE GPU KOKKOS KSPACE MOLECULE OPENMP 
+
+Info-Info-Info-Info-Info-Info-Info-Info-Info-Info-Info
+Total wall time: 0:00:00
+"""
+
+
+def test_parse_lmp_info_real_output():
+    assert parse_lmp_info(REAL_INFO) == {
+        "version": "LAMMPS (22 Jul 2025 - Update 6)",
+        "git": "HEAD / stable_22Jul2025_update6 / 9c5ab448c78a14fd534619622162ba418d6a1fb1",
+        "packages": ["CG-SPICA", "EXTRA-MOLECULE", "GPU", "KOKKOS", "KSPACE", "MOLECULE", "OPENMP"],
+    }

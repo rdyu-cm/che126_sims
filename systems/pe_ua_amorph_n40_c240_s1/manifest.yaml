@@ -1,0 +1,60 @@
+id: pe_ua_amorph_n40_c240_s1
+polymer: pe
+resolution: ua
+n_chains: 40
+n_carbons: 240
+seed: 1
+build_density_g_cm3: 0.3
+box_angstrom:
+- [0.0, 90.68621794016295]
+- [0.0, 90.68621794016295]
+- [0.0, 90.68621794016295]
+density_g_cm3: 0.3000000000000003
+counts:
+  per_chain: {atoms: 240, bonds: 239, angles: 238, dihedrals: 237}
+  total: {atoms: 9600, bonds: 9560, angles: 9520, dihedrals: 9480}
+formula:
+  per_chain: C240H482
+  total: {C: 9600, H: 19280}
+total_mass_g_mol: 134739.84
+forcefield: {name: trappe_ua, file: trappe_ua.yaml, sha256: 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b}
+sepsim_version: 0.1.0
+git: {commit: 0bd5440501b70080509ae1f6e38246fe6b8deb15, dirty: false}
+overlap_minima_angstrom:
+  heavy: 3.2005467288410343
+  all: 3.2005467288410343
+  local: {bonds: null, heavy_heavy: null, heavy_h: null, h_h: null}
+type_ids:
+  atom: {CH3: 1, CH2: 2}
+  bond: {CHx-CHy: 1}
+  angle: {CHx-CH2-CHy: 1}
+  dihedral: {CHx-CH2-CH2-CHy: 1}
+shake_bond_types: {}
+lammps_styles:
+  pair: lj/cut
+  mixing: arithmetic
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 0.0]
+    coul: [0.0, 0.0, 0.0]
+growth:
+  params:
+    p_trans: 0.6
+    p_gauche: 0.2
+    gauche_deg: 60.0
+    torsion_sd_deg: 10.0
+    cg_angle_temp_K: 500.0
+    ipp_p_tg: 0.5
+    ipp_p_reversal: 0.4
+    ipp_local_exclusion_bonds: 6
+    check_overlaps: true
+    max_tries: 50
+    backtrack: 3
+    max_backtracks: 500
+    max_restarts: 50
+    min_dist: {heavy: 3.2, heavy_h: 2.2, h_h: 1.8}
+    exclusion_bonds: 3
+  stats: {proposals: 18706, backtracks: 102, restarts: 0, dyads: 0, reversals: 0}

@@ -1,0 +1,60 @@
+id: pe_aa_amorph_n40_c240_s1
+polymer: pe
+resolution: aa
+n_chains: 40
+n_carbons: 240
+seed: 1
+build_density_g_cm3: 0.3
+box_angstrom:
+- [0.0, 90.68621794016295]
+- [0.0, 90.68621794016295]
+- [0.0, 90.68621794016295]
+density_g_cm3: 0.3000000000000003
+counts:
+  per_chain: {atoms: 722, bonds: 721, angles: 1440, dihedrals: 2151}
+  total: {atoms: 28880, bonds: 28840, angles: 57600, dihedrals: 86040}
+formula:
+  per_chain: C240H482
+  total: {C: 9600, H: 19280}
+total_mass_g_mol: 134739.84
+forcefield: {name: opls2020_aa, file: opls2020_aa.yaml, sha256: d689069854bb4591e1020c7b5fb67c6c84b17dee88b85771c9e53545060c3151}
+sepsim_version: 0.1.0
+git: {commit: 0bd5440501b70080509ae1f6e38246fe6b8deb15, dirty: false}
+overlap_minima_angstrom:
+  heavy: 3.000144272678315
+  all: 1.6007042186691303
+  local: {bonds: null, heavy_heavy: null, heavy_h: null, h_h: null}
+type_ids:
+  atom: {CT_CH3: 1, CT_CH2: 2, HC: 3}
+  bond: {CT-CT: 1, CT-HC: 2}
+  angle: {CT-CT-CT: 1, CT-CT-HC: 2, HC-CT-HC: 3}
+  dihedral: {CT-CT-CT-CT: 1, HC-CT-CT-CT: 2, HC-CT-CT-HC: 3}
+shake_bond_types: {}
+lammps_styles:
+  pair: lj/cut/coul/long
+  mixing: geometric
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 0.5]
+    coul: [0.0, 0.0, 0.5]
+growth:
+  params:
+    p_trans: 0.6
+    p_gauche: 0.2
+    gauche_deg: 60.0
+    torsion_sd_deg: 10.0
+    cg_angle_temp_K: 500.0
+    ipp_p_tg: 0.5
+    ipp_p_reversal: 0.4
+    ipp_local_exclusion_bonds: 6
+    check_overlaps: true
+    max_tries: 50
+    backtrack: 3
+    max_backtracks: 500
+    max_restarts: 50
+    min_dist: {heavy: 3.0, heavy_h: 2.0, h_h: 1.6}
+    exclusion_bonds: 3
+  stats: {proposals: 43564, backtracks: 443, restarts: 0, dyads: 0, reversals: 0}

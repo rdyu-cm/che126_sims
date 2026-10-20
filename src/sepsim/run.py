@@ -26,7 +26,8 @@ from sepsim import __version__
 CODE_DIR = Path(sepsim.__file__).resolve().parent
 
 MANIFEST_NAME = "run_manifest.json"
-HELP_NAME = "lmp_help.txt"
+INFO_NAME = "lmp_info.txt"
+INFO_INPUT = b"info configuration\n"
 SCREEN_NAME = "screen.out"
 EXIT_NO_LAMMPS = 127
 
@@ -125,10 +126,13 @@ def git_info(directory: Path) -> dict:
     }
 
 
-def parse_lmp_help(text: str) -> dict:
-    """Extract the version line and installed-package list from ``lmp -h`` output."""
+def parse_lmp_info(text: str) -> dict:
+    """Extract version, git info and installed packages from ``info configuration`` output."""
     lines = text.splitlines()
-    version = next((ln.strip() for ln in lines if "Large-scale Atomic/Molecular" in ln), None)
+    version = next((ln.strip() for ln in lines if ln.startswith("LAMMPS (")), None)
+    git = next(
+        (ln.split("Git info:", 1)[1].strip() for ln in lines if ln.startswith("Git info:")), None
+    )
     packages = None
     for i, ln in enumerate(lines):
         if ln.strip() == "Installed packages:":
@@ -142,7 +146,7 @@ def parse_lmp_help(text: str) -> dict:
                     break
                 packages.extend(nxt.split())
             break
-    return {"version": version, "packages": packages}
+    return {"version": version, "git": git, "packages": packages}
 
 
 def lammps_executable(lmp_cmd: list[str]) -> str:
@@ -158,29 +162,37 @@ def lammps_executable(lmp_cmd: list[str]) -> str:
 
 
 def query_lammps(probe: list[str], workdir: Path) -> dict:
-    """Run ``probe -h``, save the output to ``lmp_help.txt``, and summarize it."""
+    """Feed ``info configuration`` to ``probe`` on stdin, save the output to ``lmp_info.txt``,
+    and summarize it. (``lmp -h`` is avoided: GPU builds abort on hosts without a GPU.)
+    """
     exe = shlex.join(probe)
     info: dict = {
         "executable": exe,
         "probe": list(probe),
-        "help_sha256": None,
+        "info_sha256": None,
         "version": None,
+        "git": None,
         "packages": None,
     }
     try:
         proc = subprocess.run(
-            [*probe, "-h"], cwd=workdir, capture_output=True, timeout=120, check=False
+            [*probe, "-nocite", "-log", "none"],
+            input=INFO_INPUT,
+            cwd=workdir,
+            capture_output=True,
+            timeout=120,
+            check=False,
         )
     except (OSError, subprocess.SubprocessError) as exc:
         info["error"] = f"{type(exc).__name__}: {exc}"
         return info
-    help_path = workdir / HELP_NAME
-    help_path.write_bytes(proc.stdout + proc.stderr)
-    info["help_file"] = HELP_NAME
-    info["help_sha256"] = sha256_file(help_path)
-    info.update(parse_lmp_help((proc.stdout + proc.stderr).decode(errors="replace")))
+    info_path = workdir / INFO_NAME
+    info_path.write_bytes(proc.stdout + proc.stderr)
+    info["info_file"] = INFO_NAME
+    info["info_sha256"] = sha256_file(info_path)
+    info.update(parse_lmp_info((proc.stdout + proc.stderr).decode(errors="replace")))
     if proc.returncode != 0:
-        info["error"] = f"'{exe} -h' exited with code {proc.returncode}"
+        info["error"] = f"'{exe}' (info configuration) exited with code {proc.returncode}"
     return info
 
 
@@ -223,7 +235,7 @@ def run_deck(
 
     ``lmp`` is a shell-style launch command (e.g. ``"mpirun -np 8 lmp -sf gpu"``);
     default ``$SEPSIM_LMP`` or ``lmp``. Its first token named ``lmp*``/``lammps*`` (else
-    its first token) is queried with ``-h``. ``lmp_probe`` (default ``$SEPSIM_LMP_PROBE``)
+    its first token) is queried with ``info configuration`` on stdin. ``lmp_probe`` (default ``$SEPSIM_LMP_PROBE``)
     overrides that query command for wrappers and containers, e.g.
     ``"apptainer exec --rocm img.sif lmp"``.
     Returns LAMMPS's exit code (0 for a dry run, 127 if LAMMPS cannot be queried).
@@ -288,7 +300,8 @@ def run_deck(
         manifest.update(status="failed", exit_code=EXIT_NO_LAMMPS, end_time=_now())
         _write_manifest(wd, manifest)
         print(
-            f"sepsim run: cannot query LAMMPS with '{lammps['executable']} -h': "
+            f"sepsim run: cannot query LAMMPS with "
+            f"'{lammps['executable']}' (info configuration): "
             f"{lammps['error']}\n"
             "Set --lmp or SEPSIM_LMP to a working LAMMPS command, or --lmp-probe or "
             "SEPSIM_LMP_PROBE to a command that runs the LAMMPS binary.",
