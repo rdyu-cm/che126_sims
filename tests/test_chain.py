@@ -8,8 +8,12 @@ import pytest
 
 from sepsim.analysis.chain import (
     backbone_chains,
+    chain_com_rg2,
     characteristic_ratio,
+    com_msd_over_rg2,
+    decorrelation_time,
     drift_check,
+    end_to_end_autocorrelation,
     internal_distances,
     msid_check,
 )
@@ -139,3 +143,50 @@ def test_msid_check_stationary_passes_and_drift_fails():
     assert single.within_reference and single.drift is None and not single.passed
     with pytest.raises(ValueError):
         msid_check(pos[0], chains, reference=(1.0, 2.0), n_min=1000)
+
+
+def _ou_vectors(n_frames, n_chains, tau, dt=1.0, seed=0):
+    """Ornstein-Uhlenbeck vectors: <R(t).R(0)>/<R^2> = exp(-t/tau)."""
+    rng = np.random.default_rng(seed)
+    a = np.exp(-dt / tau)
+    r = np.empty((n_frames, n_chains, 3))
+    r[0] = rng.normal(size=(n_chains, 3))
+    for k in range(1, n_frames):
+        r[k] = a * r[k - 1] + np.sqrt(1 - a**2) * rng.normal(size=(n_chains, 3))
+    return r
+
+
+def test_end_to_end_autocorrelation_exponential():
+    r = _ou_vectors(2000, 200, tau=20.0)
+    lags, c = end_to_end_autocorrelation(r, dt=0.5, max_lag=200)
+    assert lags[1] == 0.5 and c[0] == 1.0
+    np.testing.assert_allclose(c[:60], np.exp(-np.arange(60) / 20.0), atol=0.03)
+    assert decorrelation_time(lags, c) == pytest.approx(10.0, rel=0.1)  # tau * dt
+    frozen = np.repeat(r[:1], 50, axis=0)
+    lags, c = end_to_end_autocorrelation(frozen, dt=1.0)
+    np.testing.assert_allclose(c, 1.0)
+    assert decorrelation_time(lags, c) is None
+
+
+def test_decorrelation_time_interpolates():
+    assert decorrelation_time([0, 1, 2], [1.0, 0.5, 0.2], level=0.35) == pytest.approx(1.5)
+    assert decorrelation_time([0, 1], [0.1, 0.0], level=0.5) == 0.0
+
+
+def test_chain_com_rg2_rod_and_masses():
+    # two molecules: a 3-site rod (spacing 1, equal masses) and a 2-site dumbbell (masses 1, 3)
+    x = np.array([[0.0, 0, 0], [1, 0, 0], [2, 0, 0], [10, 0, 0], [14, 0, 0]])
+    com, rg2 = chain_com_rg2(x, [0, 0, 0, 1, 1], [1.0, 1.0, 1.0, 1.0, 3.0])
+    np.testing.assert_allclose(com[0], [[1, 0, 0], [13, 0, 0]])
+    np.testing.assert_allclose(rg2[0], [2.0 / 3.0, (9 + 3 * 1) / 4.0])
+
+
+def test_com_msd_over_rg2_ballistic_and_box_drift():
+    n, dt = 101, 0.1
+    t = np.arange(n)[:, None, None] * dt
+    v = np.zeros((1, 4, 3))
+    v[0, :, 0] = [1.0, -1.0, 1.0, -1.0]
+    com = t * v + 5.0 * t  # every chain also drifts with the box: removed
+    lag, msd_lag, rg2_mean, ratio = com_msd_over_rg2(com, np.full((n, 4), 2.0), dt)
+    assert lag == pytest.approx(5.0) and msd_lag == pytest.approx(25.0)
+    assert rg2_mean == 2.0 and ratio == pytest.approx(12.5)

@@ -11,6 +11,9 @@ logs/
 /jobs/
 # Local throughput charts and their CSVs (make_plots.py redraws them), kept off git
 /results/benchmarks/
+# `sepsim progress` summary and the copies pulled from the other node (D45)
+/results/progress.md
+/results/progress/
 log.lammps
 log.*.lammps
 *.lammpstrj

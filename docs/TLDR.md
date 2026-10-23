@@ -58,6 +58,19 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --mem 
 - Use `--partition gpu --accel kokkos --cpus 2` on the GPU (the GPU package aborts at device init, D43) and OpenMP threads on CPU (4–8 threads; scaling flattens beyond, D43).
 - `--accel omp|mpi|gpu|kokkos` (default omp on `cpu`, gpu on `gpu`), `--ranks N` for MPI ranks (`mpirun` inside the image, no `srun --mpi=pmix`), `--partition gpu` adds `--gres=gpu:1`, `apptainer exec --rocm` and `HSA_OVERRIDE_GFX_VERSION=10.3.0`. The image is `$SEPSIM_SIF` (default `~/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif`). Benchmark variants need their own run directory, e.g. `--out results/runs/<system>/benchmark_gpu`, and `--set ensemble=nve --set dt_fs=1` for the D38 dt check.
 
+## Monitoring runs (D45)
+`sepsim progress` writes `progress.md`, `progress.json` and `progress_*.png` into each run directory: status (stalled/killed detection), segments done, ns/day, ETA, per-segment means, the prep-hold chain checks (D37 C_n, end-to-end ACF, COM MSD/⟨Rg²⟩), cooling-vs-heating hysteresis and sweep step-vs-hold flags.
+```
+uv run sepsim progress results/runs/pe_ua_amorph_n40_c240_s1/prep    # one run (--out DIR to write elsewhere)
+uv run sepsim progress --all --summary results/progress.md            # every run on this node + one table
+scripts/progress_update.sh                                            # one two-node pass -> results/progress.md
+```
+For updates every 10 min, add this line on rdyu-server with `crontab -e` (not installed by the repo):
+```
+*/10 * * * * /home/rdyu/projects/che126_sims/scripts/progress_update.sh
+```
+Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog over ssh, pulls only its progress files into `results/progress/rdyu-rog/`, and writes `results/progress.md`. It holds a lock (an overlapping pass skips), times out each step after 300 s (a down node cannot hang it) and logs to `logs/progress_update.log`. rdyu-rog needs the `progress` code (synced by `ssubmit`).
+
 ## Decisions at a glance
 **Systems**
 - Chains: 40 × C240 at every level (PE C240H482 / iPP 80-mer), ~29k atoms in all-atom.

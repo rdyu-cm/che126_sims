@@ -12,6 +12,12 @@ at most 2 combined SEMs (statistical-inefficiency SEM of the per-frame plateau).
 
 Units: positions in Angstrom; n in backbone sites (``carbons_per_site`` converts to
 carbon equivalents, 3 for SDK CG PE beads).
+
+Equilibration diagnostics over a hold (D45): the end-to-end vector autocorrelation
+<R(t).R(0)>/<R^2> (``end_to_end_autocorrelation``, ``decorrelation_time``) and the
+chain centre-of-mass MSD relative to <Rg^2> (``chain_com_rg2``, ``com_msd_over_rg2``).
+A chain has relaxed when its end-to-end vector has decorrelated (C < 1/e) and its
+centre of mass has moved at least its own size (MSD/<Rg^2> >= 1).
 """
 
 from dataclasses import dataclass
@@ -24,6 +30,8 @@ import yaml
 from sepsim.build.datafile import read_data_file
 from sepsim.build.topology import build_chain
 
+from ._corr import autocorr, check_max_lag
+from .mobility import msd
 from .stats import timeseries_mean
 
 CARBONS_PER_SITE = {"aa": 1, "ua": 1, "cg": 3}  # backbone carbons per backbone site
@@ -49,6 +57,7 @@ class MSIDResult:
     delta_sem: float | None  # sqrt(SEM_1^2 + SEM_2^2)
     drift: bool | None  # |delta| > 2 delta_sem; None if < 3 frames per half
     passed: bool  # within_reference and drift is False
+    plateau_frames: np.ndarray | None = None  # per-frame plateau (n >= n_min), in frame order
 
 
 def _frames(positions) -> np.ndarray:
@@ -157,6 +166,7 @@ def msid_check(
         delta_sem=sem,
         drift=drift,
         passed=within and drift is False,
+        plateau_frames=plateau_t,
     )
 
 
@@ -192,3 +202,74 @@ def backbone_chains(data_file, manifest) -> list[np.ndarray]:
                 raise ValueError(f"molecule {m}: backbone rows {a}, {b} are not bonded")
         chains.append(bb)
     return chains
+
+
+def end_to_end_autocorrelation(ree, dt: float, max_lag: int | None = None):
+    """End-to-end vector autocorrelation C(t) = <R(t0) . R(t0 + t)> / <R^2>.
+
+    ``ree``: (n_frames, n_chains, 3) end-to-end vectors (last minus first backbone
+    site, from unwrapped coordinates); averaged over chains and all time origins
+    (FFT). <R^2> is the mean over all frames and chains, so C(0) = 1. Returns
+    (lag_times, C) for lags 0..max_lag (default n_frames // 2), times in units of
+    ``dt``.
+    """
+    r = np.asarray(ree, dtype=float)
+    max_lag = check_max_lag(r.shape[0], max_lag)
+    c = autocorr(r, max_lag).sum(axis=2).mean(axis=1)
+    return np.arange(max_lag + 1) * dt, c / c[0]
+
+
+def decorrelation_time(lag_times, acf, level: float = float(np.exp(-1.0))) -> float | None:
+    """First time ``acf`` drops below ``level`` (default 1/e), linearly interpolated.
+
+    Returns None if it never does within the lags given.
+    """
+    t = np.asarray(lag_times, dtype=float)
+    c = np.asarray(acf, dtype=float)
+    below = np.flatnonzero(c < level)
+    if not len(below):
+        return None
+    k = int(below[0])
+    if k == 0:
+        return float(t[0])
+    return float(t[k - 1] + (c[k - 1] - level) / (c[k - 1] - c[k]) * (t[k] - t[k - 1]))
+
+
+def chain_com_rg2(positions, molecule, masses):
+    """Mass-weighted centre of mass and squared radius of gyration of every molecule.
+
+    ``positions``: (n_frames, n_atoms, 3) or (n_atoms, 3), unwrapped (whole
+    molecules); ``molecule``: (n_atoms,) molecule index 0..n_mol-1 of each atom;
+    ``masses``: (n_atoms,). Returns com (n_frames, n_mol, 3) and rg2
+    (n_frames, n_mol), Rg^2 = sum m |r - r_com|^2 / sum m.
+    """
+    x = _frames(positions)
+    mol = np.asarray(molecule, dtype=np.int64)
+    m = np.asarray(masses, dtype=float)
+    n_mol = int(mol.max()) + 1
+    mtot = np.bincount(mol, weights=m, minlength=n_mol)
+    com = np.empty((x.shape[0], n_mol, 3))
+    rg2 = np.empty((x.shape[0], n_mol))
+    for f, xf in enumerate(x):
+        for k in range(3):
+            com[f, :, k] = np.bincount(mol, weights=m * xf[:, k], minlength=n_mol) / mtot
+        d2 = np.sum((xf - com[f, mol]) ** 2, axis=1)
+        rg2[f] = np.bincount(mol, weights=m * d2, minlength=n_mol) / mtot
+    return com, rg2
+
+
+def com_msd_over_rg2(com, rg2, dt: float, max_lag: int | None = None):
+    """Chain centre-of-mass MSD at the longest lag relative to the mean Rg^2.
+
+    ``com``: (n_frames, n_chains, 3) unwrapped chain centres of mass (chains of
+    equal mass; the mean over chains is removed per frame, so a drift of the whole
+    box does not count); ``rg2``: per-frame Rg^2 (any shape, averaged). The MSD
+    uses every time origin, lags 0..max_lag (default n_frames // 2). Returns
+    (lag_time, msd_at_lag, rg2_mean, ratio = msd_at_lag / rg2_mean), with
+    lag_time in units of ``dt``; ratio >= 1 means the chains moved their own size.
+    """
+    c = np.asarray(com, dtype=float)
+    c = c - c.mean(axis=1, keepdims=True)
+    lags, m = msd(c, dt, max_lag)
+    rg2_mean = float(np.mean(rg2))
+    return float(lags[-1]), float(m[-1]), rg2_mean, float(m[-1] / rg2_mean)

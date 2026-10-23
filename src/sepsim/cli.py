@@ -112,6 +112,42 @@ def build_parser() -> argparse.ArgumentParser:
         pr.add_argument("--data", help=data_help[name])
     for name, help_text in _SUBCOMMANDS.items():
         subparsers.add_parser(name, help=help_text, description=help_text)
+    prog_help = (
+        "Write progress.md, progress.json and PNG plots for run directories (D45): status,"
+        " segments done, ns/day, ETA, per-segment means, prep-hold chain checks, cooling vs"
+        " heating hysteresis, sweep step vs hold."
+    )
+    pg = subparsers.add_parser("progress", help=prog_help, description=prog_help)
+    pg.set_defaults(progress_parser=pg)
+    pg.add_argument("run_dirs", nargs="*", metavar="RUN_DIR", help="run directories")
+    pg.add_argument("--all", action="store_true", help="every ROOT/<system>/<stage>/ with a deck")
+    pg.add_argument(
+        "--root", default="results/runs", help="runs root for --all (default %(default)s)"
+    )
+    pg.add_argument(
+        "--out",
+        metavar="DIR",
+        help="write to DIR/<system>/<stage>/ instead of into the run directories",
+    )
+    pg.add_argument(
+        "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
+    pg.add_argument("--summary", metavar="PATH", help="also write one markdown table of all runs")
+    pg.add_argument(
+        "--collect",
+        action="append",
+        default=[],
+        metavar="DIR",
+        help="summarize the progress.json files under DIR (repeatable) instead of the runs"
+        " processed here",
+    )
+    pg.add_argument(
+        "--stall-min",
+        type=float,
+        default=30.0,
+        help="minutes without a log update before a run is 'stalled?' (default %(default)s)",
+    )
+    pg.add_argument("--no-plots", action="store_true", help="skip the PNG plots")
     run_help = "Run a LAMMPS deck with `lmp` and write run_manifest.json."
     run = subparsers.add_parser(
         "run",
@@ -168,6 +204,8 @@ def main(argv: list[str] | None = None) -> int:
         return _build(args)
     if args.command == "render":
         return _render(args)
+    if args.command == "progress":
+        return _progress(args)
     print(_NOT_IMPLEMENTED.format(cmd=args.command), file=sys.stderr)
     return 2
 
@@ -198,6 +236,44 @@ def _build(args: argparse.Namespace) -> int:
         return 1
     print(sysdir)
     return 0
+
+
+def _progress(args: argparse.Namespace) -> int:
+    from sepsim import progress as pg
+
+    if not (args.run_dirs or args.all or args.collect):
+        args.progress_parser.print_help()
+        return 2
+    dirs = [Path(d) for d in args.run_dirs]
+    if args.all:
+        dirs += pg.find_runs(args.root)
+    reports, code = [], 0
+    for d in dirs:
+        try:
+            report = pg.progress_report(
+                d,
+                out=args.out,
+                systems=args.systems,
+                stall_s=args.stall_min * 60,
+                plots=not args.no_plots,
+            )
+            out_dir = pg.out_dir_for(d, args.out)
+            pg.write_report(report, out_dir)
+        except Exception as exc:  # noqa: BLE001 - one bad run directory must not stop the loop
+            print(f"sepsim progress: {d}: {type(exc).__name__}: {exc}", file=sys.stderr)
+            code = 1
+            continue
+        report["_md"] = str(out_dir / pg.MD_NAME)
+        reports.append(report)
+        print(f"{out_dir / pg.MD_NAME}: {report['status']}")
+    if args.summary:
+        if args.collect:
+            reports = pg.collect_reports(args.collect)
+        path = Path(args.summary)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(pg.summary_markdown(reports, base=path.parent))
+        print(path)
+    return code
 
 
 _JOB_OPTS = ("partition", "cpus", "ranks", "mem", "time", "node", "accel")
