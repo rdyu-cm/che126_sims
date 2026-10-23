@@ -9,6 +9,8 @@ runs/
 logs/
 # Slurm decks + job.sh from `sepsim render --job` (synced by ssubmit, never committed)
 /jobs/
+# Local throughput charts and their CSVs (make_plots.py redraws them), kept off git
+/results/benchmarks/
 log.lammps
 log.*.lammps
 *.lammpstrj
