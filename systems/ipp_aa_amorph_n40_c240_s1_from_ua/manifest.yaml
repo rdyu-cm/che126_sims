@@ -1,0 +1,50 @@
+id: ipp_aa_amorph_n40_c240_s1_from_ua
+polymer: ipp
+resolution: aa
+n_chains: 40
+n_carbons: 240
+seed: 1
+box_angstrom:
+- [0.0, 90.68621794]
+- [0.0, 90.68621794]
+- [0.0, 90.68621794]
+density_g_cm3: 0.30000000000161736
+counts:
+  per_chain: {atoms: 722, bonds: 721, angles: 1440, dihedrals: 2151}
+  total: {atoms: 28880, bonds: 28840, angles: 57600, dihedrals: 86040}
+formula:
+  per_chain: C240H482
+  total: {C: 9600, H: 19280}
+total_mass_g_mol: 134739.84
+forcefield: {name: opls2020_aa, file: opls2020_aa.yaml, sha256: d689069854bb4591e1020c7b5fb67c6c84b17dee88b85771c9e53545060c3151}
+sepsim_version: 0.1.0
+git: {commit: 9054074d057a05f28b3d6d8399d7ff8f00868ce0, dirty: false}
+overlap_minima_angstrom:
+  heavy: 3.179914244420597
+  all: 1.1017812558843028
+  local:
+    bonds: [4, 6]
+    heavy_heavy: 3.070863247214698
+    heavy_h: 1.739154333927836
+    h_h: 0.8856679528587426
+type_ids:
+  atom: {CT_CH3: 1, CT_CH3_iso: 2, CT_CH2: 3, CT_CH: 4, HC: 5}
+  bond: {CT-CT: 1, CT-HC: 2}
+  angle: {CT-CT-CT: 1, CT-CT-HC: 2, HC-CT-HC: 3}
+  dihedral: {CT-CT-CT-CT: 1, HC-CT-CT-CT: 2, HC-CT-CT-HC: 3}
+shake_bond_types: {}
+lammps_styles:
+  pair: lj/cut/coul/long
+  mixing: geometric
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 0.5]
+    coul: [0.0, 0.0, 0.5]
+conversion: {method: 'ua2aa (D32): carbons at UA positions; H placed geometrically',
+  methine_h: 'along UA explicit C-H, AA C-H length', methylene_h: 'bisector plane,
+    H-C-H theta0', methyl_h: staggered (60/180/300) against lowest-index heavy neighbour}
+source: {id: ipp_ua_amorph_n40_c240_s1, manifest_sha256: 38b4573a1b4938692479940180c192fc859b9070fd39e26a88a8fd5c7c820097,
+  data_file: relaxed.data, data_sha256: 30d4230a74085566c5c6d416f62b9fe42ec4d8926801ee2c1c1d5fa919e68bb4}

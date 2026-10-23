@@ -17,13 +17,15 @@ The repo holds the build and analysis code, templates, and force-field parameter
 - crystal data for iPP α₂ (Hikosaka & Seto 1973 Table Ia) and PE
 - phase 2: amorphous builders at all three resolutions, T1 systems in `systems/`, LAMMPS image fixes (D29–D33; commit `0507798`)
 
-**In progress:** `feat/phase3-templates` in `../worktrees/che126_sims-phase3-templates`. Render engine and templates (`_ff`, `prep`, `sweep`, `benchmark`) per D34–D39, the chain-equilibration check `sepsim.analysis.chain` (D37), and the Slurm run layout (D41).
+- phase 3: render engine and templates (`_ff`, `prep`, `sweep`, `benchmark`) per D34–D39, chain check `sepsim.analysis.chain` (D37), Slurm run layout (D41) (commit `9054074`)
+
+**In progress:** T1 production (D43). Large systems (AA PE, AA iPP from the relaxed UA box, CG C1500) queue on the rdyu-rog GPU with KOKKOS; small ones on CPU: iPP UA (rdyu-rog, 8 threads), CG C240 (rdyu-rog, 6), PE UA (rdyu-server, 4). Each sweep is chained to its prep (`--dependency=afterok`).
 
 **Scope change (D40):** melting is dropped. No crystal-slab Tm ramps and no CG crystallization cycles (~60 GPU-h freed). Crystallinity is still monitored during sweeps. Whether phase 4 builds crystals at all is decided at phase 4.
 
 **Next steps:**
-1. Finish phase 3 templates: prep (push-off → minimize → NVT 500 K → NPT compression 100 atm → 1 atm → hold → step-cool), sweep, benchmark.
-2. Run the benchmark (D38) and the UA 2 fs check, then the early CG density-vs-T check (D15).
+1. D37 chain check after each prep; decide the CG criterion (CG C240 plateau ≈ 8.3, stable, vs melt 6.7).
+2. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses.
 3. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
 
 **Rules:**
@@ -53,6 +55,7 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --mem 
 ```
 - Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.
 - Render, then `ssubmit` (not plain `sbatch`), so the deck reaches the other node. Re-render and resubmit after changes.
+- Use `--partition gpu --accel kokkos --cpus 2` on the GPU (the GPU package aborts at device init, D43) and OpenMP threads on CPU (4–8 threads; scaling flattens beyond, D43).
 - `--accel omp|mpi|gpu|kokkos` (default omp on `cpu`, gpu on `gpu`), `--ranks N` for MPI ranks (`mpirun` inside the image, no `srun --mpi=pmix`), `--partition gpu` adds `--gres=gpu:1`, `apptainer exec --rocm` and `HSA_OVERRIDE_GFX_VERSION=10.3.0`. The image is `$SEPSIM_SIF` (default `~/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif`). Benchmark variants need their own run directory, e.g. `--out results/runs/<system>/benchmark_gpu`, and `--set ensemble=nve --set dt_fs=1` for the D38 dt check.
 
 ## Decisions at a glance
