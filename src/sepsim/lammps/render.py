@@ -1,13 +1,14 @@
 """Render plain LAMMPS input decks from Jinja templates for a built system.
 
 A deck is rendered from ``templates/<protocol>.in.j2`` (``prep``, ``sweep``,
-``benchmark`` for bulk systems; ``pore`` for slit-pore systems, D44) and the system's
+``benchmark``, ``extend``, ``cool`` for bulk systems; ``pore`` for slit-pore systems,
+D44) and the system's
 ``manifest.yaml``: styles, mixing, special_bonds, type ids and SHAKE bond types come
 from the manifest; every coefficient line is emitted from the force-field YAML via
 ``sepsim.ff.params.to_lammps_real`` (the deck must not rely on data-file coefficients,
 because changing ``pair_style`` during the push-off discards them). Run parameters come
 from a per-protocol, per-resolution defaults table (decisions D12a, D12c, D12g, D20,
-D24, D25, D28, D31, D34-D39, D44), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
+D24, D25, D28, D31, D34-D39, D44, D47), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
 header lists every resolved parameter; output is deterministic (no timestamps).
 
 Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to ``lmp``.
@@ -26,7 +27,7 @@ from sepsim.ff.params import FORCEFIELD_DIR, load_forcefield, to_lammps_real
 from sepsim.run import sha256_file
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
-PROTOCOLS = ("prep", "sweep", "benchmark", "pore")
+PROTOCOLS = ("prep", "sweep", "benchmark", "pore", "extend", "cool")
 PORE_PROTOCOLS = ("pore",)  # protocols for slit-pore systems (manifest has a ``pore`` key)
 MANIFEST_NAME = "manifest.yaml"
 DATA_NAME = "data.lmp"
@@ -182,15 +183,38 @@ PORE_DEFAULTS = {
     for res in DEFAULTS
 }
 
+# Extended 500 K hold (D47): the prep's NPT hold continued from its hold.data, in
+# chunks of chunk_ps, each ending in a write_data snapshot hold_ext_<ns>ns.data.
+EXTEND_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in (*_FF_KEYS, "t_melt", "hold_dump_ps")}
+    | {"extend_ps": 80000.0, "chunk_ps": 10000.0}
+    for res in DEFAULTS
+}
+
+# Step-cool alone (D47): the prep's Stage 7 from any 500 K snapshot -> cooled.data.
+COOL_DEFAULTS = {
+    res: {
+        k: DEFAULTS[res][k]
+        for k in (*_FF_KEYS, "t_melt", "t_final", "cool_steps", "cool_step_ps", "cool_dump_ps")
+    }
+    for res in DEFAULTS
+}
+
 PROTOCOL_DEFAULTS = {
     "prep": DEFAULTS,
     "sweep": SWEEP_DEFAULTS,
     "benchmark": BENCHMARK_DEFAULTS,
     "pore": PORE_DEFAULTS,
+    "extend": EXTEND_DEFAULTS,
+    "cool": COOL_DEFAULTS,
 }
 
 # Data a protocol reads by default: a prep output in the sibling prep/ run directory.
-DEFAULT_INPUT = {"sweep": "cooled.data", "benchmark": "compressed.data"}
+DEFAULT_INPUT = {"sweep": "cooled.data", "benchmark": "compressed.data", "extend": "hold.data"}
+# Protocols that read an earlier stage's output (results/runs/<id>/<stage>/): a relative
+# --data path is taken relative to the run directory and may not exist yet. cool has no
+# default input (the extension snapshot to cool is chosen once the D47 checks pass).
+STAGE_INPUT = (*DEFAULT_INPUT, "cool")
 
 # ps-scale stages for checking that a deck runs end to end. A protocol ignores the
 # keys it does not use.
@@ -218,6 +242,9 @@ PRESETS = {
         "burst_dt_ps": 0.02,
         # pore
         "relax_ps": 1.0,
+        # extend: two chunks of 1 ps
+        "extend_ps": 2.0,
+        "chunk_ps": 1.0,
         # benchmark
         "warmup_steps": 100,
         "timed_steps": 200,
@@ -292,6 +319,8 @@ def resolve_params(
     if protocol in ("sweep", "pore"):
         parse_grid(params["sweep_grid_c"])
         _check_bursts(params)
+    if protocol == "extend" and not (params["extend_ps"] > 0 and params["chunk_ps"] > 0):
+        raise RenderError("extend_ps and chunk_ps must be > 0")
     if protocol == "benchmark" and params["ensemble"] not in BENCHMARK_ENSEMBLES:
         raise RenderError(
             f"--set ensemble: expected one of {', '.join(BENCHMARK_ENSEMBLES)},"
@@ -346,6 +375,18 @@ def _bursts(params: dict, hold_ps: float, prefix: str) -> list[dict]:
         rest = span - burst if span - burst > 1e-9 else 0.0
         chunks.append({"file": f"{prefix}_burst{k:02d}.dcd", "burst_ps": burst, "rest_ps": rest})
         t += span
+    return chunks
+
+
+def extend_chunks(params: dict) -> list[dict]:
+    """Chunks of the hold extension (D47): ``chunk_ps`` each (the last may be shorter),
+    each ending in ``hold_ext_<cumulative ns>ns`` (written as .data)."""
+    total, size = params["extend_ps"], params["chunk_ps"]
+    chunks, t = [], 0.0
+    while total - t > 1e-9:
+        ps = min(size, total - t)
+        t += ps
+        chunks.append({"ps": ps, "end_ns": t / 1000.0, "stage": f"hold_ext_{_num(t / 1000.0)}ns"})
     return chunks
 
 
@@ -499,8 +540,11 @@ def _environment() -> jinja2.Environment:
 
 
 def default_data(protocol: str, system_dir: str | Path, run_dir: str | Path | None) -> Path:
-    """Default input data: ``SYSTEM/data.lmp`` for prep and pore; for sweep/benchmark the prep
-    output (``cooled.data`` / ``compressed.data``) in the sibling ``prep/`` run directory."""
+    """Default input data: ``SYSTEM/data.lmp`` for prep and pore; for sweep/benchmark/extend
+    the prep output (``cooled.data`` / ``compressed.data`` / ``hold.data``) in the sibling
+    ``prep/`` run directory. cool has no default."""
+    if protocol == "cool":
+        raise RenderError("cool: give the data file to cool (--data), e.g. an extension snapshot")
     if protocol not in DEFAULT_INPUT:
         return Path(system_dir) / DATA_NAME
     if run_dir is None:
@@ -586,10 +630,12 @@ def render_deck(
         # step counts at the production timestep
         "n": lambda ps: steps(ps, dt),
     }
-    if protocol == "prep":
+    if protocol in ("prep", "cool"):
         t0, t1, n = params["t_melt"], params["t_final"], params["cool_steps"]
         context["cool_temps"] = [t0 + (t1 - t0) * (k + 1) / n for k in range(n)]
         context["n_push"] = lambda ps: steps(ps, params.get("pushoff_dt_fs", dt))
+    elif protocol == "extend":
+        context["chunks"] = extend_chunks(params)
     elif protocol in ("sweep", "pore"):
         context["segments"] = sweep_segments(params)
         context["n_vdos"] = lambda ps: steps(ps, params["vdos_dt_fs"])

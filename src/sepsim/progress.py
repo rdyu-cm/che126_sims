@@ -9,9 +9,16 @@ vector decorrelation, chain COM MSD / <Rg^2>), the cooling-vs-heating density
 hysteresis (prep step-cool vs sweep) and sweep step-vs-hold agreement.
 
 Segments are the deck's ``run``/``minimize`` commands in order; LAMMPS writes one
-thermo block per command, so the k-th block of the log belongs to the k-th
-segment. Names come from the deck's comment headers (``# ---- Stage 6: ...``,
-``# cool step 3/8: ...``, ``# ---- Segment 4: step at 55 C ...``).
+thermo block per command, so the k-th block of the log belongs to the k-th run.
+Consecutive ``run`` commands under one header with no ``fix``/``unfix``/``timestep``
+in between are one segment: the 1 ns chunks of a sweep or pore hold (D46) and the
+chunks of a hold extension (D47). Names come from the deck's comment headers
+(``# ---- Stage 6: ...``, ``# cool step 3/8: ...``, ``# ---- Segment 4: step at 55 C ...``).
+
+For a hold extension (``extend``, D47) the chain checks run on the sibling
+``../prep/hold.dcd`` followed by ``hold_ext.dcd`` as one trajectory, also while the
+extension runs (at most every 2 h, and only when the DCD has grown), and report the
+D47 criteria (end-to-end ACF < 1/e and COM MSD >= 2 <Rg^2> at half the combined run).
 
 Expensive results (the DCD analyses) are cached in ``progress.json``; a finished
 hold's chain check is never recomputed. A run whose manifest is finished or failed,
@@ -37,7 +44,8 @@ from sepsim.analysis.lammps_log import LogRun, read_log
 from sepsim.analysis.stats import timeseries_mean
 from sepsim.run import MANIFEST_NAME, _deck_commands
 
-REPORT_VERSION = 1
+REPORT_VERSION = 2  # 2: chunked runs are one segment (D46/D47)
+READ_VERSIONS = (1, 2)  # summaries and caches accept reports of these versions
 CHAIN_VERSION = 1  # bump to recompute cached hold chain checks
 MD_NAME, JSON_NAME = "progress.md", "progress.json"
 LOG_NAME = "log.lammps"
@@ -45,6 +53,9 @@ STALL_S = 30 * 60  # no log update for this long while not finished -> "stalled?
 KILLED_S = 6 * 3600  # ... and for this long -> "cancelled/killed?"
 RATE_WINDOW_S = 3600  # ns/day of the running segment from its last hour of thermo rows
 MAX_MSID_FRAMES = 200  # frames (evenly spaced) used for the D37 C_n check
+CHAIN_EVERY_S = 2 * 3600  # chain checks of a running hold extension: at most this often
+D47_ACF = float(np.exp(-1.0))  # D47: end-to-end vector ACF at half the run below 1/e ...
+D47_MSD_RG2 = 2.0  # ... and chain COM MSD at half the run >= 2 <Rg^2>
 N_SIGMA = 2.0  # step vs hold disagreement threshold, in combined SEMs
 FINAL = {"finished", "failed", "interrupted", "dry-run", "cancelled/killed?"}
 
@@ -76,6 +87,7 @@ class Segment:
     sweep_kind: str | None = None  # "step" / "hold"
     t_c: float | None = None  # sweep segment temperature, C
     vdos: bool = False
+    run_steps: list[int] = field(default_factory=list)  # per run/minimize command (log block)
 
 
 def _short(header: str) -> str:
@@ -89,7 +101,13 @@ def _short(header: str) -> str:
 
 
 def parse_deck(path: str | Path) -> list[Segment]:
-    """Planned segments of a rendered deck (no loops or variables in run lengths)."""
+    """Planned segments of a rendered deck (no loops or variables in run lengths).
+
+    Chunked runs (consecutive ``run`` commands under the same header with no
+    ``fix``/``unfix``/``timestep`` between them) form one segment: its ``steps`` is
+    their sum, ``run_steps`` lists them and ``dcd`` every DCD dumped in any of them
+    (e.g. a hold's burst files, D46).
+    """
     segments: list[Segment] = []
     major, sub, cool = "", None, None
     dt_fs = 1.0  # LAMMPS default for units real
@@ -97,16 +115,17 @@ def parse_deck(path: str | Path) -> list[Segment]:
     dumps: dict[str, tuple[str, int]] = {}
     lines = Path(path).read_text(errors="replace").splitlines()
     pending = []
+    joinable = False  # the next run continues the last segment
     for raw in lines:
         s = raw.strip()
         if s.startswith("#"):
             if m := _HEADER.match(s):
-                major, sub, cool = m.group(1), None, None
+                major, sub, cool, joinable = m.group(1), None, None, False
             elif m := _COOL.match(s):
-                cool = int(m.group(1))
+                cool, joinable = int(m.group(1)), False
                 sub = f"cool {m.group(1)}/{m.group(2)} ({float(m.group(3)):.1f} K)"
             elif _VDOS.match(s):
-                sub = "VDOS NVE"
+                sub, joinable = "VDOS NVE", False
             continue
         pending.append(raw)
         if raw.split("#", 1)[0].rstrip().endswith("&"):
@@ -115,19 +134,30 @@ def parse_deck(path: str | Path) -> list[Segment]:
         for tokens in commands:
             cmd = tokens[0]
             if cmd == "timestep":
-                dt_fs = float(tokens[1])
+                dt_fs, joinable = float(tokens[1]), False
             elif cmd == "fix" and len(tokens) >= 4:
-                fixes[tokens[1]] = tokens[3:]
+                fixes[tokens[1]], joinable = tokens[3:], False
             elif cmd == "unfix":
                 fixes.pop(tokens[1], None)
+                joinable = False
             elif cmd == "dump" and len(tokens) >= 6 and tokens[3] == "dcd":
                 dumps[tokens[1]] = (tokens[5], int(tokens[4]))
             elif cmd == "undump":
                 dumps.pop(tokens[1], None)
+            elif cmd == "run" and joinable:
+                seg = segments[-1]
+                n = int(float(tokens[1]))
+                seg.steps += n
+                seg.run_steps.append(n)
+                for f, every in dumps.values():
+                    if f not in seg.dcd:
+                        seg.dcd.append(f)
+                        seg.dump_every.append(every)
             elif cmd in ("run", "minimize"):
                 segments.append(
                     _segment(len(segments) + 1, cmd, tokens, dt_fs, fixes, dumps, major, sub, cool)
                 )
+                joinable = cmd == "run"
     # "(run j/n)" for headers with several runs (e.g. the two compression pressures)
     names = [s.name for s in segments]
     for k, s in enumerate(segments):
@@ -161,6 +191,7 @@ def _segment(index, cmd, tokens, dt_fs, fixes, dumps, major, sub, cool) -> Segme
         cool_step=cool,
         vdos=sub == "VDOS NVE",
     )
+    seg.run_steps = [seg.steps]  # one log thermo block per run/minimize command
     if m := _SWEEP_SEG.match(major):
         seg.sweep_index, seg.sweep_kind, seg.t_c = int(m.group(1)), m.group(2), float(m.group(3))
         seg.name = f"seg {seg.sweep_index:02d} {seg.sweep_kind} {m.group(3)} C"
@@ -235,7 +266,10 @@ def segment_stats(thermo: dict[str, np.ndarray]) -> dict:
 
 
 def hold_chain_checks(
-    dcd: Path, system_dir: Path, frame_ps: float, max_msid_frames: int = MAX_MSID_FRAMES
+    dcd: Path | list[Path],
+    system_dir: Path,
+    frame_ps: float,
+    max_msid_frames: int = MAX_MSID_FRAMES,
 ) -> dict:
     """D37 C_n check plus end-to-end decorrelation and COM MSD / <Rg^2> over a hold DCD.
 
@@ -243,6 +277,15 @@ def hold_chain_checks(
     C_n check uses up to ``max_msid_frames`` evenly spaced frames. Backbones from
     :func:`sepsim.analysis.chain.backbone_chains` on the system's data.lmp and
     manifest.yaml; molecules and masses from data.lmp.
+
+    ``dcd`` may be a list of consecutive trajectories of one continuous run (the prep
+    hold, then its extension, D47), all with frames every ``frame_ps``: they are read
+    as one, and a file's first frame is dropped when it repeats the previous file's last
+    frame (a run continued from a write_data of its last step). Otherwise the gap at a
+    boundary counts as one frame interval; for the prep hold it is shorter (its last
+    frame precedes hold.data by < 1 interval, the step counter being offset by the
+    minimizer), which is negligible over many frames. ``parts`` gives the frames taken
+    from each file and ``boundaries_ns`` where each later file starts.
     """
     import yaml
     from MDAnalysis.coordinates.DCD import DCDReader
@@ -260,6 +303,7 @@ def hold_chain_checks(
     from sepsim.analysis.mobility import msd
     from sepsim.build.datafile import read_data_file
 
+    dcds = [Path(d) for d in (dcd if isinstance(dcd, list | tuple) else [dcd])]
     man = yaml.safe_load((system_dir / "manifest.yaml").read_text())
     chains = backbone_chains(system_dir / "data.lmp", man)
     atoms = read_data_file(system_dir / "data.lmp")
@@ -275,29 +319,47 @@ def hold_chain_checks(
         bb_chains.append(np.arange(k, k + len(c)))
         k += len(c)
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        reader = DCDReader(str(dcd))
+    readers = []
     try:
-        n, n_atoms = reader.n_frames, reader.n_atoms
-        if n_atoms != len(sorted_atoms):
-            raise ValueError(f"{dcd.name}: {n_atoms} atoms, data.lmp has {len(sorted_atoms)}")
-        if n < 6:
-            raise ValueError(f"{dcd.name}: only {n} frames")
-        keep = set(np.unique(np.linspace(0, n - 1, min(n, max_msid_frames)).round().astype(int)))
-        ree = np.empty((n, len(chains), 3))
-        com = np.empty((n, int(molecule.max()) + 1, 3))
-        rg2 = np.empty((n, com.shape[1]))
-        bb = []
-        for f, ts in enumerate(reader):
-            x = ts.positions.astype(float)
-            ree[f] = x[last] - x[first]
-            c, g = chain_com_rg2(x, molecule, masses)
-            com[f], rg2[f] = c[0], g[0]
-            if f in keep:
-                bb.append(x[bb_rows])
+        for path in dcds:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", DeprecationWarning)
+                readers.append(DCDReader(str(path)))
+            if readers[-1].n_atoms != len(sorted_atoms):
+                raise ValueError(
+                    f"{path.name}: {readers[-1].n_atoms} atoms, data.lmp has {len(sorted_atoms)}"
+                )
+        n_max = sum(r.n_frames for r in readers)
+        if n_max < 6:
+            raise ValueError(f"{', '.join(d.name for d in dcds)}: only {n_max} frames")
+        # frames for the C_n check, spaced over the frames present (one fewer if a
+        # repeated frame is dropped: the last pick may then not exist)
+        spaced = np.linspace(0, n_max - 1, min(n_max, max_msid_frames)).round().astype(int)
+        pick = set(np.unique(spaced).tolist())
+        ree = np.empty((n_max, len(chains), 3))
+        com = np.empty((n_max, int(molecule.max()) + 1, 3))
+        rg2 = np.empty((n_max, com.shape[1]))
+        bb, kept, parts, prev = [], [], [], None
+        n = 0
+        for path, reader in zip(dcds, readers, strict=True):
+            taken = 0
+            for j, ts in enumerate(reader):
+                x = ts.positions.astype(float)
+                if j == 0 and prev is not None and np.allclose(x, prev, atol=1e-2):
+                    continue  # the previous file's last frame, written again at step 0
+                ree[n] = x[last] - x[first]
+                c, g = chain_com_rg2(x, molecule, masses)
+                com[n], rg2[n] = c[0], g[0]
+                if n in pick:
+                    bb.append(x[bb_rows])
+                    kept.append(n)
+                n, taken = n + 1, taken + 1
+                prev = x
+            parts.append({"file": path.name, "frames": taken})
     finally:
-        reader.close()
+        for reader in readers:
+            reader.close()
+    ree, com, rg2 = ree[:n], com[:n], rg2[:n]
 
     res = man["resolution"]
     cg = res == "cg"
@@ -313,10 +375,13 @@ def hold_chain_checks(
     t_1e = decorrelation_time(lags, acf)
     lag_ns, msd_a2, rg2_mean, ratio = com_msd_over_rg2(com, rg2, dt_ns)
     msd_lags, msd_curve = msd(com - com.mean(axis=1, keepdims=True), dt_ns)
+    starts = np.cumsum([p["frames"] for p in parts])[:-1]
     return {
         "frames": n,
         "frame_ps": frame_ps,
         "hold_ns": (n - 1) * dt_ns,
+        "parts": parts,
+        "boundaries_ns": [float(f"{(s - 0.5) * dt_ns:.6g}") for s in starts],
         "msid": {
             "frames_used": len(bb),
             "plateau": m.plateau,
@@ -341,13 +406,28 @@ def hold_chain_checks(
         "curves": {  # for the plots (ACF and MSD thinned to <= MAX_CURVE points)
             "n_carbons": m.n_carbons.tolist(),
             "c_n": _round(m.c_n),
-            "plateau_t_ns": (np.array(sorted(keep)) * dt_ns).tolist(),
+            "plateau_t_ns": (np.array(kept) * dt_ns).tolist(),
             "plateau_t": _round(m.plateau_frames),
             "acf_lag_ns": _round(_thin(lags)),
             "acf": _round(_thin(acf)),
             "msd_lag_ns": _round(_thin(msd_lags)),
             "msd_A2": _round(_thin(msd_curve)),
         },
+    }
+
+
+def d47_criteria(result: dict) -> dict:
+    """D47 relaxation criteria on a (combined) hold result: end-to-end vector ACF below
+    1/e and chain COM MSD >= 2 <Rg^2>, both at the longest lag (half the trajectory)."""
+    acf, ratio = result["ree_acf"]["acf_at_lag"], result["com_msd"]["ratio"]
+    acf_ok, msd_ok = acf < D47_ACF, ratio >= D47_MSD_RG2
+    return {
+        "acf": acf,
+        "lag_ns": result["ree_acf"]["lag_ns"],
+        "ratio": ratio,
+        "acf_passed": bool(acf_ok),
+        "msd_passed": bool(msd_ok),
+        "passed": bool(acf_ok and msd_ok),
     }
 
 
@@ -504,27 +584,55 @@ def _status(manifest: dict | None, log_age: float | None, has_log: bool, stall_s
     return "running"
 
 
+def _concat_thermo(runs: list[LogRun]) -> dict[str, np.ndarray]:
+    """Thermo blocks of consecutive runs as one block (columns common to all); a block's
+    first row is dropped when it repeats the previous block's last step."""
+    blocks = [r.thermo for r in runs if r.thermo.get("Step") is not None and len(r.thermo["Step"])]
+    if not blocks:
+        return {}
+    cols = [c for c in blocks[0] if all(c in b for b in blocks)]
+    parts = [blocks[0]]
+    for prev, b in pairwise(blocks):
+        skip = 1 if b["Step"][0] == prev["Step"][-1] else 0
+        parts.append({c: b[c][skip:] for c in cols})
+    return {c: np.concatenate([p[c] for p in parts]) for c in cols}
+
+
 def _segments_with_log(segments: list[Segment], log) -> tuple[list[dict], dict]:
-    """Segment dicts with state (done/running/pending), steps done and stats."""
+    """Segment dicts with state (done/running/pending), steps done and stats.
+
+    The log's thermo blocks are assigned to segments in order, ``len(run_steps)``
+    blocks each; a chunked segment is done once all its blocks are complete, and its
+    stats are over all of them concatenated.
+    """
     rows, info = [], {"current": None, "extra_runs": 0, "rate": None, "last_perf": None}
     runs = log.runs if log else []
-    info["extra_runs"] = max(0, len(runs) - len(segments))
+    planned = sum(len(seg.run_steps) for seg in segments)
+    info["extra_runs"] = max(0, len(runs) - planned)
+    start = 0
     for k, seg in enumerate(segments):
         d = asdict(seg)
-        run = runs[k] if k < len(runs) else None
-        if run is None:
-            d.update(state="pending", steps_done=0, stats=None)
-        elif run.complete:
-            stats = segment_stats(run.thermo) if seg.command == "run" else None
-            d.update(state="done", steps_done=seg.steps, stats=stats)
-            if run.ns_per_day is not None:
+        mine = runs[start : start + len(seg.run_steps)]
+        start += len(seg.run_steps)
+        for run in mine:
+            if run.complete and run.ns_per_day is not None:
                 info["last_perf"] = (run.ns_per_day, run.steps_per_s, k)
+        if not mine:
+            d.update(state="pending", steps_done=0, stats=None)
+        elif len(mine) == len(seg.run_steps) and all(r.complete for r in mine):
+            stats = segment_stats(_concat_thermo(mine)) if seg.command == "run" else None
+            d.update(state="done", steps_done=seg.steps, stats=stats)
         else:
-            step = run.thermo.get("Step")
-            done = int(step[-1] - step[0]) if step is not None and len(step) else 0
+            done = 0
+            for run, n in zip(mine, seg.run_steps, strict=False):
+                if run.complete:
+                    done += n
+                else:
+                    step = run.thermo.get("Step")
+                    done += min(int(step[-1] - step[0]), n) if step is not None and len(step) else 0
+                    info["rate"] = _rate(run)
             d.update(state="running", steps_done=min(done, seg.steps), stats=None)
             info["current"] = k
-            info["rate"] = _rate(run)
         rows.append(d)
     if info["current"] is None:
         nxt = next((k for k, d in enumerate(rows) if d["state"] == "pending"), None)
@@ -539,6 +647,18 @@ def segments_for(run_dir: Path) -> list[dict] | None:
         return None
     log = read_log(run_dir / LOG_NAME) if (run_dir / LOG_NAME).is_file() else None
     return _segments_with_log(parse_deck(deck), log)[0]
+
+
+def _input_stage(deck: Path | None) -> str | None:
+    """Stage directory a deck reads its data from (``read_data ../<stage>/<file>``)."""
+    if deck is None:
+        return None
+    for line in deck.read_text(errors="replace").splitlines():
+        tokens = line.split("#", 1)[0].split()
+        if len(tokens) >= 2 and tokens[0] == "read_data":
+            parts = Path(tokens[1]).parts
+            return parts[1] if len(parts) == 3 and parts[0] == ".." else None
+    return None
 
 
 def _sibling_segments(run_dir: Path, name: str, out: str | Path | None) -> list[dict] | None:
@@ -565,7 +685,7 @@ def progress_report(
     now = dt.datetime.now().timestamp() if now is None else now
     out_dir = out_dir_for(run_dir, out)
     previous = load_json(out_dir / JSON_NAME) or {}
-    cache = previous.get("cache", {}) if previous.get("version") == REPORT_VERSION else {}
+    cache = previous.get("cache", {}) if previous.get("version") in READ_VERSIONS else {}
     manifest = load_json(run_dir / MANIFEST_NAME)
     deck = find_deck(run_dir, manifest)
     log_path = run_dir / LOG_NAME
@@ -578,7 +698,9 @@ def progress_report(
         MANIFEST_NAME: _stat(run_dir / MANIFEST_NAME),
         "deck": _stat(deck) if deck else None,
     }
-    sibling = {"sweep": "prep", "prep": "sweep"}.get(protocol)
+    sibling = {"sweep": _input_stage(deck) or "prep", "prep": "sweep", "cool": "sweep"}.get(
+        protocol
+    )
     if sibling:
         signature[f"../{sibling}/{LOG_NAME}"] = _stat(run_dir.resolve().parent / sibling / LOG_NAME)
 
@@ -653,17 +775,25 @@ def progress_report(
         report["eta"] = _iso(log_mtime + remaining / rate)
         report["remaining_h"] = remaining / rate / 3600.0
 
-    # prep hold chain checks, once the hold is complete
-    hold = next((r for r in rows if "hold.dcd" in r["dcd"]), None) if protocol == "prep" else None
+    # hold chain checks: the prep hold once complete; a hold extension also while running
+    hold_dcd = {"prep": "hold.dcd", "extend": "hold_ext.dcd"}.get(protocol)
+    hold = next((r for r in rows if hold_dcd in r["dcd"]), None) if hold_dcd else None
     if hold is not None:
-        report["hold"] = _hold_checks(run_dir, hold, system, systems, manifest, cache, report)
-    # cooling vs heating, sweep step vs hold
+        report["hold"] = _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now)
+    # cooling (prep or cool step-cool) vs heating (sweep), sweep step vs hold
     prep_rows = sweep_rows = None
     if protocol == "sweep":
-        prep_rows, sweep_rows = _sibling_segments(run_dir, "prep", out), rows
+        prep_rows, sweep_rows = _sibling_segments(run_dir, sibling, out), rows
         report["step_vs_hold"] = step_vs_hold(rows)
-    elif protocol == "prep":
-        prep_rows, sweep_rows = rows, _sibling_segments(run_dir, "sweep", out)
+    elif protocol in ("prep", "cool"):
+        sweep_rows = _sibling_segments(run_dir, "sweep", out)
+        sweep_deck = find_deck(run_dir.resolve().parent / "sweep")
+        if (
+            sweep_deck is not None
+            and (_input_stage(sweep_deck) or "prep") != run_dir.resolve().name
+        ):
+            sweep_rows = None  # that sweep started from another stage's cooled box
+        prep_rows = rows
     if prep_rows and sweep_rows:
         hyst = hysteresis(prep_rows, sweep_rows)
         if any(h["rho_sweep"] is not None for h in hyst):
@@ -701,16 +831,20 @@ def _t_points(rows: list[dict] | None, cool: bool) -> list[dict]:
 def _timeline_data(log, rows: list[dict], max_points: int = 6000):
     """Concatenated Time (ns), Density, PotEng of the MD runs, and segment start marks."""
     t, rho, pe, marks = [], [], [], []
-    for k, run in enumerate(log.runs if log else []):
+    owner = [k for k, r in enumerate(rows) for _ in r.get("run_steps") or [0]]
+    marked = set()
+    for j, run in enumerate(log.runs if log else []):
         th = run.thermo
-        if k < len(rows) and rows[k]["command"] == "minimize":
+        k = owner[j] if j < len(owner) else None
+        if k is not None and rows[k]["command"] == "minimize":
             continue
         if not all(c in th for c in ("Time", "Density", "PotEng")) or not len(th["Time"]):
             continue
         t.append(th["Time"] / 1e6)
         rho.append(th["Density"])
         pe.append(th["PotEng"])
-        if k < len(rows):
+        if k is not None and k not in marked:
+            marked.add(k)
             marks.append((float(th["Time"][0] / 1e6), f"{rows[k]['index']}"))
     if not t:
         return None
@@ -729,7 +863,8 @@ def make_plots(report, log, prep_rows, sweep_rows, out_dir: Path, previous: dict
 
     title = f"{report['system']} / {report['stage']}"
     jobs = []  # (name, title, key, draw(path))
-    if report["protocol"] == "prep" and _timeline_data(log, report["segments"], 1) is not None:
+    timeline = report["protocol"] in ("prep", "extend", "cool")
+    if timeline and _timeline_data(log, report["segments"], 1) is not None:
         jobs.append(
             (
                 "timeline",
@@ -741,31 +876,34 @@ def make_plots(report, log, prep_rows, sweep_rows, out_dir: Path, previous: dict
     hold = report.get("hold") or {}
     if "curves" in hold:
         c, ref = hold["curves"], hold["msid"]["reference"]
-        hk = ["hold", _key(c), ref]
+        marks = hold.get("boundaries_ns") or []
+        hk = ["hold", _key(c), ref, marks]
+        what = "500 K hold + extension" if hold.get("extend") else "500 K hold"
         jobs += [
             (
                 "hold_cn",
-                "500 K hold: C_n vs n",
+                f"{what}: C_n vs n",
                 hk,
                 lambda p: pp.cn_curve(p, c["n_carbons"], c["c_n"], ref, title=title),
             ),
             (
                 "hold_cn_time",
-                "500 K hold: C_n plateau vs time",
+                f"{what}: C_n plateau vs time"
+                + (" (prep/extension boundary dashed)" if marks else ""),
                 hk,
                 lambda p: pp.cn_plateau_time(
-                    p, c["plateau_t_ns"], c["plateau_t"], ref, title=title
+                    p, c["plateau_t_ns"], c["plateau_t"], ref, title=title, boundaries=marks
                 ),
             ),
             (
                 "hold_ree_acf",
-                "500 K hold: end-to-end vector ACF",
+                f"{what}: end-to-end vector ACF",
                 hk,
                 lambda p: pp.ree_acf(p, c["acf_lag_ns"], c["acf"], title=title),
             ),
             (
                 "hold_com_msd",
-                "500 K hold: chain COM MSD vs <Rg²>",
+                f"{what}: chain COM MSD vs <Rg²>",
                 hk,
                 lambda p: pp.com_msd(
                     p, c["msd_lag_ns"], c["msd_A2"], hold["com_msd"]["rg2_A2"], title=title
@@ -773,7 +911,7 @@ def make_plots(report, log, prep_rows, sweep_rows, out_dir: Path, previous: dict
             ),
         ]
     cool, sweep = _t_points(prep_rows, cool=True), _t_points(sweep_rows, cool=False)
-    if report["protocol"] == "prep" and cool:
+    if report["protocol"] in ("prep", "cool") and cool:
         jobs.append(
             (
                 "cool_vs_sweep",
@@ -814,40 +952,92 @@ def _draw_timeline(pp, path, log, rows, title):
     return pp.timeline(path, t, rho, pe, marks, title=title)
 
 
-def _hold_checks(run_dir, hold, system, systems, manifest, cache, report) -> dict:
-    out = {"segment": hold["index"], "state": hold["state"]}
-    if hold["state"] != "done":
+def _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now=None) -> dict:
+    """Chain checks of the prep hold (once complete; never recomputed) or of a hold
+    extension (D47: prep hold.dcd + hold_ext.dcd as one trajectory, also while running,
+    at most every CHAIN_EVERY_S and only when hold_ext.dcd has grown)."""
+    extend = report["protocol"] == "extend"
+    out = {"segment": hold["index"], "state": hold["state"], "extend": extend}
+    if hold["state"] != "done" and not (extend and hold["state"] == "running"):
         return out
-    dcd = run_dir / "hold.dcd"
+    name = "hold_ext.dcd" if extend else "hold.dcd"
+    dcd = run_dir / name
+    every = hold["dump_every"][hold["dcd"].index(name)]
+    frame_ps = every * hold["dt_fs"] / 1000.0
+    dcds = [dcd]
+    if extend:
+        prep_dcd, note = _prep_hold_dcd(run_dir, frame_ps)
+        if note:
+            report["notes"].append(note)
+        if prep_dcd is not None:
+            dcds.insert(0, prep_dcd)
     entry = cache.get("hold_chain")
     start = (manifest or {}).get("start_time")
-    if (
+    complete = hold["state"] == "done"
+    key = [_stat(d) for d in dcds] if extend else _stat(dcd)
+    valid = bool(
         entry
         and entry.get("version") == CHAIN_VERSION
-        and entry.get("complete")
         and entry.get("start_time") == start
-    ):
-        out.update(entry["result"], cached=True)
-        return out
+        and (entry.get("files") == [d.name for d in dcds] if extend else entry.get("complete"))
+    )
+    if valid:
+        if entry.get("complete"):
+            fresh = True  # computed on the finished hold: never recomputed
+        elif complete:
+            fresh = False  # the extension just finished: final computation
+        else:  # running extension: throttled, and only when the trajectory has grown
+            age = now - entry["computed_at"] if now and entry.get("computed_at") else None
+            grown = [k and k[0] for k in entry.get("key") or []] != [k and k[0] for k in key]
+            fresh = not grown or (age is not None and age < CHAIN_EVERY_S)
+        if fresh:
+            out.update(entry["result"], cached=True, computed_at=entry.get("computed_at"))
+            return out
     if not dcd.is_file():
-        out["error"] = "hold.dcd not found"
+        out["error"] = f"{name} not found"
         return out
-    every = hold["dump_every"][hold["dcd"].index("hold.dcd")]
-    frame_ps = every * hold["dt_fs"] / 1000.0
     try:
-        result = hold_chain_checks(dcd, Path(systems) / system, frame_ps)
+        result = hold_chain_checks(dcds, Path(systems) / system, frame_ps)
     except (OSError, ValueError, KeyError) as exc:
+        if valid:  # e.g. a frame being written: keep the last result
+            report["notes"].append(f"chain check failed, showing the cached one: {exc}")
+            out.update(entry["result"], cached=True, computed_at=entry.get("computed_at"))
+            return out
         out["error"] = f"{type(exc).__name__}: {exc}"
         return out
+    if extend:
+        result["d47"] = d47_criteria(result)
     cache["hold_chain"] = {
         "version": CHAIN_VERSION,
-        "complete": True,
+        "complete": complete,
         "start_time": start,
-        "key": _stat(dcd),
+        "files": [d.name for d in dcds],
+        "key": key,
+        "computed_at": now,
         "result": result,
     }
-    out.update(result, cached=False)
+    out.update(result, cached=False, computed_at=now)
     return out
+
+
+def _prep_hold_dcd(run_dir: Path, frame_ps: float) -> tuple[Path | None, str | None]:
+    """The sibling prep's hold.dcd for a hold extension, if present and with the same
+    frame interval (checked against the prep deck when there is one); else a note."""
+    prep = run_dir.resolve().parent / "prep"
+    dcd = prep / "hold.dcd"
+    if not dcd.is_file():
+        return None, "../prep/hold.dcd not found: chain checks use the extension alone"
+    deck = find_deck(prep, load_json(prep / MANIFEST_NAME))
+    if deck is not None:
+        seg = next((g for g in parse_deck(deck) if "hold.dcd" in g.dcd), None)
+        if seg is not None:
+            prep_ps = seg.dump_every[seg.dcd.index("hold.dcd")] * seg.dt_fs / 1000.0
+            if abs(prep_ps - frame_ps) > 1e-9:
+                return None, (
+                    f"../prep/hold.dcd has frames every {prep_ps:g} ps, the extension"
+                    f" {frame_ps:g} ps: chain checks use the extension alone"
+                )
+    return dcd, None
 
 
 def _flags(report: dict) -> list[str]:
@@ -860,6 +1050,13 @@ def _flags(report: dict) -> list[str]:
         if m["drift"]:
             why.append("drift")
         flags.append(f"D37 {ok} C_n {m['plateau']:.2f}" + (f" ({', '.join(why)})" if why else ""))
+        if "d47" in hold:
+            d = hold["d47"]
+            flags.append(
+                f"D47 {'PASS' if d['passed'] else 'FAIL'} (ACF {d['acf']:.2f} at"
+                f" {d['lag_ns']:.1f} ns; MSD/Rg2 {d['ratio']:.2f}; {hold['hold_ns']:.1f} ns)"
+            )
+            return _other_flags(report, flags)
         a = hold["ree_acf"]
         t = a["t_1e_ns"]
         flags.append(
@@ -870,6 +1067,10 @@ def _flags(report: dict) -> list[str]:
         flags.append(f"MSD/Rg2 {hold['com_msd']['ratio']:.2f}")
     elif "error" in hold:
         flags.append(f"hold check: {hold['error'][:60]}")
+    return _other_flags(report, flags)
+
+
+def _other_flags(report: dict, flags: list[str]) -> list[str]:
     drift = [
         str(s["index"])
         for s in report.get("segments", [])
@@ -986,17 +1187,31 @@ def render_markdown(r: dict) -> str:
             )
     hold = r.get("hold")
     if hold:
-        lines += ["", "## 500 K hold checks", ""]
-        if hold["state"] != "done":
-            lines.append(f"- hold (segment {hold['segment']}) not complete yet")
-        elif "error" in hold:
-            lines.append(f"- error: {hold['error']}")
+        ext = hold.get("extend")
+        lines += ["", "## 500 K hold checks" + (" (prep hold + extension, D47)" if ext else ""), ""]
+        if "msid" not in hold:
+            if "error" in hold:
+                lines.append(f"- error: {hold['error']}")
+            elif hold["state"] != "done":
+                lines.append(f"- hold (segment {hold['segment']}) not complete yet")
         else:
             m, a, c = hold["msid"], hold["ree_acf"], hold["com_msd"]
+            when = ""
+            if hold.get("computed_at"):
+                when = f", computed {_when(_iso(hold['computed_at']))}"
+            parts = hold.get("parts") or [{"file": "hold.dcd", "frames": hold["frames"]}]
             lines.append(
-                f"- hold.dcd: {hold['frames']} frames every {hold['frame_ps']:g} ps"
-                f" ({hold['hold_ns']:.1f} ns){' (cached)' if hold.get('cached') else ''}"
+                "- "
+                + " + ".join(f"{p['file']} {p['frames']} frames" for p in parts)
+                + f", every {hold['frame_ps']:g} ps ({hold['hold_ns']:.1f} ns"
+                + (" combined" if len(parts) > 1 else "")
+                + ")"
+                + (" (cached" + when + ")" if hold.get("cached") else when)
             )
+            if ext and hold["state"] != "done":
+                lines.append(
+                    f"- extension running: rechecked at most every {CHAIN_EVERY_S / 3600:g} h"
+                )
             ref = m["reference"]
             drift = (
                 "n/a"
@@ -1014,7 +1229,7 @@ def render_markdown(r: dict) -> str:
             t = a["t_1e_ns"]
             lines.append(
                 f"- end-to-end ACF <R(t)·R(0)>/<R²>: {a['acf_at_lag']:.3f} at"
-                f" {a['lag_ns']:.2f} ns (half the hold); 1/e "
+                f" {a['lag_ns']:.2f} ns (half the {'combined ' if ext else ''}hold); 1/e "
                 + (f"at {t:.2f} ns" if t is not None else "**not reached**")
                 + f"; <R²> = {a['r2_mean_A2']:.0f} Å²"
             )
@@ -1022,6 +1237,13 @@ def render_markdown(r: dict) -> str:
                 f"- chain COM MSD({c['lag_ns']:.2f} ns) = {c['msd_A2']:.0f} Å² vs"
                 f" <Rg²> = {c['rg2_A2']:.0f} Å²: ratio **{c['ratio']:.2f}**"
             )
+            if "d47" in hold:
+                d = hold["d47"]
+                lines.append(
+                    f"- D47 (ACF < 1/e: {'yes' if d['acf_passed'] else 'no'};"
+                    f" MSD ≥ {D47_MSD_RG2:g} <Rg²>: {'yes' if d['msd_passed'] else 'no'})"
+                    f" -> **{'PASS' if d['passed'] else 'FAIL'}**"
+                )
     hyst = r.get("hysteresis")
     if hyst:
         lines += [
@@ -1113,7 +1335,7 @@ def collect_reports(dirs) -> list[dict]:
     for d in dirs:
         for p in sorted(Path(d).rglob(JSON_NAME)):
             r = load_json(p)
-            if r and r.get("version") == REPORT_VERSION:
+            if r and r.get("version") in READ_VERSIONS:
                 r["_md"] = str(p.with_name(MD_NAME))
                 reports.append(r)
     return reports

@@ -135,12 +135,26 @@ def build_parser() -> argparse.ArgumentParser:
         " 5 ns), then the bulk sweep grid with its bursts; NPT on x,y only (couple xy, z fixed), plain LJ"
         " cutoff without tail correction (AA 14 A), thermo adds pxx pyy pzz."
         " Writes OUT/in.pore.",
+        "extend": "Extended 500 K hold (D47): the prep's NPT hold continued from its hold.data"
+        " (default 80 ns, --set extend_ps=...), frames every 10 ps into one hold_ext.dcd, in"
+        " chunks of chunk_ps (default 10 ns) each ending in write_data hold_ext_<ns>ns.data;"
+        " stop the job once the D47 checks pass. No cooling. Writes OUT/in.extend.",
+        "cool": "Step-cool alone (D47): the prep's 8-step cool from a 500 K snapshot (--data,"
+        " e.g. ../extend/hold_ext_60ns.data) to 298.15 K, cool.dcd, cooled.data for the"
+        " sweep (--data ../cool/cooled.data). Writes OUT/in.cool.",
     }
+    stage_rel = (
+        "; a relative path is taken relative to OUT (the run directory) unless it exists"
+        " only relative to the current directory, and may not exist yet (made by an earlier"
+        " stage; job.sh checks it at run time)"
+    )
     data_help = {
         "prep": "data file to start from (default: SYSTEM/data.lmp)",
-        "sweep": "data file to start from (default: OUT/../prep/cooled.data)",
-        "benchmark": "data file to start from (default: OUT/../prep/compressed.data)",
+        "sweep": "data file to start from (default: OUT/../prep/cooled.data)" + stage_rel,
+        "benchmark": "data file to start from (default: OUT/../prep/compressed.data)" + stage_rel,
         "pore": "data file to start from (default: SYSTEM/data.lmp)",
+        "extend": "data file to start from (default: OUT/../prep/hold.data)" + stage_rel,
+        "cool": "data file to cool (required), e.g. ../extend/hold_ext_60ns.data" + stage_rel,
     }
     for name, help_text in protocol_help.items():
         pr = protocols.add_parser(name, help=help_text, description=help_text, parents=[common])
@@ -149,8 +163,9 @@ def build_parser() -> argparse.ArgumentParser:
         subparsers.add_parser(name, help=help_text, description=help_text)
     prog_help = (
         "Write progress.md, progress.json and PNG plots for run directories (D45): status,"
-        " segments done, ns/day, ETA, per-segment means, prep-hold chain checks, cooling vs"
-        " heating hysteresis, sweep step vs hold."
+        " segments done, ns/day, ETA, per-segment means, prep-hold chain checks (prep hold +"
+        " extension and the D47 criteria for an extend run), cooling vs heating hysteresis,"
+        " sweep step vs hold."
     )
     pg = subparsers.add_parser("progress", help=prog_help, description=prog_help)
     pg.set_defaults(progress_parser=pg)
@@ -324,6 +339,19 @@ def _progress(args: argparse.Namespace) -> int:
 _JOB_OPTS = ("partition", "cpus", "ranks", "mem", "time", "node", "accel")
 
 
+def _data_path(given: str | None, run_dir: Path, stage_input: bool) -> Path | None:
+    """``--data`` as a path. For protocols reading an earlier stage's output a relative
+    path is relative to the run directory (like their defaults, e.g. ../cool/cooled.data),
+    unless it exists only relative to the current directory."""
+    if given is None:
+        return None
+    path = Path(given)
+    if not stage_input or path.is_absolute():
+        return path
+    in_run = (run_dir / path).resolve()  # the run directory itself may not exist yet
+    return path if path.is_file() and not in_run.is_file() else in_run
+
+
 def _render(args: argparse.Namespace) -> int:
     if args.protocol is None:
         args.render_parser.print_help()
@@ -331,7 +359,7 @@ def _render(args: argparse.Namespace) -> int:
     import yaml
 
     from sepsim.lammps.render import (
-        DEFAULT_INPUT,
+        STAGE_INPUT,
         RenderError,
         default_data,
         parse_overrides,
@@ -352,9 +380,11 @@ def _render(args: argparse.Namespace) -> int:
             project = Path.cwd().resolve()
             run_dir = run_dir.resolve()
             out = job_dir_for(project, run_dir)
-        data = Path(args.data) if args.data else default_data(args.protocol, args.system, run_dir)
-        # A defaulted input from an earlier stage may not exist yet (chained jobs).
-        missing_ok = args.data is None and args.protocol in DEFAULT_INPUT
+        data = _data_path(args.data, run_dir, args.protocol in STAGE_INPUT)
+        if data is None:
+            data = default_data(args.protocol, args.system, run_dir)
+        # An input from an earlier stage may not exist yet (chained jobs, other node).
+        missing_ok = args.protocol in STAGE_INPUT
         if missing_ok and not data.is_file():
             print(
                 f"sepsim render {args.protocol}: warning: {data} does not exist yet"

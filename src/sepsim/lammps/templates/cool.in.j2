@@ -1,0 +1,14 @@
+{#- Step-cool alone (D47): the prep's Stage 7 from a 500 K snapshot (e.g. an extension
+    snapshot hold_ext_<ns>ns.data; velocities kept): cool_steps NPT steps to t_final,
+    cool.dcd, cooled.data for `sepsim render sweep --data ../cool/cooled.data`. -#}
+{% import "_ff.in.j2" as ff with context %}
+{% import "_cool.in.j2" as cl with context %}
+{{ ff.header() -}}
+{{ ff.setup() -}}
+{{ ff.thermo() -}}
+{{ ff.shake() -}}
+# velocities come from the data file (no velocity create)
+thermo {{ n(p.thermo_ps) }}
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+{{ cl.step_cool(1) -}}

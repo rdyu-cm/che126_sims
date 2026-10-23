@@ -24,10 +24,11 @@ The repo holds the build and analysis code, templates, and force-field parameter
 **Scope change (D40):** melting is dropped. No crystal-slab Tm ramps and no CG crystallization cycles (~60 GPU-h freed). Crystallinity is still monitored during sweeps. Whether phase 4 builds crystals at all is decided at phase 4.
 
 **Next steps:**
-1. D37 chain check after each prep; decide the CG criterion (CG C240 plateau ≈ 8.3, stable, vs melt 6.7).
-2. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses.
-3. Dry pores (D44): `systems/pe_ua_pore_w10nm_n40_c240_s1` and `systems/pe_cg_pore_w10nm_n40_c240_s1` are built and smoke-tested. Two user decisions are open: how to make 3/5 nm (C240 chains stick out of a 6.4 nm wall by up to 44 Å, so only w > ~8.5 nm opens without bridging chains), and whether to keep the x,y barostat (the liquid-like slab keeps contracting in-plane). Then CG and UA pore runs on CPU; AA on the GPU after the AA preps.
-4. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
+1. D47: the UA chains are not relaxed after the 20 ns prep hold. Extend PE UA and iPP UA at 500 K (`extend`) until end-to-end ACF < 1/e and COM MSD ≥ 2⟨Rg²⟩ (expected ~60–80 ns more), then `cool` the latest snapshot, rerun the sweeps, build AA from the relaxed UA box (`ua2aa`) and the pores from it.
+2. D37 chain check after each prep; decide the CG criterion (CG C240 plateau ≈ 8.3, stable, vs melt 6.7). C1500 relies on correct construction + the no-distortion check (D47).
+3. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses.
+4. Dry pores (D44): `systems/pe_ua_pore_w10nm_n40_c240_s1` and `systems/pe_cg_pore_w10nm_n40_c240_s1` are built and smoke-tested. Two user decisions are open: how to make 3/5 nm (C240 chains stick out of a 6.4 nm wall by up to 44 Å, so only w > ~8.5 nm opens without bridging chains), and whether to keep the x,y barostat (the liquid-like slab keeps contracting in-plane). Then CG and UA pore runs on CPU; AA on the GPU after the AA preps.
+5. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
 
 **Rules:**
 - Every new design choice goes to the user, with a plain-language recommendation, before it's built.
@@ -59,14 +60,20 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --mem 
   uv run sepsim build pore --data results/runs/pe_ua_amorph_n40_c240_s1/prep/cooled.data --source systems/pe_ua_amorph_n40_c240_s1 --width-nm 10   # --replicate-z 2 for a thick wall
   uv run sepsim render pore --system systems/pe_ua_pore_w10nm_n40_c240_s1 --job --node rdyu-server --cpus 4 --mem 8G --time 7-00:00:00
   ```
+- Extended 500 K hold (D47), then re-cool and sweep from it. `extend` reads `../prep/hold.data` and writes `hold_ext.dcd` plus a snapshot `hold_ext_<ns>ns.data` every `chunk_ps` (default 10 ns of `extend_ps` = 80 ns). Watch `sepsim progress` on the extend run (it rechecks prep hold + extension at most every 2 h and prints `D47 PASS/FAIL`); once it passes, `scancel` the job and cool the latest snapshot. Relative `--data` paths of these stages are relative to the run directory, as below (move the old `sweep/` away first, or use `--out .../sweep_d47`):
+  ```
+  uv run sepsim render extend --system $S --job --node rdyu-server --cpus 4 --mem 8G --time 7-00:00:00   # --set extend_ps=80000 --set chunk_ps=10000
+  uv run sepsim render cool   --system $S --data ../extend/hold_ext_60ns.data --job --node rdyu-server --cpus 4 --mem 8G --time 2-00:00:00
+  uv run sepsim render sweep  --system $S --data ../cool/cooled.data --job --node rdyu-server --cpus 4 --mem 8G --time 7-00:00:00
+  ```
 - Sweep and pore holds write a dense 10 ps burst at 0.1 ps every 1 ns into `segNN_hold_XXC_burstKK.dcd` (D46); `--set burst_period_ps=0` turns them off.
-- Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.
+- Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`, extend `../prep/hold.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.
 - Render, then `ssubmit` (not plain `sbatch`), so the deck reaches the other node. Re-render and resubmit after changes.
 - Use `--partition gpu --accel kokkos --cpus 2` on the GPU (the GPU package aborts at device init, D43) and OpenMP threads on CPU (4–8 threads; scaling flattens beyond, D43).
 - `--accel omp|mpi|gpu|kokkos` (default omp on `cpu`, gpu on `gpu`), `--ranks N` for MPI ranks (`mpirun` inside the image, no `srun --mpi=pmix`), `--partition gpu` adds `--gres=gpu:1`, `apptainer exec --rocm` and `HSA_OVERRIDE_GFX_VERSION=10.3.0`. The image is `$SEPSIM_SIF` (default `~/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif`). Benchmark variants need their own run directory, e.g. `--out results/runs/<system>/benchmark_gpu`, and `--set ensemble=nve --set dt_fs=1` for the D38 dt check.
 
 ## Monitoring runs (D45)
-`sepsim progress` writes `progress.md`, `progress.json` and `progress_*.png` into each run directory: status (stalled/killed detection), segments done, ns/day, ETA, per-segment means, the prep-hold chain checks (D37 C_n, end-to-end ACF, COM MSD/⟨Rg²⟩), cooling-vs-heating hysteresis and sweep step-vs-hold flags.
+`sepsim progress` writes `progress.md`, `progress.json` and `progress_*.png` into each run directory: status (stalled/killed detection), segments done, ns/day, ETA, per-segment means, the prep-hold chain checks (D37 C_n, end-to-end ACF, COM MSD/⟨Rg²⟩; for an extend run on prep hold + extension with the D47 verdict), cooling-vs-heating hysteresis and sweep step-vs-hold flags. A chunked hold (D46 bursts, D47 chunks) is one segment.
 ```
 uv run sepsim progress results/runs/pe_ua_amorph_n40_c240_s1/prep    # one run (--out DIR to write elsewhere)
 uv run sepsim progress --all --summary results/progress.md            # every run on this node + one table
@@ -97,7 +104,7 @@ Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog o
 - Dry systems run at 1 atm; dry slabs are barostatted in x and y only, with z fixed. Wet pores are NPT aniso (x, y, z) at 20 bar.
 
 **Protocol**
-- Prep: soft-core push-off (AA/UA only; D34) → minimize → NVT 500 K → NPT 500 K (100 atm, then 1 atm; D35) → 500 K hold (AA 5 / UA 20 / CG 20 ns) → step-cool to 298 K (D36). Chain equilibration checked by ⟨R²(n)⟩/n (D37).
+- Prep: soft-core push-off (AA/UA only; D34) → minimize → NVT 500 K → NPT 500 K (100 atm, then 1 atm; D35) → 500 K hold (AA 5 / UA 20 / CG 20 ns) → step-cool to 298 K (D36). Chain equilibration checked by ⟨R²(n)⟩/n (D37). UA: hold extended until end-to-end ACF < 1/e and COM MSD ≥ 2⟨Rg²⟩, then re-cooled (D47).
 - One NPT sweep trajectory per system: 14 steps of ~10 °C (AA 1 / UA 2 / CG 5 ns) plus holds at 25, 90, 130, and 160 °C (AA 5 / UA 10 / CG 25 ns) (D36). Holds add a 10 ps burst at 0.1 ps every 1 ns (D46).
 - Dry pores: minimize, 25 °C surface relaxation (AA 1 / UA 2 / CG 5 ns), then the same sweep; barostat on x,y only (D44).
 - Thermal conductivity κ: rNEMD branch runs. Whether to use 4 or 2 temperatures is decided after the benchmark.

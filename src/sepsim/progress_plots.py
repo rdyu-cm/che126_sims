@@ -75,8 +75,11 @@ def cn_curve(path, n_carbons, c_n, reference, tolerance=0.10, n_min=100, title="
     return _save(fig, Path(path))
 
 
-def cn_plateau_time(path, t_ns, plateau, reference, tolerance=0.10, title="") -> Path:
-    """C_n plateau (n ≥ n_min) per frame across the hold."""
+def cn_plateau_time(
+    path, t_ns, plateau, reference, tolerance=0.10, title="", boundaries=()
+) -> Path:
+    """C_n plateau (n ≥ n_min) per frame across the hold; ``boundaries`` (ns) are drawn
+    as dashed lines (e.g. where a hold extension starts, D47)."""
     fig, ax = plt.subplots(figsize=(6, 3.5))
     lo, hi = reference
     ax.axhspan(
@@ -87,6 +90,8 @@ def cn_plateau_time(path, t_ns, plateau, reference, tolerance=0.10, title="") ->
         label=f"melt C∞ {lo:g} ±{tolerance:.0%}",
     )
     ax.plot(t_ns, plateau, ".-", ms=2, lw=0.6)
+    for k, t in enumerate(boundaries):
+        ax.axvline(t, color="0.4", ls="--", lw=0.8, label="extension starts" if k == 0 else None)
     ax.set_xlabel("hold time (ns)")
     ax.set_ylabel("C_n plateau")
     ax.set_title(title, fontsize=9)

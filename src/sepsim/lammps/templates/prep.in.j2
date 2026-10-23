@@ -2,6 +2,7 @@
     NVT relax, NPT compression, NPT hold, step-cool. Every stage writes <stage>.data
     and <stage>.restart in the run directory. -#}
 {% import "_ff.in.j2" as ff with context %}
+{% import "_cool.in.j2" as cl with context %}
 {{ ff.header() -}}
 {{ ff.setup() -}}
 {{ ff.thermo() -}}
@@ -73,14 +74,4 @@ undump hold
 unfix md
 {{ ff.write("hold") -}}
 
-# ---- Stage 7: step-cool {{ p.t_melt | num }} -> {{ p.t_final | num }} K in {{ p.cool_steps }} steps of {{ p.cool_step_ps | num }} ps at {{ p.p_atm | num }} atm -> cooled.data, cool.dcd
-dump cool all dcd {{ n(p.cool_dump_ps) }} cool.dcd
-dump_modify cool unwrap yes
-{% for t in cool_temps %}
-# cool step {{ loop.index }}/{{ p.cool_steps }}: {{ t | num }} K
-fix md all npt temp {{ t | num }} {{ t | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
-run {{ n(p.cool_step_ps) }}
-unfix md
-{% endfor %}
-undump cool
-{{ ff.write("cooled") -}}
+{{ cl.step_cool(7) -}}

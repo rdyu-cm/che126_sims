@@ -616,8 +616,17 @@ def test_benchmark_smoke_and_default_data(tmp_path, monkeypatch, capsys):
     deck = (tmp_path / "results/runs/pe_cg_amorph_n40_c240_s1/benchmark/in.benchmark").read_text()
     assert first(deck, "read_data")[1] == "../prep/compressed.data"
     assert "sha256 n/a: not present at render time" in deck
-    # an explicit --data must exist
-    assert main(["render", "benchmark", "--system", str(path), "--data", "nope.data"]) == 1
+    # an explicit relative --data is taken relative to the run directory, like the default,
+    # and may not exist yet either (D47: e.g. ../cool/cooled.data)
+    assert main(["render", "benchmark", "--system", str(path), "--data", "nope.data"]) == 0
+    assert "does not exist yet" in capsys.readouterr().err
+    assert first(deck_of(tmp_path, "benchmark"), "read_data")[1] == "nope.data"
+    # prep still needs an existing file
+    assert main(["render", "prep", "--system", str(path), "--data", "nope.data"]) == 1
+
+
+def deck_of(root, protocol, sid="pe_cg_amorph_n40_c240_s1"):
+    return (root / f"results/runs/{sid}/{protocol}/in.{protocol}").read_text()
 
 
 # ---- Slurm job scripts (D41) ----
@@ -1037,3 +1046,140 @@ def test_bursts_smoke_preset_and_pore_reset_timestep():
     )
     bench = sysdir("pe_cg_amorph_n40_c240_s1")
     assert "burst" not in render_deck("benchmark", bench, data=bench / "data.lmp")
+
+
+# ---- extended 500 K hold and stand-alone step-cool (D47) ----
+
+
+@pytest.mark.parametrize("path", SYSTEMS, ids=IDS)
+def test_extend_continues_prep_hold_in_chunks(path, tmp_path):
+    res = manifest(path)["resolution"]
+    dt = DEFAULTS[res]["dt_fs"]
+    run = tmp_path / "runs" / "x" / "extend"
+    (run.parent / "prep").mkdir(parents=True)
+    (run.parent / "prep" / "hold.data").write_text((path / "data.lmp").read_text())
+    deck = write_deck("extend", path, run).read_text()
+    cmds = commands(deck)
+    prep = render_deck("prep", path)
+    # input: the prep's hold.data (velocities kept), same FF, SHAKE, timestep, thermo
+    assert first(deck, "read_data") == ["read_data", "../prep/hold.data", "nocoeff"]
+    assert not any(c[0] in ("velocity", "minimize", "package", "suffix") for c in cmds)
+    for name in ("pair_style", "special_bonds", "timestep", "thermo_style", "neighbor"):
+        assert first(deck, name) == first(prep, name)
+    shake = [c for c in commands(prep) if c[:2] == ["fix", "shake"]]
+    assert [c for c in cmds if c[:2] == ["fix", "shake"]] == shake
+    # the prep hold's fix, 10 ps frames into one unwrapped DCD, 1 ns rolling restarts
+    hold = commands(stage(prep, 6))
+    npt = [c for c in cmds if c[:2] == ["fix", "md"]]
+    assert npt == [c for c in hold if c[:2] == ["fix", "md"]]
+    assert npt[0][4:7] == ["temp", "500", "500"]
+    assert [c for c in cmds if c[0] == "dump"] == [
+        ["dump", "hold_ext", "all", "dcd", str(round(10_000 / dt)), "hold_ext.dcd"]
+    ]
+    assert ["dump_modify", "hold_ext", "unwrap", "yes"] in cmds
+    assert ["restart", str(round(1_000_000 / dt)), "restart.a", "restart.b"] in cmds
+    # 80 ns in 8 chunks of 10 ns, a snapshot after each; no cooling
+    runs = [c[1] for c in cmds if c[0] == "run"]
+    assert runs == [str(round(10_000_000 / dt))] * 8
+    outs = [c[1] for c in cmds if c[0] == "write_data"]
+    assert outs == [f"hold_ext_{k}ns.data" for k in range(10, 90, 10)]
+    for k, c in enumerate(cmds):
+        if c[0] == "run":
+            assert cmds[k + 1][0] == "write_data"
+    assert ("pair ij" in deck) == (manifest(path)["lammps_styles"]["mixing"] == "none")
+    assert "cool" not in deck.split("# Resolved parameters:")[1]
+    assert not any(c[0] in ("write_restart", "unfix") and c[1] != "md" for c in cmds)
+    assert "# ---- Stage 1: NPT hold extension 80000 ps at 500 K" in deck
+
+
+def test_extend_last_chunk_smoke_and_bad_parameters():
+    path = sysdir("pe_ua_amorph_n40_c240_s1")
+    data = path / "data.lmp"
+    deck = render_deck("extend", path, data=data, overrides={"extend_ps": 25000})
+    cmds = commands(deck)
+    assert [c[1] for c in cmds if c[0] == "run"] == ["5000000", "5000000", "2500000"]
+    assert [c[1] for c in cmds if c[0] == "write_data"] == [
+        "hold_ext_10ns.data",
+        "hold_ext_20ns.data",
+        "hold_ext_25ns.data",
+    ]
+    smoke = commands(render_deck("extend", path, data=data, preset="smoke"))
+    assert [c[1] for c in smoke if c[0] == "run"] == ["500", "500"]
+    assert [c[1] for c in smoke if c[0] == "write_data"] == [
+        "hold_ext_0.001ns.data",
+        "hold_ext_0.002ns.data",
+    ]
+    for bad in ({"chunk_ps": 0}, {"extend_ps": -1}):
+        with pytest.raises(RenderError, match="must be > 0"):
+            render_deck("extend", path, data=data, overrides=bad)
+    with pytest.raises(RenderError, match="unknown parameter"):
+        render_deck("extend", path, data=data, overrides={"hold_ps": 1})
+
+
+@pytest.mark.parametrize("path", SYSTEMS, ids=IDS)
+def test_cool_is_the_prep_step_cool_only(path):
+    data = path / "data.lmp"
+    deck = render_deck("cool", path, data=data)
+    prep = render_deck("prep", path)
+    cmds = commands(deck)
+    assert first(deck, "read_data")[0] == "read_data"
+    assert not any(c[0] in ("velocity", "minimize") for c in cmds)
+    # the prep's Stage 7 verbatim (as Stage 1), after the same FF setup and SHAKE
+    cool = stage(deck, 1)
+    assert cool == stage(prep, 7)
+    assert [c[1] for c in cmds if c[0] == "write_data"] == ["cooled.data"]
+    assert [c[1] for c in cmds if c[0] == "dump"] == ["cool"]
+    assert len([c for c in cmds if c[:4] == ["fix", "md", "all", "npt"]]) == 8
+    shake = [c for c in commands(prep) if c[:2] == ["fix", "shake"]]
+    assert [c for c in cmds if c[:2] == ["fix", "shake"]] == shake
+    assert first(deck, "thermo_style") == first(prep, "thermo_style")
+    with pytest.raises(RenderError, match="--data"):
+        render_deck("cool", path, deck_dir=Path("results/runs/x/cool"))
+
+
+def test_cli_extend_cool_sweep_chain_jobs(tmp_path, monkeypatch, capsys):
+    """extend (default ../prep/hold.data) -> cool (--data relative to its run dir) ->
+    sweep (--data ../cool/cooled.data), none of the inputs present yet."""
+    sid = "pe_ua_amorph_n40_c240_s1"
+    monkeypatch.chdir(tmp_path)
+    base = ["--system", str(sysdir(sid)), "--job", "--time", "3-00:00:00", "--node", "n1"]
+    assert main(["render", "extend", *base, "--set", "extend_ps=60000"]) == 0
+    assert main(["render", "cool", *base, "--data", "../extend/hold_ext_60ns.data"]) == 0
+    assert main(["render", "sweep", *base, "--data", "../cool/cooled.data"]) == 0
+    err = capsys.readouterr().err
+    assert err.count("does not exist yet") == 3
+    for protocol, data in (
+        ("extend", "../prep/hold.data"),
+        ("cool", "../extend/hold_ext_60ns.data"),
+        ("sweep", "../cool/cooled.data"),
+    ):
+        job = tmp_path / "jobs" / sid / protocol
+        assert first((job / f"in.{protocol}").read_text(), "read_data")[1] == data
+        assert f"if [ ! -f {data} ]" in (job / "job.sh").read_text()
+    # cool needs --data
+    assert main(["render", "cool", "--system", str(sysdir(sid))]) == 1
+    assert "--data" in capsys.readouterr().err
+    # a path given relative to the current directory still works when it exists there
+    snap = tmp_path / "results" / "runs" / sid / "extend" / "hold_ext_10ns.data"
+    snap.parent.mkdir(parents=True, exist_ok=True)
+    snap.write_text((sysdir(sid) / "data.lmp").read_text())
+    rel = str(snap.relative_to(tmp_path))
+    assert main(["render", "cool", "--system", str(sysdir(sid)), "--data", rel]) == 0
+    deck = (tmp_path / "results" / "runs" / sid / "cool" / "in.cool").read_text()
+    assert first(deck, "read_data")[1] == "../extend/hold_ext_10ns.data"
+    assert "sha256 n/a" not in deck
+    # ... and relative to a run directory that does not exist yet
+    out = ["--out", f"results/runs/{sid}/cool_b"]
+    args = [
+        "render",
+        "cool",
+        "--system",
+        str(sysdir(sid)),
+        "--data",
+        "../extend/hold_ext_10ns.data",
+    ]
+    assert main([*args, *out]) == 0
+    assert "does not exist yet" not in capsys.readouterr().err
+    deck = (tmp_path / "results" / "runs" / sid / "cool_b" / "in.cool").read_text()
+    assert first(deck, "read_data")[1] == "../extend/hold_ext_10ns.data"
+    assert "sha256 n/a" not in deck

@@ -303,3 +303,257 @@ def test_extra_burst_dumps_are_listed_not_fatal(tmp_path):
     segs = pg.parse_deck(tmp_path / "in.prep")
     assert segs[-1].dcd == ["seg01_hold_25C_burst1.dcd"] and segs[-1].steps == 40
     assert segs[-2].dcd == [] and sum(s.steps for s in segs) == 100
+
+
+# ---- chunked holds (D46) and hold extensions (D47) ----
+
+PORE = SYSTEMS / "pe_ua_pore_w10nm_n40_c240_s1"
+
+
+@pytest.mark.parametrize(("protocol", "system"), [("sweep", UA), ("pore", PORE)])
+def test_parse_chunked_holds_are_one_segment(tmp_path, protocol, system):
+    """A hold run in 1 ns chunks with bursts (D46) is one segment listing its burst files."""
+    _, deck = _deck(tmp_path, protocol, system=system)
+    segs = pg.parse_deck(deck)
+    md = [s for s in segs if s.sweep_index is not None]
+    assert [s.sweep_index for s in md] == list(range(1, 19))
+    holds = [s for s in md if s.sweep_kind == "hold"]
+    assert len(holds) == 4
+    for h in holds:
+        stem = f"seg{h.sweep_index:02d}_hold_{h.t_c:g}C"
+        assert h.steps == 5_000_000 and h.run_steps == [5_000, 495_000] * 10  # UA 10 ns
+        assert h.dcd == [f"{stem}.dcd"] + [f"{stem}_burst{k:02d}.dcd" for k in range(1, 11)]
+        assert h.dump_every == [5_000] + [50] * 10
+        assert h.name == f"seg {h.sweep_index:02d} hold {h.t_c:g} C"  # no "(run j/n)"
+    steps = [s for s in md if s.sweep_kind == "step"]
+    assert all(len(s.run_steps) == 1 and s.steps == 1_000_000 for s in steps)
+    # every deck run command is accounted for exactly once
+    text = deck.read_text()
+    runs = [int(ln.split()[1]) for ln in text.splitlines() if ln.startswith("run ")]
+    assert [n for s in segs for n in s.run_steps if s.command == "run"] == runs
+    if protocol == "pore":
+        assert [s.command for s in segs[:2]] == ["minimize", "run"]
+        assert segs[1].name.startswith("Stage 2: surface relaxation")
+
+
+def test_unchunked_sweep_parses_as_before(tmp_path):
+    """burst_period_ps=0 (decks before D46, e.g. the finished CG C240 sweep): one run per segment."""
+    _, deck = _deck(tmp_path, "sweep", system=CG, overrides={"burst_period_ps": 0})
+    segs = pg.parse_deck(deck)
+    assert len(segs) == 18 and all(len(s.run_steps) == 1 for s in segs)
+    assert [s.dcd for s in segs] == [[s.dcd[0]] for s in segs]
+
+
+CHUNK_DECK = """# sepsim 0.1.0 deck: sweep
+# system demo_sys (ua), seed 1
+timestep 2
+thermo_style custom step time temp density enthalpy pe cpu
+
+# ---- Segment 1: hold at 25 C (298.15 K), 0.06 ps
+fix md all npt temp 298.15 298.15 200 iso 1 1 2000
+dump traj all dcd 10 seg01_hold_25C.dcd
+dump_modify traj unwrap yes
+dump burst all dcd 1 seg01_hold_25C_burst01.dcd
+dump_modify burst unwrap yes
+run 10
+undump burst
+run 20
+dump burst all dcd 1 seg01_hold_25C_burst02.dcd
+dump_modify burst unwrap yes
+run 10
+undump burst
+run 20
+undump traj
+unfix md
+write_data hold_25C.data
+
+# ---- Segment 2: step at 35 C (308.15 K), 0.02 ps
+fix md all npt temp 308.15 308.15 200 iso 1 1 2000
+dump traj all dcd 10 seg02_step_35C.dcd
+run 40
+undump traj
+unfix md
+"""
+
+
+def _block(step0, n, rho, stride=1, cpu0=0.0):
+    rows = "".join(
+        f"  {step0 + stride * k}  {2.0 * (step0 + stride * k)}  298  {rho[k]}  -10  5"
+        f"  {cpu0 + 0.1 * k}\n"
+        for k in range(n)
+    )
+    return HEAD + rows
+
+
+def test_chunked_hold_log_state_stats_and_eta(tmp_path):
+    run = tmp_path / "runs" / "demo_sys" / "sweep"
+    run.mkdir(parents=True)
+    (run / "in.sweep").write_text(CHUNK_DECK)
+    segs = pg.parse_deck(run / "in.sweep")
+    assert len(segs) == 2 and segs[0].run_steps == [10, 20, 10, 20] and segs[0].steps == 60
+    assert segs[0].dcd == [
+        "seg01_hold_25C.dcd",
+        "seg01_hold_25C_burst01.dcd",
+        "seg01_hold_25C_burst02.dcd",
+    ]
+    rho = 0.80 + 0.001 * np.arange(61)  # one row per step across the hold
+    loop = "Loop time of 1 on 1 procs for 10 steps with 10 atoms\n"
+    perf = "Performance: 1.0 ns/day, 24 hours/ns, 10.0 timesteps/s\n"
+    blocks = [(0, 11), (10, 21), (30, 11), (40, 21)]  # each block repeats the previous last step
+    log = ""
+    for k, (s0, n) in enumerate(blocks[:3]):
+        log += _block(s0, n, rho[s0 : s0 + n]) + (loop + perf if k < 2 else "")
+    (run / "log.lammps").write_text(log[: log.rindex("\n", 0, -1) + 1])  # third chunk running
+    man = {"status": "started", "hostname": "n", "start_time": "2026-10-23T00:00:00+00:00"}
+    (run / "run_manifest.json").write_text(json.dumps(man))
+    mtime = (run / "log.lammps").stat().st_mtime
+    r = pg.progress_report(run, now=mtime + 10, plots=False)
+    hold = r["segments"][0]
+    assert r["n_segments"] == 2 and hold["state"] == "running" and r["current"]["index"] == 1
+    assert hold["steps_done"] == 30 + 9  # two complete chunk runs + 9 steps of the third
+    assert r["steps_total"] == 100 and r["percent"] == pytest.approx(39.0)
+    assert r["remaining_h"] == pytest.approx(61 / 10 / 3600)  # 10 steps per CPU second
+    assert "log has" not in " ".join(r["notes"])
+    # whole hold done: stats over the 61 distinct rows (second half: steps 30..60)
+    log = "".join(_block(s0, n, rho[s0 : s0 + n]) + loop + perf for s0, n in blocks)
+    log += _block(60, 41, np.full(41, 0.7), cpu0=0.0)
+    (run / "log.lammps").write_text(log)
+    r = pg.progress_report(run, now=mtime + 10, plots=False)
+    hold = r["segments"][0]
+    assert hold["state"] == "done" and hold["stats"]["rows"] == 61
+    assert hold["stats"]["density"]["mean"] == pytest.approx(rho[30:].mean(), rel=1e-3)
+    assert r["segments"][1]["state"] == "running" and r["current"]["index"] == 2
+
+
+def _extend_layout(tmp_path, ext_frames: int, chunks: int = 2):
+    """runs/<CG system>/{prep/hold.dcd (8 frames), extend/{in.extend, hold_ext.dcd}}."""
+    from sepsim.build.datafile import read_data_file
+
+    root = tmp_path / "runs" / CG.name
+    prep, ext = root / "prep", root / "extend"
+    prep.mkdir(parents=True)
+    ext.mkdir()
+    (prep / "in.prep").write_text(render_deck("prep", CG, deck_dir=prep, require_data=False))
+    over = {"extend_ps": 100.0 * chunks, "chunk_ps": 100.0}
+    (ext / "in.extend").write_text(
+        render_deck("extend", CG, deck_dir=ext, require_data=False, overrides=over)
+    )
+    x0 = read_data_file(CG / "data.lmp").unwrapped()
+    rng = np.random.default_rng(1)
+    frames = np.stack([x0 + 0.05 * rng.normal(size=x0.shape) for _ in range(8 + ext_frames)])
+    frames = frames.astype(np.float32)
+    _write_dcd(prep / "hold.dcd", frames[:8])
+    # the extension starts from the prep's last state: its first frame repeats it
+    _write_dcd(ext / "hold_ext.dcd", frames[7 : 8 + ext_frames])
+    man = {"status": "started", "hostname": "n", "start_time": "2026-10-23T00:00:00+00:00"}
+    (ext / "run_manifest.json").write_text(json.dumps(man))
+    return ext, frames
+
+
+def _extend_log(ext, done_chunks: int, chunks: int = 2):
+    steps = 10_000  # 100 ps at 10 fs
+    log = ""
+    for k in range(chunks if done_chunks == chunks else done_chunks + 1):
+        log += _block(k * steps, 11, np.full(11, 0.75), stride=steps // 10)
+        if k < done_chunks:
+            log += "Loop time of 1 on 1 procs for 10000 steps with 10 atoms\n"
+    (ext / "log.lammps").write_text(log)
+
+
+def test_extend_monitor_concatenates_prep_hold_and_throttles(tmp_path):
+    ext, frames = _extend_layout(tmp_path, ext_frames=6)
+    _extend_log(ext, done_chunks=1)
+    segs = pg.parse_deck(ext / "in.extend")
+    assert len(segs) == 1 and segs[0].run_steps == [10_000, 10_000]
+    assert segs[0].dcd == ["hold_ext.dcd"] and segs[0].name.startswith("Stage 1: NPT hold ext")
+    t0 = 1_000_000.0
+    out = tmp_path / "out"
+    r = pg.progress_report(ext, out=out, systems=SYSTEMS, now=t0, plots=False)
+    h = r["hold"]
+    assert h["state"] == "running" and h["extend"] and not h["cached"]
+    # 8 prep frames + 6 new extension frames (its first frame repeats the prep's last)
+    assert h["parts"] == [
+        {"file": "hold.dcd", "frames": 8},
+        {"file": "hold_ext.dcd", "frames": 6},
+    ]
+    assert h["frames"] == 14 and h["hold_ns"] == pytest.approx(0.13)
+    assert h["boundaries_ns"] == [pytest.approx(0.075)]
+    assert h["ree_acf"]["lag_ns"] == pytest.approx(0.07)  # half the combined trajectory
+    d = h["d47"]
+    assert d["passed"] is False and d["acf"] > 0.99 and d["ratio"] < 0.01
+    flag = next(f for f in r["flags"] if f.startswith("D47"))
+    assert flag.startswith("D47 FAIL (ACF 1.00 at 0.1 ns; MSD/Rg2 0.00; 0.1 ns)")
+    assert not any(f.startswith("R_ee") for f in r["flags"])
+    md = pg.render_markdown(r)
+    assert "prep hold + extension, D47" in md and "hold.dcd 8 frames + hold_ext.dcd 6" in md
+    pg.write_report(r, pg.out_dir_for(ext, out))
+
+    def again(dt_s, **kw):
+        res = pg.progress_report(ext, out=out, systems=SYSTEMS, now=t0 + dt_s, plots=False, **kw)
+        pg.write_report(res, pg.out_dir_for(ext, out))
+        return res["hold"]
+
+    # the trajectory grows: not rechecked within 2 h, rechecked after
+    _write_dcd(ext / "hold_ext.dcd", np.concatenate([frames[7:], frames[-2:]]))  # 2 more
+    h = again(3600)
+    assert h["cached"] and h["frames"] == 14 and h["computed_at"] == t0
+    h = again(3 * 3600)
+    assert not h["cached"] and h["frames"] == 16 and h["computed_at"] == t0 + 3 * 3600
+    # unchanged trajectory: kept even after 2 h
+    h = again(9 * 3600)
+    assert h["cached"] and h["computed_at"] == t0 + 3 * 3600
+    # the extension finishes: final computation, then never again
+    _extend_log(ext, done_chunks=2)
+    man = {"status": "finished", "start_time": "2026-10-23T00:00:00+00:00"}
+    (ext / "run_manifest.json").write_text(json.dumps(man))
+    h = again(9 * 3600 + 60)
+    assert h["state"] == "done" and not h["cached"]
+    with (ext / "log.lammps").open("a") as fh:  # force a re-parse of the finished run
+        fh.write("Total wall time: 0:00:09\n")
+    h = again(30 * 86400)
+    assert h["cached"] and h["computed_at"] == t0 + 9 * 3600 + 60
+
+
+def test_extend_monitor_without_prep_hold_and_plots(tmp_path):
+    ext, _ = _extend_layout(tmp_path, ext_frames=7)
+    (ext.parent / "prep" / "hold.dcd").unlink()
+    _extend_log(ext, done_chunks=1)
+    r = pg.progress_report(ext, out=tmp_path / "out", systems=SYSTEMS, now=1e6)
+    assert r["hold"]["parts"] == [{"file": "hold_ext.dcd", "frames": 8}]
+    assert r["hold"]["boundaries_ns"] == []
+    assert any("../prep/hold.dcd not found" in n for n in r["notes"])
+    assert {"timeline", "hold_cn", "hold_cn_time", "hold_ree_acf", "hold_com_msd"} <= set(
+        r["plots"]
+    )
+    assert r["plots"]["hold_cn"]["title"].startswith("500 K hold + extension")
+
+
+def test_d47_criteria():
+    def res(acf, ratio):
+        return {"ree_acf": {"acf_at_lag": acf, "lag_ns": 50.0}, "com_msd": {"ratio": ratio}}
+
+    assert pg.d47_criteria(res(0.30, 2.1))["passed"] is True
+    no_acf = pg.d47_criteria(res(0.40, 2.5))
+    assert no_acf["passed"] is False and not no_acf["acf_passed"] and no_acf["msd_passed"]
+    no_msd = pg.d47_criteria(res(0.10, 1.99))
+    assert no_msd["passed"] is False and no_msd["acf_passed"] and not no_msd["msd_passed"]
+
+
+def test_prep_hold_check_unchanged_for_prep(tmp_path):
+    """The prep keeps the single-hold check: no concatenation, no D47 flag."""
+    from sepsim.build.datafile import read_data_file
+
+    x0 = read_data_file(CG / "data.lmp").unwrapped()
+    rng = np.random.default_rng(2)
+    frames = np.stack([x0 + 0.05 * rng.normal(size=x0.shape) for _ in range(8)])
+    _write_dcd(tmp_path / "hold.dcd", frames.astype(np.float32))
+    res = pg.hold_chain_checks(tmp_path / "hold.dcd", CG, frame_ps=10.0)
+    assert res["parts"] == [{"file": "hold.dcd", "frames": 8}] and res["boundaries_ns"] == []
+    assert "d47" not in res
+
+
+def test_input_stage_picks_the_cooling_run(tmp_path):
+    (tmp_path / "in.sweep").write_text("units real\nread_data ../cool/cooled.data nocoeff\n")
+    assert pg._input_stage(tmp_path / "in.sweep") == "cool"
+    (tmp_path / "in.sweep").write_text("read_data /abs/cooled.data nocoeff\n")
+    assert pg._input_stage(tmp_path / "in.sweep") is None

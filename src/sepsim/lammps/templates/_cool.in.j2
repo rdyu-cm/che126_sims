@@ -1,0 +1,22 @@
+{#- Step-cool stage shared by the prep and cool protocols (D24, D28, D36). Import with
+    context: {% import "_cool.in.j2" as cl with context %}
+    cl.step_cool(stage) - "# ---- Stage <stage>: step-cool" header, cool_steps NPT steps
+                          from t_melt to t_final (one "# cool step k/n" each), cool.dcd,
+                          then cooled.data/.restart
+-#}
+{% import "_ff.in.j2" as ff with context %}
+{% macro step_cool(stage) %}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% set pdamp = p.pdamp_dt * p.dt_fs %}
+# ---- Stage {{ stage }}: step-cool {{ p.t_melt | num }} -> {{ p.t_final | num }} K in {{ p.cool_steps }} steps of {{ p.cool_step_ps | num }} ps at {{ p.p_atm | num }} atm -> cooled.data, cool.dcd
+dump cool all dcd {{ n(p.cool_dump_ps) }} cool.dcd
+dump_modify cool unwrap yes
+{% for t in cool_temps %}
+# cool step {{ loop.index }}/{{ p.cool_steps }}: {{ t | num }} K
+fix md all npt temp {{ t | num }} {{ t | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
+run {{ n(p.cool_step_ps) }}
+unfix md
+{% endfor %}
+undump cool
+{{ ff.write("cooled") -}}
+{% endmacro %}

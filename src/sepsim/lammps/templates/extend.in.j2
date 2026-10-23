@@ -1,0 +1,28 @@
+{#- Extended 500 K hold (D47): the prep's Stage 6 NPT hold continued from its hold.data
+    (velocities kept), same force field, SHAKE, timestep, thermostat/barostat and thermo,
+    frames every hold_dump_ps into one hold_ext.dcd across all chunks. The run is split
+    into chunks of chunk_ps, each ending in write_data hold_ext_<cumulative ns>ns.data,
+    so the job can be stopped once the D47 checks pass and the latest snapshot cooled
+    (`sepsim render cool --data ...`). No cooling here. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+{{ ff.setup() -}}
+{{ ff.thermo() -}}
+{{ ff.shake() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% set pdamp = p.pdamp_dt * p.dt_fs %}
+# velocities come from the data file (no velocity create)
+thermo {{ n(p.thermo_ps) }}
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+# ---- Stage 1: NPT hold extension {{ p.extend_ps | num }} ps at {{ p.t_melt | num }} K, {{ p.p_atm | num }} atm (D47; continues the prep's Stage 6 hold) -> hold_ext.dcd, hold_ext_<ns>ns.data
+# {{ chunks | length }} chunk(s) of up to {{ p.chunk_ps | num }} ps, each followed by a snapshot; fix md and the dump carry on across the runs
+fix md all npt temp {{ p.t_melt | num }} {{ p.t_melt | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
+dump hold_ext all dcd {{ n(p.hold_dump_ps) }} hold_ext.dcd
+dump_modify hold_ext unwrap yes
+{% for c in chunks %}
+run {{ n(c.ps) }}
+{{ ff.write_data(c.stage) -}}
+{% endfor %}
+undump hold_ext
+unfix md
