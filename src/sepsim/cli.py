@@ -50,6 +50,35 @@ def build_parser() -> argparse.ArgumentParser:
     cv.add_argument("--data", required=True, help="relaxed UA data file (LAMMPS write_data)")
     cv.add_argument("--source", required=True, help="UA system directory holding its manifest.yaml")
     cv.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
+    pore_help = (
+        "Open a dry slit pore in an equilibrated bulk box (D44): molecules made whole, slab"
+        " centred, Lz increased by the pore width; x, y, ids, types and topology kept."
+    )
+    po = kinds.add_parser("pore", help=pore_help, description=pore_help)
+    po.add_argument(
+        "--data", required=True, help="equilibrated bulk data file (e.g. prep/cooled.data)"
+    )
+    po.add_argument(
+        "--source", required=True, help="bulk system directory holding its manifest.yaml"
+    )
+    po.add_argument(
+        "--width-nm",
+        type=float,
+        required=True,
+        help="nominal (mass-equivalent) pore width in nm: Lz_new = wall + width",
+    )
+    po.add_argument(
+        "--replicate-z",
+        type=int,
+        default=1,
+        help="replicate the bulk box along z before opening (thick wall; default 1)",
+    )
+    po.add_argument(
+        "--data-origin",
+        help="where the data file came from, recorded in the manifest"
+        " (e.g. rdyu-rog:results/runs/<id>/prep/cooled.data; default: --data as given)",
+    )
+    po.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
     render = subparsers.add_parser("render", help=_RENDER_HELP, description=_RENDER_HELP)
     render.set_defaults(render_parser=render)
     protocols = render.add_subparsers(dest="protocol", metavar="protocol")
@@ -97,15 +126,21 @@ def build_parser() -> argparse.ArgumentParser:
         " compression, NPT hold, step-cool to 298.15 K (D24, D28, D31). Writes OUT/in.prep.",
         "sweep": "Temperature sweep (D11, D36): NPT 1 atm through 25-160 C, 14 steps + 4 holds"
         " (sweep_grid_c), DCD per segment, write_data at each hold end, AA VDOS NVE"
-        " velocity dumps after each hold (D12c, D39). Writes OUT/in.sweep.",
+        " velocity dumps after each hold (D12c, D39), a dense 10 ps burst at 0.1 ps every"
+        " 1 ns of each hold (D46). Writes OUT/in.sweep.",
         "benchmark": "Benchmark (D38): NPT 500 K, 1000-step warm-up + 2000 timed steps;"
         " --set ensemble=nve for the dt energy-drift check (100 ps NVE, --set dt_fs=...)."
         " Writes OUT/in.benchmark.",
+        "pore": "Dry slit pore (D44): minimize, surface relaxation at 25 C (AA 1 / UA 2 / CG"
+        " 5 ns), then the bulk sweep grid with its bursts; NPT on x,y only (couple xy, z fixed), plain LJ"
+        " cutoff without tail correction (AA 14 A), thermo adds pxx pyy pzz."
+        " Writes OUT/in.pore.",
     }
     data_help = {
         "prep": "data file to start from (default: SYSTEM/data.lmp)",
         "sweep": "data file to start from (default: OUT/../prep/cooled.data)",
         "benchmark": "data file to start from (default: OUT/../prep/compressed.data)",
+        "pore": "data file to start from (default: SYSTEM/data.lmp)",
     }
     for name, help_text in protocol_help.items():
         pr = protocols.add_parser(name, help=help_text, description=help_text, parents=[common])
@@ -216,11 +251,21 @@ def _build(args: argparse.Namespace) -> int:
         return 2
     from sepsim.build.amorphous import build_amorphous
     from sepsim.build.growth import GrowthError
+    from sepsim.build.pore import build_pore
     from sepsim.build.ua2aa import convert_ua_to_aa
 
     try:
         if args.kind == "ua2aa":
             sysdir = convert_ua_to_aa(args.data, args.source, out=args.out)
+        elif args.kind == "pore":
+            sysdir = build_pore(
+                args.data,
+                args.source,
+                args.width_nm,
+                replicate_z=args.replicate_z,
+                out=args.out,
+                data_origin=args.data_origin,
+            )
         else:
             sysdir = build_amorphous(
                 args.polymer,
@@ -285,7 +330,13 @@ def _render(args: argparse.Namespace) -> int:
         return 2
     import yaml
 
-    from sepsim.lammps.render import RenderError, default_data, parse_overrides, write_deck
+    from sepsim.lammps.render import (
+        DEFAULT_INPUT,
+        RenderError,
+        default_data,
+        parse_overrides,
+        write_deck,
+    )
     from sepsim.lammps.slurm import JobError, JobOptions, job_dir_for, write_job
 
     given = [k for k in _JOB_OPTS if getattr(args, k) is not None]
@@ -303,7 +354,7 @@ def _render(args: argparse.Namespace) -> int:
             out = job_dir_for(project, run_dir)
         data = Path(args.data) if args.data else default_data(args.protocol, args.system, run_dir)
         # A defaulted input from an earlier stage may not exist yet (chained jobs).
-        missing_ok = args.data is None and args.protocol != "prep"
+        missing_ok = args.data is None and args.protocol in DEFAULT_INPUT
         if missing_ok and not data.is_file():
             print(
                 f"sepsim render {args.protocol}: warning: {data} does not exist yet"

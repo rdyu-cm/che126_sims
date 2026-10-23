@@ -4,6 +4,7 @@
     ff.setup()   - units, styles, special_bonds, read_data, all coefficients, neighbor, timestep
     ff.pair()    - pair_style + pair_modify + pair_coeff + kspace (re-issue after a pair switch)
     ff.thermo()  - thermo_style + thermo_modify, the same columns in every protocol
+                   (pore systems add pxx pyy pzz, D44)
     ff.shake()   - fix shake on the manifest's constrained bond types (if any)
     ff.write(stage) - write_data <stage>.data + write_restart <stage>.restart
 -#}
@@ -27,8 +28,9 @@
 
 {% macro pair() %}
 pair_style {{ styles.pair }} {{ p.lj_cutoff | num }}
-{% if styles.mixing != "none" or p.tail %}
-pair_modify{% if styles.mixing != "none" %} mix {{ styles.mixing }}{% endif %}{% if p.tail %} tail yes{% endif %}
+{# pore decks state "tail no" explicitly (D44) #}
+{% if styles.mixing != "none" or p.tail or pore %}
+pair_modify{% if styles.mixing != "none" %} mix {{ styles.mixing }}{% endif %}{% if p.tail %} tail yes{% elif pore %} tail no{% endif %}
 
 {% endif %}
 {% for line in coeffs.pair %}
@@ -68,7 +70,7 @@ timestep {{ p.dt_fs | num }}
 {% endmacro %}
 
 {% macro thermo() %}
-thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz{% if pore %} pxx pyy pzz{% endif %} evdwl ecoul elong ebond eangle edihed cpu
 thermo_modify flush yes
 {% endmacro %}
 

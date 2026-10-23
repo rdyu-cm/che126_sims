@@ -112,6 +112,46 @@ def _pair_lines(ff: ForceField, real: dict, atom_ids: dict[str, int]) -> tuple[s
     return "Pair Coeffs # " + ff.styles["pair"], lines
 
 
+def coeff_sections(ff: ForceField, tm: TypeMaps) -> list[tuple[str, list[str]]]:
+    """(header, lines) of the Masses and coefficient sections for the types in ``tm``.
+
+    Each line is commented with its type name; the dihedral section is left out when
+    ``tm`` has no dihedral types.
+    """
+    real = to_lammps_real(ff)
+    out = [
+        ("Masses", [f"{i} {_num(real['atoms'][n]['mass'])}  # {n}" for n, i in tm.atom.items()]),
+        _pair_lines(ff, real, tm.atom),
+        (
+            "Bond Coeffs # " + ff.styles["bond"],
+            [
+                f"{i} {_num(real['bond'][n]['K'])} {_num(real['bond'][n]['r0'])}  # {n}"
+                for n, i in tm.bond.items()
+            ],
+        ),
+        (
+            "Angle Coeffs # " + ff.styles["angle"],
+            [
+                f"{i} {_num(real['angle'][n]['K'])} {_num(real['angle'][n]['theta0'])}  # {n}"
+                for n, i in tm.angle.items()
+            ],
+        ),
+    ]
+    if tm.dihedral:
+        out.append(
+            (
+                "Dihedral Coeffs # " + ff.styles["dihedral"],
+                [
+                    f"{i} "
+                    + " ".join(_num(real["dihedral"][n][f"K{k}"]) for k in range(1, 5))
+                    + f"  # {n}"
+                    for n, i in tm.dihedral.items()
+                ],
+            )
+        )
+    return out
+
+
 def format_data_file(
     mol: Molecule,
     ff: ForceField,
@@ -152,35 +192,8 @@ def format_data_file(
     def section(header: str, lines: list[str]) -> None:
         out.extend(["", header, "", *lines])
 
-    section(
-        "Masses",
-        [f"{i} {_num(real['atoms'][n]['mass'])}  # {n}" for n, i in tm.atom.items()],
-    )
-    section(*_pair_lines(ff, real, tm.atom))
-    section(
-        "Bond Coeffs # " + ff.styles["bond"],
-        [
-            f"{i} {_num(real['bond'][n]['K'])} {_num(real['bond'][n]['r0'])}  # {n}"
-            for n, i in tm.bond.items()
-        ],
-    )
-    section(
-        "Angle Coeffs # " + ff.styles["angle"],
-        [
-            f"{i} {_num(real['angle'][n]['K'])} {_num(real['angle'][n]['theta0'])}  # {n}"
-            for n, i in tm.angle.items()
-        ],
-    )
-    if n_dihedrals:
-        section(
-            "Dihedral Coeffs # " + ff.styles["dihedral"],
-            [
-                f"{i} "
-                + " ".join(_num(real["dihedral"][n][f"K{k}"]) for k in range(1, 5))
-                + f"  # {n}"
-                for n, i in tm.dihedral.items()
-            ],
-        )
+    for header, lines in coeff_sections(ff, tm):
+        section(header, lines)
 
     wrapped, img = wrap(positions, box)
     atype = [tm.atom[t] for t in mol.types]

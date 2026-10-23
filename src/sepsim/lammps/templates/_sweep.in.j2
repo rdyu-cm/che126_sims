@@ -1,0 +1,65 @@
+{#- Sweep segments shared by the sweep and pore protocols (D11, D12c, D36, D39). Import
+    with context: {% import "_sweep.in.j2" as sw with context %}
+    sw.grid_table()   - header table of the segments
+    sw.run_segments() - one constant-T NPT segment per entry of `segments`; the barostat
+                        keywords come from `barostat` (iso for bulk, x y couple xy for pores);
+                        holds carry dense burst dumps (D46)
+-#}
+{% import "_ff.in.j2" as ff with context %}
+{% macro grid_table() %}
+# Sweep grid ({{ p.sweep_grid_c }}; h = hold): {{ segments | selectattr("kind", "eq", "step") | list | length }} steps + {{ segments | selectattr("kind", "eq", "hold") | list | length }} holds at {{ p.p_atm | num }} atm
+#   seg  kind   T/C     T/K       ps        frame/ps  outputs
+{% for s in segments %}
+#   {{ "%-4s" | format(s.index) }} {{ "%-6s" | format(s.kind) }} {{ "%-7s" | format(s.t_c | num) }} {{ "%-9s" | format(s.t_k | num) }} {{ "%-9s" | format(s.ps | num) }} {{ "%-9s" | format(s.dump_ps | num) }} {{ s.dcd }}{% if s.stage %} {{ s.stage }}.data{% endif %}{% if s.vdos %} {{ s.vdos }}{% endif %}{% if s.bursts %} {{ s.dcd[:-4] }}_burst01-{{ "%02d" | format(s.bursts | length) }}.dcd{% endif %}
+
+{% endfor %}
+{% endmacro %}
+
+{% macro run_segments() %}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% for s in segments %}
+
+# ---- Segment {{ s.index }}: {{ s.kind }} at {{ s.t_c | num }} C ({{ s.t_k | num }} K), {{ s.ps | num }} ps, frames every {{ s.dump_ps | num }} ps -> {{ s.dcd }}
+{% if s.new_fix %}
+fix md all npt temp {{ s.t_k | num }} {{ s.t_k | num }} {{ tdamp | num }} {{ barostat }}
+{% else %}
+# same target as the previous segment: fix md continues
+{% endif %}
+dump traj all dcd {{ n(s.dump_ps) }} {{ s.dcd }}
+dump_modify traj unwrap yes
+{% if s.bursts %}
+# D46: the hold runs in {{ s.bursts | length }} chunk(s) of {{ p.burst_period_ps | num }} ps; each starts with a dense burst ({{ p.burst_len_ps | num }} ps, frames every {{ p.burst_dt_ps | num }} ps, own file); fix md and dump traj carry on across the runs
+{% for c in s.bursts %}
+dump burst all dcd {{ n(p.burst_dt_ps) }} {{ c.file }}
+dump_modify burst unwrap yes
+run {{ n(c.burst_ps) }}
+undump burst
+{% if c.rest_ps %}
+run {{ n(c.rest_ps) }}
+{% endif %}
+{% endfor %}
+{% else %}
+run {{ n(s.ps) }}
+{% endif %}
+undump traj
+{% if s.unfix %}
+unfix md
+{% endif %}
+{% if s.stage %}
+{{ ff.write(s.stage) -}}
+{% endif %}
+{% if s.vdos %}
+# VDOS (D12c, D39): NVE {{ p.vdos_ps | num }} ps at dt {{ p.vdos_dt_fs | num }} fs, velocities every {{ p.vdos_dump_fs | num }} fs -> {{ s.vdos }}
+timestep {{ p.vdos_dt_fs | num }}
+thermo {{ n_vdos(p.thermo_ps) }}
+fix vdos all nve
+dump vel all custom {{ n_vdos(p.vdos_dump_fs / 1000) }} {{ s.vdos }} id type vx vy vz
+dump_modify vel sort id
+run {{ n_vdos(p.vdos_ps) }}
+undump vel
+unfix vdos
+timestep {{ p.dt_fs | num }}
+thermo {{ n(p.thermo_ps) }}
+{% endif %}
+{% endfor %}
+{% endmacro %}

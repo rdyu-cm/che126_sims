@@ -1,13 +1,13 @@
 """Render plain LAMMPS input decks from Jinja templates for a built system.
 
 A deck is rendered from ``templates/<protocol>.in.j2`` (``prep``, ``sweep``,
-``benchmark``) and the system's
+``benchmark`` for bulk systems; ``pore`` for slit-pore systems, D44) and the system's
 ``manifest.yaml``: styles, mixing, special_bonds, type ids and SHAKE bond types come
 from the manifest; every coefficient line is emitted from the force-field YAML via
 ``sepsim.ff.params.to_lammps_real`` (the deck must not rely on data-file coefficients,
 because changing ``pair_style`` during the push-off discards them). Run parameters come
 from a per-protocol, per-resolution defaults table (decisions D12a, D12c, D12g, D20,
-D24, D25, D28, D31, D34-D39), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
+D24, D25, D28, D31, D34-D39, D44), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
 header lists every resolved parameter; output is deterministic (no timestamps).
 
 Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to ``lmp``.
@@ -26,7 +26,8 @@ from sepsim.ff.params import FORCEFIELD_DIR, load_forcefield, to_lammps_real
 from sepsim.run import sha256_file
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
-PROTOCOLS = ("prep", "sweep", "benchmark")
+PROTOCOLS = ("prep", "sweep", "benchmark", "pore")
+PORE_PROTOCOLS = ("pore",)  # protocols for slit-pore systems (manifest has a ``pore`` key)
 MANIFEST_NAME = "manifest.yaml"
 DATA_NAME = "data.lmp"
 
@@ -143,6 +144,11 @@ SWEEP_DEFAULTS = {
         "vdos_dt_fs": 1.0,
         "vdos_dump_fs": 4.0,
         "vdos_gzip": True,  # needs LAMMPS_GZIP (pipes through gzip)
+        # D46: dense bursts in every hold: burst_len_ps at burst_dt_ps (both ends written,
+        # burst_len/burst_dt + 1 frames) at the start of every burst_period_ps; 0 = off
+        "burst_period_ps": 1000.0,
+        "burst_len_ps": 10.0,
+        "burst_dt_ps": 0.1,
     }
     for res in DEFAULTS
 }
@@ -162,7 +168,26 @@ BENCHMARK_DEFAULTS = {
     for res in DEFAULTS
 }
 
-PROTOCOL_DEFAULTS = {"prep": DEFAULTS, "sweep": SWEEP_DEFAULTS, "benchmark": BENCHMARK_DEFAULTS}
+# Dry slit pore (D44): minimize, surface relaxation at the first grid point, then the bulk
+# sweep. Plain LJ cutoff at every resolution: the analytic tail correction assumes a
+# homogeneous bulk. AA cutoff 14 A (bulk 12, D25); UA stays 14, CG 15.
+PORE_DEFAULTS = {
+    res: SWEEP_DEFAULTS[res]
+    | {k: DEFAULTS[res][k] for k in ("min_etol", "min_ftol", "min_maxiter", "min_maxeval")}
+    | {
+        "tail": False,
+        "lj_cutoff": 14.0 if res == "aa" else DEFAULTS[res]["lj_cutoff"],
+        "relax_ps": {"aa": 1000.0, "ua": 2000.0, "cg": 5000.0}[res],
+    }
+    for res in DEFAULTS
+}
+
+PROTOCOL_DEFAULTS = {
+    "prep": DEFAULTS,
+    "sweep": SWEEP_DEFAULTS,
+    "benchmark": BENCHMARK_DEFAULTS,
+    "pore": PORE_DEFAULTS,
+}
 
 # Data a protocol reads by default: a prep output in the sibling prep/ run directory.
 DEFAULT_INPUT = {"sweep": "cooled.data", "benchmark": "compressed.data"}
@@ -188,6 +213,11 @@ PRESETS = {
         "step_dump_ps": 0.5,
         "sweep_hold_ps": 2.0,
         "vdos_ps": 0.2,
+        "burst_period_ps": 1.0,
+        "burst_len_ps": 0.2,
+        "burst_dt_ps": 0.02,
+        # pore
+        "relax_ps": 1.0,
         # benchmark
         "warmup_steps": 100,
         "timed_steps": 200,
@@ -259,8 +289,9 @@ def resolve_params(
             params[key] = _coerce(key, value, params[key])
     if resolution == "cg" and params.get("pushoff"):
         raise RenderError("CG has no push-off: angle_style spica cannot run with pair_style soft")
-    if protocol == "sweep":
+    if protocol in ("sweep", "pore"):
         parse_grid(params["sweep_grid_c"])
+        _check_bursts(params)
     if protocol == "benchmark" and params["ensemble"] not in BENCHMARK_ENSEMBLES:
         raise RenderError(
             f"--set ensemble: expected one of {', '.join(BENCHMARK_ENSEMBLES)},"
@@ -284,6 +315,38 @@ def parse_grid(text: str) -> list[tuple[float, bool]]:
     if len(points) < 2 and not points[0][1]:
         raise RenderError("sweep_grid_c: no segments (need a hold or at least two points)")
     return points
+
+
+def _check_bursts(params: dict) -> None:
+    """Burst parameters (D46): off at period 0, else 0 < len <= period, len a multiple of dt."""
+    period, length, dt_b = (params[k] for k in ("burst_period_ps", "burst_len_ps", "burst_dt_ps"))
+    if period == 0:
+        return
+    if period < 0 or not 0 < length <= period or dt_b <= 0:
+        raise RenderError(
+            "bursts need 0 < burst_len_ps <= burst_period_ps and burst_dt_ps > 0"
+            " (burst_period_ps=0 disables them)"
+        )
+    n_len, n_dt = steps(length, params["dt_fs"]), steps(dt_b, params["dt_fs"])
+    if n_len % n_dt:
+        raise RenderError(f"burst_len_ps {length} is not a multiple of burst_dt_ps {dt_b}")
+
+
+def _bursts(params: dict, hold_ps: float, prefix: str) -> list[dict]:
+    """Chunks of one hold (D46): a burst of burst_len_ps at the start of every
+    burst_period_ps, then the rest of the chunk; the last chunk may be shorter."""
+    period, length = params["burst_period_ps"], params["burst_len_ps"]
+    if period == 0:
+        return []
+    chunks, t, k = [], 0.0, 0
+    while hold_ps - t > 1e-9:
+        span = min(period, hold_ps - t)
+        burst = min(length, span)
+        k += 1
+        rest = span - burst if span - burst > 1e-9 else 0.0
+        chunks.append({"file": f"{prefix}_burst{k:02d}.dcd", "burst_ps": burst, "rest_ps": rest})
+        t += span
+    return chunks
 
 
 def _label(t_c: float) -> str:
@@ -315,6 +378,11 @@ def sweep_segments(params: dict) -> list[dict]:
                         if is_hold and params["vdos"]
                         else None
                     ),
+                    "bursts": (
+                        _bursts(params, params["sweep_hold_ps"], f"seg{idx:02d}_hold_{label}")
+                        if is_hold
+                        else []
+                    ),
                 }
             )
     # A hold right after the step to the same T keeps the running fix npt (no thermostat
@@ -326,6 +394,27 @@ def sweep_segments(params: dict) -> list[dict]:
         last = k == len(segments) - 1
         seg["unfix"] = last or segments[k + 1]["new_fix"] or seg["vdos"] is not None
     return segments
+
+
+def _check_burst_alignment(protocol: str, params: dict, segments: list[dict]) -> None:
+    """Every burst must start on a multiple of its dump interval, so it gets its first
+    frame and burst_len/burst_dt + 1 frames in all. The deck's step counter starts at 0
+    (read_data; the pore deck resets it after the minimization)."""
+    dt = params["dt_fs"]
+    every = steps(params["burst_dt_ps"], dt) if params["burst_period_ps"] else 0
+    step = steps(params["relax_ps"], dt) if protocol == "pore" else 0
+    for seg in segments:
+        for c in seg["bursts"]:
+            if step % every:
+                raise RenderError(
+                    f"{c['file']} would start at step {step}, not a multiple of the burst"
+                    f" interval {every}: choose durations that are multiples of burst_dt_ps"
+                )
+            step += steps(c["burst_ps"], dt) + (steps(c["rest_ps"], dt) if c["rest_ps"] else 0)
+        if not seg["bursts"]:
+            step += steps(seg["ps"], dt)
+        if seg["vdos"]:
+            step += steps(params["vdos_ps"], params["vdos_dt_fs"])
 
 
 def _num(x: float) -> str:
@@ -410,7 +499,7 @@ def _environment() -> jinja2.Environment:
 
 
 def default_data(protocol: str, system_dir: str | Path, run_dir: str | Path | None) -> Path:
-    """Default input data: ``SYSTEM/data.lmp`` for prep; for sweep/benchmark the prep
+    """Default input data: ``SYSTEM/data.lmp`` for prep and pore; for sweep/benchmark the prep
     output (``cooled.data`` / ``compressed.data``) in the sibling ``prep/`` run directory."""
     if protocol not in DEFAULT_INPUT:
         return Path(system_dir) / DATA_NAME
@@ -443,6 +532,13 @@ def render_deck(
     if not manifest_path.is_file():
         raise RenderError(f"{manifest_path}: no such file")
     manifest = yaml.safe_load(manifest_path.read_text())
+    pore = manifest.get("pore")
+    if (pore is not None) != (protocol in PORE_PROTOCOLS):
+        raise RenderError(
+            f"{manifest['id']}: the {protocol} protocol is for "
+            + ("slit-pore systems (use prep/sweep/benchmark)" if pore is None else "bulk systems")
+            + ("" if pore is None else f"; pore systems use {', '.join(PORE_PROTOCOLS)}")
+        )
     data = Path(data) if data is not None else default_data(protocol, system_dir, deck_dir)
     if require_data and not data.is_file():
         raise RenderError(f"{data}: no such file")
@@ -460,6 +556,7 @@ def render_deck(
     ff = load_forcefield(ff_path)
     styles = manifest["lammps_styles"]
     dt = params["dt_fs"]
+    p_atm, pdamp = _num(params["p_atm"]), _num(params["pdamp_dt"] * dt)
     context = {
         "p": params,
         "system": {
@@ -479,6 +576,13 @@ def render_deck(
         "special_bonds": _special_bonds(styles["special_bonds"]),
         "coeffs": coeff_lines(manifest, ff),
         "shake_types": sorted((manifest.get("shake_bond_types") or {}).values()),
+        "pore": pore,
+        # D9/D12g: iso for bulk; a slab is barostatted in x and y only (coupled), z fixed
+        "barostat": (
+            f"x {p_atm} {p_atm} {pdamp} y {p_atm} {p_atm} {pdamp} couple xy"
+            if pore is not None
+            else f"iso {p_atm} {p_atm} {pdamp}"
+        ),
         # step counts at the production timestep
         "n": lambda ps: steps(ps, dt),
     }
@@ -486,9 +590,11 @@ def render_deck(
         t0, t1, n = params["t_melt"], params["t_final"], params["cool_steps"]
         context["cool_temps"] = [t0 + (t1 - t0) * (k + 1) / n for k in range(n)]
         context["n_push"] = lambda ps: steps(ps, params.get("pushoff_dt_fs", dt))
-    elif protocol == "sweep":
+    elif protocol in ("sweep", "pore"):
         context["segments"] = sweep_segments(params)
         context["n_vdos"] = lambda ps: steps(ps, params["vdos_dt_fs"])
+        context["relax_t_k"] = parse_grid(params["sweep_grid_c"])[0][0] + 273.15
+        _check_burst_alignment(protocol, params, context["segments"])
     return _environment().get_template(f"{protocol}.in.j2").render(context)
 
 

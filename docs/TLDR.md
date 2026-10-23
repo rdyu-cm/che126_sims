@@ -7,7 +7,7 @@
 
 The repo holds the build and analysis code, templates, and force-field parameters. Production runs on a separate workstation with a budget under 500 GPU-h.
 
-**Status (2026-10-20):** design is done; every decision is in [`decisions.md`](decisions.md). Phase 2 is merged; phase 3 is in progress.
+**Status (2026-10-23):** design is done; every decision is in [`decisions.md`](decisions.md). Phase 2 is merged; phase 3 is in progress; stage 2 dry pores (D44) are built on `feat/dry-pores` for 10 nm only (3/5 nm blocked, see next steps).
 
 **Done and merged into `main`:**
 - phase 0: uv package skeleton
@@ -26,7 +26,8 @@ The repo holds the build and analysis code, templates, and force-field parameter
 **Next steps:**
 1. D37 chain check after each prep; decide the CG criterion (CG C240 plateau ≈ 8.3, stable, vs melt 6.7).
 2. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses.
-3. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
+3. Dry pores (D44): `systems/pe_ua_pore_w10nm_n40_c240_s1` and `systems/pe_cg_pore_w10nm_n40_c240_s1` are built and smoke-tested. Two user decisions are open: how to make 3/5 nm (C240 chains stick out of a 6.4 nm wall by up to 44 Å, so only w > ~8.5 nm opens without bridging chains), and whether to keep the x,y barostat (the liquid-like slab keeps contracting in-plane). Then CG and UA pore runs on CPU; AA on the GPU after the AA preps.
+4. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
 
 **Rules:**
 - Every new design choice goes to the user, with a plain-language recommendation, before it's built.
@@ -53,6 +54,12 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --mem 
 ~/projects/slurm-setup/bin/ssubmit ~/projects/che126_sims jobs/pe_ua_amorph_n40_c240_s1/sweep/job.sh --dependency=afterok:<prep job id>
 ~/projects/slurm-setup/bin/scollect ~/projects/che126_sims   # copy results/ and logs/ back
 ```
+- Dry pores (D44): build from the bulk prep output, then render the `pore` protocol (it reads the pore system's `data.lmp`, so it can run on either node):
+  ```
+  uv run sepsim build pore --data results/runs/pe_ua_amorph_n40_c240_s1/prep/cooled.data --source systems/pe_ua_amorph_n40_c240_s1 --width-nm 10   # --replicate-z 2 for a thick wall
+  uv run sepsim render pore --system systems/pe_ua_pore_w10nm_n40_c240_s1 --job --node rdyu-server --cpus 4 --mem 8G --time 7-00:00:00
+  ```
+- Sweep and pore holds write a dense 10 ps burst at 0.1 ps every 1 ns into `segNN_hold_XXC_burstKK.dcd` (D46); `--set burst_period_ps=0` turns them off.
 - Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.
 - Render, then `ssubmit` (not plain `sbatch`), so the deck reaches the other node. Re-render and resubmit after changes.
 - Use `--partition gpu --accel kokkos --cpus 2` on the GPU (the GPU package aborts at device init, D43) and OpenMP threads on CPU (4–8 threads; scaling flattens beyond, D43).
@@ -80,9 +87,9 @@ Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog o
 **Morphologies**
 - Amorphous bulk.
 - ~~Crystal slab with free surfaces for Tm~~: dropped (D40).
-- Slit pores (slab + gap in a 3D-periodic box):
-  - widths 3/5/10 nm at AA/UA
-  - 20–50 nm dry pore at CG
+- Slit pores (slab + gap in a 3D-periodic box; D44: wall = one equilibrated bulk box, gap opened along z, plain LJ cutoff without tail correction, AA 14 Å):
+  - widths 3/5/10 nm at AA/UA (only 10 nm buildable so far)
+  - CG C240 3/5/10 nm plus a 2×-thick wall; 20–50 nm dry pore at CG
   - wall ablation: amorphous vs crystal-core + amorphous skin
 
 **Electrolyte**
@@ -91,7 +98,8 @@ Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog o
 
 **Protocol**
 - Prep: soft-core push-off (AA/UA only; D34) → minimize → NVT 500 K → NPT 500 K (100 atm, then 1 atm; D35) → 500 K hold (AA 5 / UA 20 / CG 20 ns) → step-cool to 298 K (D36). Chain equilibration checked by ⟨R²(n)⟩/n (D37).
-- One NPT sweep trajectory per system: 14 steps of ~10 °C (AA 1 / UA 2 / CG 5 ns) plus holds at 25, 90, 130, and 160 °C (AA 5 / UA 10 / CG 25 ns) (D36).
+- One NPT sweep trajectory per system: 14 steps of ~10 °C (AA 1 / UA 2 / CG 5 ns) plus holds at 25, 90, 130, and 160 °C (AA 5 / UA 10 / CG 25 ns) (D36). Holds add a 10 ps burst at 0.1 ps every 1 ns (D46).
+- Dry pores: minimize, 25 °C surface relaxation (AA 1 / UA 2 / CG 5 ns), then the same sweep; barostat on x,y only (D44).
 - Thermal conductivity κ: rNEMD branch runs. Whether to use 4 or 2 temperatures is decided after the benchmark.
 - Cp: dH/dT plus a VDOS quantum correction (all-atom).
 - Timesteps: AA 1 fs flexible / UA 2 fs (flexible backbone, SHAKE only on the explicit methine C–H; fallback 1 fs) / CG 10 fs.

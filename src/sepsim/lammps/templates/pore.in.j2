@@ -1,0 +1,40 @@
+{#- Dry slit pore (D9, D44): the slab (pore system data.lmp, velocities from the bulk
+    prep) is minimized, relaxed at the first grid temperature, then run through the same
+    sweep as the bulk (D11, D36, D39). Barostat on x and y only (coupled), z fixed: never
+    across the vacuum. Plain LJ cutoff without tail correction; thermo adds pxx pyy pzz
+    for the surface tension gamma = (Lz/2) [Pzz - (Pxx + Pyy)/2]. -#}
+{% import "_ff.in.j2" as ff with context %}
+{% import "_sweep.in.j2" as sw with context %}
+{{ ff.header() -}}
+# Pore: nominal width {{ pore.nominal_width_nm | num }} nm, wall {{ pore.wall_thickness_angstrom | num }} A (replicate_z {{ pore.replicate_z }}), Lz {{ pore.lz_new_angstrom | num }} A (fixed)
+{{ sw.grid_table() -}}
+{{ ff.setup() -}}
+{{ ff.thermo() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+# ---- Stage 1: minimize the opened slab
+thermo 100
+minimize {{ p.min_etol }} {{ p.min_ftol }} {{ p.min_maxiter }} {{ p.min_maxeval }}
+{{ ff.write("minimized") -}}
+# the minimizer advanced the step counter: restart it so dump intervals line up with segment starts (D46)
+reset_timestep 0
+{% if shake_types %}
+
+# ---- SHAKE on the constrained bond types (after the minimization)
+{{ ff.shake() -}}
+{% endif %}
+
+# ---- Stage 2: surface relaxation {{ p.relax_ps | num }} ps at {{ relax_t_k | num }} K, x,y at {{ p.p_atm | num }} atm -> relaxed.data, relax.dcd; then the sweep segments
+# velocities come from the data file (no velocity create)
+thermo {{ n(p.thermo_ps) }}
+fix md all npt temp {{ relax_t_k | num }} {{ relax_t_k | num }} {{ tdamp | num }} {{ barostat }}
+dump relax all dcd {{ n(p.hold_dump_ps) }} relax.dcd
+dump_modify relax unwrap yes
+run {{ n(p.relax_ps) }}
+undump relax
+unfix md
+{{ ff.write("relaxed") -}}
+{{ sw.run_segments() -}}
