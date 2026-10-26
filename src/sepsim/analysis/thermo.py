@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .stats import linear_fit
-from .units import A3_CM3, AVOGADRO, KCAL_J
+from .stats import linear_fit, timeseries_mean
+from .units import A3_CM3, AVOGADRO, KB_J_PER_K, KCAL_J
 
 
 def density(mass_gmol, volume_A3):
@@ -114,3 +114,44 @@ def heat_capacity_classical(T, H_kcalmol, mass_gmol, H_err=None, T_window=None) 
     slope, _, slope_err, _ = linear_fit(T, H, H_err)
     to_jg = KCAL_J / float(mass_gmol)
     return HeatCapacity(slope, slope_err, slope * to_jg, slope_err * to_jg, len(T))
+
+
+@dataclass
+class Compressibility:
+    """Isothermal compressibility from NPT volume fluctuations, with its SEM."""
+
+    kappa_T: float  # 1/GPa
+    kappa_T_sem: float  # 1/GPa
+    V_mean: float  # Angstrom^3
+    V_std: float  # Angstrom^3 (population, ddof = 0)
+    g: float  # statistical inefficiency of (V - <V>)^2
+    n_samples: int
+
+
+def isothermal_compressibility(V_A3, T_K: float, mintime: int = 3) -> Compressibility:
+    """kappa_T = (<V^2> - <V>^2) / (k_B T <V>) from an NPT volume series.
+
+    The standard isothermal-isobaric fluctuation formula (Allen & Tildesley,
+    Computer Simulation of Liquids, 2nd ed., OUP 2017, sec. 2.5); valid for an
+    ensemble that samples NPT fluctuations correctly (e.g. Nose-Hoover/MTK ``fix
+    npt``, not a Berendsen barostat). ``V_A3``: box volumes in Angstrom^3, sampled
+    at equal intervals after equilibration; ``T_K``: the ensemble temperature.
+    SEM: the variance is the mean of s = (V - <V>)^2, so its SEM is the
+    statistical-inefficiency SEM of s (:func:`sepsim.analysis.stats.timeseries_mean`,
+    D26); the uncertainty of <V> (relative ~1e-4) is neglected. Returns 1/GPa.
+    """
+    v = np.asarray(V_A3, dtype=float)
+    if len(v) < 3:
+        raise ValueError("need at least 3 volume samples")
+    dv2 = (v - v.mean()) ** 2
+    s = timeseries_mean(dv2, mintime)
+    # A^6 / (J * A^3) = 1e-30 m^3 / J = 1e-30 1/Pa; 1/GPa = 1e9 1/Pa
+    to_gpa = 1e-30 * 1e9 / (KB_J_PER_K * float(T_K) * float(v.mean()))
+    return Compressibility(
+        kappa_T=s.mean * to_gpa,
+        kappa_T_sem=s.sem * to_gpa,
+        V_mean=float(v.mean()),
+        V_std=float(np.sqrt(s.mean)),
+        g=s.g,
+        n_samples=len(v),
+    )

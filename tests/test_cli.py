@@ -14,11 +14,10 @@ def test_version_flag_prints_version(capsys):
     assert __version__ in capsys.readouterr().out
 
 
-@pytest.mark.parametrize("command", ["analyze"])
-def test_subcommands_are_stubs(command, capsys):
-    """Stub subcommands: exit code 2 and a message on stderr."""
-    assert main([command]) == 2
-    assert "not implemented yet" in capsys.readouterr().err
+def test_analyze_without_analysis_prints_help(capsys):
+    """`sepsim analyze` alone prints the analyze help and returns 2."""
+    assert main(["analyze"]) == 2
+    assert "sweep" in capsys.readouterr().out
 
 
 def test_build_without_kind_prints_help(capsys):

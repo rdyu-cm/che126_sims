@@ -1,8 +1,11 @@
 """Chain mobility: mean-squared displacement and bond-vector reorientation."""
 
+from dataclasses import dataclass
+
 import numpy as np
 
 from ._corr import autocorr, check_max_lag
+from .stats import linear_fit
 
 
 def msd(positions_unwrapped, dt: float, max_lag: int | None = None):
@@ -47,3 +50,125 @@ def p2_autocorrelation(vectors, dt: float, max_lag: int | None = None):
     products = (u[..., :, None] * u[..., None, :]).reshape(u.shape[0], u.shape[1], 9)
     c = 1.5 * autocorr(products, max_lag).sum(axis=2).mean(axis=1) - 0.5
     return np.arange(max_lag + 1) * dt, c
+
+
+def mean_over_batches(fn, x, dt: float, max_lag: int, batch_elems: int = 4_000_000):
+    """``fn(x[:, batch], dt, max_lag)`` (:func:`msd` or :func:`p2_autocorrelation`)
+    averaged over batches of the second axis, weighted by batch size.
+
+    Both functions average over that axis, so this equals ``fn(x, dt, max_lag)``
+    while bounding the FFT work array to about ``batch_elems`` complex values
+    (frames are zero-padded to the next power of two >= 2 n_frames - 1; P2 uses 9
+    components per vector, MSD 3).
+    """
+    x = np.asarray(x)
+    nfft = 1 << (2 * x.shape[0] - 1).bit_length()
+    comps = 9 if fn is p2_autocorrelation else 3
+    size = max(1, batch_elems // (nfft * comps))
+    total, lags = None, None
+    for k in range(0, x.shape[1], size):
+        part = x[:, k : k + size]
+        lags, c = fn(part.astype(float), dt, max_lag)
+        total = c * part.shape[1] if total is None else total + c * part.shape[1]
+    return lags, total / x.shape[1]
+
+
+def average_curves(curves):
+    """Average (lags, values, n_frames) curves of several short trajectories (bursts).
+
+    Each curve is weighted at lag index m by its number of time origins n_frames - m;
+    lags must share one spacing. Returns (lags, values) up to the longest curve.
+    """
+    curves = list(curves)
+    if not curves:
+        raise ValueError("no curves")
+    n = max(len(c[0]) for c in curves)
+    total, weight = np.zeros(n), np.zeros(n)
+    lags = max((c[0] for c in curves), key=len)
+    for lag, val, n_frames in curves:
+        m = np.arange(len(val))
+        w = n_frames - m
+        total[: len(val)] += w * np.asarray(val, dtype=float)
+        weight[: len(val)] += w
+    return np.asarray(lags, dtype=float), total / weight
+
+
+def stitch_curves(short_lags, short_vals, long_lags, long_vals):
+    """One curve from a finely sampled short trajectory and a coarse long one.
+
+    Keeps the short curve (e.g. 0.1 ps burst frames) for lags below the long curve's
+    first nonzero lag (its frame interval, e.g. 10 ps) and the long curve (more time
+    origins) from that lag on. Returns (lags, values, source) with source 0 for
+    short and 1 for long points.
+    """
+    sl, sv = np.asarray(short_lags, dtype=float), np.asarray(short_vals, dtype=float)
+    ll, lv = np.asarray(long_lags, dtype=float), np.asarray(long_vals, dtype=float)
+    first = ll[ll > 0][0] if np.any(ll > 0) else np.inf
+    keep_s = sl < first * (1 - 1e-9)
+    keep_l = ll >= first * (1 - 1e-9)
+    lags = np.concatenate([sl[keep_s], ll[keep_l]])
+    vals = np.concatenate([sv[keep_s], lv[keep_l]])
+    src = np.concatenate([np.zeros(keep_s.sum(), int), np.ones(keep_l.sum(), int)])
+    return lags, vals, src
+
+
+@dataclass
+class DiffusionFit:
+    """Outcome of :func:`diffusion_coefficient`."""
+
+    diffusive: bool  # a trailing range with local log-slope >= min_slope was found
+    D: float | None  # MSD units per lag unit (e.g. A^2/ns), MSD = 2 dim D t + c
+    D_err: float | None  # from the OLS slope error (correlated points: a lower bound)
+    t_start: float | None  # fit range in lag units
+    t_end: float | None
+    slope_end: float  # local log-slope at the longest lag
+    slope_max: float  # largest local log-slope over the curve
+
+
+def local_log_slope(lags, values, factor: float = 1.25):
+    """d ln(values) / d ln(lag) on a log-spaced subset of the positive lags.
+
+    Points are picked so successive lags grow by at least ``factor`` (which smooths
+    the dense long-lag tail); returns (lags_subset, slope) from np.gradient.
+    """
+    t, y = np.asarray(lags, dtype=float), np.asarray(values, dtype=float)
+    ok = (t > 0) & (y > 0)
+    t, y = t[ok], y[ok]
+    pick, last = [], -np.inf
+    for k, tk in enumerate(t):
+        if tk >= last * factor:
+            pick.append(k)
+            last = tk
+    if pick[-1] != len(t) - 1:
+        pick.append(len(t) - 1)
+    t, y = t[pick], y[pick]
+    if len(t) < 2:
+        raise ValueError("need at least 2 positive lags")
+    return t, np.gradient(np.log(y), np.log(t))
+
+
+def diffusion_coefficient(
+    lags, msd_values, min_slope: float = 0.9, min_span: float = 2.0, dim: int = 3
+) -> DiffusionFit:
+    """Self-diffusion coefficient from the diffusive (Fickian) end of an MSD curve.
+
+    Criterion: the local log-slope (:func:`local_log_slope`) is >= ``min_slope`` at
+    every point from some lag t_start up to the longest lag t_end, and t_end /
+    t_start >= ``min_span``. Then D = slope / (2 dim) of an OLS line through the MSD
+    points with t_start <= t <= t_end; otherwise ``diffusive`` is False and D None.
+    """
+    t, s = local_log_slope(lags, msd_values)
+    k = len(s)
+    while k > 0 and s[k - 1] >= min_slope:
+        k -= 1
+    slope_end, slope_max = float(s[-1]), float(s.max())
+    if k == len(s) or t[-1] / t[k] < min_span:
+        return DiffusionFit(False, None, None, None, None, slope_end, slope_max)
+    lag, m = np.asarray(lags, dtype=float), np.asarray(msd_values, dtype=float)
+    sel = (lag >= t[k]) & (lag <= t[-1])
+    if sel.sum() < 3:
+        return DiffusionFit(False, None, None, None, None, slope_end, slope_max)
+    slope, _, err, _ = linear_fit(lag[sel], m[sel])
+    return DiffusionFit(
+        True, slope / (2 * dim), err / (2 * dim), float(t[k]), float(t[-1]), slope_end, slope_max
+    )

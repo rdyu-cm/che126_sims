@@ -14,9 +14,7 @@ _NOT_IMPLEMENTED = "sepsim {cmd}: not implemented yet (see docs/decisions.md, Im
 
 _BUILD_HELP = "Build system configurations and LAMMPS data files."
 _RENDER_HELP = "Render LAMMPS input decks from Jinja templates."
-_SUBCOMMANDS = {
-    "analyze": "Analyze trajectories and thermo output.",
-}
+_ANALYZE_HELP = "Analyze finished runs (thermo output and trajectories)."
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -198,8 +196,32 @@ def build_parser() -> argparse.ArgumentParser:
     for name, help_text in protocol_help.items():
         pr = protocols.add_parser(name, help=help_text, description=help_text, parents=[common])
         pr.add_argument("--data", help=data_help[name])
-    for name, help_text in _SUBCOMMANDS.items():
-        subparsers.add_parser(name, help=help_text, description=help_text)
+    an = subparsers.add_parser("analyze", help=_ANALYZE_HELP, description=_ANALYZE_HELP)
+    an.set_defaults(analyze_parser=an)
+    analyses = an.add_subparsers(dest="analysis", metavar="analysis")
+    sweep_help = (
+        "Bulk NPT sweep (D49): per-segment T, density, enthalpy (mean ± SEM; steps second"
+        " half, holds without their first 10%%), κ_T from the hold volume fluctuations, α_V"
+        " and classical Cp fits (25-160, 25-90, 90-160 C), and per hold from its DCD and"
+        " D46 burst DCDs: backbone-site and chain COM MSD, D_COM, bond P2 autocorrelation,"
+        " Rg, R_ee, C_n. Writes results.md, results.json and PNGs to"
+        " results/analysis/<system>/<stage>/ (or --out). Pore runs are not supported yet."
+    )
+    sw = analyses.add_parser("sweep", help=sweep_help, description=sweep_help)
+    sw.add_argument("run_dir", metavar="RUN_DIR", help="sweep run directory (in.sweep, log.lammps)")
+    sw.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
+    )
+    sw.add_argument(
+        "--max-frames",
+        type=int,
+        default=500,
+        help="evenly spaced hold frames for the C_n plateau (default %(default)s)",
+    )
+    sw.add_argument("--no-traj", action="store_true", help="thermo only: skip the DCD analyses")
+    sw.add_argument(
+        "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
     prog_help = (
         "Write progress.md, progress.json and PNG plots for run directories (D45): status,"
         " segments done, ns/day, ETA, per-segment means, prep-hold chain checks (prep hold +"
@@ -295,6 +317,8 @@ def main(argv: list[str] | None = None) -> int:
         return _render(args)
     if args.command == "progress":
         return _progress(args)
+    if args.command == "analyze":
+        return _analyze(args)
     print(_NOT_IMPLEMENTED.format(cmd=args.command), file=sys.stderr)
     return 2
 
@@ -361,6 +385,28 @@ def _build_pore(args: argparse.Namespace, build_pore) -> Path:
     return narrow_pore(
         args.data, args.source, args.width_nm, table, out=args.out, data_origin=args.data_origin
     )
+
+
+def _analyze(args: argparse.Namespace) -> int:
+    if args.analysis is None:
+        args.analyze_parser.print_help()
+        return 2
+    from sepsim.analyze import AnalyzeError, analyze_sweep, write_results
+
+    try:
+        report, out_dir = analyze_sweep(
+            args.run_dir,
+            out=args.out,
+            systems=args.systems,
+            max_frames=args.max_frames,
+            traj=not args.no_traj,
+        )
+        write_results(report, out_dir)
+    except (AnalyzeError, OSError) as exc:
+        print(f"sepsim analyze sweep: error: {exc}", file=sys.stderr)
+        return 1
+    print(out_dir / "results.md")
+    return 0
 
 
 def _progress(args: argparse.Namespace) -> int:

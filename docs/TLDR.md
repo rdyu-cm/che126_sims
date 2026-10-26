@@ -26,7 +26,7 @@ The repo holds the build and analysis code, templates, and force-field parameter
 **Next steps:**
 1. D47: the UA chains are not relaxed after the 20 ns prep hold. Extend PE UA and iPP UA at 500 K (`extend`) until end-to-end ACF < 1/e and COM MSD ≥ 2⟨Rg²⟩ (expected ~60–80 ns more), then `cool` the latest snapshot, rerun the sweeps, build AA from the relaxed UA box (`ua2aa`) and the pores from it.
 2. D37 chain check after each prep; decide the CG criterion (CG C240 plateau ≈ 8.3, stable, vs melt 6.7). C1500 relies on correct construction + the no-distortion check (D47).
-3. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses.
+3. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses (`sepsim analyze sweep`, D49; run it where the hold DCDs are).
 4. Dry pores (D48): CG C240 first (its bulk sweep is done): `pore_relax` on `systems/pe_cg_pore500k_w10nm_n40_c240_s1`, narrow to 3/5/10 nm, `pore` runs on CPU (commands below; a 300 ps smoke relaxation already let 3 nm open without bridging). UA after D47 passes and the UA sweeps are rerun (wide pore from the extension snapshot). AA later on the GPU after the AA preps.
 5. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
 
@@ -89,6 +89,12 @@ For updates every 10 min, add this line on rdyu-server with `crontab -e` (not in
 Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog over ssh, pulls only its progress files into `results/progress/rdyu-rog/`, and writes `results/progress.md`. It holds a lock (an overlapping pass skips), times out each step after 300 s (a down node cannot hang it) and logs to `logs/progress_update.log`. rdyu-rog needs the `progress` code (synced by `ssubmit`).
 
 **Viewing trajectories (OVITO in the browser):** `scripts/viewer.sh` on rdyu-server starts Jupyter Lab (localhost only) on `scripts/view.ipynb`; from the laptop `ssh -N -L 8888:localhost:8888 rdyu-server` and open the printed URL. Or open `scripts/view.ipynb` in VS Code (Remote-SSH; the notebook's default kernel is `ovito-viewer`, registered once with the line in `viewer.sh`; Remote Settings `"python.venvFolders": ["projects/installations"]` lets VS Code find the environment; setting `"jupyter.widgetScriptSources": ["jsdelivr.com", "unpkg.com"]`). Paste a DCD path (VS Code *Copy Path*, or `rdyu-rog:<path>`) into `v.load_path(...)`; the notebook (`scripts/ovito_view.py`) loads the system's `data.lmp` plus that DCD and draws it with `STYLE` (top of `ovito_view.py`: wrap into the box, color by chain or `"z"` for pores, hydrogens hidden, radii, bond width, camera) in a rotatable viewport with a frame slider. `node="rdyu-rog"` copies that DCD into `results/viewer/rdyu-rog/` first (delete the copies when done). It runs in its own environment, `../installations/ovito-viewer` (ovito 3.17.0, ipywidgets, jupyterlab; setup line in `viewer.sh`), not the project's.
+
+## Analysing a sweep (D49)
+`sepsim analyze sweep` reads a finished bulk sweep run directory (deck, log, hold and burst DCDs) and writes `results.md`, `results.json` and PNGs into `results/analysis/<system>/<stage>/`: per-segment T/density/enthalpy (mean ± SEM; steps second half, holds minus their first 10%), κ_T from the hold volume fluctuations, α_V and classical Cp fits (25–160, 25–90, 90–160 °C), and per hold the backbone-site and chain COM MSD (bursts + hold DCD), D_COM if diffusive, bond P2 1/e time, Rg, R_ee and the C_n plateau. Holds whose DCD is not on this node are reported as "trajectory not available"; pore runs are not supported yet.
+```
+uv run sepsim analyze sweep results/runs/pe_cg_amorph_n40_c240_s1/sweep               # --no-traj: thermo only; --max-frames N (C_n frames, default 500); --out DIR
+```
 
 ## Decisions at a glance
 **Systems**
