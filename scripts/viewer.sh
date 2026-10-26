@@ -2,6 +2,7 @@
 # Jupyter Lab for scripts/view.ipynb (OVITO trajectory viewer) on this node, localhost only.
 # From the laptop: ssh -N -L 8888:localhost:8888 rdyu-server, then open the printed URL.
 # Environment (once): uv venv $ENV --python 3.12 && VIRTUAL_ENV=$ENV uv pip install ovito ipywidgets jupyterlab
+# Kernel for VS Code and view.ipynb's default (once): $ENV/bin/python -m ipykernel install --user --name ovito-viewer --display-name "OVITO viewer (ovito 3.17)"
 set -euo pipefail
 ENV=${OVITO_VIEWER_ENV:-${SEPSIM_INSTALL_DIR:-$HOME/projects/installations}/ovito-viewer}
 cd "$(dirname "$0")"
