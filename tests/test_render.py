@@ -81,7 +81,8 @@ def test_all_five_committed_systems_present():
 @pytest.mark.parametrize("path", ALL_SYSTEMS, ids=[p.name for p in ALL_SYSTEMS])
 def test_coeff_lines_match_committed_data_file(path):
     """Masses and every coefficient section rendered from the YAML equal the data file's."""
-    deck = render_deck("pore_relax" if path in PORES else "prep", path)
+    kind = (manifest(path).get("pore") or {}).get("kind")
+    deck = render_deck({"wide": "pore_relax", "narrow": "pore"}.get(kind, "prep"), path)
     df = read_data_file(path / "data.lmp")
     cmds = commands(deck)
     # The full pair block appears once in setup (and again after a push-off); take the first.
@@ -822,10 +823,14 @@ def pores(tmp_path_factory):
 
 
 def test_committed_pore_systems_present():
-    assert {p.name for p in PORES} == {"pe_cg_pore500k_w10nm_n40_c240_s1"}
-    m = manifest(PORES[0])
+    names = {p.name for p in PORES}
+    assert "pe_cg_pore500k_w10nm_n40_c240_s1" in names
+    m = manifest(REPO / "systems" / "pe_cg_pore500k_w10nm_n40_c240_s1")
     assert m["pore"]["kind"] == "wide" and m["pore"]["temperature_k"] == 500.0
     assert m["source"]["data_file"].endswith("pe_cg_amorph_n40_c240_s1/prep/hold.data")
+    for p in PORES:
+        if p.name != "pe_cg_pore500k_w10nm_n40_c240_s1":
+            assert manifest(p)["pore"]["kind"] == "narrow"
 
 
 def test_pore_decks_nvt_cutoff_tail_thermo(pores):
