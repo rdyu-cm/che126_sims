@@ -660,7 +660,7 @@ def test_job_cpu_omp_default(tmp_path, monkeypatch, capsys):
     sid = "pe_ua_amorph_n40_c240_s1"
     sb = sbatch(text)
     assert "--partition=cpu" in sb and "--cpus-per-task=4" in sb and "--ntasks=1" in sb
-    assert "--mem=4G" in sb and "--time=1:00:00" in sb
+    assert "--mem=1G" in sb and "--time=1:00:00" in sb  # default_mem(9600 atoms, 1 rank)
     assert f"--output={root}/logs/%x-%j-%N.out" in sb
     assert f"--job-name={sid}-prep" in sb
     assert not any(s.startswith(("--gres", "--nodelist")) for s in sb)
@@ -1279,3 +1279,14 @@ def test_cli_extend_cool_sweep_chain_jobs(tmp_path, monkeypatch, capsys):
     deck = (tmp_path / "results" / "runs" / sid / "cool_b" / "in.cool").read_text()
     assert first(deck, "read_data")[1] == "../extend/hold_ext_10ns.data"
     assert "sha256 n/a" not in deck
+
+
+def test_default_mem_scales_with_atoms_and_ranks():
+    from sepsim.lammps.slurm import JobOptions, default_mem
+
+    assert default_mem(3200) == "1G"  # CG C240 (measured 70 MB)
+    assert default_mem(20000) == "2G"  # CG C1500 KOKKOS (measured 290 MB)
+    assert default_mem(28880, 4) == "5G"
+    opts = JobOptions(partition="cpu", cpus=4, time="1:00:00").resolved(3200)
+    assert opts.mem == "1G"
+    assert JobOptions(partition="cpu", cpus=4, mem="3G", time="1:00:00").resolved(3200).mem == "3G"

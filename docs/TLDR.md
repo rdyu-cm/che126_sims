@@ -49,9 +49,9 @@ From the project root on rdyu-server (`ssubmit` syncs the project to rdyu-rog ex
 ```
 mkdir -p logs results                                  # once: Slurm needs logs/ on every node
 S=systems/pe_ua_amorph_n40_c240_s1
-uv run sepsim render prep  --system $S --job --node rdyu-server --cpus 12 --mem 8G --time 3-00:00:00
+uv run sepsim render prep  --system $S --job --node rdyu-server --cpus 12 --time 3-00:00:00
 ~/projects/slurm-setup/bin/ssubmit ~/projects/che126_sims jobs/pe_ua_amorph_n40_c240_s1/prep/job.sh
-uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --mem 8G --time 7-00:00:00
+uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --time 7-00:00:00
 ~/projects/slurm-setup/bin/ssubmit ~/projects/che126_sims jobs/pe_ua_amorph_n40_c240_s1/sweep/job.sh --dependency=afterok:<prep job id>
 ~/projects/slurm-setup/bin/scollect ~/projects/che126_sims   # copy results/ and logs/ back
 ```
@@ -59,15 +59,15 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --mem 
   ```
   B=pe_cg_amorph_n40_c240_s1; W=pe_cg_pore500k_w10nm_n40_c240_s1
   uv run sepsim build pore --data results/runs/$B/prep/hold.data --source systems/$B --width-nm 10   # --replicate-z 2 for a thick wall; UA: --data .../extend/hold_ext_<N>ns.data
-  uv run sepsim render pore_relax --system systems/$W --job --node rdyu-rog --cpus 6 --mem 8G --time 1-00:00:00
+  uv run sepsim render pore_relax --system systems/$W --job --node rdyu-rog --cpus 6 --time 1-00:00:00
   uv run sepsim build pore --data results/runs/$W/pore_relax/relaxed.data --source systems/$W --width-nm 3   # also 5, 10; UA: --bulk-hold .../extend --bulk-cool .../cool --bulk-sweep .../sweep_d47
-  uv run sepsim render pore --system systems/pe_cg_pore_w3nm_n40_c240_s1 --job --node rdyu-rog --cpus 6 --mem 8G --time 7-00:00:00
+  uv run sepsim render pore --system systems/pe_cg_pore_w3nm_n40_c240_s1 --job --node rdyu-rog --cpus 6 --time 7-00:00:00
   ```
 - Extended 500 K hold (D47), then re-cool and sweep from it. `extend` reads `../prep/hold.data` and writes `hold_ext.dcd` plus a snapshot `hold_ext_<ns>ns.data` every `chunk_ps` (default 10 ns of `extend_ps` = 80 ns). Watch `sepsim progress` on the extend run (it rechecks prep hold + extension at most every 2 h and prints `D47 PASS/FAIL`); once it passes, `scancel` the job and cool the latest snapshot. Relative `--data` paths of these stages are relative to the run directory, as below (move the old `sweep/` away first, or use `--out .../sweep_d47`):
   ```
-  uv run sepsim render extend --system $S --job --node rdyu-server --cpus 4 --mem 8G --time 7-00:00:00   # --set extend_ps=80000 --set chunk_ps=10000
-  uv run sepsim render cool   --system $S --data ../extend/hold_ext_60ns.data --job --node rdyu-server --cpus 4 --mem 8G --time 2-00:00:00
-  uv run sepsim render sweep  --system $S --data ../cool/cooled.data --job --node rdyu-server --cpus 4 --mem 8G --time 7-00:00:00
+  uv run sepsim render extend --system $S --job --node rdyu-server --cpus 4 --time 7-00:00:00   # --set extend_ps=80000 --set chunk_ps=10000
+  uv run sepsim render cool   --system $S --data ../extend/hold_ext_60ns.data --job --node rdyu-server --cpus 4 --time 2-00:00:00
+  uv run sepsim render sweep  --system $S --data ../cool/cooled.data --job --node rdyu-server --cpus 4 --time 7-00:00:00
   ```
 - Sweep and pore holds write a dense 10 ps burst at 0.1 ps every 1 ns into `segNN_hold_XXC_burstKK.dcd` (D46); `--set burst_period_ps=0` turns them off.
 - Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`, extend `../prep/hold.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.

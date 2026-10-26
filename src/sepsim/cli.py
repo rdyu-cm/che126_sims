@@ -141,7 +141,11 @@ def build_parser() -> argparse.ArgumentParser:
     job.add_argument("--partition", choices=["cpu", "gpu"], help="Slurm partition (default cpu)")
     job.add_argument("--cpus", type=int, help="CPUs for the job, all ranks (default 4)")
     job.add_argument("--ranks", type=int, help="MPI ranks (default: --cpus for mpi, else 1)")
-    job.add_argument("--mem", help="memory, always passed to sbatch (default 4G)")
+    job.add_argument(
+        "--mem",
+        help="memory, always passed to sbatch (default: from the system's atom count and ranks, "
+        "about 2x the measured need, at least 1G)",
+    )
     job.add_argument("--time", help="wall-time limit, required with --job (e.g. 2-00:00:00)")
     job.add_argument("--node", help="pin to one node (sbatch -w), e.g. rdyu-server")
     job.add_argument(
@@ -437,7 +441,8 @@ def _render(args: argparse.Namespace) -> int:
         run_dir = Path(args.out or Path("results") / "runs" / manifest["id"] / args.protocol)
         out = run_dir
         if args.job:
-            opts = JobOptions(**{k: getattr(args, k) for k in given}).resolved()
+            n_atoms = manifest["counts"]["total"]["atoms"]
+            opts = JobOptions(**{k: getattr(args, k) for k in given}).resolved(n_atoms)
             project = Path.cwd().resolve()
             run_dir = run_dir.resolve()
             out = job_dir_for(project, run_dir)

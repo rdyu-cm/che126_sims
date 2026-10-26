@@ -16,6 +16,7 @@ because the container's OpenMPI against the host's pmix is unverified.
 
 from __future__ import annotations
 
+import math
 import re
 import shlex
 from dataclasses import dataclass
@@ -38,18 +39,27 @@ class JobError(ValueError):
     """Inconsistent job options or layout."""
 
 
+def default_mem(n_atoms: int, ranks: int = 1) -> str:
+    """Slurm memory for a run of ``n_atoms`` on ``ranks`` MPI ranks: about twice an estimate of
+    100 MB + 15 kB/atom per rank plus 200 MB for the job wrapper, in whole GB, at least 1G.
+    Measured resident sizes (2026-10-26): CG C240 pore 3,200 atoms 70 MB; PE UA 9,600 atoms
+    85 MB per rank (2 ranks); iPP UA 12,760 atoms 135 MB; CG C1500 20,000 atoms KOKKOS 290 MB."""
+    est_mb = ranks * (100 + 0.015 * n_atoms) + 200
+    return f"{max(1, math.ceil(2 * est_mb / 1024))}G"
+
+
 @dataclass
 class JobOptions:
     partition: str = "cpu"
     cpus: int = 4
-    mem: str = "4G"
+    mem: str | None = None  # default: default_mem(n_atoms, ranks)
     time: str = ""
     node: str | None = None
     accel: str | None = None  # default: omp on cpu, gpu on gpu
     ranks: int | None = None  # default: cpus for mpi, else 1
 
-    def resolved(self) -> JobOptions:
-        """Fill defaults and check consistency."""
+    def resolved(self, n_atoms: int | None = None) -> JobOptions:
+        """Fill defaults and check consistency (``n_atoms`` sizes the default memory)."""
         if self.partition not in PARTITIONS:
             raise JobError(f"partition {self.partition!r} not in {', '.join(PARTITIONS)}")
         accel = self.accel or ("gpu" if self.partition == "gpu" else "omp")
@@ -67,13 +77,14 @@ class JobOptions:
             raise JobError(f"--ranks {ranks} must divide --cpus {self.cpus}")
         if accel == "kokkos" and ranks != 1:
             raise JobError("--accel kokkos runs 1 rank (no GPU-aware MPI in the image)")
-        if not _MEM.match(self.mem):
-            raise JobError(f"--mem {self.mem!r}: expected e.g. 4G or 4000M")
+        mem = self.mem or (default_mem(n_atoms, ranks) if n_atoms else "4G")
+        if not _MEM.match(mem):
+            raise JobError(f"--mem {mem!r}: expected e.g. 4G or 4000M")
         if not self.time or any(c.isspace() for c in self.time):
             raise JobError("--time is required with --job (e.g. 2-00:00:00 or 12:00:00)")
         if self.node is not None and not re.match(r"^[A-Za-z0-9_.-]+$", self.node):
             raise JobError(f"--node {self.node!r}: expected one node name")
-        return JobOptions(self.partition, self.cpus, self.mem, self.time, self.node, accel, ranks)
+        return JobOptions(self.partition, self.cpus, mem, self.time, self.node, accel, ranks)
 
 
 def job_dir_for(project: Path, run_dir: Path) -> Path:
