@@ -827,7 +827,7 @@ def test_committed_pore_systems_present():
     assert "pe_cg_pore500k_w10nm_n40_c240_s1" in names
     m = manifest(REPO / "systems" / "pe_cg_pore500k_w10nm_n40_c240_s1")
     assert m["pore"]["kind"] == "wide" and m["pore"]["temperature_k"] == 500.0
-    assert m["source"]["data_file"].endswith("pe_cg_amorph_n40_c240_s1/prep/hold.data")
+    assert m["source"]["data_file"].endswith("pe_cg_amorph_n40_c240_s1/extend/hold_ext_60ns.data")
     for p in PORES:
         if p.name != "pe_cg_pore500k_w10nm_n40_c240_s1":
             assert manifest(p)["pore"]["kind"] == "narrow"

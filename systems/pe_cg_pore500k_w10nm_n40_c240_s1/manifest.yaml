@@ -5,10 +5,10 @@ n_chains: 40
 n_carbons: 240
 seed: 1
 box_angstrom:
-- [11.436254464849455, 79.24953092514761]
-- [11.436254464849455, 79.24953092514761]
-- [11.436254464849455, 179.2495309251476]
-density_g_cm3: 0.2899233119866426
+- [11.63544872039845, 79.05033666956882]
+- [11.63544872039845, 79.05033666956882]
+- [11.63544872039845, 179.05033666956882]
+density_g_cm3: 0.29405813601673203
 counts:
   per_chain: {atoms: 80, bonds: 79, angles: 78, dihedrals: 0}
   total: {atoms: 3200, bonds: 3160, angles: 3120, dihedrals: 0}
@@ -18,7 +18,7 @@ formula:
 total_mass_g_mol: 134737.912
 forcefield: {name: sdk_cg, file: sdk_cg.yaml, sha256: 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba}
 sepsim_version: 0.1.0
-git: {commit: db8754358e97627951ddbf67572160e9fbea98df, dirty: true}
+git: {commit: 64e49ea4c5914216e7cdc62d5940aeb8f61c1c34, dirty: false}
 type_ids:
   atom: {CM: 1, CT: 2}
   bond: {CM-CM: 1, CM-CT: 2}
@@ -44,16 +44,17 @@ pore:
   width_definition: 'mass-equivalent at the source density: Lz_new - M / (rho_src
     * Lx * Ly)'
   replicate_z: 1
-  wall_thickness_angstrom: 67.81327646029816
-  lz_source_angstrom: 67.81327646029816
-  lz_new_angstrom: 167.81327646029814
-  area_angstrom2: 4598.6404642808275
+  wall_thickness_angstrom: 67.41488794917038
+  lz_source_angstrom: 67.41488794917038
+  lz_new_angstrom: 167.41488794917038
+  area_angstrom2: 4544.767117199198
   slab_mass_g_mol: 134737.912
-  bulk_density_g_cm3: 0.717455097973094
-  cut_z_angstrom: 66.68625446484945
-  slab_z_extent_angstrom: [35.76209967414969, 171.83900683038382]
-  window_z_angstrom: [64.33722523907586, 132.15050169937402]
-  protrusion_angstrom: [28.575125564926175, 39.688505131009805]
-  clear_gap_angstrom: 31.736369304064
+  bulk_density_g_cm3: 0.7302498215068075
+  cut_z_angstrom: 44.63544872039845
+  slab_z_extent_angstrom: [33.92921920531927, 158.95321424507955]
+  window_z_angstrom: [59.44768084477638, 126.86256879394676]
+  protrusion_angstrom: [25.518461639457108, 32.09064545113279]
+  clear_gap_angstrom: 42.3908929094101
 source: {id: pe_cg_amorph_n40_c240_s1, manifest_sha256: be94805b7ab7d340773f4aac950d8c88ba3106377c963af80451fabc5b7ef4b3,
-  data_file: 'rdyu-rog:results/runs/pe_cg_amorph_n40_c240_s1/prep/hold.data', data_sha256: 8a79b54fad74b98e63514cc39e8a20ecb0f2688c0eafe885d899bafd82ce0a5c}
+  data_file: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/extend/hold_ext_60ns.data,
+  data_sha256: 0d698cd7dfde40cda87e6e45b1845f2bd9a3937e5df3e45f716374eeed5b9bf2}
