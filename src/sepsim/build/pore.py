@@ -239,6 +239,17 @@ def whole_molecules(atoms: np.ndarray, bonds: np.ndarray, lengths: np.ndarray) -
     return pos
 
 
+def replicate(pos: np.ndarray, lengths: np.ndarray, n: tuple[int, int, int]) -> np.ndarray:
+    """Whole-molecule coordinates ``pos`` repeated over an ``nx x ny x nz`` grid of box images.
+
+    Replica ``k`` (x fastest, then y, then z) is ``pos`` shifted by its image vector times
+    ``lengths``; its rows follow replica ``k - 1``, matching the id offsets of ``_data_text``.
+    """
+    nx, ny, nz = (int(v) for v in n)
+    shifts = [(i, j, k) for k in range(nz) for j in range(ny) for i in range(nx)]
+    return np.vstack([pos + np.asarray(s, dtype=float) * lengths for s in shifts])
+
+
 def place_molecules(
     z: np.ndarray, mol: np.ndarray, masses: np.ndarray, z_lo: float, period: float
 ) -> tuple[float, np.ndarray]:
@@ -315,7 +326,8 @@ def _read_input(data: Path, src: dict):
 
 
 def _data_text(sid, df, ff, tm, bounds, wrapped, img, r: int, n_chains: int) -> str:
-    """Data file of ``r`` z-replicas of ``df`` at the given (wrapped) coordinates."""
+    """Data file of ``r`` replicas of ``df`` at the given (wrapped) coordinates and image
+    flags (rows replica by replica; replica k adds k times the source counts to every id)."""
     n_src = len(df.sections["Atoms"])
     counts = {k: df.counts.get(k, 0) * r for k in ("atoms", "bonds", "angles", "dihedrals")}
     out_lines = [f"LAMMPS data file: {sid} (atom_style full, units real)", ""]
@@ -457,7 +469,7 @@ def build_pore(
     bonds = df.topology("Bonds")[:, 2:4]
     pos = whole_molecules(atoms, bonds, lengths)
     r = replicate_z
-    pos = np.vstack([pos + [0.0, 0.0, k * lengths[2]] for k in range(r)])
+    pos = replicate(pos, lengths, (1, 1, r))
     masses = np.tile(masses, r)
     mol_ids = np.concatenate([atoms[:, 1].astype(np.int64) + k * n_chains for k in range(r)])
     slab = float(r * lengths[2])  # wall thickness = slab period before opening, Angstrom

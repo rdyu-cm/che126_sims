@@ -7,7 +7,7 @@
 
 The repo holds the build and analysis code, templates, and force-field parameters. Production runs on a separate workstation with a budget under 500 GPU-h.
 
-**Status (2026-10-23):** design is done; every decision is in [`decisions.md`](decisions.md). Phase 2 is merged; phase 3 is in progress; stage 2 dry pores follow D48 (made at 500 K, then narrowed; NVT with the bulk lateral area), on `feat/pore-500k`.
+**Status (2026-10-26):** design is done; every decision is in [`decisions.md`](decisions.md). Phase 2 is merged; phase 3 is in progress; stage 2 dry pores follow D48 (made at 500 K, then narrowed; NVT with the bulk lateral area) with one 5 nm dry width and a CG finite-size check (D50).
 
 **Done and merged into `main`:**
 - phase 0: uv package skeleton
@@ -27,7 +27,7 @@ The repo holds the build and analysis code, templates, and force-field parameter
 1. D47: the UA chains are not relaxed after the 20 ns prep hold. Extend PE UA and iPP UA at 500 K (`extend`) until end-to-end ACF < 1/e and COM MSD ≥ 2⟨Rg²⟩ (expected ~60–80 ns more), then `cool` the latest snapshot, rerun the sweeps, build AA from the relaxed UA box (`ua2aa`) and the pores from it.
 2. D37 chain check after each prep; decide the CG criterion (CG C240 plateau ≈ 8.3, stable, vs melt 6.7). C1500 relies on correct construction + the no-distortion check (D47).
 3. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses (`sepsim analyze sweep`, D49; run it where the hold DCDs are).
-4. Dry pores (D48): CG C240 first (its bulk sweep is done): `pore_relax` on `systems/pe_cg_pore500k_w10nm_n40_c240_s1`, narrow to 3/5/10 nm, `pore` runs on CPU (commands below; a 300 ps smoke relaxation already let 3 nm open without bridging). UA after D47 passes and the UA sweeps are rerun (wide pore from the extension snapshot). AA later on the GPU after the AA preps.
+4. Dry pores (D48, D50: one dry width, 5 nm): CG C240 first (its bulk sweep is done): `pore_relax` on `systems/pe_cg_pore500k_w10nm_n40_c240_s1`, narrow to 5 nm, `pore` on CPU (commands below). CG finite-size check (D50): the same 5 nm pore from a 2×2×2 replicated bulk (320 chains), decorrelated by a 500 K `extend` first; compare γ, the density profile and surface vs interior mobility. UA/AA: one 5 nm pore each, sized from that check; UA after D47 passes and the UA sweeps are rerun (wide pore from the extension snapshot), AA later on the GPU after the AA preps.
 5. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
 
 **Rules:**
@@ -60,8 +60,15 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --time
   B=pe_cg_amorph_n40_c240_s1; W=pe_cg_pore500k_w10nm_n40_c240_s1
   uv run sepsim build pore --data results/runs/$B/prep/hold.data --source systems/$B --width-nm 10   # --replicate-z 2 for a thick wall; UA: --data .../extend/hold_ext_<N>ns.data
   uv run sepsim render pore_relax --system systems/$W --job --node rdyu-rog --cpus 6 --time 1-00:00:00
-  uv run sepsim build pore --data results/runs/$W/pore_relax/relaxed.data --source systems/$W --width-nm 3   # also 5, 10; UA: --bulk-hold .../extend --bulk-cool .../cool --bulk-sweep .../sweep_d47
-  uv run sepsim render pore --system systems/pe_cg_pore_w3nm_n40_c240_s1 --job --node rdyu-rog --cpus 6 --time 7-00:00:00
+  uv run sepsim build pore --data results/runs/$W/pore_relax/relaxed.data --source systems/$W --width-nm 5   # D50: 5 nm only; UA: --bulk-hold .../extend --bulk-cool .../cool --bulk-sweep .../sweep_d47
+  uv run sepsim render pore --system systems/pe_cg_pore_w5nm_n40_c240_s1 --job --node rdyu-rog --cpus 6 --time 7-00:00:00
+  ```
+- CG finite-size check (D50): replicate the 500 K bulk box 2×2×2 (`sepsim build replicate`, id `..._n320_..._rep222`; molecules whole across the seams, velocities kept), decorrelate the correlated copies with a 500 K `extend` (no prep: give the system's own `data.lmp`), then the pore chain above from its latest snapshot. Narrowing reads the densities of the **small** bulk's runs by default (`results/runs/pe_cg_amorph_n40_c240_s1/{prep,sweep}`; the lateral rule is intensive):
+  ```
+  uv run sepsim build replicate --data results/runs/$B/prep/hold.data --source systems/$B --n 2 2 2
+  R=pe_cg_amorph_n320_c240_s1_rep222
+  uv run sepsim render extend --system systems/$R --data systems/$R/data.lmp --job --node rdyu-rog --cpus 6 --time 7-00:00:00
+  uv run sepsim build pore --data results/runs/$R/extend/hold_ext_<N>ns.data --source systems/$R --width-nm 10
   ```
 - Extended 500 K hold (D47), then re-cool and sweep from it. `extend` reads `../prep/hold.data` and writes `hold_ext.dcd` plus a snapshot `hold_ext_<ns>ns.data` every `chunk_ps` (default 10 ns of `extend_ps` = 80 ns). Watch `sepsim progress` on the extend run (it rechecks prep hold + extension at most every 2 h and prints `D47 PASS/FAIL`); once it passes, `scancel` the job and cool the latest snapshot. Relative `--data` paths of these stages are relative to the run directory, as below (move the old `sweep/` away first, or use `--out .../sweep_d47`):
   ```
@@ -96,6 +103,13 @@ Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog o
 uv run sepsim analyze sweep results/runs/pe_cg_amorph_n40_c240_s1/sweep               # --no-traj: thermo only; --max-frames N (C_n frames, default 500); --out DIR
 ```
 
+**Snapshots for showing the pores (PNG/movie, headless):** `scripts/render_snapshots.py`, run with the OVITO environment's Python; topology from the DCD path like the viewer, look from `ovito_view.STYLE`; pores default to a side view along x (z across the image, the films as walls left and right of the gap) colored by z, bulk to a perspective view colored by chain. Output in the gitignored `results/figures/<system>/<stage>/`. Views `side`, `side_zup`, `front`, `top`, `perspective`; `--frames last|first,last|0,50,last|N` (N evenly spaced); `--movie mp4|gif|png` (OVITO's built-in encoder, ~1.5 s per 1600×1000 frame on 2 threads). Renders take ~0.5–2 s per image on 2 CPU threads (`--threads`, default 2).
+```
+~/projects/installations/ovito-viewer/bin/python scripts/render_snapshots.py \
+    results/runs/pe_cg_pore_w5nm_n40_c240_s1/pore/relax.dcd --frames first,last --replicate-z 2 --views side,perspective
+```
+OVITO 3.17 (pip) needs a Vulkan driver for every renderer (Tachyon too). rdyu-server has none, so a user-space Mesa lavapipe (software Vulkan) copy lives in `../installations/vulkan-lavapipe` (extracted from the Ubuntu `mesa-vulkan-drivers` package, no root; see its README.txt); the script uses it automatically. `sudo apt install mesa-vulkan-drivers` would make it unnecessary.
+
 ## Decisions at a glance
 **Systems**
 - Chains: 40 × C240 at every level (PE C240H482 / iPP 80-mer), ~29k atoms in all-atom.
@@ -106,8 +120,9 @@ uv run sepsim analyze sweep results/runs/pe_cg_amorph_n40_c240_s1/sweep         
 - Amorphous bulk.
 - ~~Crystal slab with free surfaces for Tm~~: dropped (D40).
 - Slit pores (slab + gap in a 3D-periodic box; D44/D48: wall = one equilibrated 500 K bulk box, gap opened along z, plain LJ cutoff without tail correction, AA 14 Å):
-  - widths 3/5/10 nm at AA/UA (D48: cut wide from the 500 K box, relaxed there, then narrowed; w defined at 25 °C)
-  - CG C240 3/5/10 nm plus a 2×-thick wall; 20–50 nm dry pore at CG
+  - dry: one width, 5 nm, at every resolution (D50: walls further apart than the 1.4–1.5 nm cutoff do not interact, so dry widths barely differ); width varies only for wet pores (D48: cut wide from the 500 K box, relaxed there, then narrowed; w defined at 25 °C)
+  - CG C240 finite-size check (D50): 40 chains vs a 2×2×2 replicated box (320 chains, film and lateral size ×2): γ, density profile, surface vs interior mobility
+  - caveat: our walls are amorphous; real separator pore walls are semicrystalline (phase 4)
   - wall ablation: amorphous vs crystal-core + amorphous skin
 
 **Electrolyte**

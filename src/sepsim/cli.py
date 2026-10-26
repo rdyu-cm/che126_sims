@@ -106,6 +106,29 @@ def build_parser() -> argparse.ArgumentParser:
         " (e.g. rdyu-rog:results/runs/<id>/prep/hold.data; default: --data as given)",
     )
     po.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
+    rep_help = (
+        "Replicated bulk box (D50 finite-size check): a bulk data file (LAMMPS write_data,"
+        " e.g. prep/hold.data) repeated NX x NY x NZ times with whole molecules across the"
+        " seams; ids offset per replica, types, charges and velocities kept (id"
+        " ..._n<N*NX*NY*NZ>_..._rep<NX><NY><NZ>). The replicas are correlated copies:"
+        " decorrelate with `sepsim render extend --data <system>/data.lmp` before cutting a pore."
+    )
+    rp = kinds.add_parser("replicate", help=rep_help, description=rep_help)
+    rp.add_argument("--data", required=True, help="bulk data file (LAMMPS write_data)")
+    rp.add_argument("--source", required=True, help="bulk system directory holding its manifest")
+    rp.add_argument(
+        "--n",
+        type=int,
+        nargs=3,
+        default=[2, 2, 2],
+        metavar=("NX", "NY", "NZ"),
+        help="replicas along x, y, z (default 2 2 2)",
+    )
+    rp.add_argument(
+        "--data-origin",
+        help="where the data file came from, recorded in the manifest (default: --data as given)",
+    )
+    rp.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
     render = subparsers.add_parser("render", help=_RENDER_HELP, description=_RENDER_HELP)
     render.set_defaults(render_parser=render)
     protocols = render.add_subparsers(dest="protocol", metavar="protocol")
@@ -190,7 +213,8 @@ def build_parser() -> argparse.ArgumentParser:
         "benchmark": "data file to start from (default: OUT/../prep/compressed.data)" + stage_rel,
         "pore_relax": "data file to start from (default: SYSTEM/data.lmp)",
         "pore": "data file to start from (default: SYSTEM/data.lmp)",
-        "extend": "data file to start from (default: OUT/../prep/hold.data)" + stage_rel,
+        "extend": "data file to start from (default: OUT/../prep/hold.data; a replicated"
+        " system, D50, has no prep: give its SYSTEM/data.lmp)" + stage_rel,
         "cool": "data file to cool (required), e.g. ../extend/hold_ext_60ns.data" + stage_rel,
     }
     for name, help_text in protocol_help.items():
@@ -337,6 +361,12 @@ def _build(args: argparse.Namespace) -> int:
             sysdir = convert_ua_to_aa(args.data, args.source, out=args.out)
         elif args.kind == "pore":
             sysdir = _build_pore(args, build_pore)
+        elif args.kind == "replicate":
+            from sepsim.build.replicate import build_replicate
+
+            sysdir = build_replicate(
+                args.data, args.source, tuple(args.n), out=args.out, data_origin=args.data_origin
+            )
         else:
             sysdir = build_amorphous(
                 args.polymer,
@@ -375,7 +405,9 @@ def _build_pore(args: argparse.Namespace, build_pore) -> Path:
         )
     if args.replicate_z != 1:
         raise PoreError("--replicate-z applies to the wide pore build only")
-    bulk_id = (src.get("source") or {}).get("id")
+    # A pore cut from a replicated bulk (D50) reads the densities of the replica's source
+    # (intensive, so the small box's runs give the same lateral rule).
+    bulk_id = (src.get("replicate") or {}).get("source_id") or (src.get("source") or {}).get("id")
     root = Path(args.bulk_root) / str(bulk_id)
     hold, cool, sweep = (
         Path(given) if given else root / default

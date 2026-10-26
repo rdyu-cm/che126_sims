@@ -16,6 +16,8 @@ logs/
 /results/progress/
 # DCD copies pulled from rdyu-rog by the OVITO viewer (scripts/ovito_view.py)
 /results/viewer/
+# PNG/MP4 snapshots from scripts/render_snapshots.py
+/results/figures/
 log.lammps
 log.*.lammps
 *.lammpstrj

@@ -75,23 +75,31 @@ def fetch(system, stage, dcd, node=REMOTE):
     return dest
 
 
-def load_path(path, **style):
-    """Pipeline for a DCD given by path, e.g. pasted from VS Code's "Copy Path":
+def parse_path(path):
+    """(node, system, stage, dcd name, project root or None) of a DCD path:
     .../results/runs/<system>/<stage>/<file>.dcd, a results/viewer/<node>/... copy, or
-    "rdyu-rog:<path on rdyu-rog>" (copied over first)."""
+    "rdyu-rog:<path on rdyu-rog>"."""
     node, rest = "local", str(path)
     if rest.startswith(REMOTE + ":"):
         node, rest = REMOTE, rest[len(REMOTE) + 1 :]
     parts = Path(rest).parts
     if len(parts) >= 5 and parts[-5:-3] == ("results", "runs"):
-        system, stage, dcd = parts[-3:]
+        (system, stage, dcd), root = parts[-3:], parts[:-5]
     elif len(parts) >= 6 and parts[-6:-4] == ("results", "viewer"):  # an earlier copy
-        node, (system, stage, dcd) = parts[-4], parts[-3:]
+        node, (system, stage, dcd), root = parts[-4], parts[-3:], parts[:-6]
     else:
         raise ValueError(
             f"{path}: expected .../results/runs/<system>/<stage>/<file>.dcd"
             " or .../results/viewer/<node>/<system>/<stage>/<file>.dcd"
         )
+    return node, system, stage, dcd, Path(*root) if root else None
+
+
+def load_path(path, **style):
+    """Pipeline for a DCD given by path, e.g. pasted from VS Code's "Copy Path":
+    .../results/runs/<system>/<stage>/<file>.dcd, a results/viewer/<node>/... copy, or
+    "rdyu-rog:<path on rdyu-rog>" (copied over first)."""
+    node, system, stage, dcd, _ = parse_path(path)
     return load(system, stage, dcd, node=node, **style)
 
 
@@ -100,11 +108,17 @@ def load(system, stage, dcd, node="local", data=None, **style):
 
     data: topology file; default systems/<system>/data.lmp.
     """
-    st = {**STYLE, **style}
     run_dir = RUNS / system / stage if node == "local" else fetch(system, stage, dcd, node)
-    pipeline = import_file(str(data or ROOT / "systems" / system / "data.lmp"), atom_style="full")
+    return pipeline_for(data or ROOT / "systems" / system / "data.lmp", run_dir / dcd, **style)
+
+
+def pipeline_for(data, dcd, **style):
+    """Pipeline of the topology file `data` (LAMMPS data, atom_style full) plus the
+    trajectory `dcd`, drawn with STYLE (keyword arguments override entries)."""
+    st = {**STYLE, **style}
+    pipeline = import_file(str(data), atom_style="full")
     traj = LoadTrajectoryModifier()
-    traj.source.load(str(run_dir / dcd))
+    traj.source.load(str(dcd))
     pipeline.modifiers.append(traj)
     if st["wrap"]:
         pipeline.modifiers.append(WrapPeriodicImagesModifier())
