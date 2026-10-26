@@ -149,7 +149,9 @@ def show(pipeline, **style):
     ipywidgets.jslink((play, "value"), (slider, "value"))
 
     def on_frame(change):
+        # The widget shows a captured copy of the scene: re-capture it after each frame change.
         ovito.scene.anim.current_frame = change["new"]
+        view.refresh()
 
     slider.observe(on_frame, names="value")
     return ipywidgets.VBox([view, ipywidgets.HBox([play, slider])])
