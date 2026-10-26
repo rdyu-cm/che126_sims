@@ -88,6 +88,8 @@ For updates every 10 min, add this line on rdyu-server with `crontab -e` (not in
 ```
 Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog over ssh, pulls only its progress files into `results/progress/rdyu-rog/`, and writes `results/progress.md`. It holds a lock (an overlapping pass skips), times out each step after 300 s (a down node cannot hang it) and logs to `logs/progress_update.log`. rdyu-rog needs the `progress` code (synced by `ssubmit`).
 
+**Viewing trajectories (OVITO in the browser):** `scripts/viewer.sh` on rdyu-server starts Jupyter Lab (localhost only) on `scripts/view.ipynb`; from the laptop `ssh -N -L 8888:localhost:8888 rdyu-server` and open the printed URL. The notebook (`scripts/ovito_view.py`) loads a system's `data.lmp` plus a run DCD, wraps into the box, colors by chain (`color="z"` for pores), hides hydrogens, and shows a rotatable viewport with a frame slider. `node="rdyu-rog"` copies that DCD into `results/viewer/rdyu-rog/` first (delete the copies when done). It runs in its own environment, `../installations/ovito-viewer` (ovito 3.17.0, ipywidgets, jupyterlab; setup line in `viewer.sh`), not the project's.
+
 ## Decisions at a glance
 **Systems**
 - Chains: 40 × C240 at every level (PE C240H482 / iPP 80-mer), ~29k atoms in all-atom.

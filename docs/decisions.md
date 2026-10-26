@@ -129,6 +129,7 @@ src/sepsim/
           chain.py (⟨R²(n)⟩/n check, D37; R_ee ACF, COM MSD/⟨Rg²⟩, D45)
 scripts/build_lammps.sh, containers/lammps.def   # LAMMPS ROCm/HIP build (D23); outputs in ../installations/
 scripts/progress_update.sh              # one two-node progress pass (cron, 10 min) -> results/progress.md (D45)
+scripts/viewer.sh, view.ipynb, ovito_view.py   # OVITO trajectory viewer in Jupyter (own env in ../installations/ovito-viewer)
 forcefields/<ff>/*.yaml                 # parameters + citations, single source of truth
 systems/<system_id>/{data.lmp, manifest.yaml}   # generated, committed (D3)
 results/                                # small processed CSVs/plots (committed)

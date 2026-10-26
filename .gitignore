@@ -14,6 +14,8 @@ logs/
 # `sepsim progress` summary and the copies pulled from the other node (D45)
 /results/progress.md
 /results/progress/
+# DCD copies pulled from rdyu-rog by the OVITO viewer (scripts/ovito_view.py)
+/results/viewer/
 log.lammps
 log.*.lammps
 *.lammpstrj
