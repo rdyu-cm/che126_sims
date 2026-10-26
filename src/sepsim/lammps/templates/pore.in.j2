@@ -1,12 +1,25 @@
-{#- Dry slit pore (D9, D44): the slab (pore system data.lmp, velocities from the bulk
-    prep) is minimized, relaxed at the first grid temperature, then run through the same
-    sweep as the bulk (D11, D36, D39). Barostat on x and y only (coupled), z fixed: never
-    across the vacuum. Plain LJ cutoff without tail correction; thermo adds pxx pyy pzz
-    for the surface tension gamma = (Lz/2) [Pzz - (Pxx + Pyy)/2]. -#}
+{#- Dry slit pore, narrowed (D9, D44, D48): the slab (pore system data.lmp, velocities
+    from the relaxed wide pore at 500 K) is minimized, re-relaxed at 500 K, step-cooled
+    like the bulk prep, then run through the same sweep as the bulk (D11, D36, D39).
+    NVT throughout with Lz fixed; x and y follow the bulk thermal expansion: at each new
+    temperature change_box sets L(T) = L_src (rho_bulk(T_src)/rho_bulk(T))^(1/3) (affine
+    remap, z untouched). No barostat. Plain LJ cutoff without tail correction; thermo adds
+    pxx pyy pzz for the surface tension gamma = (Lz/2) [Pzz - (Pxx + Pyy)/2]. -#}
 {% import "_ff.in.j2" as ff with context %}
 {% import "_sweep.in.j2" as sw with context %}
+{% import "_cool.in.j2" as cl with context %}
+{% set lat = pore.lateral %}
 {{ ff.header() -}}
-# Pore: nominal width {{ pore.nominal_width_nm | num }} nm, wall {{ pore.wall_thickness_angstrom | num }} A (replicate_z {{ pore.replicate_z }}), Lz {{ pore.lz_new_angstrom | num }} A (fixed)
+# Pore (D48): nominal width {{ pore.nominal_width_nm | num }} nm at 25 C ({{ "%.3f" | format(pore.width_500k_nm) }} nm at {{ pore.temperature_k | num }} K), wall {{ "%.3f" | format(pore.wall_thickness_angstrom) }} A at 25 C (replicate_z {{ pore.replicate_z }}), Lz {{ pore.lz_new_angstrom | num }} A (fixed)
+# Lateral box (D48): L(T) = L_src (rho_bulk(T_src)/rho_bulk(T))^(1/3), T_src {{ lat.t_source_k | num }} K, L_src {{ "%.4f" | format(lat.l_source_angstrom[0]) }} x {{ "%.4f" | format(lat.l_source_angstrom[1]) }} A, rho_bulk(T_src) {{ "%.6f" | format(lat.rho_source_g_cm3) }} g/cm3
+# rho_bulk(T) from the bulk runs (linear in T; cooling branch for the re-relaxation and step-cool, heating branch for the sweep):
+{% for key, src in lat.sources | dictsort %}
+#   {{ "%-5s" | format(key) }} {{ src.run_dir }} ({{ src.segments }}): {{ src.deck }} sha256 {{ src.deck_sha256 }}, log.lammps sha256 {{ src.log_sha256 }}
+{% endfor %}
+#   stage          T/K        branch   rho_bulk   Lx/A       Ly/A
+{% for b in box_table %}
+#   {{ "%-14s" | format(b.label) }} {{ "%-10s" | format(b.t_k | num) }} {{ "%-8s" | format(b.branch) }} {{ "%.6f" | format(b.rho) }}   {{ "%.4f" | format(b.lx) }}    {{ "%.4f" | format(b.ly) }}
+{% endfor %}
 {{ sw.grid_table() -}}
 {{ ff.setup() -}}
 {{ ff.thermo() -}}
@@ -15,7 +28,7 @@
 # rolling restart files from here on (alternating restart.a / restart.b)
 restart {{ n(p.restart_ps) }} restart.a restart.b
 
-# ---- Stage 1: minimize the opened slab
+# ---- Stage 1: minimize the narrowed slab
 thermo 100
 minimize {{ p.min_etol }} {{ p.min_ftol }} {{ p.min_maxiter }} {{ p.min_maxeval }}
 {{ ff.write("minimized") -}}
@@ -27,14 +40,17 @@ reset_timestep 0
 {{ ff.shake() -}}
 {% endif %}
 
-# ---- Stage 2: surface relaxation {{ p.relax_ps | num }} ps at {{ relax_t_k | num }} K, x,y at {{ p.p_atm | num }} atm -> relaxed.data, relax.dcd; then the sweep segments
+# ---- Stage 2: surface re-relaxation {{ p.rerelax_ps | num }} ps NVT at {{ p.t_melt | num }} K after narrowing -> relaxed.data, relax.dcd; then the step-cool and the sweep segments
 # velocities come from the data file (no velocity create)
 thermo {{ n(p.thermo_ps) }}
-fix md all npt temp {{ relax_t_k | num }} {{ relax_t_k | num }} {{ tdamp | num }} {{ barostat }}
+{{ ff.box(relax_box) -}}
+fix md all nvt temp {{ p.t_melt | num }} {{ p.t_melt | num }} {{ tdamp | num }}
 dump relax all dcd {{ n(p.hold_dump_ps) }} relax.dcd
 dump_modify relax unwrap yes
-run {{ n(p.relax_ps) }}
+run {{ n(p.rerelax_ps) }}
 undump relax
 unfix md
 {{ ff.write("relaxed") -}}
+
+{{ cl.step_cool(3) -}}
 {{ sw.run_segments() -}}

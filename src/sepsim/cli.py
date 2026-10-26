@@ -51,32 +51,61 @@ def build_parser() -> argparse.ArgumentParser:
     cv.add_argument("--source", required=True, help="UA system directory holding its manifest.yaml")
     cv.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
     pore_help = (
-        "Open a dry slit pore in an equilibrated bulk box (D44): molecules made whole, slab"
-        " centred, Lz increased by the pore width; x, y, ids, types and topology kept."
+        "Dry slit pore (D44, D48), in two steps. With a bulk --source: open a wide pore in"
+        " the 500 K bulk box (prep/hold.data or a D47 extension snapshot): molecules made"
+        " whole, slab centred, Lz increased by the width; x, y, ids, types and topology kept"
+        " (id ..._pore500k_w<W>nm_...); relax it with `sepsim render pore_relax`. With a wide"
+        " pore --source: narrow its relaxed state (pore_relax/relaxed.data) to a nominal width"
+        " at 25 C, Lz = M / (rho_bulk(25 C) A(25 C)) + width, x, y kept; the bulk densities"
+        " for the D48 lateral rule come from the bulk runs (--bulk-*) and go into the manifest."
     )
     po = kinds.add_parser("pore", help=pore_help, description=pore_help)
     po.add_argument(
-        "--data", required=True, help="equilibrated bulk data file (e.g. prep/cooled.data)"
+        "--data",
+        required=True,
+        help="500 K bulk data file (e.g. prep/hold.data), or the relaxed wide pore"
+        " (pore_relax/relaxed.data)",
     )
     po.add_argument(
-        "--source", required=True, help="bulk system directory holding its manifest.yaml"
+        "--source",
+        required=True,
+        help="bulk system directory, or wide pore system directory (narrowing)",
     )
     po.add_argument(
         "--width-nm",
         type=float,
         required=True,
-        help="nominal (mass-equivalent) pore width in nm: Lz_new = wall + width",
+        help="pore width in nm: wide pore Lz_new = wall + width (mass-equivalent at the source"
+        " density); narrow pore: nominal width at 25 C",
     )
     po.add_argument(
         "--replicate-z",
         type=int,
         default=1,
-        help="replicate the bulk box along z before opening (thick wall; default 1)",
+        help="wide pore: replicate the bulk box along z before opening (thick wall; default 1)",
     )
+    bulk_runs = "narrowing: bulk run directory with the {} (deck + log.lammps; default {})"
+    po.add_argument(
+        "--bulk-root",
+        default="results/runs",
+        help="narrowing: runs root for the --bulk-* defaults (default %(default)s)",
+    )
+    po.add_argument(
+        "--bulk-hold",
+        help=bulk_runs.format(
+            "500 K hold the wide pore was cut from (prep, or extend for a D47 snapshot)",
+            "ROOT/<bulk id>/prep",
+        ),
+    )
+    po.add_argument(
+        "--bulk-cool",
+        help=bulk_runs.format("step-cool (prep, or cool after D47)", "ROOT/<bulk id>/prep"),
+    )
+    po.add_argument("--bulk-sweep", help=bulk_runs.format("heating sweep", "ROOT/<bulk id>/sweep"))
     po.add_argument(
         "--data-origin",
         help="where the data file came from, recorded in the manifest"
-        " (e.g. rdyu-rog:results/runs/<id>/prep/cooled.data; default: --data as given)",
+        " (e.g. rdyu-rog:results/runs/<id>/prep/hold.data; default: --data as given)",
     )
     po.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
     render = subparsers.add_parser("render", help=_RENDER_HELP, description=_RENDER_HELP)
@@ -131,10 +160,15 @@ def build_parser() -> argparse.ArgumentParser:
         "benchmark": "Benchmark (D38): NPT 500 K, 1000-step warm-up + 2000 timed steps;"
         " --set ensemble=nve for the dt energy-drift check (100 ps NVE, --set dt_fs=...)."
         " Writes OUT/in.benchmark.",
-        "pore": "Dry slit pore (D44): minimize, surface relaxation at 25 C (AA 1 / UA 2 / CG"
-        " 5 ns), then the bulk sweep grid with its bursts; NPT on x,y only (couple xy, z fixed), plain LJ"
-        " cutoff without tail correction (AA 14 A), thermo adds pxx pyy pzz."
-        " Writes OUT/in.pore.",
+        "pore_relax": "Wide 500 K slit pore (D48 step 1): minimize, NVT surface relaxation at"
+        " 500 K with the box fixed (AA 1 / UA 2 / CG 5 ns) -> relaxed.data, the input for"
+        " narrowing (`sepsim build pore --source <this system>`). Plain LJ cutoff without tail"
+        " correction (AA 14 A), thermo adds pxx pyy pzz. Writes OUT/in.pore_relax.",
+        "pore": "Narrowed dry slit pore (D44, D48): minimize, NVT re-relaxation at 500 K (AA 0.5"
+        " / UA 1 / CG 2 ns), the prep's 8-step cool, then the bulk sweep grid with its bursts;"
+        " NVT throughout, Lz fixed, x and y set by change_box at each new T to the bulk"
+        " thermal expansion (table in the deck header). Plain LJ cutoff without tail"
+        " correction (AA 14 A), thermo adds pxx pyy pzz. Writes OUT/in.pore.",
         "extend": "Extended 500 K hold (D47): the prep's NPT hold continued from its hold.data"
         " (default 80 ns, --set extend_ps=...), frames every 10 ps into one hold_ext.dcd, in"
         " chunks of chunk_ps (default 10 ns) each ending in write_data hold_ext_<ns>ns.data;"
@@ -152,6 +186,7 @@ def build_parser() -> argparse.ArgumentParser:
         "prep": "data file to start from (default: SYSTEM/data.lmp)",
         "sweep": "data file to start from (default: OUT/../prep/cooled.data)" + stage_rel,
         "benchmark": "data file to start from (default: OUT/../prep/compressed.data)" + stage_rel,
+        "pore_relax": "data file to start from (default: SYSTEM/data.lmp)",
         "pore": "data file to start from (default: SYSTEM/data.lmp)",
         "extend": "data file to start from (default: OUT/../prep/hold.data)" + stage_rel,
         "cool": "data file to cool (required), e.g. ../extend/hold_ext_60ns.data" + stage_rel,
@@ -273,14 +308,7 @@ def _build(args: argparse.Namespace) -> int:
         if args.kind == "ua2aa":
             sysdir = convert_ua_to_aa(args.data, args.source, out=args.out)
         elif args.kind == "pore":
-            sysdir = build_pore(
-                args.data,
-                args.source,
-                args.width_nm,
-                replicate_z=args.replicate_z,
-                out=args.out,
-                data_origin=args.data_origin,
-            )
+            sysdir = _build_pore(args, build_pore)
         else:
             sysdir = build_amorphous(
                 args.polymer,
@@ -296,6 +324,39 @@ def _build(args: argparse.Namespace) -> int:
         return 1
     print(sysdir)
     return 0
+
+
+def _build_pore(args: argparse.Namespace, build_pore) -> Path:
+    """Wide pore from a bulk source; narrowing from a wide pore source (D48)."""
+    import yaml
+
+    from sepsim.build.pore import PoreError, bulk_density_table, narrow_pore
+
+    src = yaml.safe_load((Path(args.source) / "manifest.yaml").read_text()) or {}
+    bulk_opts = (args.bulk_hold, args.bulk_cool, args.bulk_sweep)
+    if "pore" not in src:
+        if any(bulk_opts):
+            raise PoreError("--bulk-* are for narrowing (a wide pore --source)")
+        return build_pore(
+            args.data,
+            args.source,
+            args.width_nm,
+            replicate_z=args.replicate_z,
+            out=args.out,
+            data_origin=args.data_origin,
+        )
+    if args.replicate_z != 1:
+        raise PoreError("--replicate-z applies to the wide pore build only")
+    bulk_id = (src.get("source") or {}).get("id")
+    root = Path(args.bulk_root) / str(bulk_id)
+    hold, cool, sweep = (
+        Path(given) if given else root / default
+        for given, default in zip(bulk_opts, ("prep", "prep", "sweep"), strict=True)
+    )
+    table = bulk_density_table(hold, cool, sweep)
+    return narrow_pore(
+        args.data, args.source, args.width_nm, table, out=args.out, data_origin=args.data_origin
+    )
 
 
 def _progress(args: argparse.Namespace) -> int:

@@ -8,6 +8,7 @@
     ff.shake()   - fix shake on the manifest's constrained bond types (if any)
     ff.write(stage) - write_data <stage>.data + write_restart <stage>.restart
     ff.write_data(stage) - write_data <stage>.data only
+    ff.box(b)    - pores (D48): change_box to the lateral box b (x, y final, affine remap; z kept)
 -#}
 {% macro header() %}
 # sepsim {{ version }} deck: {{ protocol }}{% if preset %} (preset {{ preset }}){% endif %}
@@ -85,6 +86,11 @@ fix shake all shake {{ p.shake_tol }} {{ p.shake_iter }} 0 b {{ shake_types | jo
 {% macro write_data(stage) %}
 write_data {{ stage }}.data{% if styles.mixing == "none" %} pair ij{% endif %}
 
+{% endmacro %}
+
+{% macro box(b) %}
+# D48 lateral box at {{ b.t_k | num }} K (bulk {{ b.branch }} density {{ "%.6f" | format(b.rho) }} g/cm3): Lx {{ "%.4f" | format(b.lx) }}, Ly {{ "%.4f" | format(b.ly) }} A; z unchanged
+change_box all x final {{ b.x[0] | num }} {{ b.x[1] | num }} y final {{ b.y[0] | num }} {{ b.y[1] | num }} remap units box
 {% endmacro %}
 
 {% macro write(stage) %}

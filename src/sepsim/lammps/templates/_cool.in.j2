@@ -2,18 +2,24 @@
     context: {% import "_cool.in.j2" as cl with context %}
     cl.step_cool(stage) - "# ---- Stage <stage>: step-cool" header, cool_steps NPT steps
                           from t_melt to t_final (one "# cool step k/n" each), cool.dcd,
-                          then cooled.data/.restart
+                          then cooled.data/.restart. With cool_boxes (pore decks, D48)
+                          each step is NVT after a change_box to its lateral box.
 -#}
 {% import "_ff.in.j2" as ff with context %}
 {% macro step_cool(stage) %}
 {% set tdamp = p.tdamp_dt * p.dt_fs %}
 {% set pdamp = p.pdamp_dt * p.dt_fs %}
-# ---- Stage {{ stage }}: step-cool {{ p.t_melt | num }} -> {{ p.t_final | num }} K in {{ p.cool_steps }} steps of {{ p.cool_step_ps | num }} ps at {{ p.p_atm | num }} atm -> cooled.data, cool.dcd
+# ---- Stage {{ stage }}: step-cool {{ p.t_melt | num }} -> {{ p.t_final | num }} K in {{ p.cool_steps }} steps of {{ p.cool_step_ps | num }} ps {% if cool_boxes %}NVT at the D48 lateral box per T{% else %}at {{ p.p_atm | num }} atm{% endif %} -> cooled.data, cool.dcd
 dump cool all dcd {{ n(p.cool_dump_ps) }} cool.dcd
 dump_modify cool unwrap yes
 {% for t in cool_temps %}
 # cool step {{ loop.index }}/{{ p.cool_steps }}: {{ t | num }} K
+{% if cool_boxes %}
+{{ ff.box(cool_boxes[loop.index0]) -}}
+fix md all nvt temp {{ t | num }} {{ t | num }} {{ tdamp | num }}
+{% else %}
 fix md all npt temp {{ t | num }} {{ t | num }} {{ tdamp | num }} iso {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}
+{% endif %}
 run {{ n(p.cool_step_ps) }}
 unfix md
 {% endfor %}

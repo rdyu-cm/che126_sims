@@ -1,14 +1,14 @@
 """Render plain LAMMPS input decks from Jinja templates for a built system.
 
 A deck is rendered from ``templates/<protocol>.in.j2`` (``prep``, ``sweep``,
-``benchmark``, ``extend``, ``cool`` for bulk systems; ``pore`` for slit-pore systems,
-D44) and the system's
+``benchmark``, ``extend``, ``cool`` for bulk systems; ``pore_relax`` for wide 500 K
+slit pores and ``pore`` for narrowed ones, D44/D48) and the system's
 ``manifest.yaml``: styles, mixing, special_bonds, type ids and SHAKE bond types come
 from the manifest; every coefficient line is emitted from the force-field YAML via
 ``sepsim.ff.params.to_lammps_real`` (the deck must not rely on data-file coefficients,
 because changing ``pair_style`` during the push-off discards them). Run parameters come
 from a per-protocol, per-resolution defaults table (decisions D12a, D12c, D12g, D20,
-D24, D25, D28, D31, D34-D39, D44, D47), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
+D24, D25, D28, D31, D34-D39, D44, D47, D48), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
 header lists every resolved parameter; output is deterministic (no timestamps).
 
 Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to ``lmp``.
@@ -27,8 +27,9 @@ from sepsim.ff.params import FORCEFIELD_DIR, load_forcefield, to_lammps_real
 from sepsim.run import sha256_file
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
-PROTOCOLS = ("prep", "sweep", "benchmark", "pore", "extend", "cool")
-PORE_PROTOCOLS = ("pore",)  # protocols for slit-pore systems (manifest has a ``pore`` key)
+PROTOCOLS = ("prep", "sweep", "benchmark", "pore_relax", "pore", "extend", "cool")
+# protocols for slit-pore systems (manifest has a ``pore`` key), by pore.kind (D48)
+PORE_PROTOCOLS = {"pore_relax": "wide", "pore": "narrow"}
 MANIFEST_NAME = "manifest.yaml"
 DATA_NAME = "data.lmp"
 
@@ -169,17 +170,33 @@ BENCHMARK_DEFAULTS = {
     for res in DEFAULTS
 }
 
-# Dry slit pore (D44): minimize, surface relaxation at the first grid point, then the bulk
-# sweep. Plain LJ cutoff at every resolution: the analytic tail correction assumes a
-# homogeneous bulk. AA cutoff 14 A (bulk 12, D25); UA stays 14, CG 15.
-PORE_DEFAULTS = {
-    res: SWEEP_DEFAULTS[res]
-    | {k: DEFAULTS[res][k] for k in ("min_etol", "min_ftol", "min_maxiter", "min_maxeval")}
-    | {
+# Dry slit pores (D44, D48). Plain LJ cutoff at every resolution: the analytic tail
+# correction assumes a homogeneous bulk. AA cutoff 14 A (bulk 12, D25); UA stays 14, CG 15.
+_MIN_KEYS = ("min_etol", "min_ftol", "min_maxiter", "min_maxeval")
+_PORE_FF = {
+    res: {
         "tail": False,
         "lj_cutoff": 14.0 if res == "aa" else DEFAULTS[res]["lj_cutoff"],
-        "relax_ps": {"aa": 1000.0, "ua": 2000.0, "cg": 5000.0}[res],
     }
+    for res in DEFAULTS
+}
+# Wide pore (D48 step 1): minimize, then NVT surface relaxation at 500 K with the box fixed.
+PORE_RELAX_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in (*_FF_KEYS, *_MIN_KEYS, "t_melt", "hold_dump_ps")}
+    | _PORE_FF[res]
+    | {"relax_ps": {"aa": 1000.0, "ua": 2000.0, "cg": 5000.0}[res]}
+    for res in DEFAULTS
+}
+# Narrow pore (D48 step 2): minimize, short NVT re-relaxation at 500 K, the prep's step-cool
+# and the bulk sweep, all NVT with the lateral box of the bulk density at each T (change_box).
+PORE_DEFAULTS = {
+    res: SWEEP_DEFAULTS[res]
+    | {
+        k: DEFAULTS[res][k]
+        for k in (*_MIN_KEYS, "t_melt", "t_final", "cool_steps", "cool_step_ps", "cool_dump_ps")
+    }
+    | _PORE_FF[res]
+    | {"rerelax_ps": {"aa": 500.0, "ua": 1000.0, "cg": 2000.0}[res]}
     for res in DEFAULTS
 }
 
@@ -204,6 +221,7 @@ PROTOCOL_DEFAULTS = {
     "prep": DEFAULTS,
     "sweep": SWEEP_DEFAULTS,
     "benchmark": BENCHMARK_DEFAULTS,
+    "pore_relax": PORE_RELAX_DEFAULTS,
     "pore": PORE_DEFAULTS,
     "extend": EXTEND_DEFAULTS,
     "cool": COOL_DEFAULTS,
@@ -240,8 +258,9 @@ PRESETS = {
         "burst_period_ps": 1.0,
         "burst_len_ps": 0.2,
         "burst_dt_ps": 0.02,
-        # pore
+        # pores
         "relax_ps": 1.0,
+        "rerelax_ps": 1.0,
         # extend: two chunks of 1 ps
         "extend_ps": 2.0,
         "chunk_ps": 1.0,
@@ -424,6 +443,7 @@ def sweep_segments(params: dict) -> list[dict]:
                         if is_hold
                         else []
                     ),
+                    "box": None,  # pore decks: the D48 lateral box at this T (change_box)
                 }
             )
     # A hold right after the step to the same T keeps the running fix npt (no thermostat
@@ -440,10 +460,15 @@ def sweep_segments(params: dict) -> list[dict]:
 def _check_burst_alignment(protocol: str, params: dict, segments: list[dict]) -> None:
     """Every burst must start on a multiple of its dump interval, so it gets its first
     frame and burst_len/burst_dt + 1 frames in all. The deck's step counter starts at 0
-    (read_data; the pore deck resets it after the minimization)."""
+    (read_data; the pore deck resets it after the minimization and runs the 500 K
+    re-relaxation and the step-cool before the sweep)."""
     dt = params["dt_fs"]
     every = steps(params["burst_dt_ps"], dt) if params["burst_period_ps"] else 0
-    step = steps(params["relax_ps"], dt) if protocol == "pore" else 0
+    step = 0
+    if protocol == "pore":
+        step = steps(params["rerelax_ps"], dt) + params["cool_steps"] * steps(
+            params["cool_step_ps"], dt
+        )
     for seg in segments:
         for c in seg["bursts"]:
             if step % every:
@@ -540,7 +565,7 @@ def _environment() -> jinja2.Environment:
 
 
 def default_data(protocol: str, system_dir: str | Path, run_dir: str | Path | None) -> Path:
-    """Default input data: ``SYSTEM/data.lmp`` for prep and pore; for sweep/benchmark/extend
+    """Default input data: ``SYSTEM/data.lmp`` for prep and the pores; for sweep/benchmark/extend
     the prep output (``cooled.data`` / ``compressed.data`` / ``hold.data``) in the sibling
     ``prep/`` run directory. cool has no default."""
     if protocol == "cool":
@@ -583,6 +608,13 @@ def render_deck(
             + ("slit-pore systems (use prep/sweep/benchmark)" if pore is None else "bulk systems")
             + ("" if pore is None else f"; pore systems use {', '.join(PORE_PROTOCOLS)}")
         )
+    if pore is not None and pore.get("kind") != PORE_PROTOCOLS[protocol]:
+        want = {v: k for k, v in PORE_PROTOCOLS.items()}.get(pore.get("kind"))
+        raise RenderError(
+            f"{manifest['id']}: {protocol} is for {PORE_PROTOCOLS[protocol]} pores (D48); this"
+            f" is a {pore.get('kind') or 'D44 (superseded)'} pore"
+            + (f": use {want}" if want else ": rebuild it with sepsim build pore")
+        )
     data = Path(data) if data is not None else default_data(protocol, system_dir, deck_dir)
     if require_data and not data.is_file():
         raise RenderError(f"{data}: no such file")
@@ -621,27 +653,68 @@ def render_deck(
         "coeffs": coeff_lines(manifest, ff),
         "shake_types": sorted((manifest.get("shake_bond_types") or {}).values()),
         "pore": pore,
-        # D9/D12g: iso for bulk; a slab is barostatted in x and y only (coupled), z fixed
-        "barostat": (
-            f"x {p_atm} {p_atm} {pdamp} y {p_atm} {p_atm} {pdamp} couple xy"
-            if pore is not None
-            else f"iso {p_atm} {p_atm} {pdamp}"
-        ),
+        # D9/D12g: iso for bulk; pores run NVT with the D48 lateral box (no barostat)
+        "barostat": f"iso {p_atm} {p_atm} {pdamp}",
+        "cool_boxes": None,
         # step counts at the production timestep
         "n": lambda ps: steps(ps, dt),
     }
-    if protocol in ("prep", "cool"):
+    if protocol in ("prep", "cool", "pore"):
         t0, t1, n = params["t_melt"], params["t_final"], params["cool_steps"]
         context["cool_temps"] = [t0 + (t1 - t0) * (k + 1) / n for k in range(n)]
         context["n_push"] = lambda ps: steps(ps, params.get("pushoff_dt_fs", dt))
-    elif protocol == "extend":
+    if protocol == "extend":
         context["chunks"] = extend_chunks(params)
     elif protocol in ("sweep", "pore"):
         context["segments"] = sweep_segments(params)
         context["n_vdos"] = lambda ps: steps(ps, params["vdos_dt_fs"])
-        context["relax_t_k"] = parse_grid(params["sweep_grid_c"])[0][0] + 273.15
         _check_burst_alignment(protocol, params, context["segments"])
+    if protocol == "pore":
+        _pore_boxes(context, manifest, params)
     return _environment().get_template(f"{protocol}.in.j2").render(context)
+
+
+def _pore_boxes(context: dict, manifest: dict, params: dict) -> None:
+    """D48 lateral boxes of a pore deck: the 500 K re-relaxation and each step-cool stage
+    on the bulk cooling branch, each sweep segment that changes T on the heating branch;
+    x and y centred on the data box, z untouched. ``box_table`` lists them all."""
+    from sepsim.build.pore import PoreError, bulk_density, lateral_lengths
+
+    lat = manifest["pore"].get("lateral")
+    if not lat:
+        raise RenderError(f"{manifest['id']}: manifest has no pore.lateral table (D48)")
+    centre = [0.5 * (lo + hi) for lo, hi in manifest["box_angstrom"][:2]]
+
+    def box(label: str, branch: str, t_k: float) -> dict:
+        try:
+            lx, ly = lateral_lengths(lat, branch, t_k)
+            rho = bulk_density(lat, branch, t_k)
+        except PoreError as exc:
+            raise RenderError(f"{label}: {exc}") from None
+        return {
+            "label": label,
+            "branch": branch,
+            "t_k": t_k,
+            "rho": rho,
+            "lx": lx,
+            "ly": ly,
+            "x": (centre[0] - 0.5 * lx, centre[0] + 0.5 * lx),
+            "y": (centre[1] - 0.5 * ly, centre[1] + 0.5 * ly),
+        }
+
+    n = params["cool_steps"]
+    context["relax_box"] = box("re-relax", "cooling", params["t_melt"])
+    context["cool_boxes"] = [
+        box(f"cool {k + 1}/{n}", "cooling", t) for k, t in enumerate(context["cool_temps"])
+    ]
+    for seg in context["segments"]:
+        if seg["new_fix"]:
+            seg["box"] = box(f"seg {seg['index']:02d} {seg['kind']}", "heating", seg["t_k"])
+    context["box_table"] = [
+        context["relax_box"],
+        *context["cool_boxes"],
+        *(s["box"] for s in context["segments"] if s["box"]),
+    ]
 
 
 def write_deck(

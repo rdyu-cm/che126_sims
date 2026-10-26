@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from _build_helpers import tiny_pores
 
 from sepsim import progress as pg
 from sepsim import progress_plots as pp
@@ -84,6 +85,40 @@ def test_read_log_runs_performance_and_errors(tmp_path):
     assert first.ns_per_day == 1.5 and first.steps_per_s == 8.0
     np.testing.assert_array_equal(log.runs[1].thermo["Step"], [20, 30])
     assert log.errors == ["ERROR: something (src/x.cpp:1)"]
+
+
+def test_segment_stats_surface_tension_and_column(tmp_path):
+    """Pore thermo (D48): gamma = (Lz/2)[Pzz - (Pxx+Pyy)/2] per surface, in mN/m."""
+    n = 100
+    rng = np.random.default_rng(1)
+    th = {
+        "Step": np.arange(n, dtype=float),
+        "Temp": np.full(n, 300.0),
+        "Density": np.full(n, 0.5),
+        "Enthalpy": rng.normal(size=n),
+        "Lz": np.full(n, 100.0),
+        "Pxx": -60.0 + rng.normal(size=n),
+        "Pyy": -40.0 + rng.normal(size=n),
+        "Pzz": rng.normal(size=n) * 0.1,
+    }
+    st = pg.segment_stats(th)
+    want = 0.5 * 100.0 * (0.0 + 50.0) * 101325 * 1e-10 * 1e3  # 25.3 mN/m
+    assert st["gamma"]["mean"] == pytest.approx(want, rel=0.02) and st["gamma"]["sem"] > 0
+    assert st["density"] == {"mean": 0.5, "sem": 0.0}  # NVT: constant density
+    assert "gamma" not in pg.segment_stats({k: th[k] for k in ("Step", "Temp", "Density")})
+    seg = {"index": 1, "name": "x", "state": "done", "steps": 100, "command": "run"}
+    md = pg.render_markdown(
+        {
+            "system": "s",
+            "stage": "pore",
+            "status": "finished",
+            "node": "n",
+            "generated": None,
+            "generated_on": "n",
+            "segments": [seg | {"stats": st}],
+        }
+    )
+    assert "| γ (mN/m) |" in md and f"| {st['gamma']['mean']:.1f} ± " in md
 
 
 def test_segment_stats_guards_constant_density():
@@ -307,13 +342,17 @@ def test_extra_burst_dumps_are_listed_not_fatal(tmp_path):
 
 # ---- chunked holds (D46) and hold extensions (D47) ----
 
-PORE = SYSTEMS / "pe_ua_pore_w10nm_n40_c240_s1"
+
+@pytest.fixture(scope="module")
+def pore(tmp_path_factory):
+    """A tiny narrowed UA iPP pore (D48) with the synthetic bulk table."""
+    return tiny_pores("ipp", "ua", 12, 12, tmp_path_factory.mktemp("pore"))[2]
 
 
-@pytest.mark.parametrize(("protocol", "system"), [("sweep", UA), ("pore", PORE)])
-def test_parse_chunked_holds_are_one_segment(tmp_path, protocol, system):
+@pytest.mark.parametrize("protocol", ["sweep", "pore"])
+def test_parse_chunked_holds_are_one_segment(tmp_path, protocol, pore):
     """A hold run in 1 ns chunks with bursts (D46) is one segment listing its burst files."""
-    _, deck = _deck(tmp_path, protocol, system=system)
+    _, deck = _deck(tmp_path, protocol, system=UA if protocol == "sweep" else pore)
     segs = pg.parse_deck(deck)
     md = [s for s in segs if s.sweep_index is not None]
     assert [s.sweep_index for s in md] == list(range(1, 19))
@@ -332,8 +371,16 @@ def test_parse_chunked_holds_are_one_segment(tmp_path, protocol, system):
     runs = [int(ln.split()[1]) for ln in text.splitlines() if ln.startswith("run ")]
     assert [n for s in segs for n in s.run_steps if s.command == "run"] == runs
     if protocol == "pore":
+        # D48: minimize, 500 K re-relaxation, 8 NVT cool steps, then the NVT sweep; the
+        # change_box at each new temperature does not split or join segments
         assert [s.command for s in segs[:2]] == ["minimize", "run"]
-        assert segs[1].name.startswith("Stage 2: surface relaxation")
+        assert segs[1].name.startswith("Stage 2: surface re-relaxation")
+        assert segs[1].t_target_k == 500.0 and segs[1].dcd == ["relax.dcd"]
+        cool = [s for s in segs if s.cool_step]
+        assert [s.cool_step for s in cool] == list(range(1, 9)) and segs[2:10] == cool
+        assert cool[-1].t_target_k == pytest.approx(298.15) and cool[0].dcd == ["cool.dcd"]
+        assert all(s.ensemble == "nvt" for s in segs[1:])
+        assert len(segs) == 1 + 1 + 8 + 18
 
 
 def test_unchunked_sweep_parses_as_before(tmp_path):

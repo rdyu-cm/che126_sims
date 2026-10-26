@@ -6,8 +6,10 @@ from pathlib import Path
 
 import pytest
 import yaml
+from _build_helpers import tiny_pores
 
 from sepsim.build.datafile import read_data_file
+from sepsim.build.pore import lateral_lengths
 from sepsim.cli import main
 from sepsim.ff.params import FORCEFIELD_DIR, load_forcefield
 from sepsim.lammps.render import (
@@ -23,7 +25,7 @@ from sepsim.lammps.render import (
 
 REPO = Path(__file__).resolve().parents[1]
 ALL_SYSTEMS = sorted(p.parent for p in (REPO / "systems").glob("*/manifest.yaml"))
-# bulk systems run prep/sweep/benchmark; slit-pore systems (D44) run the pore protocol
+# bulk systems run prep/sweep/benchmark; slit-pore systems run pore_relax (wide) or pore (D48)
 PORES = [p for p in ALL_SYSTEMS if "pore" in yaml.safe_load((p / "manifest.yaml").read_text())]
 SYSTEMS = [p for p in ALL_SYSTEMS if p not in PORES]
 IDS = [p.name for p in SYSTEMS]
@@ -79,7 +81,7 @@ def test_all_five_committed_systems_present():
 @pytest.mark.parametrize("path", ALL_SYSTEMS, ids=[p.name for p in ALL_SYSTEMS])
 def test_coeff_lines_match_committed_data_file(path):
     """Masses and every coefficient section rendered from the YAML equal the data file's."""
-    deck = render_deck("pore" if path in PORES else "prep", path)
+    deck = render_deck("pore_relax" if path in PORES else "prep", path)
     df = read_data_file(path / "data.lmp")
     cmds = commands(deck)
     # The full pair block appears once in setup (and again after a push-off); take the first.
@@ -803,142 +805,233 @@ def test_job_guards_and_rolling_restarts(tmp_path):
         assert "restart 500000 restart.a restart.b" in deck  # 1 ns at 2 fs
 
 
-# ---- dry slit pore (D9, D44) ----
+# ---- dry slit pores (D9, D44, D48) ----
 
 
 @pytest.fixture(scope="module")
-def aa_pore(tmp_path_factory):
-    """A tiny AA PE pore (no AA cooled box exists yet): checks the AA-only deck lines."""
-    from sepsim.build.amorphous import build_amorphous
-    from sepsim.build.pore import build_pore
-
-    root = tmp_path_factory.mktemp("aa_pore")
-    bulk = build_amorphous("pe", "aa", 12, 12, 0.3, 3, root)
-    return build_pore(bulk / "data.lmp", bulk, 3.0, 1, root)
-
-
-def pore_systems(aa_pore):
-    return [*PORES, aa_pore]
+def pores(tmp_path_factory):
+    """Tiny (wide, narrow) pores per resolution with the synthetic D48 bulk table; UA is
+    iPP (SHAKE on the methine C-H)."""
+    root = tmp_path_factory.mktemp("pores")
+    specs = {"aa": ("pe", "aa", 12, 12), "ua": ("ipp", "ua", 12, 12), "cg": ("pe", "cg", 12, 24)}
+    out = {}
+    for res, spec in specs.items():
+        _, wide, narrow = tiny_pores(*spec, root / res)
+        out[res] = (wide, narrow)
+    return out
 
 
 def test_committed_pore_systems_present():
-    assert {p.name for p in PORES} >= {
-        "pe_ua_pore_w10nm_n40_c240_s1",
-        "pe_cg_pore_w10nm_n40_c240_s1",
-    }
+    assert {p.name for p in PORES} == {"pe_cg_pore500k_w10nm_n40_c240_s1"}
+    m = manifest(PORES[0])
+    assert m["pore"]["kind"] == "wide" and m["pore"]["temperature_k"] == 500.0
+    assert m["source"]["data_file"].endswith("pe_cg_amorph_n40_c240_s1/prep/hold.data")
 
 
-def test_pore_deck_barostat_cutoff_tail_thermo(aa_pore):
-    for path in pore_systems(aa_pore):
-        res = manifest(path)["resolution"]
-        p = resolve_params(res, protocol="pore")
-        dt = p["dt_fs"]
-        deck = render_deck("pore", path)
-        cmds = commands(deck)
-        tdamp, pdamp = str(round(100 * dt)), str(round(1000 * dt))
-        npt = [c for c in cmds if c[:4] == ["fix", "md", "all", "npt"]]
-        assert len(npt) == 16  # relaxation + the 15 of the bulk sweep
-        for c in npt:
-            assert c[7] == tdamp
-            assert c[8:] == ["x", "1", "1", pdamp, "y", "1", "1", pdamp, "couple", "xy"]
-        assert "iso" not in deck and not any("z" in c[8:] for c in npt)
-        # plain cutoff, no tail correction, stated explicitly; AA 14 A, UA 14, CG 15
-        cut = {"aa": "14", "ua": "14", "cg": "15"}[res]
-        style = manifest(path)["lammps_styles"]["pair"]
-        assert [c for c in cmds if c[0] == "pair_style"] == [["pair_style", style, cut]]
-        pm = [c for c in cmds if c[0] == "pair_modify"]
-        assert len(pm) == 1 and pm[0][-2:] == ["tail", "no"] and "yes" not in pm[0]
-        assert "#   tail = False" in deck and f"#   lj_cutoff = {float(cut)}" in deck
-        # AA keeps 3D PPPM with periodic z (D44: net z dipole negligible), no slab correction
-        assert (["kspace_style", "pppm", "1e-05"] in cmds) == (res == "aa")
-        assert ["boundary", "p", "p", "p"] in cmds
-        assert not any(c[0] == "kspace_modify" for c in cmds)
-        thermo = " ".join(first(deck, "thermo_style")[2:])
-        assert "lx ly lz pxx pyy pzz evdwl" in thermo
-        assert not any(c[0] in ("velocity", "package", "suffix") for c in cmds)
+def test_pore_decks_nvt_cutoff_tail_thermo(pores):
+    """No barostat anywhere in pore decks (D48): fix nvt only, plain cutoff, pxx pyy pzz."""
+    for res, (wide, narrow) in pores.items():
+        for protocol, path in (("pore_relax", wide), ("pore", narrow)):
+            p = resolve_params(res, protocol=protocol)
+            deck = render_deck(protocol, path)
+            cmds = commands(deck)
+            md = [c for c in cmds if c[:2] == ["fix", "md"]]
+            assert md and all(c[3] == "nvt" and c[7] == str(round(100 * p["dt_fs"])) for c in md)
+            assert len(md[0]) == 8  # fix md all nvt temp T T Tdamp: no barostat keywords
+            assert not any(c[0] == "fix" and c[3] == "npt" for c in cmds)
+            assert not any(t in ("couple", "iso", "aniso") for c in cmds for t in c)
+            cut = {"aa": "14", "ua": "14", "cg": "15"}[res]
+            style = manifest(path)["lammps_styles"]["pair"]
+            assert [c for c in cmds if c[0] == "pair_style"] == [["pair_style", style, cut]]
+            pm = [c for c in cmds if c[0] == "pair_modify"]
+            assert len(pm) == 1 and pm[0][-2:] == ["tail", "no"] and "yes" not in pm[0]
+            assert "#   tail = False" in deck and f"#   lj_cutoff = {float(cut)}" in deck
+            # AA keeps 3D PPPM with periodic z (D44: net z dipole negligible), no slab correction
+            assert (["kspace_style", "pppm", "1e-05"] in cmds) == (res == "aa")
+            assert ["boundary", "p", "p", "p"] in cmds
+            assert not any(c[0] == "kspace_modify" for c in cmds)
+            thermo = " ".join(first(deck, "thermo_style")[2:])
+            assert "lx ly lz pxx pyy pzz evdwl" in thermo
+            assert not any(c[0] in ("velocity", "package", "suffix") for c in cmds)
 
 
-def test_pore_stages_and_sweep_segments(aa_pore):
-    for path in pore_systems(aa_pore):
-        res = manifest(path)["resolution"]
-        dt = resolve_params(res, protocol="pore")["dt_fs"]
-        deck = render_deck("pore", path)
+def test_pore_relax_stages(pores):
+    for res, (wide, _) in pores.items():
+        dt = resolve_params(res, protocol="pore_relax")["dt_fs"]
+        deck = render_deck("pore_relax", wide)
         cmds = commands(deck)
         names = [" ".join(c[:2]) for c in cmds]
-        order = ["minimize 0.0001", "write_data minimized.data", "fix md", "dump relax"]
-        order += ["write_data relaxed.data", "fix md"]
+        order = ["minimize 0.0001", "write_data minimized.data", "reset_timestep 0", "fix md"]
+        relax_ps = {"aa": 1000, "ua": 2000, "cg": 5000}[res]
+        order += ["dump relax", f"run {round(relax_ps * 1000 / dt)}", "write_data relaxed.data"]
         pos = [
             names.index(o, names.index(order[k - 1]) + 1 if k else 0) for k, o in enumerate(order)
         ]
         assert pos == sorted(pos)
-        relax_ps = {"aa": 1000, "ua": 2000, "cg": 5000}[res]
-        relax = commands(deck.split("# ---- Stage 2:", 1)[1].split("# ---- Segment", 1)[0])
-        assert ["run", str(round(relax_ps * 1000 / dt))] in relax
-        assert ["fix", "md", "all", "npt", "temp", "298.15", "298.15"] == first(
-            "\n".join(" ".join(c) for c in relax), "fix"
-        )[:7]
+        assert [c for c in cmds if c[0] == "run"] == [["run", str(round(relax_ps * 1000 / dt))]]
+        assert ["fix", "md", "all", "nvt", "temp", "500", "500", str(round(100 * dt))] in cmds
+        assert ["dump", "relax", "all", "dcd", str(round(10_000 / dt)), "relax.dcd"] in cmds
+        assert not any(c[0] == "change_box" for c in cmds) and "Segment" not in deck
+        assert "restart" in names[names.index("minimize 0.0001") - 2]
+
+
+def _boxes(cmds):
+    """(Lx, Ly, T of the next fix md) for each change_box, checking the command form."""
+    out = []
+    for k, c in enumerate(cmds):
+        if c[0] != "change_box":
+            continue
+        assert c[1:3] == ["all", "x"] and c[3] == "final" and c[6:8] == ["y", "final"]
+        assert c[10:] == ["remap", "units", "box"] and "z" not in c
+        nxt = next(d for d in cmds[k + 1 :] if d[:2] == ["fix", "md"])
+        out.append((float(c[5]) - float(c[4]), float(c[9]) - float(c[8]), float(nxt[5]), c))
+    return out
+
+
+def test_pore_change_box_per_temperature_from_the_table(pores):
+    """D48: a change_box before the re-relaxation, each cool step and each sweep segment
+    that changes T (holds after the step at the same T keep the box), with the lateral
+    rule's values, x and y centred on the data box, z untouched; listed in the header."""
+    for res, (_, narrow) in pores.items():
+        p = resolve_params(res, protocol="pore")
+        m = manifest(narrow)
+        lat = m["pore"]["lateral"]
+        deck = render_deck("pore", narrow)
+        cmds = commands(deck)
+        boxes = _boxes(cmds)
+        cool_t = [500 + (298.15 - 500) * (k + 1) / 8 for k in range(8)]
+        grid = [25, 35, 45, 55, 65, 75, 85, 90, 100, 110, 120, 130, 140, 150, 160]
+        want = [("cooling", t) for t in [500.0, *cool_t]] + [("heating", t + 273.15) for t in grid]
+        assert len(boxes) == len(want) == 24
+        (cx_lo, cx_hi), (cy_lo, cy_hi) = m["box_angstrom"][:2]
+        for (lx, ly, t_fix, c), (branch, t) in zip(boxes, want, strict=True):
+            assert t_fix == pytest.approx(t)
+            want_l = lateral_lengths(lat, branch, t)
+            assert [lx, ly] == pytest.approx(want_l, rel=1e-10)
+            assert float(c[4]) + float(c[5]) == pytest.approx(cx_lo + cx_hi, abs=1e-8)
+            assert float(c[8]) + float(c[9]) == pytest.approx(cy_lo + cy_hi, abs=1e-8)
+        # the area grows on heating and shrinks on cooling, as the bulk density says
+        assert boxes[1][0] < boxes[0][0] and boxes[-1][0] > boxes[9][0]
+        # header: the table and the bulk sources with their hashes
+        head = deck.split("units real")[0]
+        for src in lat["sources"].values():
+            assert f"{src['deck']} sha256 {src['deck_sha256']}" in head
+            assert f"log.lammps sha256 {src['log_sha256']}" in head
+        rows = [ln.split() for ln in head.splitlines() if ln.startswith("#   ") and "ing  0." in ln]
+        assert len(rows) == 24
+        assert [float(r[-2]) for r in rows] == pytest.approx([b[0] for b in boxes], abs=1e-4)
+        assert p["rerelax_ps"] == {"aa": 500.0, "ua": 1000.0, "cg": 2000.0}[res]
+
+
+def test_pore_stages_and_sweep_segments(pores):
+    for res, (_, narrow) in pores.items():
+        p = resolve_params(res, protocol="pore")
+        dt = p["dt_fs"]
+        deck = render_deck("pore", narrow)
+        cmds = commands(deck)
+        names = [" ".join(c[:2]) for c in cmds]
+        order = [
+            "minimize 0.0001",
+            "write_data minimized.data",
+            "reset_timestep 0",
+            "change_box all",
+        ]
+        order += ["fix md", "dump relax", "write_data relaxed.data", "dump cool"]
+        order += ["write_data cooled.data", "change_box all", "fix md"]
+        at = 0
+        for o in order:  # each in turn after the previous one
+            at = names.index(o, at) + 1
+        relax = commands(deck.split("# ---- Stage 2:", 1)[1].split("# ---- Stage 3:", 1)[0])
+        assert ["run", str(round(p["rerelax_ps"] * 1000 / dt))] in relax
         assert ["dump", "relax", "all", "dcd", str(round(10 * 1000 / dt)), "relax.dcd"] in relax
+        # the prep's step-cool: 8 NVT steps of the per-resolution length, frames every 100 ps
+        cool = commands(deck.split("# ---- Stage 3:", 1)[1].split("# ---- Segment", 1)[0])
+        step_ps = {"aa": 1000, "ua": 2000, "cg": 5000}[res]
+        assert [c for c in cool if c[0] == "run"] == [["run", str(round(step_ps * 1000 / dt))]] * 8
+        assert ["dump", "cool", "all", "dcd", str(round(100_000 / dt)), "cool.dcd"] in cool
+        assert deck.count("# cool step ") == 8
         # the bulk sweep follows unchanged: 14 steps + 4 holds, hold write_data, AA VDOS
         segs = segments_of(deck)
         kinds = [s[0] for s in segs]
         assert kinds.count("step") == 14 and kinds.count("hold") == 4
         assert [round(s[1] - 273.15, 6) for s in segs if s[0] == "hold"] == HOLDS_C
-        holds = [c[1] for c in cmds if c[0] == "write_data"][2:]
+        holds = [c[1] for c in cmds if c[0] == "write_data"][3:]
         assert [h.split()[0] for h in holds] == [f"hold_{t}C.data" for t in HOLDS_C]
         vdos = [c for c in cmds if c[:3] == ["dump", "vel", "all"]]
         assert len(vdos) == (4 if res == "aa" else 0)
         assert "restart" in names[names.index("minimize 0.0001") - 2]
-        assert sum(c[:2] == ["unfix", "md"] for c in cmds) == 16
+        assert sum(c[:2] == ["unfix", "md"] for c in cmds) == 1 + 8 + 15
 
 
-def test_pore_smoke_preset():
-    path = sysdir("pe_cg_pore_w10nm_n40_c240_s1")
-    deck = render_deck("pore", path, preset="smoke")
-    relax = commands(deck.split("# ---- Stage 2:", 1)[1].split("# ---- Segment", 1)[0])
+def test_pore_smoke_preset(pores):
+    deck = render_deck("pore", pores["cg"][1], preset="smoke")
+    relax = commands(deck.split("# ---- Stage 2:", 1)[1].split("# ---- Stage 3:", 1)[0])
     assert ["run", "100"] in relax  # 1 ps at 10 fs
+    cool = commands(deck.split("# ---- Stage 3:", 1)[1].split("# ---- Segment", 1)[0])
+    assert [c for c in cool if c[0] == "run"] == [["run", "50"]] * 8
     assert [(s[0], round(s[1] - 273.15, 6)) for s in segments_of(deck)] == [
         ("step", 35),
         ("step", 45),
         ("hold", 45),
     ]
+    deck = render_deck("pore_relax", pores["cg"][0], preset="smoke")
+    assert [c for c in commands(deck) if c[0] == "run"] == [["run", "100"]]
 
 
-def test_pore_and_bulk_protocols_are_not_mixed():
-    pore = sysdir("pe_ua_pore_w10nm_n40_c240_s1")
+def test_pore_and_bulk_protocols_are_not_mixed(pores, tmp_path):
+    wide, narrow = pores["ua"]
     for protocol in ("prep", "sweep", "benchmark"):
-        with pytest.raises(RenderError, match="pore systems use pore"):
-            render_deck(protocol, pore, data=pore / "data.lmp")
+        with pytest.raises(RenderError, match="pore systems use pore_relax, pore"):
+            render_deck(protocol, narrow, data=narrow / "data.lmp")
     with pytest.raises(RenderError, match="slit-pore systems"):
         render_deck("pore", sysdir("pe_ua_amorph_n40_c240_s1"))
+    with pytest.raises(RenderError, match="for narrow pores.*use pore_relax"):
+        render_deck("pore", wide)
+    with pytest.raises(RenderError, match="for wide pores.*use pore"):
+        render_deck("pore_relax", narrow)
+    # a D44 pore (no pore.kind) is superseded
+    old = tmp_path / "old"
+    old.mkdir()
+    m = manifest(narrow)
+    del m["pore"]["kind"]
+    (old / "manifest.yaml").write_text(yaml.safe_dump(m))
+    (old / "data.lmp").write_text((narrow / "data.lmp").read_text())
+    with pytest.raises(RenderError, match="superseded.*rebuild"):
+        render_deck("pore", old)
 
 
-def test_cli_render_pore_default_data_and_job(tmp_path, monkeypatch, capsys):
-    sid = "pe_ua_pore_w10nm_n40_c240_s1"
-    path = sysdir(sid)
+def test_pore_grid_outside_the_bulk_table_raises(pores):
+    with pytest.raises(RenderError, match="outside the bulk heating"):
+        render_deck("pore", pores["cg"][1], overrides={"sweep_grid_c": "25h,200h"})
+
+
+def test_cli_render_pore_default_data_and_job(pores, tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    assert main(["render", "pore", "--system", str(path), "--preset", "smoke"]) == 0
-    io = capsys.readouterr()
-    assert "does not exist yet" not in io.err
-    deck = (tmp_path / "results/runs" / sid / "pore/in.pore").read_text()
-    rd = first(deck, "read_data")
-    assert (tmp_path / "results/runs" / sid / "pore" / rd[1]).resolve() == (
-        path / "data.lmp"
-    ).resolve()
-    assert rd[2] == "nocoeff"
-    text, job = render_job(tmp_path, monkeypatch, "pore", sid, "--node", "rdyu-server")
-    assert f"--job-name={sid}-pore" in sbatch(text) and "--nodelist=rdyu-server" in sbatch(text)
-    assert (job.parent / "in.pore").is_file()
-    assert 'cp "$JOB_DIR/in.pore" in.pore' in text and "sepsim run in.pore" in text
+    for protocol, path in (("pore_relax", pores["ua"][0]), ("pore", pores["ua"][1])):
+        sid = path.name
+        assert main(["render", protocol, "--system", str(path), "--preset", "smoke"]) == 0
+        assert "does not exist yet" not in capsys.readouterr().err
+        run = tmp_path / "results/runs" / sid / protocol
+        rd = first((run / f"in.{protocol}").read_text(), "read_data")
+        assert (run / rd[1]).resolve() == (path / "data.lmp").resolve() and rd[2] == "nocoeff"
+        args = ["render", protocol, "--system", str(path), "--job", "--time", "1:00:00"]
+        assert main([*args, "--node", "rdyu-server"]) == 0
+        job = tmp_path / "jobs" / sid / protocol / "job.sh"
+        text = job.read_text()
+        assert f"--job-name={sid}-{protocol}" in sbatch(text)
+        assert "--nodelist=rdyu-server" in sbatch(text)
+        assert (job.parent / f"in.{protocol}").is_file()
+        assert f'cp "$JOB_DIR/in.{protocol}" in.{protocol}' in text
+        assert f"sepsim run in.{protocol}" in text
 
 
-def test_pore_shake_after_minimize(tmp_path):
-    from sepsim.build.amorphous import build_amorphous
-    from sepsim.build.pore import build_pore
-
-    bulk = build_amorphous("ipp", "ua", 12, 12, 0.3, 3, tmp_path)
-    deck = render_deck("pore", build_pore(bulk / "data.lmp", bulk, 3.0, 1, tmp_path))
-    assert ["fix", "shake", "all", "shake", "0.0001", "20", "0", "b", "2"] in commands(deck)
-    assert deck.index("write_data minimized.data") < deck.index("fix shake") < deck.index("fix md")
+def test_pore_shake_after_minimize(pores):
+    wide, narrow = pores["ua"]
+    for protocol, path in (("pore_relax", wide), ("pore", narrow)):
+        deck = render_deck(protocol, path)
+        assert ["fix", "shake", "all", "shake", "0.0001", "20", "0", "b", "2"] in commands(deck)
+        assert deck.index("write_data minimized.data") < deck.index("fix shake")
+        assert deck.index("fix shake") < deck.index("fix md")
 
 
 # ---- dense burst dumps in holds (D46) ----
@@ -957,9 +1050,8 @@ def bursts_of(body):
 
 
 @pytest.mark.parametrize("protocol", ["sweep", "pore"])
-def test_bursts_only_in_holds(protocol):
-    sid = {"sweep": "pe_ua_amorph_n40_c240_s1", "pore": "pe_ua_pore_w10nm_n40_c240_s1"}[protocol]
-    path = sysdir(sid)
+def test_bursts_only_in_holds(protocol, pores):
+    path = sysdir("pe_ua_amorph_n40_c240_s1") if protocol == "sweep" else pores["ua"][1]
     deck = render_deck(protocol, path, data=path / "data.lmp")
     dt = 2.0
     n_holds = 0
@@ -1025,9 +1117,8 @@ def test_bursts_disabled_and_bad_parameters():
             render_deck("sweep", path, data=path / "data.lmp", overrides=bad)
 
 
-def test_bursts_smoke_preset_and_pore_reset_timestep():
-    path = sysdir("pe_cg_pore_w10nm_n40_c240_s1")
-    deck = render_deck("pore", path, preset="smoke")
+def test_bursts_smoke_preset_and_pore_reset_timestep(pores):
+    deck = render_deck("pore", pores["cg"][1], preset="smoke")
     hold = [s for s in segments_of(deck) if s[0] == "hold"]
     assert len(hold) == 1
     # smoke: 2 ps hold, 1 ps period, 0.2 ps bursts at 0.02 ps (2 steps at 10 fs): 11 frames

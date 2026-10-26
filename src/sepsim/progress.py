@@ -6,7 +6,8 @@ For a run directory ``results/runs/<system>/<stage>/`` (deck ``in.<protocol>``,
 ns/day and ETA, per-segment thermo means (second half of each segment, SEM from
 the statistical inefficiency), the prep-hold chain checks (D37 C_n, end-to-end
 vector decorrelation, chain COM MSD / <Rg^2>), the cooling-vs-heating density
-hysteresis (prep step-cool vs sweep) and sweep step-vs-hold agreement.
+hysteresis (prep step-cool vs sweep) and sweep step-vs-hold agreement. Pore decks
+(D48: NVT, fixed area per T) also get the surface tension from the pressure tensor.
 
 Segments are the deck's ``run``/``minimize`` commands in order; LAMMPS writes one
 thermo block per command, so the k-th block of the log belongs to the k-th run.
@@ -57,6 +58,7 @@ CHAIN_EVERY_S = 2 * 3600  # chain checks of a running hold extension: at most th
 D47_ACF = float(np.exp(-1.0))  # D47: end-to-end vector ACF at half the run below 1/e ...
 D47_MSD_RG2 = 2.0  # ... and chain COM MSD at half the run >= 2 <Rg^2>
 N_SIGMA = 2.0  # step vs hold disagreement threshold, in combined SEMs
+ATM_A_TO_MN_M = 101325.0 * 1e-10 * 1e3  # surface tension: atm * Angstrom -> mN/m
 FINAL = {"finished", "failed", "interrupted", "dry-run", "cancelled/killed?"}
 
 _HEADER = re.compile(r"^#\s*----\s*(.+?)\s*$")
@@ -230,7 +232,8 @@ def segment_stats(thermo: dict[str, np.ndarray]) -> dict:
 
     T (C), density (g/cm^3) and enthalpy (kcal/mol) as mean +- SEM
     (:func:`sepsim.analysis.stats.timeseries_mean`) over the second half of the
-    rows. ``drift``: :func:`sepsim.analysis.chain.drift_check` on that same
+    rows; for pore decks (Pxx, Pyy, Pzz, Lz columns) also the surface tension per
+    surface gamma = (Lz/2) [Pzz - (Pxx + Pyy)/2] in mN/m (D48: fixed box). ``drift``: :func:`sepsim.analysis.chain.drift_check` on that same
     window's density (its two quarters differ by > 2 combined SEM), i.e. the
     averaging window itself is not stationary; None for constant density (NVT,
     NVE) or < 12 rows.
@@ -252,6 +255,10 @@ def segment_stats(thermo: dict[str, np.ndarray]) -> dict:
             if ms is not None:
                 ms["mean"] += shift
             out[key] = ms
+    if all(c in thermo for c in ("Pxx", "Pyy", "Pzz", "Lz")):
+        p_lat = 0.5 * (thermo["Pxx"] + thermo["Pyy"])
+        gamma = 0.5 * thermo["Lz"] * (thermo["Pzz"] - p_lat) * ATM_A_TO_MN_M
+        out["gamma"] = _mean_sem(gamma[half])
     rho = thermo.get("Density")
     if rho is not None and n - n // 2 >= 12 and np.ptp(rho[half]) > 0:
         try:
@@ -598,12 +605,15 @@ def _concat_thermo(runs: list[LogRun]) -> dict[str, np.ndarray]:
     return {c: np.concatenate([p[c] for p in parts]) for c in cols}
 
 
-def _segments_with_log(segments: list[Segment], log) -> tuple[list[dict], dict]:
+def _segments_with_log(
+    segments: list[Segment], log, partial: bool = False
+) -> tuple[list[dict], dict]:
     """Segment dicts with state (done/running/pending), steps done and stats.
 
     The log's thermo blocks are assigned to segments in order, ``len(run_steps)``
     blocks each; a chunked segment is done once all its blocks are complete, and its
-    stats are over all of them concatenated.
+    stats are over all of them concatenated. With ``partial`` a running (or cancelled)
+    segment also gets stats over the rows logged so far.
     """
     rows, info = [], {"current": None, "extra_runs": 0, "rate": None, "last_perf": None}
     runs = log.runs if log else []
@@ -631,7 +641,10 @@ def _segments_with_log(segments: list[Segment], log) -> tuple[list[dict], dict]:
                     step = run.thermo.get("Step")
                     done += min(int(step[-1] - step[0]), n) if step is not None and len(step) else 0
                     info["rate"] = _rate(run)
-            d.update(state="running", steps_done=min(done, seg.steps), stats=None)
+            stats = (
+                segment_stats(_concat_thermo(mine)) if partial and seg.command == "run" else None
+            )
+            d.update(state="running", steps_done=min(done, seg.steps), stats=stats)
             info["current"] = k
         rows.append(d)
     if info["current"] is None:
@@ -640,13 +653,14 @@ def _segments_with_log(segments: list[Segment], log) -> tuple[list[dict], dict]:
     return rows, info
 
 
-def segments_for(run_dir: Path) -> list[dict] | None:
-    """Segment dicts (with stats) of a run directory, parsed from its deck and log."""
+def segments_for(run_dir: Path, partial: bool = False) -> list[dict] | None:
+    """Segment dicts (with stats) of a run directory, parsed from its deck and log
+    (``partial``: stats for the running segment too, e.g. a cancelled D47 extension)."""
     deck = find_deck(run_dir, load_json(run_dir / MANIFEST_NAME))
     if deck is None:
         return None
     log = read_log(run_dir / LOG_NAME) if (run_dir / LOG_NAME).is_file() else None
-    return _segments_with_log(parse_deck(deck), log)[0]
+    return _segments_with_log(parse_deck(deck), log, partial)[0]
 
 
 def _input_stage(deck: Path | None) -> str | None:
@@ -1151,6 +1165,7 @@ def render_markdown(r: dict) -> str:
     for n in r.get("notes", []):
         lines.append(f"- note: {n}")
     segs = r.get("segments", [])
+    gam = any((s.get("stats") or {}).get("gamma") for s in segs)  # pore decks (D48)
     if segs:
         lines += [
             "",
@@ -1159,13 +1174,14 @@ def render_markdown(r: dict) -> str:
             (
                 "Means ± SEM over the second half of each completed segment; drift = density"
                 " halves of that window differ by > 2 SEM."
+                + (" γ = (Lz/2)[Pzz − (Pxx+Pyy)/2] per surface." if gam else "")
             ),
             "",
             (
                 "| # | segment | state | steps | T set (°C) | T (°C) | density (g/cm³) |"
-                " H (kcal/mol) | drift |"
+                " H (kcal/mol) |" + (" γ (mN/m) |" if gam else "") + " drift |"
             ),
-            "|---|---|---|---|---|---|---|---|---|",
+            "|---|---|---|---|---|---|---|---|" + ("---|" if gam else "") + "---|",
         ]
         for s in segs:
             st = s.get("stats") or {}
@@ -1183,7 +1199,8 @@ def render_markdown(r: dict) -> str:
             lines.append(
                 f"| {s['index']} | {s['name']} | {s['state']} | {steps} | {tset} | {tm} |"
                 f" {_pm(st.get('density'), '.4f')} | {_pm(st.get('enthalpy'), '.1f')} |"
-                f" {drift} |"
+                + (f" {_pm(st.get('gamma'), '.1f')} |" if gam else "")
+                + f" {drift} |"
             )
     hold = r.get("hold")
     if hold:

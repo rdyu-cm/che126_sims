@@ -1,13 +1,15 @@
 {#- Sweep segments shared by the sweep and pore protocols (D11, D12c, D36, D39). Import
     with context: {% import "_sweep.in.j2" as sw with context %}
     sw.grid_table()   - header table of the segments
-    sw.run_segments() - one constant-T NPT segment per entry of `segments`; the barostat
-                        keywords come from `barostat` (iso for bulk, x y couple xy for pores);
-                        holds carry dense burst dumps (D46)
+    sw.run_segments() - one constant-T segment per entry of `segments`: NPT with the
+                        `barostat` keywords (iso) for bulk; for pores (D48) NVT after a
+                        change_box to the segment's lateral box (s.box); holds carry dense
+                        burst dumps (D46)
 -#}
 {% import "_ff.in.j2" as ff with context %}
 {% macro grid_table() %}
-# Sweep grid ({{ p.sweep_grid_c }}; h = hold): {{ segments | selectattr("kind", "eq", "step") | list | length }} steps + {{ segments | selectattr("kind", "eq", "hold") | list | length }} holds at {{ p.p_atm | num }} atm
+# Sweep grid ({{ p.sweep_grid_c }}; h = hold): {{ segments | selectattr("kind", "eq", "step") | list | length }} steps + {{ segments | selectattr("kind", "eq", "hold") | list | length }} holds {% if pore %}NVT at the D48 lateral box per T{% else %}at {{ p.p_atm | num }} atm{% endif %}
+
 #   seg  kind   T/C     T/K       ps        frame/ps  outputs
 {% for s in segments %}
 #   {{ "%-4s" | format(s.index) }} {{ "%-6s" | format(s.kind) }} {{ "%-7s" | format(s.t_c | num) }} {{ "%-9s" | format(s.t_k | num) }} {{ "%-9s" | format(s.ps | num) }} {{ "%-9s" | format(s.dump_ps | num) }} {{ s.dcd }}{% if s.stage %} {{ s.stage }}.data{% endif %}{% if s.vdos %} {{ s.vdos }}{% endif %}{% if s.bursts %} {{ s.dcd[:-4] }}_burst01-{{ "%02d" | format(s.bursts | length) }}.dcd{% endif %}
@@ -20,7 +22,10 @@
 {% for s in segments %}
 
 # ---- Segment {{ s.index }}: {{ s.kind }} at {{ s.t_c | num }} C ({{ s.t_k | num }} K), {{ s.ps | num }} ps, frames every {{ s.dump_ps | num }} ps -> {{ s.dcd }}
-{% if s.new_fix %}
+{% if s.new_fix and s.box %}
+{{ ff.box(s.box) -}}
+fix md all nvt temp {{ s.t_k | num }} {{ s.t_k | num }} {{ tdamp | num }}
+{% elif s.new_fix %}
 fix md all npt temp {{ s.t_k | num }} {{ s.t_k | num }} {{ tdamp | num }} {{ barostat }}
 {% else %}
 # same target as the previous segment: fix md continues

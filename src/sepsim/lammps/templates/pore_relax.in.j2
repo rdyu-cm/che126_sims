@@ -1,0 +1,38 @@
+{#- Wide slit pore at 500 K (D48 step 1): the slab opened from the 500 K bulk box
+    (pore system data.lmp, velocities from the bulk hold) is minimized, then relaxed NVT
+    at 500 K with x, y and z fixed (the film thickness is free: it faces vacuum), so the
+    chains protruding from the cut retract. relaxed.data is the input for narrowing:
+    `sepsim build pore --data .../pore_relax/relaxed.data --source <this system> --width-nm W`.
+    Plain LJ cutoff without tail correction; thermo adds pxx pyy pzz. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+# Pore (D48 wide): width {{ pore.nominal_width_nm | num }} nm at {{ pore.temperature_k | num }} K (mass-equivalent), wall {{ pore.wall_thickness_angstrom | num }} A (replicate_z {{ pore.replicate_z }}), box fixed: Lz {{ pore.lz_new_angstrom | num }} A
+{{ ff.setup() -}}
+{{ ff.thermo() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+# ---- Stage 1: minimize the opened slab
+thermo 100
+minimize {{ p.min_etol }} {{ p.min_ftol }} {{ p.min_maxiter }} {{ p.min_maxeval }}
+{{ ff.write("minimized") -}}
+# the minimizer advanced the step counter: restart it so dump intervals line up
+reset_timestep 0
+{% if shake_types %}
+
+# ---- SHAKE on the constrained bond types (after the minimization)
+{{ ff.shake() -}}
+{% endif %}
+
+# ---- Stage 2: surface relaxation {{ p.relax_ps | num }} ps NVT at {{ p.t_melt | num }} K, box fixed -> relaxed.data, relax.dcd
+# velocities come from the data file (no velocity create)
+thermo {{ n(p.thermo_ps) }}
+fix md all nvt temp {{ p.t_melt | num }} {{ p.t_melt | num }} {{ tdamp | num }}
+dump relax all dcd {{ n(p.hold_dump_ps) }} relax.dcd
+dump_modify relax unwrap yes
+run {{ n(p.relax_ps) }}
+undump relax
+unfix md
+{{ ff.write("relaxed") -}}

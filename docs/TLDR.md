@@ -7,7 +7,7 @@
 
 The repo holds the build and analysis code, templates, and force-field parameters. Production runs on a separate workstation with a budget under 500 GPU-h.
 
-**Status (2026-10-23):** design is done; every decision is in [`decisions.md`](decisions.md). Phase 2 is merged; phase 3 is in progress; stage 2 dry pores (D44) are built on `feat/dry-pores` for 10 nm only (3/5 nm blocked, see next steps).
+**Status (2026-10-23):** design is done; every decision is in [`decisions.md`](decisions.md). Phase 2 is merged; phase 3 is in progress; stage 2 dry pores follow D48 (made at 500 K, then narrowed; NVT with the bulk lateral area), on `feat/pore-500k`.
 
 **Done and merged into `main`:**
 - phase 0: uv package skeleton
@@ -27,7 +27,7 @@ The repo holds the build and analysis code, templates, and force-field parameter
 1. D47: the UA chains are not relaxed after the 20 ns prep hold. Extend PE UA and iPP UA at 500 K (`extend`) until end-to-end ACF < 1/e and COM MSD ≥ 2⟨Rg²⟩ (expected ~60–80 ns more), then `cool` the latest snapshot, rerun the sweeps, build AA from the relaxed UA box (`ua2aa`) and the pores from it.
 2. D37 chain check after each prep; decide the CG criterion (CG C240 plateau ≈ 8.3, stable, vs melt 6.7). C1500 relies on correct construction + the no-distortion check (D47).
 3. CG density-vs-T check (D15) from the CG C240 sweep, then the T1 analyses.
-4. Dry pores (D44): `systems/pe_ua_pore_w10nm_n40_c240_s1` and `systems/pe_cg_pore_w10nm_n40_c240_s1` are built and smoke-tested. Two user decisions are open: how to make 3/5 nm (C240 chains stick out of a 6.4 nm wall by up to 44 Å, so only w > ~8.5 nm opens without bridging chains), and whether to keep the x,y barostat (the liquid-like slab keeps contracting in-plane). Then CG and UA pore runs on CPU; AA on the GPU after the AA preps.
+4. Dry pores (D48): CG C240 first (its bulk sweep is done): `pore_relax` on `systems/pe_cg_pore500k_w10nm_n40_c240_s1`, narrow to 3/5/10 nm, `pore` runs on CPU (commands below; a 300 ps smoke relaxation already let 3 nm open without bridging). UA after D47 passes and the UA sweeps are rerun (wide pore from the extension snapshot). AA later on the GPU after the AA preps.
 5. Phase 4 needs a decision on whether to build crystals (D40) and, if so, the crystal-slab geometry.
 
 **Rules:**
@@ -55,10 +55,13 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --mem 
 ~/projects/slurm-setup/bin/ssubmit ~/projects/che126_sims jobs/pe_ua_amorph_n40_c240_s1/sweep/job.sh --dependency=afterok:<prep job id>
 ~/projects/slurm-setup/bin/scollect ~/projects/che126_sims   # copy results/ and logs/ back
 ```
-- Dry pores (D44): build from the bulk prep output, then render the `pore` protocol (it reads the pore system's `data.lmp`, so it can run on either node):
+- Dry pores (D48), in four steps: (1) open a wide pore in the 500 K bulk box, (2) relax it at 500 K with the box fixed (`pore_relax`), (3) narrow the relaxed state to each width (nominal at 25 °C; the bulk densities for the per-T lateral box are read from the bulk runs under `results/runs/<bulk id>/`, so build where those logs are, after `scollect`), (4) run `pore` (500 K re-relaxation, the prep's step-cool, the sweep; NVT, Lz fixed, x/y by `change_box` at each T). The pore decks read the system's `data.lmp`, so they run on either node:
   ```
-  uv run sepsim build pore --data results/runs/pe_ua_amorph_n40_c240_s1/prep/cooled.data --source systems/pe_ua_amorph_n40_c240_s1 --width-nm 10   # --replicate-z 2 for a thick wall
-  uv run sepsim render pore --system systems/pe_ua_pore_w10nm_n40_c240_s1 --job --node rdyu-server --cpus 4 --mem 8G --time 7-00:00:00
+  B=pe_cg_amorph_n40_c240_s1; W=pe_cg_pore500k_w10nm_n40_c240_s1
+  uv run sepsim build pore --data results/runs/$B/prep/hold.data --source systems/$B --width-nm 10   # --replicate-z 2 for a thick wall; UA: --data .../extend/hold_ext_<N>ns.data
+  uv run sepsim render pore_relax --system systems/$W --job --node rdyu-rog --cpus 6 --mem 8G --time 1-00:00:00
+  uv run sepsim build pore --data results/runs/$W/pore_relax/relaxed.data --source systems/$W --width-nm 3   # also 5, 10; UA: --bulk-hold .../extend --bulk-cool .../cool --bulk-sweep .../sweep_d47
+  uv run sepsim render pore --system systems/pe_cg_pore_w3nm_n40_c240_s1 --job --node rdyu-rog --cpus 6 --mem 8G --time 7-00:00:00
   ```
 - Extended 500 K hold (D47), then re-cool and sweep from it. `extend` reads `../prep/hold.data` and writes `hold_ext.dcd` plus a snapshot `hold_ext_<ns>ns.data` every `chunk_ps` (default 10 ns of `extend_ps` = 80 ns). Watch `sepsim progress` on the extend run (it rechecks prep hold + extension at most every 2 h and prints `D47 PASS/FAIL`); once it passes, `scancel` the job and cool the latest snapshot. Relative `--data` paths of these stages are relative to the run directory, as below (move the old `sweep/` away first, or use `--out .../sweep_d47`):
   ```
@@ -94,19 +97,19 @@ Each pass refreshes this node's runs, runs `sepsim progress --all` on rdyu-rog o
 **Morphologies**
 - Amorphous bulk.
 - ~~Crystal slab with free surfaces for Tm~~: dropped (D40).
-- Slit pores (slab + gap in a 3D-periodic box; D44: wall = one equilibrated bulk box, gap opened along z, plain LJ cutoff without tail correction, AA 14 Å):
-  - widths 3/5/10 nm at AA/UA (only 10 nm buildable so far)
+- Slit pores (slab + gap in a 3D-periodic box; D44/D48: wall = one equilibrated 500 K bulk box, gap opened along z, plain LJ cutoff without tail correction, AA 14 Å):
+  - widths 3/5/10 nm at AA/UA (D48: cut wide from the 500 K box, relaxed there, then narrowed; w defined at 25 °C)
   - CG C240 3/5/10 nm plus a 2×-thick wall; 20–50 nm dry pore at CG
   - wall ablation: amorphous vs crystal-core + amorphous skin
 
 **Electrolyte**
 - 1 M LiPF6 in EC/DMC, all-atom only, ion charges ×0.8, NPT at 20 bar.
-- Dry systems run at 1 atm; dry slabs are barostatted in x and y only, with z fixed. Wet pores are NPT aniso (x, y, z) at 20 bar.
+- Dry pores run NVT with z fixed and x, y following the bulk thermal expansion (D48; no barostat). Wet pores are NPT aniso (x, y, z) at 20 bar.
 
 **Protocol**
 - Prep: soft-core push-off (AA/UA only; D34) → minimize → NVT 500 K → NPT 500 K (100 atm, then 1 atm; D35) → 500 K hold (AA 5 / UA 20 / CG 20 ns) → step-cool to 298 K (D36). Chain equilibration checked by ⟨R²(n)⟩/n (D37). UA: hold extended until end-to-end ACF < 1/e and COM MSD ≥ 2⟨Rg²⟩, then re-cooled (D47).
 - One NPT sweep trajectory per system: 14 steps of ~10 °C (AA 1 / UA 2 / CG 5 ns) plus holds at 25, 90, 130, and 160 °C (AA 5 / UA 10 / CG 25 ns) (D36). Holds add a 10 ps burst at 0.1 ps every 1 ns (D46).
-- Dry pores: minimize, 25 °C surface relaxation (AA 1 / UA 2 / CG 5 ns), then the same sweep; barostat on x,y only (D44).
+- Dry pores (D48): wide pore relaxed NVT at 500 K (AA 1 / UA 2 / CG 5 ns), narrowed, then minimize, 500 K re-relaxation (AA 0.5 / UA 1 / CG 2 ns), the prep's step-cool and the same sweep, all NVT with L_xy(T) from the bulk density; γ from the pressure tensor.
 - Thermal conductivity κ: rNEMD branch runs. Whether to use 4 or 2 temperatures is decided after the benchmark.
 - Cp: dH/dT plus a VDOS quantum correction (all-atom).
 - Timesteps: AA 1 fs flexible / UA 2 fs (flexible backbone, SHAKE only on the explicit methine C–H; fallback 1 fs) / CG 10 fs.

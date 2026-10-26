@@ -113,3 +113,35 @@ def reversal_conformation(res, n_carbons=30, at=4):
         for k, r in enumerate(roles)
     ]
     return mol, ff, k_rev, build_fixed_conformation(mol, ff, phis)
+
+
+# Synthetic D48 bulk densities (cooling branch incl. the 500 K hold, heating sweep) for
+# tiny test pores built from unrelaxed 0.3 g/cm^3 boxes.
+SYN_BULK = {
+    "t_source_k": 500.0,
+    "rho_source_g_cm3": 0.30,
+    "cooling": [[298.15, 0.336], [400.0, 0.318], [500.0, 0.30]],
+    "heating": [[298.15, 0.335], [433.15, 0.312]],
+    "sources": {
+        k: {
+            "run_dir": f"results/runs/x/{k}",
+            "deck": "in.x",
+            "deck_sha256": "0" * 64,
+            "log_sha256": "1" * 64,
+            "segments": "synthetic",
+        }
+        for k in ("hold", "cool", "sweep")
+    },
+}
+
+
+def tiny_pores(polymer, res, chains, carbons, root, width_nm=3.0, bulk_table=None):
+    """(bulk, wide, narrow) system dirs: a small amorphous box, its wide pore, and that
+    pore narrowed (from its own data.lmp, standing in for the relaxed state; D48)."""
+    from sepsim.build.amorphous import build_amorphous
+    from sepsim.build.pore import build_pore, narrow_pore
+
+    bulk = build_amorphous(polymer, res, chains, carbons, 0.3, 3, root)
+    wide = build_pore(bulk / "data.lmp", bulk, width_nm, 1, root)
+    narrow = narrow_pore(wide / "data.lmp", wide, width_nm, bulk_table or SYN_BULK, root)
+    return bulk, wide, narrow
