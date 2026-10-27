@@ -5,10 +5,10 @@ n_chains: 40
 n_carbons: 240
 seed: 1
 box_angstrom:
-- [11.43625446, 79.24953093]
-- [11.43625446, 79.24953093]
-- [11.43625446, 125.57209930537181]
-density_g_cm3: 0.42627257859870576
+- [11.63544872, 79.05033667]
+- [11.63544872, 79.05033667]
+- [11.63544872, 126.50986268176351]
+density_g_cm3: 0.42855243559247036
 counts:
   per_chain: {atoms: 80, bonds: 79, angles: 78, dihedrals: 0}
   total: {atoms: 3200, bonds: 3160, angles: 3120, dihedrals: 0}
@@ -18,7 +18,7 @@ formula:
 total_mass_g_mol: 134737.912
 forcefield: {name: sdk_cg, file: sdk_cg.yaml, sha256: 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba}
 sepsim_version: 0.1.0
-git: {commit: b271ebf6eca82e4d0a2bb0b13b6435f17504bab5, dirty: false}
+git: {commit: 4d12e74601cc30a748d3880edf42f33c8ca67300, dirty: false}
 type_ids:
   atom: {CM: 1, CT: 2}
   bond: {CM-CM: 1, CM-CT: 2}
@@ -43,69 +43,70 @@ pore:
   nominal_width_nm: 5.0
   width_definition: 'at 25 C: Lz - M / (rho_bulk(298.15 K) * A(298.15 K)), A from
     the D48 lateral rule (heating branch)'
-  width_500k_nm: 4.687972203402593
+  width_500k_nm: 4.683873898676369
   replicate_z: 1
-  wall_thickness_angstrom: 64.1358448453718
-  wall_thickness_500k_angstrom: 67.25612281134588
-  lz_source_angstrom: 167.81327647
-  lz_new_angstrom: 114.1358448453718
-  area_angstrom2: 4598.640465596656
-  area_25c_angstrom2: 4181.840277603257
+  wall_thickness_angstrom: 64.87441396176351
+  wall_thickness_500k_angstrom: 68.03567497499982
+  lz_source_angstrom: 167.41488795
+  lz_new_angstrom: 114.87441396176351
+  area_angstrom2: 4544.767117311055
+  area_25c_angstrom2: 4132.236161666803
   slab_mass_g_mol: 134737.912
-  bulk_density_g_cm3: 0.8342008909215264
-  bulk_density_500k_g_cm3: 0.7233985376952305
-  cut_z_angstrom: 11.43625446
-  slab_z_extent_angstrom: [29.241107665855225, 107.43705715580818]
-  window_z_angstrom: [34.87611547701296, 102.13223828835883]
-  protrusion_angstrom: [5.635007811157735, 5.304818867449342]
-  clear_gap_angstrom: 35.939895355418855
+  bulk_density_g_cm3: 0.8346037445164387
+  bulk_density_500k_g_cm3: 0.7235867051904936
+  cut_z_angstrom: 11.63544872
+  slab_z_extent_angstrom: [29.84197355929328, 109.747630653043]
+  window_z_angstrom: [35.05481821338184, 103.09049318838166]
+  protrusion_angstrom: [5.212844654088563, 6.657137464661346]
+  clear_gap_angstrom: 34.968756868013784
   lateral:
     sources:
-      hold: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/prep,
-        deck: in.prep, deck_sha256: 090a7b7b19ac8c35dbb4344e71c819ee399be3bf2602389cd36bb506b66af479,
-        log_sha256: 427995364be6866987bf0b7b72760def9dc50e37b167afd1e1e94df4d517477c,
-        segments: '5: Stage 6: NPT hold 20000 ps at 500 K, 1 atm'}
-      cool: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/prep,
-        deck: in.prep, deck_sha256: 090a7b7b19ac8c35dbb4344e71c819ee399be3bf2602389cd36bb506b66af479,
-        log_sha256: 427995364be6866987bf0b7b72760def9dc50e37b167afd1e1e94df4d517477c,
+      hold: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/extend,
+        deck: in.extend, deck_sha256: 9c9765d97389c3f3dbd32a6ad5d157d493a2405f24f3f8f3b2d44d8ba2e46789,
+        log_sha256: 506368e66179c3310216c42d2a883ee316cee194e0a7fe3441685fe7a306b40b,
+        segments: '1: Stage 1: NPT hold extension 60000 ps at 500 K, 1 atm'}
+      cool: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/cool,
+        deck: in.cool, deck_sha256: ad2c770112bb7ac020038801f3c23ff5cfa44986ba3e59cfd4d305b6ec2a1a55,
+        log_sha256: 65ad4952a066a6edaafa4d42ec6714b9de221a3fab5efd0976c08932dbefeabd,
         segments: 8 step-cool stages + the hold}
       sweep: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/sweep,
-        deck: in.sweep, deck_sha256: 4568e7de3029ab791caf350e535e19076bbc59707b1782175384d43579fa56ea,
-        log_sha256: ce991655a1923653ec942caab25b2a8a4fe1b3fbcfe2f9b97a2560815f08fb87,
+        deck: in.sweep, deck_sha256: 943b7e5cb75dac73af50aa9c8e409a80be73408b2a8bad91f17b9088a7cab6d7,
+        log_sha256: d33b88416793ae587a09a1d6f9d5d1844f00e2df9cd958d79641268919e05b89,
         segments: 18 sweep segments}
     t_source_k: 500.0
-    rho_source_g_cm3: 0.7233985376952305
+    rho_source_g_cm3: 0.7235867051904936
     cooling:
-    - [298.15, 0.8333322070931626]
-    - [323.38125, 0.8194478384006397]
-    - [348.6125, 0.8054273591803279]
-    - [373.84375, 0.7920268015353858]
-    - [399.075, 0.7777890350539785]
-    - [424.30625, 0.7646961821511395]
-    - [449.5375, 0.7508731146061576]
-    - [474.76875, 0.7369015279368252]
-    - [500.0, 0.7233985376952305]
+    - [298.15, 0.8349717050099962]
+    - [323.38125, 0.8195344202638944]
+    - [348.6125, 0.8055979866373452]
+    - [373.84375, 0.7917072215713714]
+    - [399.075, 0.7776759243702519]
+    - [424.30625, 0.7638979325189924]
+    - [449.5375, 0.7505028884446222]
+    - [474.76875, 0.7367118197760896]
+    - [500.0, 0.7235867051904936]
     heating:
-    - [298.15, 0.8342008909215264]
-    - [308.15, 0.8291883878968411]
-    - [318.15, 0.8231001137105157]
-    - [328.15, 0.8176330752898839]
-    - [338.15, 0.8119626824910036]
-    - [348.15, 0.8063655018472611]
-    - [358.15, 0.8010620665253899]
-    - [363.15, 0.7982390853515717]
-    - [373.15, 0.7926735326549381]
-    - [383.15, 0.7865188810115954]
-    - [393.15, 0.7817242707037185]
-    - [403.15, 0.7759832886169107]
-    - [413.15, 0.7707322666933226]
-    - [423.15, 0.7652925167333068]
-    - [433.15, 0.7595990061811055]
-    l_source_angstrom: [67.81327646029816, 67.81327646029816]
+    - [298.15, 0.8346037445164387]
+    - [308.15, 0.8289994942223111]
+    - [318.15, 0.8229684830347862]
+    - [328.15, 0.8171753305197921]
+    - [338.15, 0.8114178633466614]
+    - [348.15, 0.8063222315033985]
+    - [358.15, 0.8001456614234307]
+    - [363.15, 0.797926575162787]
+    - [373.15, 0.792342031207517]
+    - [383.15, 0.7867716159216314]
+    - [393.15, 0.7812853948060776]
+    - [403.15, 0.7756432643468522]
+    - [413.15, 0.7697885178488605]
+    - [423.15, 0.7654352289284286]
+    - [433.15, 0.7595370725333973]
+    l_source_angstrom: [67.41488794917038, 67.41488794917038]
 source:
   id: pe_cg_pore500k_w10nm_n40_c240_s1
-  manifest_sha256: dadfd17a6c1fcb58f606b0fbee96bf0dc40494e7ab87858fb2256951c3e3ffb2
-  data_file: rdyu-server:results/runs/pe_cg_pore500k_w10nm_n40_c240_s1/pore_relax/relaxed.data
-  data_sha256: f83bf4ec8acb62c2485ece7204d24a43168ccb1f2c7535953ea894a4e8ab867f
+  manifest_sha256: d4af1fd525010d7362418c2dfa68765d88f14400e600d4d71ba3ced93b7f2919
+  data_file: /home/rdyu/projects/che126_sims/results/runs/pe_cg_pore500k_w10nm_n40_c240_s1/pore_relax/relaxed.data
+  data_sha256: 2267d65e2ce30199d0837b5754b8fc2da1548962126ec999a74a14ebd4e8e940
   source: {id: pe_cg_amorph_n40_c240_s1, manifest_sha256: be94805b7ab7d340773f4aac950d8c88ba3106377c963af80451fabc5b7ef4b3,
-    data_file: 'rdyu-rog:results/runs/pe_cg_amorph_n40_c240_s1/prep/hold.data', data_sha256: 8a79b54fad74b98e63514cc39e8a20ecb0f2688c0eafe885d899bafd82ce0a5c}
+    data_file: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/extend/hold_ext_60ns.data,
+    data_sha256: 0d698cd7dfde40cda87e6e45b1845f2bd9a3937e5df3e45f716374eeed5b9bf2}
