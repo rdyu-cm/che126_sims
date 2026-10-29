@@ -1,0 +1,70 @@
+id: pe_cg_pore500k_w10nm_n320_c240_s1_rep222
+polymer: pe
+resolution: cg
+n_chains: 320
+n_carbons: 240
+seed: 1
+box_angstrom:
+- [11.532062893475228, 146.56861044647752]
+- [11.532062893475228, 146.56861044647752]
+- [11.532062893475228, 246.56861044647752]
+density_g_cm3: 0.4176291906365567
+counts:
+  per_chain: {atoms: 80, bonds: 79, angles: 78, dihedrals: 0}
+  total: {atoms: 25600, bonds: 25280, angles: 24960, dihedrals: 0}
+formula:
+  per_chain: C240H482
+  total: {C: 76800, H: 154240}
+total_mass_g_mol: 1077903.296
+forcefield: {name: sdk_cg, file: sdk_cg.yaml, sha256: 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba}
+sepsim_version: 0.1.0
+git: {commit: 99d8d382667f93e3128374aa435d7e02b01cb337, dirty: false}
+type_ids:
+  atom: {CM: 1, CT: 2}
+  bond: {CM-CM: 1, CM-CT: 2}
+  angle: {CM-CM-CM: 1, CM-CM-CT: 2}
+  dihedral: {}
+shake_bond_types: {}
+lammps_styles:
+  pair: lj/spica
+  mixing: none
+  bond: harmonic
+  angle: spica
+  dihedral: none
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 1.0]
+    angle: true
+replicate:
+  factors: [2, 2, 2]
+  source_id: pe_cg_amorph_n40_c240_s1
+  source_box_angstrom:
+  - [11.63544872039845, 79.05033666956882]
+  - [11.63544872039845, 79.05033666956882]
+  - [11.63544872039845, 79.05033666956882]
+  max_bond_angstrom: 4.882277259406823
+  correlated: 'the replica images are copies of one box and stay correlated until
+    decorrelated (D50: a 500 K extend run before any pore is cut)'
+pore:
+  kind: wide
+  method: 'D48 step 1: 500 K bulk box enlarged along z (Hapke et al., cond-mat/9607112,
+    method 2); relax with pore_relax, then narrow'
+  temperature_k: 500.0
+  nominal_width_nm: 10.0
+  width_definition: 'mass-equivalent at the source density: Lz_new - M / (rho_src
+    * Lx * Ly)'
+  replicate_z: 1
+  wall_thickness_angstrom: 135.0365475530023
+  lz_source_angstrom: 135.0365475530023
+  lz_new_angstrom: 235.0365475530023
+  area_angstrom2: 18234.86917503425
+  slab_mass_g_mol: 1077903.296
+  bulk_density_g_cm3: 0.7269004199477445
+  cut_z_angstrom: 94.03206289347523
+  slab_z_extent_angstrom: [22.396057327235127, 238.1624426750988]
+  window_z_angstrom: [58.9956050037099, 194.0321525567122]
+  protrusion_angstrom: [36.59954767647477, 44.1302901183866]
+  clear_gap_angstrom: 19.270162205138632
+source: {id: pe_cg_amorph_n320_c240_s1_rep222, manifest_sha256: 6c39998934e21c5bb79290a5ae90a761293965efd003414392144aa0c917c8be,
+  data_file: /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n320_c240_s1_rep222/extend/hold_ext_70ns.data,
+  data_sha256: 61ae3d9b00e20d065cb219596f5ca49603aef997873ce214f35b655e520a7467}

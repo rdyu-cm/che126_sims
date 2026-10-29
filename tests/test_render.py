@@ -829,8 +829,8 @@ def test_committed_pore_systems_present():
     assert m["pore"]["kind"] == "wide" and m["pore"]["temperature_k"] == 500.0
     assert m["source"]["data_file"].endswith("pe_cg_amorph_n40_c240_s1/extend/hold_ext_60ns.data")
     for p in PORES:
-        if p.name != "pe_cg_pore500k_w10nm_n40_c240_s1":
-            assert manifest(p)["pore"]["kind"] == "narrow"
+        kind = "wide" if "pore500k" in p.name else "narrow"
+        assert manifest(p)["pore"]["kind"] == kind
 
 
 def test_pore_decks_nvt_cutoff_tail_thermo(pores):
