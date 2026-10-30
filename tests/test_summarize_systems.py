@@ -282,11 +282,12 @@ def test_multiple_roots_and_cli(summ, tree, tmp_path):
             "--analysis", str(tree["analysis"]),
             "--systems", str(tree["systems"]),
             "--out", str(out),
+            "--guide", str(tmp_path / "missing_guide.md"),
         ]
     )  # fmt: skip
     assert rc == 0
     text = out.read_text()
-    assert "## Property guide" not in text  # no guide in the tmp project: skipped
+    assert "## Property guide" not in text  # missing guide: skipped
     row = next(r for r in _overview_rows(text) if r[0] == "ipp_ua_amorph_n40_c240_s1")
     assert row[8].startswith("D47 PASS")  # the report with more steps done wins
 
