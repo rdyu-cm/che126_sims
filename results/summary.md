@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-10-30 17:29 UTC
-- Git commit: 8942598 (dirty)
-- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/che126_sims/results/analysis; systems /home/rdyu/projects/worktrees/comparability/systems
+- Generated: 2026-10-30 17:32 UTC
+- Git commit: 417ddb7
+- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/che126_sims/results/analysis; systems /home/rdyu/projects/worktrees/convergence-dashboard/systems
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -15,6 +15,8 @@
 - Run status comes from `sepsim progress` ("cancelled/killed?" = log silent > 6 h without a finished manifest; ETAs converted to UTC). Superseded systems and run directories (renamed old/cancelled runs, rebuilt sources) are listed separately and never used for the numbers.
 - **"drift seg …"** (monitor flag): those segments show a significant trend in a thermo quantity over their analysis window. It is informational.
 
+**Convergence figures:** [overview](convergence_overview.png), [`pe_cg_amorph_n40_c240_s1`](convergence/pe_cg_amorph_n40_c240_s1.png), [`pe_cg_amorph_n40_c1500_s1`](convergence/pe_cg_amorph_n40_c1500_s1.png), [`pe_cg_amorph_n320_c240_s1_rep222`](convergence/pe_cg_amorph_n320_c240_s1_rep222.png), [`pe_cg_pore500k_w10nm_n40_c240_s1`](convergence/pe_cg_pore500k_w10nm_n40_c240_s1.png), [`pe_cg_pore_w5nm_n40_c240_s1`](convergence/pe_cg_pore_w5nm_n40_c240_s1.png), [`pe_cg_pore500k_w10nm_n320_c240_s1_rep222`](convergence/pe_cg_pore500k_w10nm_n320_c240_s1_rep222.png), [`pe_cg_pore_w5nm_n320_c240_s1_rep222`](convergence/pe_cg_pore_w5nm_n320_c240_s1_rep222.png), [`pe_ua_amorph_n40_c240_s1`](convergence/pe_ua_amorph_n40_c240_s1.png), [`pe_aa_amorph_n40_c240_s1_from_ua`](convergence/pe_aa_amorph_n40_c240_s1_from_ua.png), [`ipp_ua_amorph_n40_c240_s1`](convergence/ipp_ua_amorph_n40_c240_s1.png), [`ipp_aa_amorph_n40_c240_s1_from_ua`](convergence/ipp_aa_amorph_n40_c240_s1_from_ua.png)
+
 ## Overview
 
 | System | Res | Polymer | Kind | Chains × length | Sites | Stage now | Status | Equilibration (D47) | C_n plateau (D37) | Analysis |
@@ -26,18 +28,18 @@
 | `pe_cg_pore_w5nm_n40_c240_s1` | CG | PE | pore (narrow, 5 nm) | 40 × C240 | 3,200 beads | done | finished: pore | from pe_cg_pore500k_w10nm_n40_c240_s1 ← pe_cg_amorph_n40_c240_s1: D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨Rg²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | no |
 | `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` | CG | PE | pore (wide, 10 nm) | 320 × C240 | 25,600 beads | done | finished: pore_relax | from pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | CG | PE | pore (narrow, 5 nm) | 320 × C240 | 25,600 beads | done | finished: pore | from pe_cg_pore500k_w10nm_n320_c240_s1_rep222 ← pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
-| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | sweep | running, 0.9% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 04:21 UTC | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | prep | running, 2.0% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:11 UTC | from pe_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | sweep | running, 40.7% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 06:27 UTC | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
+| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | sweep | running, 1.0% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 15:53 UTC | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | prep | running, 2.3% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:21 UTC | from pe_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | sweep | running, 40.8% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 05:35 UTC | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 | `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | sweep | not started (prep done) | from ipp_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 
 ## Pending and known items
 
 - `pe_cg_pore_w5nm_n40_c240_s1`: pore analysis not run
 - `pe_cg_pore_w5nm_n320_c240_s1_rep222`: pore analysis not run
-- `pe_ua_amorph_n40_c240_s1`: sweep: running, 0.9% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 04:21 UTC
-- `pe_aa_amorph_n40_c240_s1_from_ua`: prep: running, 2.0% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:11 UTC; sweep not started
-- `ipp_ua_amorph_n40_c240_s1`: sweep: running, 40.7% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 06:27 UTC
+- `pe_ua_amorph_n40_c240_s1`: sweep: running, 1.0% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 15:53 UTC
+- `pe_aa_amorph_n40_c240_s1_from_ua`: prep: running, 2.3% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:21 UTC; sweep not started
+- `ipp_ua_amorph_n40_c240_s1`: sweep: running, 40.8% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 05:35 UTC
 - `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep not started
 
 ## Superseded (kept, not used)
@@ -317,7 +319,7 @@ Not analyzed yet: `pe_cg_amorph_n320_c240_s1_rep222`, `pe_ua_amorph_n40_c240_s1`
   - 500 K hold 98.2 ns: D47 PASS (R_ee ACF 0.16 at 49.1 ns, 1/e at 19.27 ns; COM MSD/⟨Rg²⟩ 2.28); C_n 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53)
 - **cool** (rdyu-server): finished; started 2026-10-29 11:30 UTC, ended 2026-10-30 15:50 UTC; reads `../extend/hold_ext_70ns.data`
   - monitor flags: drift seg 3,4,7
-- **sweep** (rdyu-server): running, 0.9% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 04:21 UTC; started 2026-10-30 15:50 UTC; reads `../cool/cooled.data`
+- **sweep** (rdyu-server): running, 1.0% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 15:53 UTC; started 2026-10-30 15:50 UTC; reads `../cool/cooled.data`
 - Superseded (not used): sweep_old_unrelaxed_cancelled (cancelled/killed?)
 
 ### `pe_aa_amorph_n40_c240_s1` (superseded)
@@ -354,7 +356,7 @@ Not analyzed yet: `pe_cg_amorph_n320_c240_s1_rep222`, `pe_ua_amorph_n40_c240_s1`
 
 **Stages**
 
-- **prep** (rdyu-rog): running, 2.0% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:11 UTC; started 2026-10-30 16:16 UTC; reads `systems/pe_aa_amorph_n40_c240_s1_from_ua/data.lmp`
+- **prep** (rdyu-rog): running, 2.3% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:21 UTC; started 2026-10-30 16:16 UTC; reads `systems/pe_aa_amorph_n40_c240_s1_from_ua/data.lmp`
 
 ### `ipp_ua_amorph_n40_c240_s1`
 
@@ -377,7 +379,7 @@ Not analyzed yet: `pe_cg_amorph_n320_c240_s1_rep222`, `pe_ua_amorph_n40_c240_s1`
   - 500 K hold 60.0 ns: D47 PASS (R_ee ACF 0.19 at 30.0 ns, 1/e at 14.68 ns; COM MSD/⟨Rg²⟩ 2.06); C_n 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25)
 - **cool** (rdyu-rog): finished; started 2026-10-26 18:02 UTC, ended 2026-10-28 07:16 UTC; reads `../extend/hold_ext_40ns.data`
   - monitor flags: drift seg 4; hyst max 0.67%
-- **sweep** (rdyu-rog): running, 40.7% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 06:27 UTC; started 2026-10-28 07:16 UTC; reads `../cool/cooled.data`
+- **sweep** (rdyu-rog): running, 40.8% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 05:35 UTC; started 2026-10-28 07:16 UTC; reads `../cool/cooled.data`
   - monitor flags: drift seg 1,5,8; hyst max 0.67%
 - Superseded (not used): prep_server_cancelled (cancelled/killed?)
 

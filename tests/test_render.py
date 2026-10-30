@@ -468,7 +468,7 @@ def test_sweep_grid_durations_and_outputs(path):
         vdos_runs = [commands(b.split("fix vdos", 1)[1]) for *_, b in segs if "fix vdos" in b]
         assert [next(c for c in v if c[0] == "run") for v in vdos_runs] == [["run", "10000"]] * 4
     else:
-        assert not vdos and "nve" not in deck
+        assert not vdos and not any(c[0] == "fix" and "nve" in c[3:4] for c in cmds)
     # every fix md is unfixed before an NVE segment or the next target
     assert sum(c[:2] == ["unfix", "md"] for c in cmds) == len(npt)
 

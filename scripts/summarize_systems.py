@@ -1179,9 +1179,26 @@ def build_context(run_roots: list[Path], analysis_root: Path, systems_root: Path
     return ctx
 
 
-def render(ctx: dict, guide: str | None = None) -> str:
+def convergence_links(base: Path | None, order: list[str]) -> list[str]:
+    """'Convergence figures' line linking the files of scripts/convergence_dashboard.py
+    (relative to ``base``, the summary's directory) that exist; none -> no line."""
+    if base is None:
+        return []
+    links = []
+    if (base / "convergence_overview.png").is_file():
+        links.append("[overview](convergence_overview.png)")
+    links += [
+        f"[`{s}`](convergence/{s}.png)"
+        for s in order
+        if (base / "convergence" / f"{s}.png").is_file()
+    ]
+    return [f"**Convergence figures:** {', '.join(links)}", ""] if links else []
+
+
+def render(ctx: dict, guide: str | None = None, base: Path | None = None) -> str:
     order = sorted(ctx["meta"], key=lambda s: sort_key(s, ctx["meta"][s], ctx["systems"].get(s)))
-    lines = header(ctx) + overview(ctx, order) + pending(ctx, order) + superseded(ctx, order)
+    lines = header(ctx) + convergence_links(base, order)
+    lines += overview(ctx, order) + pending(ctx, order) + superseded(ctx, order)
     lines += properties(ctx, order) + pores(ctx, order)
     lines += ["## Per-system details", ""]
     for sid in order:
@@ -1212,7 +1229,7 @@ def main(argv: list[str] | None = None) -> int:
     guide = guide_path.read_text() if guide_path.is_file() else None
     if guide is None:
         print(f"note: {guide_path} not found, property guide not appended", file=sys.stderr)
-    out.write_text(render(ctx, guide))
+    out.write_text(render(ctx, guide, out.parent))
     print(f"wrote {out} ({len(ctx['meta'])} systems)")
     return 0
 
