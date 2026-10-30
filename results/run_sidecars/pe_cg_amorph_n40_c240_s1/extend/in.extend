@@ -1,0 +1,71 @@
+# sepsim 0.1.0 deck: extend
+# system pe_cg_amorph_n40_c240_s1 (cg), seed 1
+# manifest.yaml sha256 be94805b7ab7d340773f4aac950d8c88ba3106377c963af80451fabc5b7ef4b3
+# data ../prep/hold.data sha256 8a79b54fad74b98e63514cc39e8a20ecb0f2688c0eafe885d899bafd82ce0a5c
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   chunk_ps = 10000.0
+#   dt_fs = 10.0
+#   extend_ps = 60000.0
+#   hold_dump_ps = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   t_melt = 500.0
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../prep/hold.data nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 100
+restart 100000 restart.a restart.b
+
+# ---- Stage 1: NPT hold extension 60000 ps at 500 K, 1 atm (D47; continues the prep's Stage 6 hold) -> hold_ext.dcd, hold_ext_<ns>ns.data
+# 6 chunk(s) of up to 10000 ps, each followed by a snapshot; fix md and the dump carry on across the runs
+fix md all npt temp 500 500 1000 iso 1 1 10000
+dump hold_ext all dcd 1000 hold_ext.dcd
+dump_modify hold_ext unwrap yes
+run 1000000
+write_data hold_ext_10ns.data pair ij
+run 1000000
+write_data hold_ext_20ns.data pair ij
+run 1000000
+write_data hold_ext_30ns.data pair ij
+run 1000000
+write_data hold_ext_40ns.data pair ij
+run 1000000
+write_data hold_ext_50ns.data pair ij
+run 1000000
+write_data hold_ext_60ns.data pair ij
+undump hold_ext
+unfix md

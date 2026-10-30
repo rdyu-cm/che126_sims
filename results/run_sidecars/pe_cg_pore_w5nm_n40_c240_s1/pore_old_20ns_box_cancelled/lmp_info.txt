@@ -1,0 +1,41 @@
+LAMMPS (22 Jul 2025 - Update 6)
+  using 4 OpenMP thread(s) per MPI task
+
+Info-Info-Info-Info-Info-Info-Info-Info-Info-Info-Info
+Printed on Mon Oct 26 16:36:22 2026
+
+LAMMPS version: 22 Jul 2025 / 20250722
+Git info: HEAD / stable_22Jul2025_update6 / 9c5ab448c78a14fd534619622162ba418d6a1fb1
+
+OS information: Linux "Ubuntu 24.04.3 LTS" 7.0.0-38-generic x86_64
+
+sizeof(smallint): 32-bit
+sizeof(imageint): 32-bit
+sizeof(tagint):   32-bit
+sizeof(bigint):   64-bit
+
+Compiler: Clang C++ AMD Clang 19.0.0git (https://github.com/RadeonOpenCompute/llvm-project roc-6.4.4 25224 d366fa84f3fdcbd4b10847ebd5db572ae12a34fb) with OpenMP 5.1
+C++ standard: C++17
+Embedded fmt library version: 10.2.0
+Embedded JSON class version: 3.12.0
+
+Active compile time flags:
+
+-DLAMMPS_GZIP
+-DLAMMPS_SMALLBIG
+
+Available compression formats:
+
+Extension: .gz     Command: gzip
+Extension: .bz2    Command: bzip2
+Extension: .xz     Command: xz
+Extension: .lzma   Command: xz
+
+
+Installed packages:
+
+CG-SPICA EXTRA-DUMP EXTRA-MOLECULE GPU KOKKOS KSPACE MOLECULE OPENMP RIGID 
+
+Info-Info-Info-Info-Info-Info-Info-Info-Info-Info-Info
+
+Total wall time: 0:00:00

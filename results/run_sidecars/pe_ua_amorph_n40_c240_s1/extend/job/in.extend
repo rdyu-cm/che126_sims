@@ -1,0 +1,75 @@
+# sepsim 0.1.0 deck: extend
+# system pe_ua_amorph_n40_c240_s1 (ua), seed 1
+# manifest.yaml sha256 8ec8f0c6884e41f6fcf79fdb45d61bc3a036e70492adea9d48a5e42aafb9775b
+# data ../prep/hold.data sha256 424d186100bd6a7260d7d3e91c6a29f87307034402984ca1e67e37aef2c97899
+# forcefield trappe_ua.yaml sha256 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   chunk_ps = 10000.0
+#   dt_fs = 2.0
+#   extend_ps = 80000.0
+#   hold_dump_ps = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 14.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   t_melt = 500.0
+#   tail = True
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../prep/hold.data nocoeff
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 15.035  # CH3
+mass 2 14.027  # CH2
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.1947460214 3.75  # CH3
+pair_coeff 2 2 0.0914113978 3.95  # CH2
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 500
+restart 500000 restart.a restart.b
+
+# ---- Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm (D47; continues the prep's Stage 6 hold) -> hold_ext.dcd, hold_ext_<ns>ns.data
+# 8 chunk(s) of up to 10000 ps, each followed by a snapshot; fix md and the dump carry on across the runs
+fix md all npt temp 500 500 200 iso 1 1 2000
+dump hold_ext all dcd 5000 hold_ext.dcd
+dump_modify hold_ext unwrap yes
+run 5000000
+write_data hold_ext_10ns.data
+run 5000000
+write_data hold_ext_20ns.data
+run 5000000
+write_data hold_ext_30ns.data
+run 5000000
+write_data hold_ext_40ns.data
+run 5000000
+write_data hold_ext_50ns.data
+run 5000000
+write_data hold_ext_60ns.data
+run 5000000
+write_data hold_ext_70ns.data
+run 5000000
+write_data hold_ext_80ns.data
+undump hold_ext
+unfix md

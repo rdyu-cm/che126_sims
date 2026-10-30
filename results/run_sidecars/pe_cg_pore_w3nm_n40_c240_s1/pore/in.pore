@@ -1,0 +1,877 @@
+# sepsim 0.1.0 deck: pore
+# system pe_cg_pore_w3nm_n40_c240_s1 (cg), seed 1
+# manifest.yaml sha256 3589d4d4045efed52dee93875029340d3a5fb829de9fa8350a35313fdd2a18fb
+# data ../../../../systems/pe_cg_pore_w3nm_n40_c240_s1/data.lmp sha256 73ac0a046887452e45e84b028f1f83c17b44dfd92ebf9bad715d71df7661cf4a
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   burst_dt_ps = 0.1
+#   burst_len_ps = 10.0
+#   burst_period_ps = 1000.0
+#   cool_dump_ps = 100.0
+#   cool_step_ps = 5000.0
+#   cool_steps = 8
+#   dt_fs = 10.0
+#   hold_dump_ps = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   min_etol = 0.0001
+#   min_ftol = 1e-06
+#   min_maxeval = 100000
+#   min_maxiter = 10000
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   rerelax_ps = 2000.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   step_dump_ps = 100.0
+#   step_ps = 5000.0
+#   sweep_grid_c = 25h,35,45,55,65,75,85,90h,100,110,120,130h,140,150,160h
+#   sweep_hold_ps = 25000.0
+#   t_final = 298.15
+#   t_melt = 500.0
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+#   vdos = False
+#   vdos_dt_fs = 1.0
+#   vdos_dump_fs = 4.0
+#   vdos_gzip = True
+#   vdos_ps = 10.0
+# Pore (D48): nominal width 3 nm at 25 C (2.688 nm at 500 K), wall 64.136 A at 25 C (replicate_z 1), Lz 94.1358448454 A (fixed)
+# Lateral box (D48): L(T) = L_src (rho_bulk(T_src)/rho_bulk(T))^(1/3), T_src 500 K, L_src 67.8133 x 67.8133 A, rho_bulk(T_src) 0.723399 g/cm3
+# rho_bulk(T) from the bulk runs (linear in T; cooling branch for the re-relaxation and step-cool, heating branch for the sweep):
+#   cool  /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/prep (8 step-cool stages + the hold): in.prep sha256 090a7b7b19ac8c35dbb4344e71c819ee399be3bf2602389cd36bb506b66af479, log.lammps sha256 427995364be6866987bf0b7b72760def9dc50e37b167afd1e1e94df4d517477c
+#   hold  /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/prep (5: Stage 6: NPT hold 20000 ps at 500 K, 1 atm): in.prep sha256 090a7b7b19ac8c35dbb4344e71c819ee399be3bf2602389cd36bb506b66af479, log.lammps sha256 427995364be6866987bf0b7b72760def9dc50e37b167afd1e1e94df4d517477c
+#   sweep /home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/sweep (18 sweep segments): in.sweep sha256 4568e7de3029ab791caf350e535e19076bbc59707b1782175384d43579fa56ea, log.lammps sha256 ce991655a1923653ec942caab25b2a8a4fe1b3fbcfe2f9b97a2560815f08fb87
+#   stage          T/K        branch   rho_bulk   Lx/A       Ly/A
+#   re-relax       500        cooling  0.723399   67.8133    67.8133
+#   cool 1/8       474.76875  cooling  0.736902   67.3965    67.3965
+#   cool 2/8       449.5375   cooling  0.750873   66.9759    66.9759
+#   cool 3/8       424.30625  cooling  0.764696   66.5699    66.5699
+#   cool 4/8       399.075    cooling  0.777789   66.1942    66.1942
+#   cool 5/8       373.84375  cooling  0.792027   65.7952    65.7952
+#   cool 6/8       348.6125   cooling  0.805427   65.4282    65.4282
+#   cool 7/8       323.38125  cooling  0.819448   65.0529    65.0529
+#   cool 8/8       298.15     cooling  0.833332   64.6896    64.6896
+#   seg 01 hold    298.15     heating  0.834201   64.6671    64.6671
+#   seg 02 step    308.15     heating  0.829188   64.7972    64.7972
+#   seg 03 step    318.15     heating  0.823100   64.9566    64.9566
+#   seg 04 step    328.15     heating  0.817633   65.1010    65.1010
+#   seg 05 step    338.15     heating  0.811963   65.2522    65.2522
+#   seg 06 step    348.15     heating  0.806366   65.4028    65.4028
+#   seg 07 step    358.15     heating  0.801062   65.5469    65.5469
+#   seg 08 step    363.15     heating  0.798239   65.6240    65.6240
+#   seg 10 step    373.15     heating  0.792674   65.7773    65.7773
+#   seg 11 step    383.15     heating  0.786519   65.9484    65.9484
+#   seg 12 step    393.15     heating  0.781724   66.0829    66.0829
+#   seg 13 step    403.15     heating  0.775983   66.2455    66.2455
+#   seg 15 step    413.15     heating  0.770732   66.3956    66.3956
+#   seg 16 step    423.15     heating  0.765293   66.5526    66.5526
+#   seg 17 step    433.15     heating  0.759599   66.7184    66.7184
+# Sweep grid (25h,35,45,55,65,75,85,90h,100,110,120,130h,140,150,160h; h = hold): 14 steps + 4 holds NVT at the D48 lateral box per T
+#   seg  kind   T/C     T/K       ps        frame/ps  outputs
+#   1    hold   25      298.15    25000     10        seg01_hold_25C.dcd hold_25C.data seg01_hold_25C_burst01-25.dcd
+#   2    step   35      308.15    5000      100       seg02_step_35C.dcd
+#   3    step   45      318.15    5000      100       seg03_step_45C.dcd
+#   4    step   55      328.15    5000      100       seg04_step_55C.dcd
+#   5    step   65      338.15    5000      100       seg05_step_65C.dcd
+#   6    step   75      348.15    5000      100       seg06_step_75C.dcd
+#   7    step   85      358.15    5000      100       seg07_step_85C.dcd
+#   8    step   90      363.15    5000      100       seg08_step_90C.dcd
+#   9    hold   90      363.15    25000     10        seg09_hold_90C.dcd hold_90C.data seg09_hold_90C_burst01-25.dcd
+#   10   step   100     373.15    5000      100       seg10_step_100C.dcd
+#   11   step   110     383.15    5000      100       seg11_step_110C.dcd
+#   12   step   120     393.15    5000      100       seg12_step_120C.dcd
+#   13   step   130     403.15    5000      100       seg13_step_130C.dcd
+#   14   hold   130     403.15    25000     10        seg14_hold_130C.dcd hold_130C.data seg14_hold_130C_burst01-25.dcd
+#   15   step   140     413.15    5000      100       seg15_step_140C.dcd
+#   16   step   150     423.15    5000      100       seg16_step_150C.dcd
+#   17   step   160     433.15    5000      100       seg17_step_160C.dcd
+#   18   hold   160     433.15    25000     10        seg18_hold_160C.dcd hold_160C.data seg18_hold_160C_burst01-25.dcd
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../systems/pe_cg_pore_w3nm_n40_c240_s1/data.lmp nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_modify tail no
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart 100000 restart.a restart.b
+
+# ---- Stage 1: minimize the narrowed slab
+thermo 100
+minimize 0.0001 1e-06 10000 100000
+write_data minimized.data pair ij
+write_restart minimized.restart
+# the minimizer advanced the step counter: restart it so dump intervals line up with segment starts (D46)
+reset_timestep 0
+
+# ---- Stage 2: surface re-relaxation 2000 ps NVT at 500 K after narrowing -> relaxed.data, relax.dcd; then the step-cool and the sweep segments
+# velocities come from the data file (no velocity create)
+thermo 100
+# D48 lateral box at 500 K (bulk cooling density 0.723399 g/cm3): Lx 67.8133, Ly 67.8133 A; z unchanged
+change_box all x final 11.4362544649 79.2495309251 y final 11.4362544649 79.2495309251 remap units box
+fix md all nvt temp 500 500 1000
+dump relax all dcd 1000 relax.dcd
+dump_modify relax unwrap yes
+run 200000
+undump relax
+unfix md
+write_data relaxed.data pair ij
+write_restart relaxed.restart
+# ---- Stage 3: step-cool 500 -> 298.15 K in 8 steps of 5000 ps NVT at the D48 lateral box per T -> cooled.data, cool.dcd
+dump cool all dcd 10000 cool.dcd
+dump_modify cool unwrap yes
+# cool step 1/8: 474.76875 K
+# D48 lateral box at 474.76875 K (bulk cooling density 0.736902 g/cm3): Lx 67.3965, Ly 67.3965 A; z unchanged
+change_box all x final 11.6446343287 79.0411510613 y final 11.6446343287 79.0411510613 remap units box
+fix md all nvt temp 474.76875 474.76875 1000
+run 500000
+unfix md
+# cool step 2/8: 449.5375 K
+# D48 lateral box at 449.5375 K (bulk cooling density 0.750873 g/cm3): Lx 66.9759, Ly 66.9759 A; z unchanged
+change_box all x final 11.8549534379 78.8308319521 y final 11.8549534379 78.8308319521 remap units box
+fix md all nvt temp 449.5375 449.5375 1000
+run 500000
+unfix md
+# cool step 3/8: 424.30625 K
+# D48 lateral box at 424.30625 K (bulk cooling density 0.764696 g/cm3): Lx 66.5699, Ly 66.5699 A; z unchanged
+change_box all x final 12.0579637568 78.6278216332 y final 12.0579637568 78.6278216332 remap units box
+fix md all nvt temp 424.30625 424.30625 1000
+run 500000
+unfix md
+# cool step 4/8: 399.075 K
+# D48 lateral box at 399.075 K (bulk cooling density 0.777789 g/cm3): Lx 66.1942, Ly 66.1942 A; z unchanged
+change_box all x final 12.2457880864 78.4399973036 y final 12.2457880864 78.4399973036 remap units box
+fix md all nvt temp 399.075 399.075 1000
+run 500000
+unfix md
+# cool step 5/8: 373.84375 K
+# D48 lateral box at 373.84375 K (bulk cooling density 0.792027 g/cm3): Lx 65.7952, Ly 65.7952 A; z unchanged
+change_box all x final 12.4453103959 78.2404749941 y final 12.4453103959 78.2404749941 remap units box
+fix md all nvt temp 373.84375 373.84375 1000
+run 500000
+unfix md
+# cool step 6/8: 348.6125 K
+# D48 lateral box at 348.6125 K (bulk cooling density 0.805427 g/cm3): Lx 65.4282, Ly 65.4282 A; z unchanged
+change_box all x final 12.6287797476 78.0570056424 y final 12.6287797476 78.0570056424 remap units box
+fix md all nvt temp 348.6125 348.6125 1000
+run 500000
+unfix md
+# cool step 7/8: 323.38125 K
+# D48 lateral box at 323.38125 K (bulk cooling density 0.819448 g/cm3): Lx 65.0529, Ly 65.0529 A; z unchanged
+change_box all x final 12.8164299165 77.8693554735 y final 12.8164299165 77.8693554735 remap units box
+fix md all nvt temp 323.38125 323.38125 1000
+run 500000
+unfix md
+# cool step 8/8: 298.15 K
+# D48 lateral box at 298.15 K (bulk cooling density 0.833332 g/cm3): Lx 64.6896, Ly 64.6896 A; z unchanged
+change_box all x final 12.9980865645 77.6876988255 y final 12.9980865645 77.6876988255 remap units box
+fix md all nvt temp 298.15 298.15 1000
+run 500000
+unfix md
+undump cool
+write_data cooled.data pair ij
+write_restart cooled.restart
+
+# ---- Segment 1: hold at 25 C (298.15 K), 25000 ps, frames every 10 ps -> seg01_hold_25C.dcd
+# D48 lateral box at 298.15 K (bulk heating density 0.834201 g/cm3): Lx 64.6671, Ly 64.6671 A; z unchanged
+change_box all x final 13.0093177395 77.6764676505 y final 13.0093177395 77.6764676505 remap units box
+fix md all nvt temp 298.15 298.15 1000
+dump traj all dcd 1000 seg01_hold_25C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg01_hold_25C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_25C.data pair ij
+write_restart hold_25C.restart
+
+# ---- Segment 2: step at 35 C (308.15 K), 5000 ps, frames every 100 ps -> seg02_step_35C.dcd
+# D48 lateral box at 308.15 K (bulk heating density 0.829188 g/cm3): Lx 64.7972, Ly 64.7972 A; z unchanged
+change_box all x final 12.9442956618 77.7414897282 y final 12.9442956618 77.7414897282 remap units box
+fix md all nvt temp 308.15 308.15 1000
+dump traj all dcd 10000 seg02_step_35C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 3: step at 45 C (318.15 K), 5000 ps, frames every 100 ps -> seg03_step_45C.dcd
+# D48 lateral box at 318.15 K (bulk heating density 0.823100 g/cm3): Lx 64.9566, Ly 64.9566 A; z unchanged
+change_box all x final 12.86461026 77.82117513 y final 12.86461026 77.82117513 remap units box
+fix md all nvt temp 318.15 318.15 1000
+dump traj all dcd 10000 seg03_step_45C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 4: step at 55 C (328.15 K), 5000 ps, frames every 100 ps -> seg04_step_55C.dcd
+# D48 lateral box at 328.15 K (bulk heating density 0.817633 g/cm3): Lx 65.1010, Ly 65.1010 A; z unchanged
+change_box all x final 12.7923831857 77.8934022043 y final 12.7923831857 77.8934022043 remap units box
+fix md all nvt temp 328.15 328.15 1000
+dump traj all dcd 10000 seg04_step_55C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 5: step at 65 C (338.15 K), 5000 ps, frames every 100 ps -> seg05_step_65C.dcd
+# D48 lateral box at 338.15 K (bulk heating density 0.811963 g/cm3): Lx 65.2522, Ly 65.2522 A; z unchanged
+change_box all x final 12.7167860447 77.9689993453 y final 12.7167860447 77.9689993453 remap units box
+fix md all nvt temp 338.15 338.15 1000
+dump traj all dcd 10000 seg05_step_65C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 6: step at 75 C (348.15 K), 5000 ps, frames every 100 ps -> seg06_step_75C.dcd
+# D48 lateral box at 348.15 K (bulk heating density 0.806366 g/cm3): Lx 65.4028, Ly 65.4028 A; z unchanged
+change_box all x final 12.6414714342 78.0443139558 y final 12.6414714342 78.0443139558 remap units box
+fix md all nvt temp 348.15 348.15 1000
+dump traj all dcd 10000 seg06_step_75C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 7: step at 85 C (358.15 K), 5000 ps, frames every 100 ps -> seg07_step_85C.dcd
+# D48 lateral box at 358.15 K (bulk heating density 0.801062 g/cm3): Lx 65.5469, Ly 65.5469 A; z unchanged
+change_box all x final 12.5694634712 78.1163219188 y final 12.5694634712 78.1163219188 remap units box
+fix md all nvt temp 358.15 358.15 1000
+dump traj all dcd 10000 seg07_step_85C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 8: step at 90 C (363.15 K), 5000 ps, frames every 100 ps -> seg08_step_90C.dcd
+# D48 lateral box at 363.15 K (bulk heating density 0.798239 g/cm3): Lx 65.6240, Ly 65.6240 A; z unchanged
+change_box all x final 12.5308743966 78.1549109934 y final 12.5308743966 78.1549109934 remap units box
+fix md all nvt temp 363.15 363.15 1000
+dump traj all dcd 10000 seg08_step_90C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+
+# ---- Segment 9: hold at 90 C (363.15 K), 25000 ps, frames every 10 ps -> seg09_hold_90C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 1000 seg09_hold_90C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg09_hold_90C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_90C.data pair ij
+write_restart hold_90C.restart
+
+# ---- Segment 10: step at 100 C (373.15 K), 5000 ps, frames every 100 ps -> seg10_step_100C.dcd
+# D48 lateral box at 373.15 K (bulk heating density 0.792674 g/cm3): Lx 65.7773, Ly 65.7773 A; z unchanged
+change_box all x final 12.4542597209 78.2315256691 y final 12.4542597209 78.2315256691 remap units box
+fix md all nvt temp 373.15 373.15 1000
+dump traj all dcd 10000 seg10_step_100C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 11: step at 110 C (383.15 K), 5000 ps, frames every 100 ps -> seg11_step_110C.dcd
+# D48 lateral box at 383.15 K (bulk heating density 0.786519 g/cm3): Lx 65.9484, Ly 65.9484 A; z unchanged
+change_box all x final 12.3686960295 78.3170893605 y final 12.3686960295 78.3170893605 remap units box
+fix md all nvt temp 383.15 383.15 1000
+dump traj all dcd 10000 seg11_step_110C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 12: step at 120 C (393.15 K), 5000 ps, frames every 100 ps -> seg12_step_120C.dcd
+# D48 lateral box at 393.15 K (bulk heating density 0.781724 g/cm3): Lx 66.0829, Ly 66.0829 A; z unchanged
+change_box all x final 12.3014189855 78.3843664045 y final 12.3014189855 78.3843664045 remap units box
+fix md all nvt temp 393.15 393.15 1000
+dump traj all dcd 10000 seg12_step_120C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 13: step at 130 C (403.15 K), 5000 ps, frames every 100 ps -> seg13_step_130C.dcd
+# D48 lateral box at 403.15 K (bulk heating density 0.775983 g/cm3): Lx 66.2455, Ly 66.2455 A; z unchanged
+change_box all x final 12.22013518 78.46565021 y final 12.22013518 78.46565021 remap units box
+fix md all nvt temp 403.15 403.15 1000
+dump traj all dcd 10000 seg13_step_130C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+
+# ---- Segment 14: hold at 130 C (403.15 K), 25000 ps, frames every 10 ps -> seg14_hold_130C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 1000 seg14_hold_130C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg14_hold_130C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_130C.data pair ij
+write_restart hold_130C.restart
+
+# ---- Segment 15: step at 140 C (413.15 K), 5000 ps, frames every 100 ps -> seg15_step_140C.dcd
+# D48 lateral box at 413.15 K (bulk heating density 0.770732 g/cm3): Lx 66.3956, Ly 66.3956 A; z unchanged
+change_box all x final 12.1450832548 78.5407021352 y final 12.1450832548 78.5407021352 remap units box
+fix md all nvt temp 413.15 413.15 1000
+dump traj all dcd 10000 seg15_step_140C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 16: step at 150 C (423.15 K), 5000 ps, frames every 100 ps -> seg16_step_150C.dcd
+# D48 lateral box at 423.15 K (bulk heating density 0.765293 g/cm3): Lx 66.5526, Ly 66.5526 A; z unchanged
+change_box all x final 12.0666114794 78.6191739106 y final 12.0666114794 78.6191739106 remap units box
+fix md all nvt temp 423.15 423.15 1000
+dump traj all dcd 10000 seg16_step_150C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 17: step at 160 C (433.15 K), 5000 ps, frames every 100 ps -> seg17_step_160C.dcd
+# D48 lateral box at 433.15 K (bulk heating density 0.759599 g/cm3): Lx 66.7184, Ly 66.7184 A; z unchanged
+change_box all x final 11.9836784843 78.7021069057 y final 11.9836784843 78.7021069057 remap units box
+fix md all nvt temp 433.15 433.15 1000
+dump traj all dcd 10000 seg17_step_160C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+
+# ---- Segment 18: hold at 160 C (433.15 K), 25000 ps, frames every 10 ps -> seg18_hold_160C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 1000 seg18_hold_160C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg18_hold_160C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_160C.data pair ij
+write_restart hold_160C.restart

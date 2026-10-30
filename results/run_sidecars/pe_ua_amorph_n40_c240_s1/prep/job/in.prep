@@ -1,0 +1,165 @@
+# sepsim 0.1.0 deck: prep
+# system pe_ua_amorph_n40_c240_s1 (ua), seed 1
+# manifest.yaml sha256 8ec8f0c6884e41f6fcf79fdb45d61bc3a036e70492adea9d48a5e42aafb9775b
+# data ../../../../systems/pe_ua_amorph_n40_c240_s1/data.lmp sha256 054f9f0e25663298d5cf67065ccbd362c59fdb2461b8bb3ea2a1733cef7e9a33
+# forcefield trappe_ua.yaml sha256 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   compress_hi_ps = 200.0
+#   compress_ps = 800.0
+#   cool_dump_ps = 100.0
+#   cool_step_ps = 2000.0
+#   cool_steps = 8
+#   dt_fs = 2.0
+#   hold_dump_ps = 10.0
+#   hold_ps = 20000.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 14.0
+#   min_etol = 0.0001
+#   min_ftol = 1e-06
+#   min_maxeval = 100000
+#   min_maxiter = 10000
+#   neighbor_skin = 2.0
+#   nvt_ps = 100.0
+#   p_atm = 1.0
+#   p_compress_atm = 100.0
+#   pdamp_dt = 1000
+#   pushoff = True
+#   pushoff_a_max = 50.0
+#   pushoff_dt_fs = 1.0
+#   pushoff_nve_limit = 0.1
+#   pushoff_ps = 20.0
+#   pushoff_rc = 4.0
+#   pushoff_t = 500.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   t_final = 298.15
+#   t_melt = 500.0
+#   tail = True
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../systems/pe_ua_amorph_n40_c240_s1/data.lmp nocoeff
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 15.035  # CH3
+mass 2 14.027  # CH2
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.1947460214 3.75  # CH3
+pair_coeff 2 2 0.0914113978 3.95  # CH2
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+
+# ---- Stage 1: soft-core push-off (D31): bonded terms on, no Coulomb, a ramps 0 -> 50
+pair_style soft 4
+# keep the full-FF ghost cutoff: soft rc + skin is shorter than LAMMPS's bonded-length estimate
+comm_modify cutoff 16
+pair_coeff * * 0.0
+variable A equal ramp(0,50)
+fix pushoff_adapt all adapt 1 pair soft a * * v_A
+fix pushoff_nve all nve/limit 0.1
+fix pushoff_lang all langevin 500 500 100 1
+timestep 1
+thermo 1000
+run 20000
+unfix pushoff_lang
+unfix pushoff_nve
+unfix pushoff_adapt
+comm_modify cutoff 0.0
+# back to the full force field: a new pair_style erases all pair_coeff/pair_modify settings
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.1947460214 3.75  # CH3
+pair_coeff 2 2 0.0914113978 3.95  # CH2
+timestep 2
+write_data pushoff.data
+write_restart pushoff.restart
+
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart 500000 restart.a restart.b
+
+# ---- Stage 2: minimize with the full force field
+thermo 100
+minimize 0.0001 1e-06 10000 100000
+write_data minimized.data
+write_restart minimized.restart
+
+# ---- Stage 4: NVT 100 ps at 500 K -> relaxed.data (input for `sepsim build ua2aa`)
+thermo 500
+velocity all create 500 1 mom yes rot yes dist gaussian
+fix md all nvt temp 500 500 200
+run 50000
+unfix md
+write_data relaxed.data
+write_restart relaxed.restart
+# ---- Stage 5: NPT compression at 500 K: 100 atm, then 1 atm -> compressed.data
+fix md all npt temp 500 500 200 iso 100 100 2000
+run 100000
+unfix md
+fix md all npt temp 500 500 200 iso 1 1 2000
+run 400000
+unfix md
+write_data compressed.data
+write_restart compressed.restart
+# ---- Stage 6: NPT hold 20000 ps at 500 K, 1 atm -> hold.data, hold.dcd
+fix md all npt temp 500 500 200 iso 1 1 2000
+dump hold all dcd 5000 hold.dcd
+dump_modify hold unwrap yes
+run 10000000
+undump hold
+unfix md
+write_data hold.data
+write_restart hold.restart
+# ---- Stage 7: step-cool 500 -> 298.15 K in 8 steps of 2000 ps at 1 atm -> cooled.data, cool.dcd
+dump cool all dcd 50000 cool.dcd
+dump_modify cool unwrap yes
+# cool step 1/8: 474.76875 K
+fix md all npt temp 474.76875 474.76875 200 iso 1 1 2000
+run 1000000
+unfix md
+# cool step 2/8: 449.5375 K
+fix md all npt temp 449.5375 449.5375 200 iso 1 1 2000
+run 1000000
+unfix md
+# cool step 3/8: 424.30625 K
+fix md all npt temp 424.30625 424.30625 200 iso 1 1 2000
+run 1000000
+unfix md
+# cool step 4/8: 399.075 K
+fix md all npt temp 399.075 399.075 200 iso 1 1 2000
+run 1000000
+unfix md
+# cool step 5/8: 373.84375 K
+fix md all npt temp 373.84375 373.84375 200 iso 1 1 2000
+run 1000000
+unfix md
+# cool step 6/8: 348.6125 K
+fix md all npt temp 348.6125 348.6125 200 iso 1 1 2000
+run 1000000
+unfix md
+# cool step 7/8: 323.38125 K
+fix md all npt temp 323.38125 323.38125 200 iso 1 1 2000
+run 1000000
+unfix md
+# cool step 8/8: 298.15 K
+fix md all npt temp 298.15 298.15 200 iso 1 1 2000
+run 1000000
+unfix md
+undump cool
+write_data cooled.data
+write_restart cooled.restart

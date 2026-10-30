@@ -1,0 +1,38 @@
+system	stage	copy	ran_on	status	sources	files	job	job_deck_matches
+ipp_aa_amorph_n40_c240_s1_from_ua	prep		rdyu-rog	finished	rdyu-rog	5	yes	yes
+ipp_aa_amorph_n40_c240_s1_from_ua	sweep_cancelled_pe_first		rdyu-rog	started	rdyu-rog	5	sweep	yes
+ipp_ua_amorph_n40_c240_s1	cool		rdyu-rog	finished	rdyu-rog	5	yes	yes
+ipp_ua_amorph_n40_c240_s1	extend		rdyu-rog	started	rdyu-rog	5	yes	yes
+ipp_ua_amorph_n40_c240_s1	prep		rdyu-rog	started	rdyu-rog	5	yes	yes
+ipp_ua_amorph_n40_c240_s1	prep_server_cancelled		rdyu-server	started	rdyu-server	5	prep	yes
+ipp_ua_amorph_n40_c240_s1	sweep		rdyu-rog	started	rdyu-rog	5	yes	yes
+pe_aa_amorph_n40_c240_s1	prep		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_aa_amorph_n40_c240_s1_from_ua	prep		rdyu-rog	started	rdyu-rog	5	yes	yes
+pe_cg_amorph_n320_c240_s1_rep222	extend		rdyu-rog	started	rdyu-rog	5	yes	yes
+pe_cg_amorph_n320_c240_s1_rep222	extend_cpu_job92_cancelled_48ns		rdyu-server	started	rdyu-server	5	extend_cpu_job92	yes
+pe_cg_amorph_n40_c1500_s1	cool		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c1500_s1	extend		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c1500_s1	prep		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c1500_s1	prep	other_run_rdyu-server	rdyu-server	started	rdyu-server	5	no	
+pe_cg_amorph_n40_c1500_s1	sweep		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c1500_s1	sweep_cancelled_unrelaxed		rdyu-rog	started	rdyu-rog	5	no	
+pe_cg_amorph_n40_c240_s1	cool		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c240_s1	extend		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c240_s1	prep		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c240_s1	prep_server_cancelled		rdyu-server	started	rdyu-server	5	prep	yes
+pe_cg_amorph_n40_c240_s1	prep_timeout12h		rdyu-server	started	rdyu-server	5	prep	yes
+pe_cg_amorph_n40_c240_s1	sweep		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_amorph_n40_c240_s1	sweep_old_20ns_box		rdyu-rog	finished	rdyu-rog	5	no	
+pe_cg_pore500k_w10nm_n320_c240_s1_rep222	pore_relax		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_pore500k_w10nm_n40_c240_s1	pore_relax		rdyu-server	finished	rdyu-server	5	yes	yes
+pe_cg_pore500k_w10nm_n40_c240_s1	pore_relax_old_20ns_box		rdyu-server	finished	rdyu-server	5	no	
+pe_cg_pore_w10nm_n40_c240_s1	pore		rdyu-rog	started	rdyu-rog	5	yes	yes
+pe_cg_pore_w3nm_n40_c240_s1	pore		rdyu-server	started	rdyu-server	5	yes	yes
+pe_cg_pore_w5nm_n320_c240_s1_rep222	pore		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_pore_w5nm_n40_c240_s1	pore		rdyu-rog	finished	rdyu-rog	5	yes	yes
+pe_cg_pore_w5nm_n40_c240_s1	pore_old_20ns_box_cancelled		rdyu-server	started	rdyu-server	5	no	
+pe_ua_amorph_n40_c240_s1	cool		rdyu-server	finished	rdyu-server	5	yes	yes
+pe_ua_amorph_n40_c240_s1	extend		rdyu-server	started	rdyu-server	5	yes	yes
+pe_ua_amorph_n40_c240_s1	prep		rdyu-server	finished	rdyu-server	5	yes	yes
+pe_ua_amorph_n40_c240_s1	sweep		rdyu-server	started	rdyu-server	5	yes	yes
+pe_ua_amorph_n40_c240_s1	sweep_old_unrelaxed_cancelled		rdyu-server	started	rdyu-server	5	sweep_old_unrelaxed	yes

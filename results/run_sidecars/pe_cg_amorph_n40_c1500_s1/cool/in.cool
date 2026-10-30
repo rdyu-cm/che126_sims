@@ -1,0 +1,91 @@
+# sepsim 0.1.0 deck: cool
+# system pe_cg_amorph_n40_c1500_s1 (cg), seed 1
+# manifest.yaml sha256 11ed2636d50282cddd2f90c0dd1d5629ec934caebdc2d4ad26fba319ddd94ffb
+# data ../extend/hold_ext_500ns.data sha256 n/a: not present at render time (made by an earlier stage; run_manifest.json hashes it)
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   cool_dump_ps = 100.0
+#   cool_step_ps = 5000.0
+#   cool_steps = 8
+#   dt_fs = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   t_final = 298.15
+#   t_melt = 500.0
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../extend/hold_ext_500ns.data nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 100
+restart 100000 restart.a restart.b
+
+# ---- Stage 1: step-cool 500 -> 298.15 K in 8 steps of 5000 ps at 1 atm -> cooled.data, cool.dcd
+dump cool all dcd 10000 cool.dcd
+dump_modify cool unwrap yes
+# cool step 1/8: 474.76875 K
+fix md all npt temp 474.76875 474.76875 1000 iso 1 1 10000
+run 500000
+unfix md
+# cool step 2/8: 449.5375 K
+fix md all npt temp 449.5375 449.5375 1000 iso 1 1 10000
+run 500000
+unfix md
+# cool step 3/8: 424.30625 K
+fix md all npt temp 424.30625 424.30625 1000 iso 1 1 10000
+run 500000
+unfix md
+# cool step 4/8: 399.075 K
+fix md all npt temp 399.075 399.075 1000 iso 1 1 10000
+run 500000
+unfix md
+# cool step 5/8: 373.84375 K
+fix md all npt temp 373.84375 373.84375 1000 iso 1 1 10000
+run 500000
+unfix md
+# cool step 6/8: 348.6125 K
+fix md all npt temp 348.6125 348.6125 1000 iso 1 1 10000
+run 500000
+unfix md
+# cool step 7/8: 323.38125 K
+fix md all npt temp 323.38125 323.38125 1000 iso 1 1 10000
+run 500000
+unfix md
+# cool step 8/8: 298.15 K
+fix md all npt temp 298.15 298.15 1000 iso 1 1 10000
+run 500000
+unfix md
+undump cool
+write_data cooled.data pair ij
+write_restart cooled.restart

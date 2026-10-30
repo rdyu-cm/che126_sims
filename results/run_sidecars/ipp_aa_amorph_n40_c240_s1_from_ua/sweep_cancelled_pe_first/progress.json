@@ -1,0 +1,687 @@
+{
+ "cache": {},
+ "current": {
+  "index": 1,
+  "name": "seg 01 hold 25 C"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-10-30T10:10:10-07:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 3245.236620426178,
+ "log_mtime": "2026-10-30T09:16:05-07:00",
+ "manifest_status": "started",
+ "n_done": 0,
+ "n_segments": 22,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 4.5335950242990775,
+ "percent": 2.300235017626322,
+ "plots": {},
+ "protocol": "sweep",
+ "resolution": "aa",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/ipp_aa_amorph_n40_c240_s1_from_ua/sweep_cancelled_pe_first",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg01_hold_25C.dcd",
+    "seg01_hold_25C_burst01.dcd",
+    "seg01_hold_25C_burst02.dcd",
+    "seg01_hold_25C_burst03.dcd",
+    "seg01_hold_25C_burst04.dcd",
+    "seg01_hold_25C_burst05.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    10000,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "ensemble": "npt",
+   "index": 1,
+   "name": "seg 01 hold 25 C",
+   "run_steps": [
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 5000000,
+   "steps_done": 783000,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 25.0,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 1.0,
+   "dump_every": [],
+   "ensemble": "nve",
+   "index": 2,
+   "name": "seg 01 hold 25 C VDOS NVE",
+   "run_steps": [
+    10000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 10000,
+   "steps_done": 0,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 25.0,
+   "t_target_k": null,
+   "vdos": true
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg02_step_35C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 3,
+   "name": "seg 02 step 35 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 2,
+   "sweep_kind": "step",
+   "t_c": 35.0,
+   "t_target_k": 308.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg03_step_45C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 4,
+   "name": "seg 03 step 45 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 3,
+   "sweep_kind": "step",
+   "t_c": 45.0,
+   "t_target_k": 318.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg04_step_55C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 5,
+   "name": "seg 04 step 55 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 4,
+   "sweep_kind": "step",
+   "t_c": 55.0,
+   "t_target_k": 328.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg05_step_65C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 6,
+   "name": "seg 05 step 65 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 5,
+   "sweep_kind": "step",
+   "t_c": 65.0,
+   "t_target_k": 338.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg06_step_75C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 7,
+   "name": "seg 06 step 75 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 6,
+   "sweep_kind": "step",
+   "t_c": 75.0,
+   "t_target_k": 348.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg07_step_85C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 8,
+   "name": "seg 07 step 85 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 7,
+   "sweep_kind": "step",
+   "t_c": 85.0,
+   "t_target_k": 358.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg08_step_90C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 9,
+   "name": "seg 08 step 90 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 8,
+   "sweep_kind": "step",
+   "t_c": 90.0,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg09_hold_90C.dcd",
+    "seg09_hold_90C_burst01.dcd",
+    "seg09_hold_90C_burst02.dcd",
+    "seg09_hold_90C_burst03.dcd",
+    "seg09_hold_90C_burst04.dcd",
+    "seg09_hold_90C_burst05.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    10000,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "ensemble": "npt",
+   "index": 10,
+   "name": "seg 09 hold 90 C",
+   "run_steps": [
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 5000000,
+   "steps_done": 0,
+   "sweep_index": 9,
+   "sweep_kind": "hold",
+   "t_c": 90.0,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 1.0,
+   "dump_every": [],
+   "ensemble": "nve",
+   "index": 11,
+   "name": "seg 09 hold 90 C VDOS NVE",
+   "run_steps": [
+    10000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 10000,
+   "steps_done": 0,
+   "sweep_index": 9,
+   "sweep_kind": "hold",
+   "t_c": 90.0,
+   "t_target_k": null,
+   "vdos": true
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg10_step_100C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 12,
+   "name": "seg 10 step 100 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 10,
+   "sweep_kind": "step",
+   "t_c": 100.0,
+   "t_target_k": 373.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg11_step_110C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 13,
+   "name": "seg 11 step 110 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 11,
+   "sweep_kind": "step",
+   "t_c": 110.0,
+   "t_target_k": 383.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg12_step_120C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 14,
+   "name": "seg 12 step 120 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 12,
+   "sweep_kind": "step",
+   "t_c": 120.0,
+   "t_target_k": 393.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg13_step_130C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 15,
+   "name": "seg 13 step 130 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 13,
+   "sweep_kind": "step",
+   "t_c": 130.0,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg14_hold_130C.dcd",
+    "seg14_hold_130C_burst01.dcd",
+    "seg14_hold_130C_burst02.dcd",
+    "seg14_hold_130C_burst03.dcd",
+    "seg14_hold_130C_burst04.dcd",
+    "seg14_hold_130C_burst05.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    10000,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "ensemble": "npt",
+   "index": 16,
+   "name": "seg 14 hold 130 C",
+   "run_steps": [
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 5000000,
+   "steps_done": 0,
+   "sweep_index": 14,
+   "sweep_kind": "hold",
+   "t_c": 130.0,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 1.0,
+   "dump_every": [],
+   "ensemble": "nve",
+   "index": 17,
+   "name": "seg 14 hold 130 C VDOS NVE",
+   "run_steps": [
+    10000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 10000,
+   "steps_done": 0,
+   "sweep_index": 14,
+   "sweep_kind": "hold",
+   "t_c": 130.0,
+   "t_target_k": null,
+   "vdos": true
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg15_step_140C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 18,
+   "name": "seg 15 step 140 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 15,
+   "sweep_kind": "step",
+   "t_c": 140.0,
+   "t_target_k": 413.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg16_step_150C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 19,
+   "name": "seg 16 step 150 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 16,
+   "sweep_kind": "step",
+   "t_c": 150.0,
+   "t_target_k": 423.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg17_step_160C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    100000
+   ],
+   "ensemble": "npt",
+   "index": 20,
+   "name": "seg 17 step 160 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": 17,
+   "sweep_kind": "step",
+   "t_c": 160.0,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg18_hold_160C.dcd",
+    "seg18_hold_160C_burst01.dcd",
+    "seg18_hold_160C_burst02.dcd",
+    "seg18_hold_160C_burst03.dcd",
+    "seg18_hold_160C_burst04.dcd",
+    "seg18_hold_160C_burst05.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    10000,
+    100,
+    100,
+    100,
+    100,
+    100
+   ],
+   "ensemble": "npt",
+   "index": 21,
+   "name": "seg 18 hold 160 C",
+   "run_steps": [
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000,
+    10000,
+    990000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 5000000,
+   "steps_done": 0,
+   "sweep_index": 18,
+   "sweep_kind": "hold",
+   "t_c": 160.0,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 1.0,
+   "dump_every": [],
+   "ensemble": "nve",
+   "index": 22,
+   "name": "seg 18 hold 160 C VDOS NVE",
+   "run_steps": [
+    10000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 10000,
+   "steps_done": 0,
+   "sweep_index": 18,
+   "sweep_kind": "hold",
+   "t_c": 160.0,
+   "t_target_k": null,
+   "vdos": true
+  }
+ ],
+ "signature": {
+  "../prep/log.lammps": [
+   4252343,
+   1793273124830010862
+  ],
+  "deck": [
+   12788,
+   1793361934074603019
+  ],
+  "log.lammps": [
+   242838,
+   1793376965642668563
+  ],
+  "run_manifest.json": [
+   2480,
+   1793361935631322449
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "sweep_cancelled_pe_first",
+ "start_time": "2026-10-30T12:05:35.631032+00:00",
+ "status": "stalled?",
+ "step_vs_hold": [],
+ "steps_done": 783000,
+ "steps_per_s": 52.47216463309117,
+ "steps_total": 34040000,
+ "system": "ipp_aa_amorph_n40_c240_s1_from_ua",
+ "version": 2
+}

@@ -1,0 +1,729 @@
+# sepsim 0.1.0 deck: sweep
+# system pe_cg_amorph_n40_c240_s1 (cg), seed 1
+# manifest.yaml sha256 be94805b7ab7d340773f4aac950d8c88ba3106377c963af80451fabc5b7ef4b3
+# data ../cool/cooled.data sha256 n/a: not present at render time (made by an earlier stage; run_manifest.json hashes it)
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   burst_dt_ps = 0.1
+#   burst_len_ps = 10.0
+#   burst_period_ps = 1000.0
+#   dt_fs = 10.0
+#   hold_dump_ps = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   step_dump_ps = 100.0
+#   step_ps = 5000.0
+#   sweep_grid_c = 25h,35,45,55,65,75,85,90h,100,110,120,130h,140,150,160h
+#   sweep_hold_ps = 25000.0
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+#   vdos = False
+#   vdos_dt_fs = 1.0
+#   vdos_dump_fs = 4.0
+#   vdos_gzip = True
+#   vdos_ps = 10.0
+# Sweep grid (25h,35,45,55,65,75,85,90h,100,110,120,130h,140,150,160h; h = hold): 14 steps + 4 holds at 1 atm
+#   seg  kind   T/C     T/K       ps        frame/ps  outputs
+#   1    hold   25      298.15    25000     10        seg01_hold_25C.dcd hold_25C.data seg01_hold_25C_burst01-25.dcd
+#   2    step   35      308.15    5000      100       seg02_step_35C.dcd
+#   3    step   45      318.15    5000      100       seg03_step_45C.dcd
+#   4    step   55      328.15    5000      100       seg04_step_55C.dcd
+#   5    step   65      338.15    5000      100       seg05_step_65C.dcd
+#   6    step   75      348.15    5000      100       seg06_step_75C.dcd
+#   7    step   85      358.15    5000      100       seg07_step_85C.dcd
+#   8    step   90      363.15    5000      100       seg08_step_90C.dcd
+#   9    hold   90      363.15    25000     10        seg09_hold_90C.dcd hold_90C.data seg09_hold_90C_burst01-25.dcd
+#   10   step   100     373.15    5000      100       seg10_step_100C.dcd
+#   11   step   110     383.15    5000      100       seg11_step_110C.dcd
+#   12   step   120     393.15    5000      100       seg12_step_120C.dcd
+#   13   step   130     403.15    5000      100       seg13_step_130C.dcd
+#   14   hold   130     403.15    25000     10        seg14_hold_130C.dcd hold_130C.data seg14_hold_130C_burst01-25.dcd
+#   15   step   140     413.15    5000      100       seg15_step_140C.dcd
+#   16   step   150     423.15    5000      100       seg16_step_150C.dcd
+#   17   step   160     433.15    5000      100       seg17_step_160C.dcd
+#   18   hold   160     433.15    25000     10        seg18_hold_160C.dcd hold_160C.data seg18_hold_160C_burst01-25.dcd
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../cool/cooled.data nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 100
+restart 100000 restart.a restart.b
+
+# ---- Segment 1: hold at 25 C (298.15 K), 25000 ps, frames every 10 ps -> seg01_hold_25C.dcd
+fix md all npt temp 298.15 298.15 1000 iso 1 1 10000
+dump traj all dcd 1000 seg01_hold_25C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg01_hold_25C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg01_hold_25C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_25C.data pair ij
+write_restart hold_25C.restart
+
+# ---- Segment 2: step at 35 C (308.15 K), 5000 ps, frames every 100 ps -> seg02_step_35C.dcd
+fix md all npt temp 308.15 308.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg02_step_35C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 3: step at 45 C (318.15 K), 5000 ps, frames every 100 ps -> seg03_step_45C.dcd
+fix md all npt temp 318.15 318.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg03_step_45C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 4: step at 55 C (328.15 K), 5000 ps, frames every 100 ps -> seg04_step_55C.dcd
+fix md all npt temp 328.15 328.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg04_step_55C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 5: step at 65 C (338.15 K), 5000 ps, frames every 100 ps -> seg05_step_65C.dcd
+fix md all npt temp 338.15 338.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg05_step_65C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 6: step at 75 C (348.15 K), 5000 ps, frames every 100 ps -> seg06_step_75C.dcd
+fix md all npt temp 348.15 348.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg06_step_75C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 7: step at 85 C (358.15 K), 5000 ps, frames every 100 ps -> seg07_step_85C.dcd
+fix md all npt temp 358.15 358.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg07_step_85C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 8: step at 90 C (363.15 K), 5000 ps, frames every 100 ps -> seg08_step_90C.dcd
+fix md all npt temp 363.15 363.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg08_step_90C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+
+# ---- Segment 9: hold at 90 C (363.15 K), 25000 ps, frames every 10 ps -> seg09_hold_90C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 1000 seg09_hold_90C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg09_hold_90C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg09_hold_90C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_90C.data pair ij
+write_restart hold_90C.restart
+
+# ---- Segment 10: step at 100 C (373.15 K), 5000 ps, frames every 100 ps -> seg10_step_100C.dcd
+fix md all npt temp 373.15 373.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg10_step_100C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 11: step at 110 C (383.15 K), 5000 ps, frames every 100 ps -> seg11_step_110C.dcd
+fix md all npt temp 383.15 383.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg11_step_110C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 12: step at 120 C (393.15 K), 5000 ps, frames every 100 ps -> seg12_step_120C.dcd
+fix md all npt temp 393.15 393.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg12_step_120C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 13: step at 130 C (403.15 K), 5000 ps, frames every 100 ps -> seg13_step_130C.dcd
+fix md all npt temp 403.15 403.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg13_step_130C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+
+# ---- Segment 14: hold at 130 C (403.15 K), 25000 ps, frames every 10 ps -> seg14_hold_130C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 1000 seg14_hold_130C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg14_hold_130C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg14_hold_130C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_130C.data pair ij
+write_restart hold_130C.restart
+
+# ---- Segment 15: step at 140 C (413.15 K), 5000 ps, frames every 100 ps -> seg15_step_140C.dcd
+fix md all npt temp 413.15 413.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg15_step_140C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 16: step at 150 C (423.15 K), 5000 ps, frames every 100 ps -> seg16_step_150C.dcd
+fix md all npt temp 423.15 423.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg16_step_150C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+
+# ---- Segment 17: step at 160 C (433.15 K), 5000 ps, frames every 100 ps -> seg17_step_160C.dcd
+fix md all npt temp 433.15 433.15 1000 iso 1 1 10000
+dump traj all dcd 10000 seg17_step_160C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+
+# ---- Segment 18: hold at 160 C (433.15 K), 25000 ps, frames every 10 ps -> seg18_hold_160C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 1000 seg18_hold_160C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 25 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 10 seg18_hold_160C_burst01.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst02.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst03.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst04.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst05.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst06.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst07.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst08.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst09.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst10.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst11.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst12.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst13.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst14.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst15.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst16.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst17.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst18.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst19.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst20.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst21.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst22.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst23.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst24.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+dump burst all dcd 10 seg18_hold_160C_burst25.dcd
+dump_modify burst unwrap yes
+run 1000
+undump burst
+run 99000
+undump traj
+unfix md
+write_data hold_160C.data pair ij
+write_restart hold_160C.restart

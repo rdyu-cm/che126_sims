@@ -1,0 +1,422 @@
+{
+ "cache": {},
+ "current": {
+  "index": 4,
+  "name": "Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 2/2)"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-10-30T17:20:02+00:00",
+ "generated_on": "rdyu-server",
+ "hold": {
+  "extend": false,
+  "segment": 5,
+  "state": "pending"
+ },
+ "log_age_s": 767228.6425130367,
+ "log_mtime": "2026-10-21T20:12:53+00:00",
+ "manifest_status": "started",
+ "n_done": 3,
+ "n_segments": 13,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 127.64744606129877,
+ "percent": 2.601964573268921,
+ "plots": {
+  "timeline": {
+   "file": "progress_timeline.png",
+   "key": "9ba151fac5f8ca6f",
+   "title": "density and PotEng vs time (segment starts marked)"
+  }
+ },
+ "protocol": "prep",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/prep_server_cancelled",
+ "segments": [
+  {
+   "command": "minimize",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 10.0,
+   "dump_every": [],
+   "ensemble": null,
+   "index": 1,
+   "name": "Stage 2: minimize with the full force field",
+   "run_steps": [
+    0
+   ],
+   "state": "done",
+   "stats": null,
+   "steps": 0,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": null,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 10.0,
+   "dump_every": [],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 4: NVT 100 ps at 500 K",
+   "run_steps": [
+    10000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.29999997,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": 1496.6260837254902,
+     "sem": 38.95422839956196
+    },
+    "rows": 102,
+    "t_c": {
+     "mean": 226.675814509804,
+     "sem": 0.8829608509500165
+    }
+   },
+   "steps": 10000,
+   "steps_done": 10000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 500.0,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 10.0,
+   "dump_every": [],
+   "ensemble": "npt",
+   "index": 3,
+   "name": "Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)",
+   "run_steps": [
+    40000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7359689255223882,
+     "sem": 0.0006988785983647375
+    },
+    "drift": {
+     "delta": -0.0012550446000001436,
+     "drift": false,
+     "first": 0.7366251247000002,
+     "second": 0.7353700801,
+     "sem": 0.00137610643039086
+    },
+    "enthalpy": {
+     "mean": 916.6153165920399,
+     "sem": 22.36366981113751
+    },
+    "rows": 402,
+    "t_c": {
+     "mean": 226.95820626865668,
+     "sem": 0.5477880747595083
+    }
+   },
+   "steps": 40000,
+   "steps_done": 40000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 500.0,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 10.0,
+   "dump_every": [],
+   "ensemble": "npt",
+   "index": 4,
+   "name": "Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 2/2)",
+   "run_steps": [
+    160000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 160000,
+   "steps_done": 111582,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 500.0,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hold.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000
+   ],
+   "ensemble": "npt",
+   "index": 5,
+   "name": "Stage 6: NPT hold 20000 ps at 500 K, 1 atm",
+   "run_steps": [
+    2000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 500.0,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 1,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 6,
+   "name": "Stage 7 cool 1/8 (474.8 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 474.76875,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 2,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 7,
+   "name": "Stage 7 cool 2/8 (449.5 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 449.5375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 3,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 8,
+   "name": "Stage 7 cool 3/8 (424.3 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 424.30625,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 4,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 9,
+   "name": "Stage 7 cool 4/8 (399.1 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 399.075,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 5,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 10,
+   "name": "Stage 7 cool 5/8 (373.8 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 373.84375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 6,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 11,
+   "name": "Stage 7 cool 6/8 (348.6 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 348.6125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 7,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 12,
+   "name": "Stage 7 cool 7/8 (323.4 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 323.38125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 8,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 13,
+   "name": "Stage 7 cool 8/8 (298.1 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "../sweep/log.lammps": [
+   50940181,
+   1793140358899733590
+  ],
+  "deck": [
+   4083,
+   1792612542032428882
+  ],
+  "log.lammps": [
+   495301,
+   1792613573826894128
+  ],
+  "run_manifest.json": [
+   2334,
+   1792612543401909523
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "prep_server_cancelled",
+ "start_time": "2026-10-21T19:55:43.401539+00:00",
+ "status": "cancelled/killed?",
+ "steps_done": 161582,
+ "steps_per_s": 147.74009960798466,
+ "steps_total": 6210000,
+ "system": "pe_cg_amorph_n40_c240_s1",
+ "version": 2
+}

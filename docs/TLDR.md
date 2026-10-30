@@ -118,6 +118,19 @@ uv run sepsim analyze sweep results/runs/pe_cg_amorph_n40_c240_s1/sweep         
 ```
 OVITO 3.17 (pip) needs a Vulkan driver for every renderer (Tachyon too). rdyu-server has none, so a user-space Mesa lavapipe (software Vulkan) copy lives in `../installations/vulkan-lavapipe` (extracted from the Ubuntu `mesa-vulkan-drivers` package, no root; see its README.txt); the script uses it automatically. `sudo apt install mesa-vulkan-drivers` would make it unnecessary.
 
+## Run sidecars and data manifest
+In git: `results/run_sidecars/<system>/<stage>/` holds each run's small files (`in.*` deck, `run_manifest.json`, `progress.json`/`progress.md`, `lmp_info.txt`, and the Slurm `job/job.sh` + deck from `jobs/`), for every run on both nodes including superseded/cancelled stages (bench/smoke skipped); `index.tsv` lists which node ran each and whether the job deck matches the run's deck. Two different runs under one name (e.g. the server's abandoned `pe_cg_amorph_n40_c1500_s1/prep` vs rdyu-rog's real one) are kept apart: the latest is the main copy, the other goes to `other_run_<node>/`. `results/data_manifest.tsv` lists node, path, bytes, sha256, mtime and kind of the large outputs that stay on the nodes (`*.dcd`, `*.data` snapshots, `log.lammps`, `screen.out`; restarts are not listed). Trajectories, snapshots and thermo logs are **not** in git yet (archive location undecided); files of a run still running are snapshots, so rerun after it ends. Regenerate (stdlib only; `--skip-existing` rehashes only changed files):
+```
+scp scripts/collect_sidecars.py rdyu-rog:/tmp/ && ssh rdyu-rog 'cd ~/projects/che126_sims && nice -n 15 ionice -c3 \
+    ~/.local/bin/uv run --frozen python /tmp/collect_sidecars.py --runs rdyu-rog=results/runs \
+    --node-label rdyu-rog --no-sidecars --manifest /tmp/data_manifest_rog.tsv' && scp rdyu-rog:/tmp/data_manifest_rog.tsv /tmp/
+rsync -a --prune-empty-dirs --include='*/' --include='in.*' --include='run_manifest.json' --include='progress.json' \
+    --include='progress.md' --include='lmp_info.txt' --exclude='*' rdyu-rog:projects/che126_sims/results/runs/ /tmp/rog_runs/
+nice -n 15 ionice -c3 uv run --frozen python scripts/collect_sidecars.py --runs rdyu-server=results/runs \
+    --runs rdyu-rog=/tmp/rog_runs --node-label rdyu-server --skip-existing --merge /tmp/data_manifest_rog.tsv
+```
+(Without `--runs` it reads `results/runs` and the `results/progress/rdyu-rog/` copy, which lacks `lmp_info.txt`.) Delete stale `results/run_sidecars/` first if runs were renamed.
+
 ## Decisions at a glance
 **Systems**
 - Chains: 40 × C240 at every level (PE C240H482 / iPP 80-mer), ~29k atoms in all-atom.

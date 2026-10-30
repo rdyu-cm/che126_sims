@@ -1,0 +1,440 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-10-30T15:50:17.507035+00:00",
+ "errors": [],
+ "flags": [
+  "drift seg 3,4,7"
+ ],
+ "generated": "2026-10-30T17:20:02+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 5385.2361760139465,
+ "log_mtime": "2026-10-30T15:50:17+00:00",
+ "manifest_status": "finished",
+ "n_done": 8,
+ "n_segments": 8,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 12.904704000000002,
+ "percent": 100.0,
+ "plots": {
+  "cool_vs_sweep": {
+   "file": "progress_cool_vs_sweep.png",
+   "key": "55025fd45bbbe824",
+   "title": "step-cool density vs T (sweep overlaid once it exists)"
+  },
+  "timeline": {
+   "file": "progress_timeline.png",
+   "key": "773c8934a1b92824",
+   "title": "density and PotEng vs time (segment starts marked)"
+  }
+ },
+ "protocol": "cool",
+ "resolution": "ua",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/cool",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": 1,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 1,
+   "name": "Stage 1 cool 1/8 (474.8 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7593189432167834,
+     "sem": 0.0005180937316474932
+    },
+    "drift": {
+     "delta": -7.672302000005793e-05,
+     "drift": false,
+     "first": 0.75936036642,
+     "second": 0.7592836434,
+     "sem": 0.0007639512314423787
+    },
+    "enthalpy": {
+     "mean": 21761.31882417583,
+     "sem": 52.81533708063643
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 201.5526793006993,
+     "sem": 0.12240720065243688
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 474.76875,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 2,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 2,
+   "name": "Stage 1 cool 2/8 (449.5 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7728014113186813,
+     "sem": 0.0002874016476338708
+    },
+    "drift": {
+     "delta": 0.0004279268800000402,
+     "drift": false,
+     "first": 0.77258529096,
+     "second": 0.77301321784,
+     "sem": 0.0005806841188545387
+    },
+    "enthalpy": {
+     "mean": 19922.425020979023,
+     "sem": 54.068648785072895
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 176.277470959041,
+     "sem": 0.12227728018266329
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 449.5375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 3,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 3,
+   "name": "Stage 1 cool 3/8 (424.3 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7870376210389611,
+     "sem": 0.00029376898940477325
+    },
+    "drift": {
+     "delta": 0.0017064710599999922,
+     "drift": true,
+     "first": 0.78617967062,
+     "second": 0.78788614168,
+     "sem": 0.0004534988462308143
+    },
+    "enthalpy": {
+     "mean": 18140.38165334665,
+     "sem": 52.55803398768448
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 151.2175386013986,
+     "sem": 0.11938183454171328
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 424.30625,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 4,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 4,
+   "name": "Stage 1 cool 4/8 (399.1 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8016392837962037,
+     "sem": 0.00026075310061570453
+    },
+    "drift": {
+     "delta": 0.0011882214200000796,
+     "drift": true,
+     "first": 0.8010408067,
+     "second": 0.8022290281200001,
+     "sem": 0.00047739902748255745
+    },
+    "enthalpy": {
+     "mean": 16215.576226773228,
+     "sem": 48.5142050520347
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 125.93017549450548,
+     "sem": 0.10321616607303996
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 399.075,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 5,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 5,
+   "name": "Stage 1 cool 5/8 (373.8 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8161882654345655,
+     "sem": 0.0002624060200337312
+    },
+    "drift": {
+     "delta": 4.599802000004871e-05,
+     "drift": false,
+     "first": 0.8161670076,
+     "second": 0.8162130056200001,
+     "sem": 0.0005719547739135974
+    },
+    "enthalpy": {
+     "mean": 14289.528445854146,
+     "sem": 49.36776278134191
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 100.80436613386621,
+     "sem": 0.091905691589656
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 373.84375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 6,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 6,
+   "name": "Stage 1 cool 6/8 (348.6 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8295998655944057,
+     "sem": 0.0003954892046024352
+    },
+    "drift": {
+     "delta": 0.0011871265799999753,
+     "drift": false,
+     "first": 0.82900115078,
+     "second": 0.83018827736,
+     "sem": 0.0006441034837181136
+    },
+    "enthalpy": {
+     "mean": 12330.729656143854,
+     "sem": 45.84959049852399
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 75.37886210789213,
+     "sem": 0.09892600676825633
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 348.6125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 7,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 7,
+   "name": "Stage 1 cool 7/8 (323.4 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8460073940959042,
+     "sem": 0.000405707493761181
+    },
+    "drift": {
+     "delta": 0.0012727564800000257,
+     "drift": true,
+     "first": 0.8453681801,
+     "second": 0.8466409365800001,
+     "sem": 0.0005685997068745085
+    },
+    "enthalpy": {
+     "mean": 10303.354759840158,
+     "sem": 47.66450705686656
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 50.217205504495496,
+     "sem": 0.08417190385921945
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 323.38125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 8,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    50000
+   ],
+   "ensemble": "npt",
+   "index": 8,
+   "name": "Stage 1 cool 8/8 (298.1 K)",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8601267784815184,
+     "sem": 0.00022995276778926994
+    },
+    "drift": {
+     "delta": 0.0002021757399998103,
+     "drift": false,
+     "first": 0.8600258323000001,
+     "second": 0.8602280080399999,
+     "sem": 0.00045014109784180105
+    },
+    "enthalpy": {
+     "mean": 8323.783940959042,
+     "sem": 47.215040913596575
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 25.023461848151896,
+     "sem": 0.0895625604714938
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "../sweep/log.lammps": [
+   196211,
+   1793380788536740099
+  ],
+  "deck": [
+   2820,
+   1793273433039365754
+  ],
+  "log.lammps": [
+   4772989,
+   1793375417354897892
+  ],
+  "run_manifest.json": [
+   2427,
+   1793375417507199645
+  ]
+ },
+ "speed_source": "Performance line of segment 8",
+ "stage": "cool",
+ "start_time": "2026-10-29T11:30:34.116514+00:00",
+ "status": "finished",
+ "steps_done": 8000000,
+ "steps_per_s": 74.68,
+ "steps_total": 8000000,
+ "system": "pe_ua_amorph_n40_c240_s1",
+ "version": 2
+}

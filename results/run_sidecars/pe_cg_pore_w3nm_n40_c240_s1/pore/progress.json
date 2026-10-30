@@ -1,0 +1,1224 @@
+{
+ "cache": {},
+ "current": {
+  "index": 5,
+  "name": "Stage 3 cool 3/8 (424.3 K)"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-10-30T17:20:02+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 343418.1605312824,
+ "log_mtime": "2026-10-26T17:56:24+00:00",
+ "manifest_status": "started",
+ "n_done": 4,
+ "n_segments": 28,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 265.5238081882757,
+ "percent": 7.074528301886793,
+ "plots": {},
+ "protocol": "pore",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_pore_w3nm_n40_c240_s1/pore",
+ "segments": [
+  {
+   "command": "minimize",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 10.0,
+   "dump_every": [],
+   "ensemble": null,
+   "index": 1,
+   "name": "Stage 1: minimize the narrowed slab",
+   "run_steps": [
+    0
+   ],
+   "state": "done",
+   "stats": null,
+   "steps": 0,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": null,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "relax.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: surface re-relaxation 2000 ps NVT at 500 K after narrowing",
+   "run_steps": [
+    200000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.51683795,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": 997.6505071968032,
+     "sem": 10.070611019036068
+    },
+    "gamma": {
+     "mean": 22.973632429869287,
+     "sem": 1.038796387340272
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 227.11089914085915,
+     "sem": 0.2384518033848486
+    }
+   },
+   "steps": 200000,
+   "steps_done": 200000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 500.0,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 1,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 3,
+   "name": "Stage 3 cool 1/8 (474.8 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.52324965,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": 293.5777442259616,
+     "sem": 6.299178329662071
+    },
+    "gamma": {
+     "mean": 26.565296888282433,
+     "sem": 0.6463028785391649
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 201.60911473410636,
+     "sem": 0.1359689954998841
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 474.76875,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 2,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 4,
+   "name": "Stage 3 cool 2/8 (449.5 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.52984277,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -321.3918719245586,
+     "sem": 6.51519599769017
+    },
+    "gamma": {
+     "mean": 27.285505998663854,
+     "sem": 0.6529029234972352
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 176.36793938424637,
+     "sem": 0.1423257270445793
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 449.5375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 3,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 5,
+   "name": "Stage 3 cool 3/8 (424.3 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 299800,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 424.30625,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 4,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 6,
+   "name": "Stage 3 cool 4/8 (399.1 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 399.075,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 5,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 7,
+   "name": "Stage 3 cool 5/8 (373.8 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 373.84375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 6,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 8,
+   "name": "Stage 3 cool 6/8 (348.6 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 348.6125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 7,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 9,
+   "name": "Stage 3 cool 7/8 (323.4 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 323.38125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 8,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 10,
+   "name": "Stage 3 cool 8/8 (298.1 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg01_hold_25C.dcd",
+    "seg01_hold_25C_burst01.dcd",
+    "seg01_hold_25C_burst02.dcd",
+    "seg01_hold_25C_burst03.dcd",
+    "seg01_hold_25C_burst04.dcd",
+    "seg01_hold_25C_burst05.dcd",
+    "seg01_hold_25C_burst06.dcd",
+    "seg01_hold_25C_burst07.dcd",
+    "seg01_hold_25C_burst08.dcd",
+    "seg01_hold_25C_burst09.dcd",
+    "seg01_hold_25C_burst10.dcd",
+    "seg01_hold_25C_burst11.dcd",
+    "seg01_hold_25C_burst12.dcd",
+    "seg01_hold_25C_burst13.dcd",
+    "seg01_hold_25C_burst14.dcd",
+    "seg01_hold_25C_burst15.dcd",
+    "seg01_hold_25C_burst16.dcd",
+    "seg01_hold_25C_burst17.dcd",
+    "seg01_hold_25C_burst18.dcd",
+    "seg01_hold_25C_burst19.dcd",
+    "seg01_hold_25C_burst20.dcd",
+    "seg01_hold_25C_burst21.dcd",
+    "seg01_hold_25C_burst22.dcd",
+    "seg01_hold_25C_burst23.dcd",
+    "seg01_hold_25C_burst24.dcd",
+    "seg01_hold_25C_burst25.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 11,
+   "name": "seg 01 hold 25 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2500000,
+   "steps_done": 0,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 25.0,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg02_step_35C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 12,
+   "name": "seg 02 step 35 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 2,
+   "sweep_kind": "step",
+   "t_c": 35.0,
+   "t_target_k": 308.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg03_step_45C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 13,
+   "name": "seg 03 step 45 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 3,
+   "sweep_kind": "step",
+   "t_c": 45.0,
+   "t_target_k": 318.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg04_step_55C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 14,
+   "name": "seg 04 step 55 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 4,
+   "sweep_kind": "step",
+   "t_c": 55.0,
+   "t_target_k": 328.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg05_step_65C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 15,
+   "name": "seg 05 step 65 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 5,
+   "sweep_kind": "step",
+   "t_c": 65.0,
+   "t_target_k": 338.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg06_step_75C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 16,
+   "name": "seg 06 step 75 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 6,
+   "sweep_kind": "step",
+   "t_c": 75.0,
+   "t_target_k": 348.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg07_step_85C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 17,
+   "name": "seg 07 step 85 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 7,
+   "sweep_kind": "step",
+   "t_c": 85.0,
+   "t_target_k": 358.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg08_step_90C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 18,
+   "name": "seg 08 step 90 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 8,
+   "sweep_kind": "step",
+   "t_c": 90.0,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg09_hold_90C.dcd",
+    "seg09_hold_90C_burst01.dcd",
+    "seg09_hold_90C_burst02.dcd",
+    "seg09_hold_90C_burst03.dcd",
+    "seg09_hold_90C_burst04.dcd",
+    "seg09_hold_90C_burst05.dcd",
+    "seg09_hold_90C_burst06.dcd",
+    "seg09_hold_90C_burst07.dcd",
+    "seg09_hold_90C_burst08.dcd",
+    "seg09_hold_90C_burst09.dcd",
+    "seg09_hold_90C_burst10.dcd",
+    "seg09_hold_90C_burst11.dcd",
+    "seg09_hold_90C_burst12.dcd",
+    "seg09_hold_90C_burst13.dcd",
+    "seg09_hold_90C_burst14.dcd",
+    "seg09_hold_90C_burst15.dcd",
+    "seg09_hold_90C_burst16.dcd",
+    "seg09_hold_90C_burst17.dcd",
+    "seg09_hold_90C_burst18.dcd",
+    "seg09_hold_90C_burst19.dcd",
+    "seg09_hold_90C_burst20.dcd",
+    "seg09_hold_90C_burst21.dcd",
+    "seg09_hold_90C_burst22.dcd",
+    "seg09_hold_90C_burst23.dcd",
+    "seg09_hold_90C_burst24.dcd",
+    "seg09_hold_90C_burst25.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 19,
+   "name": "seg 09 hold 90 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2500000,
+   "steps_done": 0,
+   "sweep_index": 9,
+   "sweep_kind": "hold",
+   "t_c": 90.0,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg10_step_100C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 20,
+   "name": "seg 10 step 100 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 10,
+   "sweep_kind": "step",
+   "t_c": 100.0,
+   "t_target_k": 373.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg11_step_110C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 21,
+   "name": "seg 11 step 110 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 11,
+   "sweep_kind": "step",
+   "t_c": 110.0,
+   "t_target_k": 383.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg12_step_120C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 22,
+   "name": "seg 12 step 120 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 12,
+   "sweep_kind": "step",
+   "t_c": 120.0,
+   "t_target_k": 393.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg13_step_130C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 23,
+   "name": "seg 13 step 130 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 13,
+   "sweep_kind": "step",
+   "t_c": 130.0,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg14_hold_130C.dcd",
+    "seg14_hold_130C_burst01.dcd",
+    "seg14_hold_130C_burst02.dcd",
+    "seg14_hold_130C_burst03.dcd",
+    "seg14_hold_130C_burst04.dcd",
+    "seg14_hold_130C_burst05.dcd",
+    "seg14_hold_130C_burst06.dcd",
+    "seg14_hold_130C_burst07.dcd",
+    "seg14_hold_130C_burst08.dcd",
+    "seg14_hold_130C_burst09.dcd",
+    "seg14_hold_130C_burst10.dcd",
+    "seg14_hold_130C_burst11.dcd",
+    "seg14_hold_130C_burst12.dcd",
+    "seg14_hold_130C_burst13.dcd",
+    "seg14_hold_130C_burst14.dcd",
+    "seg14_hold_130C_burst15.dcd",
+    "seg14_hold_130C_burst16.dcd",
+    "seg14_hold_130C_burst17.dcd",
+    "seg14_hold_130C_burst18.dcd",
+    "seg14_hold_130C_burst19.dcd",
+    "seg14_hold_130C_burst20.dcd",
+    "seg14_hold_130C_burst21.dcd",
+    "seg14_hold_130C_burst22.dcd",
+    "seg14_hold_130C_burst23.dcd",
+    "seg14_hold_130C_burst24.dcd",
+    "seg14_hold_130C_burst25.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 24,
+   "name": "seg 14 hold 130 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2500000,
+   "steps_done": 0,
+   "sweep_index": 14,
+   "sweep_kind": "hold",
+   "t_c": 130.0,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg15_step_140C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 25,
+   "name": "seg 15 step 140 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 15,
+   "sweep_kind": "step",
+   "t_c": 140.0,
+   "t_target_k": 413.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg16_step_150C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 26,
+   "name": "seg 16 step 150 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 16,
+   "sweep_kind": "step",
+   "t_c": 150.0,
+   "t_target_k": 423.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg17_step_160C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 27,
+   "name": "seg 17 step 160 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 0,
+   "sweep_index": 17,
+   "sweep_kind": "step",
+   "t_c": 160.0,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg18_hold_160C.dcd",
+    "seg18_hold_160C_burst01.dcd",
+    "seg18_hold_160C_burst02.dcd",
+    "seg18_hold_160C_burst03.dcd",
+    "seg18_hold_160C_burst04.dcd",
+    "seg18_hold_160C_burst05.dcd",
+    "seg18_hold_160C_burst06.dcd",
+    "seg18_hold_160C_burst07.dcd",
+    "seg18_hold_160C_burst08.dcd",
+    "seg18_hold_160C_burst09.dcd",
+    "seg18_hold_160C_burst10.dcd",
+    "seg18_hold_160C_burst11.dcd",
+    "seg18_hold_160C_burst12.dcd",
+    "seg18_hold_160C_burst13.dcd",
+    "seg18_hold_160C_burst14.dcd",
+    "seg18_hold_160C_burst15.dcd",
+    "seg18_hold_160C_burst16.dcd",
+    "seg18_hold_160C_burst17.dcd",
+    "seg18_hold_160C_burst18.dcd",
+    "seg18_hold_160C_burst19.dcd",
+    "seg18_hold_160C_burst20.dcd",
+    "seg18_hold_160C_burst21.dcd",
+    "seg18_hold_160C_burst22.dcd",
+    "seg18_hold_160C_burst23.dcd",
+    "seg18_hold_160C_burst24.dcd",
+    "seg18_hold_160C_burst25.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 28,
+   "name": "seg 18 hold 160 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2500000,
+   "steps_done": 0,
+   "sweep_index": 18,
+   "sweep_kind": "hold",
+   "t_c": 160.0,
+   "t_target_k": 433.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   29903,
+   1793032573127587363
+  ],
+  "log.lammps": [
+   5152619,
+   1793037384385145725
+  ],
+  "run_manifest.json": [
+   2353,
+   1793032580006930440
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "pore",
+ "start_time": "2026-10-26T16:36:20.005809+00:00",
+ "status": "cancelled/killed?",
+ "steps_done": 1499800,
+ "steps_per_s": 307.3192224401339,
+ "steps_total": 21200000,
+ "system": "pe_cg_pore_w3nm_n40_c240_s1",
+ "version": 2
+}
