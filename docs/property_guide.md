@@ -17,6 +17,8 @@ A fair comparison needs amorphous or melt data at the same temperature and a sim
 | Young's modulus, Poisson ratio, yield (tensile) | **Not against separator data** | Real separator stiffness and yield come from crystals, and MD strain rates (10⁸–10⁹ s⁻¹) are about 10⁹× faster than tests. Only the amorphous-phase response and its trends with temperature and rate. |
 | Pores: surface structure, hole closure | **No direct experiment** | The mechanism, and comparisons within our own simulations. |
 
+**Our numbers next to experiment, with sources:** `docs/experiment_comparison.md`. In short, CG PE density is about 2% low, α_V about 5% low, surface tension within 1–3%, κ_T 50–60% too high, Cp about 3× low (degrees of freedom), chains about 20% too large (C240), and dynamics about 4× too fast.
+
 **Comparisons that hold at every resolution are the ones within our own simulations:** temperature trends from 25 to 160 °C, PE vs iPP at the same resolution, CG vs UA vs AA on the same property, and small vs 2×2×2 boxes. Most of the separator conclusions rest on these, not on absolute agreement with experiment.
 
 ### Thermodynamic properties
