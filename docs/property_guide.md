@@ -91,6 +91,20 @@ A fair comparison needs amorphous or melt data at the same temperature and a sim
 
 14. **Finite-size check (D50).** The 40-chain and 2×2×2 (320-chain) pores are compared on the quantities above.
 
+### Finite hole (stage 2, `sepsim analyze hole`, D52)
+
+15. **Hole radius R_eff(t).** The beads are projected along z onto a 2 Å grid (lightly smoothed); the hole is the connected region near the tracked hole centre where the count is below half the undisturbed film's. R_eff = √(A/π) from its area A. Centroid drift is how far the hole centre has wandered from where it was opened.
+
+16. **R(z) and R_min.** The same per 10 Å slab through the film interior. R_min is the narrowest slab. A hole can be plugged inside while still open at both surfaces (R_min ≈ 0 with R_eff > 0), and the rim is usually wider at the surfaces.
+
+17. **Closure time t_close and closure speed dR/dt.** Closed means R_min < 3 Å for 5 frames in a row (25 ps in the dense 5 ps window at the start of production and of a release, 250 ps after it). dR/dt is fitted over the first 5 ns and over the whole open period. In a viscous film the hole closes at roughly constant speed, about γ/η. These are CG model times, so compare runs with each other, not with experiment.
+
+18. **Plateau radius.** For a hole that stays open, the mean R_eff over the last quarter of the run.
+
+19. **Scaffold checks.** The tethered beads (count, fraction, nearest to the axis, which must be at least R + d), and the "free shell" between R and R + d: its bead density against the far film (rim build-up) and how far its beads move (MSD), compared between free and scaffolded runs. The scaffold is a set of imposed springs standing in for the crystalline network. It is not crystallinity, and releasing it emulates melting rather than predicting a shutdown temperature.
+
+All holes here are smaller than the film thickness (R/h ≤ 0.31), so surface tension is expected to close them. The runs measure how fast, not whether.
+
 **Caveat.** The slit models a local patch of pore wall. Real separator pores are 30–100 nm across, curved and semicrystalline.
 
 ### Physical validity by system

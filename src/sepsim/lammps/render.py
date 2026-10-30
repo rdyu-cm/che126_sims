@@ -2,7 +2,7 @@
 
 A deck is rendered from ``templates/<protocol>.in.j2`` (``prep``, ``sweep``,
 ``benchmark``, ``extend``, ``cool``, ``diffuse``, ``tensile`` for bulk systems; ``pore_relax`` for wide 500 K
-slit pores and ``pore`` for narrowed ones, D44/D48) and the system's
+slit pores and ``pore`` for narrowed ones, D44/D48; ``hole`` for hole systems, D52) and the system's
 ``manifest.yaml``: styles, mixing, special_bonds, type ids and SHAKE bond types come
 from the manifest; every coefficient line is emitted from the force-field YAML via
 ``sepsim.ff.params.to_lammps_real`` (the deck must not rely on data-file coefficients,
@@ -16,6 +16,7 @@ Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to 
 
 from __future__ import annotations
 
+import math
 import os
 import re
 from pathlib import Path
@@ -30,6 +31,7 @@ from sepsim.run import sha256_file
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 PROTOCOLS = ("prep", "sweep", "benchmark", "pore_relax", "pore", "extend", "cool")
 PROTOCOLS += ("diffuse", "tensile")  # D53, D54
+PROTOCOLS += ("hole",)  # D52
 # protocols for slit-pore systems (manifest has a ``pore`` key), by pore.kind (D48)
 PORE_PROTOCOLS = {"pore_relax": "wide", "pore": "narrow"}
 MANIFEST_NAME = "manifest.yaml"
@@ -219,6 +221,44 @@ COOL_DEFAULTS = {
     for res in DEFAULTS
 }
 
+# Cylindrical hole through the film (D52; CG-tuned durations at every resolution): NVT at
+# the system's T with its D48 lateral box, soft radial push to R, then the hole free
+# (optionally held by a tethered "scaffold" and released at a grid point).
+HOLE_SCAFFOLDS = ("none", "annulus", "columns")
+HOLE_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in _FF_KEYS}
+    | _PORE_FF[res]
+    | {
+        "inflate_ps": 10000.0,  # push radius ramped 0 -> R
+        "wall_hold_ps": 10000.0,  # push held at R
+        # radial push inside r0: indent (fix indent cylinder, F = K (r0 - r)^2, K in
+        # kcal/mol/A^3) or addforce (atom-style variables, F = K (r0 - r), kcal/mol/A^2;
+        # the variables cost ~30% of a CG step)
+        "push_style": "indent",
+        "push_k": 0.5,
+        "push_every": 1,  # addforce only: every N steps
+        "scaffold": "none",  # none | annulus | columns
+        "scaffold_d_nm": 2.5,  # tether beads with r > R + d (annulus); columns at R + d + col_r
+        "scaffold_k": 5.0,  # kcal/mol/A^2, fix spring/self
+        "scaffold_n_col": 6,
+        "scaffold_col_r_nm": 1.0,
+        "scaffold_hold_ps": 0.0,  # push off, scaffold on, before production (0 = none)
+        "hole_grid_c": "",  # production grid (sweep syntax); "" = "<system T>h"
+        "hole_step_ps": 2000.0,
+        "hole_hold_ps": 100000.0,
+        "chunk_ps": 25000.0,  # write_data hole_<ns>ns.data every chunk
+        "hole_dump_ps": 50.0,
+        # dense frames at the start of production and of the release segment (closure at
+        # 160 C takes ~0.1 ns in the smoke run): the first dense_ps, every dense_dump_ps
+        "dense_ps": 2000.0,
+        "dense_dump_ps": 5.0,
+        "release_t_c": "none",  # unfix the scaffold at the start of this grid point
+        "rho_r": True,  # live radial density about the axis (fix ave/chunk -> hole_rho_r.txt)
+        "rho_r_bin": 2.0,
+    }
+    for res in DEFAULTS
+}
+
 # Long NPT hold at one sweep temperature for chain diffusion (D53): from the sweep's
 # hold_<T>C.data, frames every hold_dump_ps into one hold.dcd, chunks of chunk_ps each
 # ending in write_data hold_<cumulative ns>ns.data. t_c in deg C.
@@ -258,6 +298,7 @@ PROTOCOL_DEFAULTS = {
     "pore": PORE_DEFAULTS,
     "extend": EXTEND_DEFAULTS,
     "cool": COOL_DEFAULTS,
+    "hole": HOLE_DEFAULTS,
     "diffuse": DIFFUSE_DEFAULTS,
     "tensile": TENSILE_DEFAULTS,
 }
@@ -302,6 +343,14 @@ PRESETS = {
         # extend: two chunks of 1 ps
         "extend_ps": 2.0,
         "chunk_ps": 1.0,
+        # hole (D52)
+        "inflate_ps": 2.0,
+        "wall_hold_ps": 1.0,
+        "hole_step_ps": 1.0,
+        "hole_hold_ps": 2.0,
+        "hole_dump_ps": 0.5,
+        "dense_ps": 1.0,
+        "dense_dump_ps": 0.1,
         # diffuse: two chunks of 1 ps (chunk_ps above)
         "diffuse_ps": 2.0,
         # tensile: strain 0.01 at 1e10 /s = 1 ps per axis
@@ -726,13 +775,23 @@ def render_deck(
         raise RenderError(f"{manifest_path}: no such file")
     manifest = yaml.safe_load(manifest_path.read_text())
     pore = manifest.get("pore")
-    if (pore is not None) != (protocol in PORE_PROTOCOLS):
+    hole = manifest.get("hole")
+    if (hole is not None) != (protocol == "hole"):
+        raise RenderError(
+            f"{manifest['id']}: "
+            + (
+                f"a hole system (D52) takes the hole protocol, not {protocol}"
+                if hole is not None
+                else "the hole protocol is for hole systems (sepsim build hole, D52)"
+            )
+        )
+    if hole is None and (pore is not None) != (protocol in PORE_PROTOCOLS):
         raise RenderError(
             f"{manifest['id']}: the {protocol} protocol is for "
             + ("slit-pore systems (use prep/sweep/benchmark)" if pore is None else "bulk systems")
             + ("" if pore is None else f"; pore systems use {', '.join(PORE_PROTOCOLS)}")
         )
-    if pore is not None and pore.get("kind") != PORE_PROTOCOLS[protocol]:
+    if hole is None and pore is not None and pore.get("kind") != PORE_PROTOCOLS[protocol]:
         want = {v: k for k, v in PORE_PROTOCOLS.items()}.get(pore.get("kind"))
         raise RenderError(
             f"{manifest['id']}: {protocol} is for {PORE_PROTOCOLS[protocol]} pores (D48); this"
@@ -800,6 +859,8 @@ def render_deck(
         _check_burst_alignment(protocol, params, context["segments"])
     if protocol == "pore":
         _pore_boxes(context, manifest, params)
+    if protocol == "hole":
+        _hole_context(context, manifest, params)
     return _environment().get_template(f"{protocol}.in.j2").render(context)
 
 
@@ -870,3 +931,201 @@ def write_deck(
     path = out / f"in.{protocol}"
     path.write_text(text, newline="\n")
     return path
+
+
+# --------------------------------------------------------------------------- hole (D52)
+
+
+def _lateral_box(manifest: dict, label: str, t_k: float) -> dict:
+    """D48 lateral box at ``t_k`` (heating branch), centred on the data box (for ff.box)."""
+    from sepsim.build.pore import PoreError, bulk_density, lateral_lengths
+
+    lat = manifest["pore"]["lateral"]
+    centre = [0.5 * (lo + hi) for lo, hi in manifest["box_angstrom"][:2]]
+    try:
+        lx, ly = lateral_lengths(lat, "heating", t_k)
+        rho = bulk_density(lat, "heating", t_k)
+    except PoreError as exc:
+        raise RenderError(f"{label}: {exc}") from None
+    return {
+        "label": label,
+        "branch": "heating",
+        "t_k": t_k,
+        "rho": rho,
+        "lx": lx,
+        "ly": ly,
+        "x": (centre[0] - 0.5 * lx, centre[0] + 0.5 * lx),
+        "y": (centre[1] - 0.5 * ly, centre[1] + 0.5 * ly),
+    }
+
+
+def hole_segments(params: dict, t0_c: float) -> list[dict]:
+    """Production segments of a hole deck (D52): the grid ``hole_grid_c`` (sweep syntax,
+    default ``"<t0>h"``) starting at the system temperature ``t0_c``; a step at every point
+    after the first and a hold where marked; ``start_ns``/``end_ns`` are cumulative
+    production times (chunks: :func:`hole_plan`)."""
+    grid = parse_grid(params["hole_grid_c"] or f"{_num(t0_c)}h")
+    if abs(grid[0][0] - t0_c) > 1e-6:
+        raise RenderError(
+            f"hole_grid_c starts at {grid[0][0]:g} C, the system is at {t0_c:g} C (its first point)"
+        )
+    segs, t_ns, prev_t = [], 0.0, t0_c
+    for k, (t_c, hold) in enumerate(grid):
+        for kind in (["step"] if k > 0 else []) + (["hold"] if hold else []):
+            ps = params["hole_hold_ps"] if kind == "hold" else params["hole_step_ps"]
+            if ps <= 0:
+                raise RenderError(f"hole_{kind}_ps must be > 0")
+            segs.append(
+                {
+                    "index": len(segs) + 1,
+                    "kind": kind,
+                    "t_c": t_c,
+                    "t_k": t_c + 273.15,
+                    "ps": ps,
+                    "new_t": abs(t_c - prev_t) > 1e-9,
+                    "start_ns": t_ns,
+                    "end_ns": t_ns + ps / 1000.0,
+                }
+            )
+            t_ns += ps / 1000.0
+            prev_t = t_c
+    return segs
+
+
+def _hole_chunks(seg: dict, params: dict, dense: bool) -> list[dict]:
+    """Runs of one production segment: cut every ``chunk_ps`` (snapshot
+    ``hole_<cumulative ns>ns``, also at the segment end) and, for a dense segment, at the
+    end of its dense window (``dense_ps``, frames every ``dense_dump_ps`` into
+    ``hole_dense_s<NN>.dcd``)."""
+    ps, size = seg["ps"], params["chunk_ps"]
+    snaps = {round(k * size, 6) for k in range(1, int(ps / size + 1e-9) + 1)} | {round(ps, 6)}
+    window = min(params["dense_ps"], ps) if dense and params["dense_ps"] > 0 else 0.0
+    cuts = sorted(snaps | ({round(window, 6)} if window else set()))
+    chunks, prev = [], 0.0
+    for c in cuts:
+        if c > ps + 1e-9:
+            continue
+        chunks.append(
+            {
+                "ps": c - prev,
+                "stage": (f"hole_{_num(seg['start_ns'] + c / 1000.0)}ns" if c in snaps else None),
+                "dense_start": f"hole_dense_s{seg['index']:02d}" if window and prev == 0 else None,
+                "dense_end": bool(window) and prev < window <= c + 1e-9,
+            }
+        )
+        prev = c
+    return chunks
+
+
+def column_centres(hole: dict, params: dict, box) -> list[tuple[float, float]]:
+    """Scaffold column axes on a ring at R + d + col_r, with the periodic images whose
+    cylinder reaches into the box (regions are not periodic)."""
+    xc, yc = hole["axis_angstrom"]
+    r_col = 10.0 * params["scaffold_col_r_nm"]
+    ring = 10.0 * (hole["radius_nm"] + params["scaffold_d_nm"]) + r_col
+    (xlo, xhi), (ylo, yhi) = box[0], box[1]
+    lx, ly = xhi - xlo, yhi - ylo
+    out = []
+    n = params["scaffold_n_col"]
+    for k in range(n):
+        a = 2.0 * math.pi * k / n
+        cx, cy = xc + ring * math.cos(a), yc + ring * math.sin(a)
+        for i in (-1, 0, 1):
+            for j in (-1, 0, 1):
+                x, y = cx + i * lx, cy + j * ly
+                dx = max(xlo - x, 0.0, x - xhi)
+                dy = max(ylo - y, 0.0, y - yhi)
+                if dx * dx + dy * dy < r_col * r_col:
+                    out.append((x, y))
+    return out
+
+
+def hole_plan(params: dict, t0_c: float) -> list[dict]:
+    """Production segments (``hole_segments``) with the scaffold state of each: ``release``
+    (unfix at its start), ``state`` (None without a scaffold, else held / released here /
+    released) and ``new_t`` (a change_box to the D48 box at its T). Checks the scaffold,
+    release and push parameters."""
+    scaffold = params["scaffold"]
+    if scaffold not in HOLE_SCAFFOLDS:
+        raise RenderError(
+            f"scaffold: expected one of {', '.join(HOLE_SCAFFOLDS)}, got {scaffold!r}"
+        )
+    has_scaf = scaffold != "none"
+    rel_text = str(params["release_t_c"]).strip().lower()
+    release = None
+    if rel_text not in ("", "none"):
+        try:
+            release = float(rel_text.rstrip("c"))
+        except ValueError:
+            raise RenderError(
+                f"release_t_c: expected none or a grid T in C, got {rel_text!r}"
+            ) from None
+        if not has_scaf:
+            raise RenderError("release_t_c needs a scaffold (scaffold=annulus or columns)")
+    if params["scaffold_hold_ps"] > 0 and not has_scaf:
+        raise RenderError("scaffold_hold_ps needs a scaffold (scaffold=annulus or columns)")
+    if params["push_every"] < 1:
+        raise RenderError("push_every must be >= 1")
+    if params["push_style"] not in ("indent", "addforce"):
+        raise RenderError(f"push_style: expected indent or addforce, got {params['push_style']!r}")
+    for key in ("inflate_ps", "wall_hold_ps", "hole_dump_ps", "chunk_ps"):
+        if params[key] <= 0:
+            raise RenderError(f"{key} must be > 0")
+    segs = hole_segments(params, t0_c)
+    active, released = has_scaf, False
+    for seg in segs:
+        seg["release"] = False
+        if active and release is not None and abs(seg["t_c"] - release) < 1e-6:
+            seg["release"], active, released = True, False, True
+        seg["rebuild"] = active and seg["new_t"]
+        if not has_scaf:
+            seg["state"] = None
+        elif seg["release"]:
+            seg["state"] = "released here"
+        else:
+            seg["state"] = "released" if released else "held"
+    if release is not None and not released:
+        raise RenderError(f"release_t_c {release:g} C is not a point of the hole grid")
+    if params["dense_ps"] < 0 or params["dense_dump_ps"] <= 0:
+        raise RenderError("dense_ps must be >= 0 and dense_dump_ps > 0")
+    for seg in segs:
+        seg["dense"] = params["dense_ps"] > 0 and (seg["index"] == 1 or seg["release"])
+        seg["chunks"] = _hole_chunks(seg, params, seg["dense"])
+    return segs
+
+
+def _hole_context(context: dict, manifest: dict, params: dict) -> None:
+    """Hole deck (D52): axis, push, scaffold group, production segments with the D48
+    lateral box at each new T, the scaffold re-anchored after every change_box and
+    released at ``release_t_c``."""
+    hole = manifest["hole"]
+    if not (manifest.get("pore") or {}).get("lateral"):
+        raise RenderError(f"{manifest['id']}: manifest has no pore.lateral table (D48)")
+    dt = params["dt_fs"]
+    segs = hole_plan(params, float(hole["t_c"]))
+    for seg in segs:
+        seg["box"] = (
+            _lateral_box(manifest, f"seg {seg['index']:02d} {seg['kind']}", seg["t_k"])
+            if seg["new_t"]
+            else None
+        )
+    r_a = 10.0 * hole["radius_nm"]
+    box = manifest["box_angstrom"]
+    half = 0.5 * min(b - a for a, b in box[:2])
+    n_rho = max(1, int(half // params["rho_r_bin"]))
+    context["hole"] = hole
+    context["segments"] = segs
+    context["h"] = {
+        "r_a": r_a,
+        "xc": hole["axis_angstrom"][0],
+        "yc": hole["axis_angstrom"][1],
+        "t0_k": float(hole["t_c"]) + 273.15,
+        "scaffold": params["scaffold"] != "none",
+        "scaf_r": r_a + 10.0 * params["scaffold_d_nm"],
+        "columns": column_centres(hole, params, box) if params["scaffold"] == "columns" else [],
+        "col_r": 10.0 * params["scaffold_col_r_nm"],
+        "lz": box[2][1] - box[2][0],
+        "n_rho": n_rho,
+        "rho_r_max": n_rho * params["rho_r_bin"],
+        "dump_every": steps(params["hole_dump_ps"], dt),
+    }

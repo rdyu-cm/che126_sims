@@ -70,6 +70,16 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --time
   uv run sepsim render extend --system systems/$R --data systems/$R/data.lmp --job --node rdyu-rog --cpus 6 --time 7-00:00:00
   uv run sepsim build pore --data results/runs/$R/extend/hold_ext_<N>ns.data --source systems/$R --width-nm 10
   ```
+- Pore closure with a finite hole (D52): a cylinder of radius R through the finished 2×2×2 narrow pore's film, from its `pore/hold_<T>C.data` snapshot (box already at the D48 L(T)); one system per (R, T). The `hole` deck pushes the hole open (fix indent, `inflate_ps` + `wall_hold_ps`), optionally tethers the film beyond R + d (`scaffold=annulus|columns`, `scaffold_d_nm`, `scaffold_k`, `scaffold_hold_ps`), then runs the hole free through `hole_grid_c` (default isothermal; ramps re-anchor the scaffold at each `change_box`) and releases the scaffold at `release_t_c`; the first 2 ns of production and of the release are also dumped every 5 ps (`hole_dense_s<NN>.dcd`; a released R = 3 nm hole closes in ~0.05 ns at 160 °C). Variants share a system and differ by run directory (`--out`):
+  ```
+  P=pe_cg_pore_w5nm_n320_c240_s1_rep222; H=pe_cg_hole_r3nm_160C_n320_c240_s1_rep222
+  uv run sepsim build hole --data results/runs/$P/pore/hold_160C.data --source systems/$P --radius-nm 3 --t-c 160
+  uv run sepsim render hole --system systems/$H --out results/runs/$H/hole_free --set hole_hold_ps=120000 --job --node rdyu-rog --cpus 4 --time 7-00:00:00
+  uv run sepsim render hole --system systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222 --out results/runs/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/hole_ramp_rel130 \
+      --set hole_grid_c=25h,35,45,55,65,75,85,90h,100,110,120,130h,140,150,160h --set hole_step_ps=2000 --set hole_hold_ps=10000 --set inflate_ps=20000 \
+      --set scaffold=annulus --set release_t_c=130 --job --node rdyu-server --cpus 4 --time 7-00:00:00
+  uv run sepsim analyze hole results/runs/$H/hole_free [--compare results/runs/<id>/<stage> ...]   # R_eff(t), R_min(t), t_close, dR/dt, scaffold checks
+  ```
 - Extended 500 K hold (D47), then re-cool and sweep from it. `extend` reads `../prep/hold.data` and writes `hold_ext.dcd` plus a snapshot `hold_ext_<ns>ns.data` every `chunk_ps` (default 10 ns of `extend_ps` = 80 ns). Watch `sepsim progress` on the extend run (it rechecks prep hold + extension at most every 2 h and prints `D47 PASS/FAIL`); once it passes, `scancel` the job and cool the latest snapshot. Relative `--data` paths of these stages are relative to the run directory, as below (move the old `sweep/` away first, or use `--out .../sweep_d47`):
   ```
   uv run sepsim render extend --system $S --job --node rdyu-server --cpus 4 --time 7-00:00:00   # --set extend_ps=80000 --set chunk_ps=10000
@@ -162,6 +172,7 @@ nice -n 15 ionice -c3 uv run --frozen python scripts/collect_sidecars.py --runs 
   - dry: one width, 5 nm, at every resolution (D50: walls further apart than the 1.4–1.5 nm cutoff do not interact, so dry widths barely differ); width varies only for wet pores (D48: cut wide from the 500 K box, relaxed there, then narrowed; w defined at 25 °C)
   - CG C240 finite-size check (D50): 40 chains vs a 2×2×2 replicated box (320 chains, film and lateral size ×2): γ, density profile, surface vs interior mobility
   - caveat: our walls are amorphous; real separator pore walls are semicrystalline (phase 4)
+  - finite hole (D52): a cylinder of R = 2–4 nm through the free film (R/h ≤ 0.31, so closure is expected; we measure closure kinetics in CG model time), free (post-shutdown limit) vs a tethered "scaffold" (stand-in for the crystalline network) released at a grid T (emulated melting, not a predicted shutdown T)
   - wall ablation: amorphous vs crystal-core + amorphous skin
 
 **Electrolyte**

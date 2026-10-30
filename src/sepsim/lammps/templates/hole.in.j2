@@ -1,0 +1,130 @@
+{#- Cylindrical hole through a free-standing film (D52). The film (hole system data.lmp:
+    a narrow-pore snapshot at T with its D48 lateral box and velocities) runs NVT
+    Nose-Hoover with the box fixed (no barostat on a free film; no minimize). Stage 1
+    ramps a soft radial push about the axis from r0 = 0 to R (push_style indent: fix indent
+    cylinder, F = K (r0 - r)^2; addforce: atom-style variables, F = K (r0 - r), ~30% slower); Stage 2 holds it at R and writes inflated.data. With a
+    scaffold, the beads outside R + d (annulus) or inside the columns are then tethered to
+    their positions (fix spring/self, static group) and optionally held without the push
+    (scaffolded hold). Production: the push is removed and the hole runs free through the
+    grid hole_grid_c (sweep syntax; default the system T, isothermal), with the D48 box at
+    each new T (change_box; the scaffold is re-anchored after it) and the scaffold
+    released at release_t_c. Plain LJ cutoff without tail correction; thermo adds
+    pxx pyy pzz. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+# Hole (D52): R {{ hole.radius_nm | num }} nm ({{ h.r_a | num }} A), axis x {{ "%.4f" | format(h.xc) }} y {{ "%.4f" | format(h.yc) }} A, built at {{ hole.t_c | num }} C; film {{ "%.2f" | format(hole.film_thickness_angstrom) }} A ({{ "%.2f" | format(hole.film_thickness_with_hole) }} A with the hole), Lz {{ "%.4f" | format(h.lz) }} A (fixed), ligament {{ "%.1f" | format(hole.ligament_angstrom) }} A
+{% if h.scaffold %}
+# Scaffold: {{ p.scaffold }}, fix spring/self K {{ p.scaffold_k | num }} kcal/mol/A^2 on the beads {% if p.scaffold == "annulus" %}with r > {{ h.scaf_r | num }} A{% else %}inside {{ p.scaffold_n_col }} columns of radius {{ h.col_r | num }} A ({{ h.columns | length }} with periodic images){% endif %} at the end of Stage 2 (static group)
+{% endif %}
+# Production grid (cumulative production ns at each segment end):
+{% for s in segments %}
+#   {{ "%2d" | format(s.index) }} {{ "%-4s" | format(s.kind) }} {{ "%-6s" | format(s.t_c | num) }} C {{ "%-9s" | format(s.ps | num) }} ps -> {{ s.end_ns | num }} ns{% if s.box %}, box {{ "%.4f" | format(s.box.lx) }} x {{ "%.4f" | format(s.box.ly) }} A{% endif %}{% if s.state %}, scaffold {{ s.state }}{% endif %}
+
+{% endfor %}
+{{ ff.setup() -}}
+{{ ff.thermo() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+
+# rolling restart files (alternating restart.a / restart.b)
+restart {{ n(p.restart_ps) }} restart.a restart.b
+thermo {{ n(p.thermo_ps) }}
+# velocities come from the data file (no velocity create)
+fix md all nvt temp {{ h.t0_k | num }} {{ h.t0_k | num }} {{ tdamp | num }}
+
+# ---- Stage 1: inflate {{ p.inflate_ps | num }} ps NVT at {{ h.t0_k | num }} K, radial push r0 0 -> {{ h.r_a | num }} A ({{ p.push_style }}, K {{ p.push_k | num }}) -> inflate.dcd
+variable r0 equal ramp(0.0,{{ h.r_a | num }})
+{% if p.push_style == "indent" %}
+# cylindrical indenter about the axis: F = K (r0 - r)^2 outward on beads with r < r0 (minimum image)
+fix push all indent {{ p.push_k | num }} cylinder z {{ h.xc | num }} {{ h.yc | num }} v_r0 side out units box
+{% else %}
+variable rr atom sqrt((x-{{ h.xc | num }})^2+(y-{{ h.yc | num }})^2)
+variable fm atom {{ p.push_k | num }}*(v_r0-v_rr)*(v_rr<v_r0)
+variable fx atom v_fm*(x-{{ h.xc | num }})/(v_rr+0.01)
+variable fy atom v_fm*(y-{{ h.yc | num }})/(v_rr+0.01)
+fix push all addforce v_fx v_fy 0.0{% if p.push_every > 1 %} every {{ p.push_every }}{% endif %}
+
+{% endif %}
+dump inflate all dcd {{ n(p.hole_dump_ps) }} inflate.dcd
+dump_modify inflate unwrap yes
+run {{ n(p.inflate_ps) }}
+
+# ---- Stage 2: hold at R {{ p.wall_hold_ps | num }} ps NVT at {{ h.t0_k | num }} K, push at r0 = {{ h.r_a | num }} A -> inflate.dcd, inflated.data
+variable r0 equal {{ h.r_a | num }}
+run {{ n(p.wall_hold_ps) }}
+undump inflate
+{{ ff.write("inflated") -}}
+unfix push
+{% if h.scaffold %}
+
+# scaffold group from the positions in inflated.data (static), tethered in place; the beads stay in fix md
+{% if p.scaffold == "annulus" %}
+region scaffold cylinder z {{ h.xc | num }} {{ h.yc | num }} {{ h.scaf_r | num }} INF INF side out units box
+{% else %}
+{% for c in h.columns %}
+region scol{{ loop.index }} cylinder z {{ c[0] | num }} {{ c[1] | num }} {{ h.col_r | num }} INF INF units box
+{% endfor %}
+region scaffold union {{ h.columns | length }}{% for c in h.columns %} scol{{ loop.index }}{% endfor %}
+
+{% endif %}
+group scaffold region scaffold
+fix scaffold scaffold spring/self {{ p.scaffold_k | num }}
+fix_modify scaffold energy yes
+{% endif %}
+{% set ns = namespace(stage=3) %}
+{% if p.scaffold_hold_ps > 0 %}
+
+# ---- Stage 3: scaffolded hold {{ p.scaffold_hold_ps | num }} ps NVT at {{ h.t0_k | num }} K, push off, scaffold on -> hole_scaf.dcd, hole_scaf.data
+dump hole_scaf all dcd {{ n(p.hole_dump_ps) }} hole_scaf.dcd
+dump_modify hole_scaf unwrap yes
+run {{ n(p.scaffold_hold_ps) }}
+undump hole_scaf
+{{ ff.write_data("hole_scaf") -}}
+{% set ns.stage = 4 %}
+{% endif %}
+{% for s in segments %}
+
+# ---- Stage {{ ns.stage + loop.index0 }}: {{ s.kind }} at {{ s.t_c | num }} C (hole segment {{ s.index }}/{{ segments | length }}, {{ s.ps | num }} ps NVT{% if s.state %}, scaffold {{ s.state }}{% endif %}) -> hole.dcd{% if s.dense %}, hole_dense_s{{ "%02d" | format(s.index) }}.dcd{% endif %}, {{ s.chunks | selectattr("stage") | map(attribute="stage") | join(", ") }}.data
+{% if s.release %}
+unfix scaffold
+{% endif %}
+{% if s.box %}
+{% if s.rebuild %}
+unfix scaffold
+{% endif %}
+{{ ff.box(s.box) -}}
+{% if s.rebuild %}
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self {{ p.scaffold_k | num }}
+fix_modify scaffold energy yes
+{% endif %}
+unfix md
+fix md all nvt temp {{ s.t_k | num }} {{ s.t_k | num }} {{ tdamp | num }}
+{% endif %}
+{% if loop.first %}
+dump hole all dcd {{ h.dump_every }} hole.dcd
+dump_modify hole unwrap yes
+{% if p.rho_r %}
+# live diagnostic: radial bead mass density about the hole axis (whole film thickness)
+compute rbin all chunk/atom bin/cylinder z lower {{ h.lz | num }} {{ h.xc | num }} {{ h.yc | num }} 0.0 {{ h.rho_r_max | num }} {{ h.n_rho }} units box
+fix rho_r all ave/chunk 100 {{ (h.dump_every // 100) if h.dump_every >= 100 else 1 }} {{ h.dump_every if h.dump_every >= 100 else 100 }} rbin density/mass file hole_rho_r.txt
+{% endif %}
+{% endif %}
+{% for c in s.chunks %}
+{% if c.dense_start %}
+# dense frames: the first {{ [p.dense_ps, s.ps] | min | num }} ps of this segment every {{ p.dense_dump_ps | num }} ps
+dump dense all dcd {{ n(p.dense_dump_ps) }} {{ c.dense_start }}.dcd
+dump_modify dense unwrap yes
+{% endif %}
+run {{ n(c.ps) }}
+{% if c.dense_end %}
+undump dense
+{% endif %}
+{% if c.stage %}
+{{ ff.write_data(c.stage) -}}
+{% endif %}
+{% endfor %}
+{% endfor %}
+undump hole
+{% if p.rho_r %}
+unfix rho_r
+{% endif %}

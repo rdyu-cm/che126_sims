@@ -129,6 +129,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="where the data file came from, recorded in the manifest (default: --data as given)",
     )
     rp.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
+    hole_help = (
+        "Film for a cylindrical hole (D52): a narrow pore's snapshot at T"
+        " (pore/hold_<T>C.data, box at the D48 L(T)), molecules whole, film re-centred,"
+        " x, y, ids, types and velocities kept, Lz = t_T (1 + pi R^2/A) + gap with"
+        " t_T = M/(rho_bulk(T) A); id ..._hole_r<R>nm_<T>C_...; open the hole with"
+        " `sepsim render hole`."
+    )
+    ho = kinds.add_parser("hole", help=hole_help, description=hole_help)
+    ho.add_argument("--data", required=True, help="narrow-pore snapshot, e.g. pore/hold_160C.data")
+    ho.add_argument("--source", required=True, help="narrow pore system directory")
+    ho.add_argument("--radius-nm", type=float, required=True, help="hole radius R in nm")
+    ho.add_argument(
+        "--t-c", type=float, required=True, help="temperature of the snapshot in C (checked)"
+    )
+    ho.add_argument(
+        "--gap-nm", type=float, default=5.0, help="vacuum above the film (default %(default)s)"
+    )
+    ho.add_argument(
+        "--data-origin",
+        help="where the data file came from, recorded in the manifest (default: --data as given)",
+    )
+    ho.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
     render = subparsers.add_parser("render", help=_RENDER_HELP, description=_RENDER_HELP)
     render.set_defaults(render_parser=render)
     protocols = render.add_subparsers(dest="protocol", metavar="protocol")
@@ -201,6 +223,13 @@ def build_parser() -> argparse.ArgumentParser:
         "cool": "Step-cool alone (D47): the prep's 8-step cool from a 500 K snapshot (--data,"
         " e.g. ../extend/hold_ext_60ns.data) to 298.15 K, cool.dcd, cooled.data for the"
         " sweep (--data ../cool/cooled.data). Writes OUT/in.cool.",
+        "hole": "Cylindrical hole through the film (D52): NVT at the system T with its D48 box,"
+        " soft radial push 0 -> R (inflate_ps) and held (wall_hold_ps) -> inflated.data, then"
+        " the hole free through hole_grid_c (default isothermal, hole_hold_ps) -> hole.dcd,"
+        " hole_<ns>ns.data. Optional scaffold (scaffold=annulus|columns: fix spring/self on"
+        " beads beyond R + scaffold_d_nm), scaffold_hold_ps, release_t_c. Several variants per"
+        " system: give each its run directory (--out results/runs/<id>/hole_free, ...)."
+        " Writes OUT/in.hole.",
         "diffuse": "Chain diffusion hold (D53): long NPT hold at t_c (deg C, --set t_c=90) from a"
         " sweep snapshot (--data ../sweep/hold_90C.data), CG default 300 ns in 25 ns chunks"
         " each ending in write_data hold_<ns>ns.data, frames every 100 ps into hold.dcd;"
@@ -227,6 +256,7 @@ def build_parser() -> argparse.ArgumentParser:
         "extend": "data file to start from (default: OUT/../prep/hold.data; a replicated"
         " system, D50, has no prep: give its SYSTEM/data.lmp)" + stage_rel,
         "cool": "data file to cool (required), e.g. ../extend/hold_ext_60ns.data" + stage_rel,
+        "hole": "data file to start from (default: SYSTEM/data.lmp)",
         "diffuse": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
         "tensile": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
     }
@@ -257,6 +287,29 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sw.add_argument("--no-traj", action="store_true", help="thermo only: skip the DCD analyses")
     sw.add_argument(
+        "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
+    hole_an = (
+        "Hole runs (D52): per frame of inflate.dcd, hole_scaf.dcd and hole.dcd the hole in the"
+        " bead occupancy map projected through z (2 A bins, 50%% of the far-field median),"
+        " R_eff = sqrt(A/pi), centroid drift, R(z) per 10 A slab and R_min, closure (R_min"
+        " < 3 A for 5 frames), film thickness, scaffold diagnostics; R per grid point for"
+        " ramps. Writes results.md, results.json and PNGs to results/analysis/<system>/<stage>/."
+    )
+    ah = analyses.add_parser("hole", help=hole_an, description=hole_an)
+    ah.add_argument("run_dir", metavar="RUN_DIR", help="hole run directory (in.hole, *.dcd)")
+    ah.add_argument(
+        "--compare",
+        nargs="+",
+        default=[],
+        metavar="RUN_DIR",
+        help="also tabulate these hole runs with RUN_DIR (R0, T, variant -> t_close or final R,"
+        " dR/dt) and overlay their R(t)",
+    )
+    ah.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
+    )
+    ah.add_argument(
         "--systems", default="systems", help="system directories root (default %(default)s)"
     )
     pore_help = (
@@ -445,6 +498,18 @@ def _build(args: argparse.Namespace) -> int:
             sysdir = convert_ua_to_aa(args.data, args.source, out=args.out)
         elif args.kind == "pore":
             sysdir = _build_pore(args, build_pore)
+        elif args.kind == "hole":
+            from sepsim.build.hole import build_hole
+
+            sysdir = build_hole(
+                args.data,
+                args.source,
+                args.radius_nm,
+                args.t_c,
+                gap_nm=args.gap_nm,
+                out=args.out,
+                data_origin=args.data_origin,
+            )
         elif args.kind == "replicate":
             from sepsim.build.replicate import build_replicate
 
@@ -507,6 +572,8 @@ def _analyze(args: argparse.Namespace) -> int:
     if args.analysis is None:
         args.analyze_parser.print_help()
         return 2
+    if args.analysis == "hole":
+        return _analyze_hole(args)
     if args.analysis == "tensile":
         return _analyze_tensile(args)
     from sepsim.analyze import AnalyzeError, analyze_sweep, write_results
@@ -557,6 +624,18 @@ def _analyze_tensile(args: argparse.Namespace) -> int:
         print(f"sepsim analyze tensile: error: {exc}", file=sys.stderr)
         return 1
     print(out_dir / "results.md")
+    return 0
+
+
+def _analyze_hole(args: argparse.Namespace) -> int:
+    from sepsim.analyze_hole import HoleAnalysisError, analyze_hole_cli
+
+    try:
+        path = analyze_hole_cli(args.run_dir, args.compare, out=args.out, systems=args.systems)
+    except (HoleAnalysisError, OSError, ValueError) as exc:
+        print(f"sepsim analyze hole: error: {exc}", file=sys.stderr)
+        return 1
+    print(path)
     return 0
 
 
