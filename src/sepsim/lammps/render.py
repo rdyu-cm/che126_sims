@@ -1,14 +1,14 @@
 """Render plain LAMMPS input decks from Jinja templates for a built system.
 
 A deck is rendered from ``templates/<protocol>.in.j2`` (``prep``, ``sweep``,
-``benchmark``, ``extend``, ``cool`` for bulk systems; ``pore_relax`` for wide 500 K
+``benchmark``, ``extend``, ``cool``, ``diffuse``, ``tensile`` for bulk systems; ``pore_relax`` for wide 500 K
 slit pores and ``pore`` for narrowed ones, D44/D48) and the system's
 ``manifest.yaml``: styles, mixing, special_bonds, type ids and SHAKE bond types come
 from the manifest; every coefficient line is emitted from the force-field YAML via
 ``sepsim.ff.params.to_lammps_real`` (the deck must not rely on data-file coefficients,
 because changing ``pair_style`` during the push-off discards them). Run parameters come
 from a per-protocol, per-resolution defaults table (decisions D12a, D12c, D12g, D20,
-D24, D25, D28, D31, D34-D39, D44, D47, D48), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
+D24, D25, D28, D31, D34-D39, D44, D47, D48, D53, D54), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
 header lists every resolved parameter; output is deterministic (no timestamps).
 
 Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to ``lmp``.
@@ -17,6 +17,7 @@ Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to 
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 import jinja2
@@ -28,6 +29,7 @@ from sepsim.run import sha256_file
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 PROTOCOLS = ("prep", "sweep", "benchmark", "pore_relax", "pore", "extend", "cool")
+PROTOCOLS += ("diffuse", "tensile")  # D53, D54
 # protocols for slit-pore systems (manifest has a ``pore`` key), by pore.kind (D48)
 PORE_PROTOCOLS = {"pore_relax": "wide", "pore": "narrow"}
 MANIFEST_NAME = "manifest.yaml"
@@ -217,6 +219,37 @@ COOL_DEFAULTS = {
     for res in DEFAULTS
 }
 
+# Long NPT hold at one sweep temperature for chain diffusion (D53): from the sweep's
+# hold_<T>C.data, frames every hold_dump_ps into one hold.dcd, chunks of chunk_ps each
+# ending in write_data hold_<cumulative ns>ns.data. t_c in deg C.
+_DIFFUSE_RES = {
+    "aa": {"diffuse_ps": 20000.0, "chunk_ps": 5000.0, "hold_dump_ps": 20.0},
+    "ua": {"diffuse_ps": 100000.0, "chunk_ps": 10000.0, "hold_dump_ps": 100.0},
+    "cg": {"diffuse_ps": 300000.0, "chunk_ps": 25000.0, "hold_dump_ps": 100.0},
+}
+DIFFUSE_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in _FF_KEYS} | {"t_c": 25.0} | _DIFFUSE_RES[res]
+    for res in DEFAULTS
+}
+
+# Uniaxial tensile test (D54): from the sweep's hold_<T>C.data, one segment per axis in
+# ``axes`` (each re-reads the start data after ``clear``), fix deform erate along the
+# axis, NPT at p_atm on the two lateral axes (coupled), averages every avg_ps into
+# tensile_<axis>.txt, frames every tensile_dump_ps into tensile_<axis>.dcd.
+TENSILE_AXES = ("x", "y", "z")
+TENSILE_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in _FF_KEYS}
+    | {
+        "t_c": 25.0,
+        "rate_per_s": 1.0e8,  # engineering strain rate, 1/s
+        "strain_max": 0.5,  # engineering strain at the end of each axis
+        "axes": "x,y,z",
+        "avg_ps": 1.0,  # fix ave/time window (every step averaged)
+        "tensile_dump_ps": 100.0,
+    }
+    for res in DEFAULTS
+}
+
 PROTOCOL_DEFAULTS = {
     "prep": DEFAULTS,
     "sweep": SWEEP_DEFAULTS,
@@ -225,6 +258,8 @@ PROTOCOL_DEFAULTS = {
     "pore": PORE_DEFAULTS,
     "extend": EXTEND_DEFAULTS,
     "cool": COOL_DEFAULTS,
+    "diffuse": DIFFUSE_DEFAULTS,
+    "tensile": TENSILE_DEFAULTS,
 }
 
 # Data a protocol reads by default: a prep output in the sibling prep/ run directory.
@@ -232,7 +267,10 @@ DEFAULT_INPUT = {"sweep": "cooled.data", "benchmark": "compressed.data", "extend
 # Protocols that read an earlier stage's output (results/runs/<id>/<stage>/): a relative
 # --data path is taken relative to the run directory and may not exist yet. cool has no
 # default input (the extension snapshot to cool is chosen once the D47 checks pass).
-STAGE_INPUT = (*DEFAULT_INPUT, "cool")
+STAGE_INPUT = (*DEFAULT_INPUT, "cool", "diffuse", "tensile")
+# Protocols run once per temperature (D53, D54): the default stage directory carries
+# t_c (and a non-default tensile rate) so the runs do not overwrite each other.
+PER_T_STAGE = ("diffuse", "tensile")
 
 # ps-scale stages for checking that a deck runs end to end. A protocol ignores the
 # keys it does not use.
@@ -264,6 +302,13 @@ PRESETS = {
         # extend: two chunks of 1 ps
         "extend_ps": 2.0,
         "chunk_ps": 1.0,
+        # diffuse: two chunks of 1 ps (chunk_ps above)
+        "diffuse_ps": 2.0,
+        # tensile: strain 0.01 at 1e10 /s = 1 ps per axis
+        "strain_max": 0.01,
+        "rate_per_s": 1.0e10,
+        "avg_ps": 0.1,
+        "tensile_dump_ps": 0.5,
         # benchmark
         "warmup_steps": 100,
         "timed_steps": 200,
@@ -340,6 +385,12 @@ def resolve_params(
         _check_bursts(params)
     if protocol == "extend" and not (params["extend_ps"] > 0 and params["chunk_ps"] > 0):
         raise RenderError("extend_ps and chunk_ps must be > 0")
+    if protocol == "diffuse" and not (params["diffuse_ps"] > 0 and params["chunk_ps"] > 0):
+        raise RenderError("diffuse_ps and chunk_ps must be > 0")
+    if protocol == "tensile":
+        if not (params["rate_per_s"] > 0 and params["strain_max"] > 0 and params["avg_ps"] > 0):
+            raise RenderError("rate_per_s, strain_max and avg_ps must be > 0")
+        tensile_axes(params)
     if protocol == "benchmark" and params["ensemble"] not in BENCHMARK_ENSEMBLES:
         raise RenderError(
             f"--set ensemble: expected one of {', '.join(BENCHMARK_ENSEMBLES)},"
@@ -397,16 +448,87 @@ def _bursts(params: dict, hold_ps: float, prefix: str) -> list[dict]:
     return chunks
 
 
-def extend_chunks(params: dict) -> list[dict]:
+def extend_chunks(
+    params: dict, total_key: str = "extend_ps", prefix: str = "hold_ext"
+) -> list[dict]:
     """Chunks of the hold extension (D47): ``chunk_ps`` each (the last may be shorter),
-    each ending in ``hold_ext_<cumulative ns>ns`` (written as .data)."""
-    total, size = params["extend_ps"], params["chunk_ps"]
+    each ending in ``<prefix>_<cumulative ns>ns`` (written as .data). The diffusion hold
+    (D53) uses ``diffuse_ps`` and the prefix ``hold``."""
+    total, size = params[total_key], params["chunk_ps"]
     chunks, t = [], 0.0
     while total - t > 1e-9:
         ps = min(size, total - t)
         t += ps
-        chunks.append({"ps": ps, "end_ns": t / 1000.0, "stage": f"hold_ext_{_num(t / 1000.0)}ns"})
+        chunks.append({"ps": ps, "end_ns": t / 1000.0, "stage": f"{prefix}_{_num(t / 1000.0)}ns"})
     return chunks
+
+
+def rate_label(rate_per_s: float) -> str:
+    """Strain rate for names and headers: 1e8, 2.5e9, 3e10."""
+    mant, exp = f"{float(rate_per_s):.3g}".partition("e")[::2]
+    if not exp:
+        return mant
+    return f"{mant}e{int(exp)}"
+
+
+def tensile_axes(params: dict) -> list[dict]:
+    """Segments of the tensile deck (D54), one per axis in ``axes``: the pulled axis, the
+    two lateral (barostatted, coupled) axes, the run length strain_max / (rate dt) and
+    the per-axis file and variable names (variables survive ``clear``)."""
+    axes = [a.strip().lower() for a in params["axes"].split(",") if a.strip()]
+    if not axes or any(a not in TENSILE_AXES for a in axes) or len(set(axes)) != len(axes):
+        raise RenderError(f"axes: expected distinct axes from x,y,z, got {params['axes']!r}")
+    run_ps = params["strain_max"] / params["rate_per_s"] * 1e12
+    out = []
+    for k, ax in enumerate(axes):
+        lat = [a for a in TENSILE_AXES if a != ax]
+        out.append(
+            {
+                "index": k + 1,
+                "ax": ax,
+                "lat": lat,
+                "couple": "".join(lat),
+                "comp": TENSILE_AXES.index(ax) + 1,  # pressure tensor component (pxx = 1)
+                "var": f"t{ax}",
+                "txt": f"tensile_{ax}.txt",
+                "dcd": f"tensile_{ax}.dcd",
+                "run_ps": run_ps,
+            }
+        )
+    return out
+
+
+def default_stage(protocol: str, resolution: str, overrides: dict | None = None) -> str:
+    """Default stage directory name: the protocol, or for the per-temperature protocols
+    (D53, D54) ``diffuse_<T>C`` / ``tensile_<T>C`` with ``_r<rate>`` for a tensile rate
+    other than the default (e.g. ``tensile_25C_r1e9``)."""
+    if protocol not in PER_T_STAGE:
+        return protocol
+    p = resolve_params(resolution, None, overrides, protocol)
+    name = f"{protocol}_{_label(p['t_c'])}"
+    if protocol == "tensile" and p["rate_per_s"] != TENSILE_DEFAULTS[resolution]["rate_per_s"]:
+        name += f"_r{rate_label(p['rate_per_s'])}"
+    return name
+
+
+_HOLD_DATA = re.compile(r"^hold_(m?)([\d.]+)C\.data$")
+
+
+def data_temperature_warning(protocol: str, data: str | Path, t_c: float) -> str | None:
+    """For diffuse/tensile (D53, D54): a warning when the input is a sweep snapshot
+    ``hold_<T>C.data`` of another temperature than t_c, else None."""
+    if protocol not in PER_T_STAGE:
+        return None
+    m = _HOLD_DATA.match(Path(data).name)
+    if not m:
+        return None
+    t_data = float(m.group(2)) * (-1 if m.group(1) else 1)
+    if abs(t_data - t_c) > 1e-6:
+        return (
+            f"{Path(data).name} is the {_num(t_data)} C sweep hold but t_c = {_num(t_c)} C"
+            " (--set t_c=...)"
+        )
+    return None
 
 
 def _label(t_c: float) -> str:
@@ -570,6 +692,8 @@ def default_data(protocol: str, system_dir: str | Path, run_dir: str | Path | No
     ``prep/`` run directory. cool has no default."""
     if protocol == "cool":
         raise RenderError("cool: give the data file to cool (--data), e.g. an extension snapshot")
+    if protocol in PER_T_STAGE:
+        raise RenderError(f"{protocol}: give the data file (--data), e.g. ../sweep/hold_25C.data")
     if protocol not in DEFAULT_INPUT:
         return Path(system_dir) / DATA_NAME
     if run_dir is None:
@@ -665,6 +789,11 @@ def render_deck(
         context["n_push"] = lambda ps: steps(ps, params.get("pushoff_dt_fs", dt))
     if protocol == "extend":
         context["chunks"] = extend_chunks(params)
+    elif protocol == "diffuse":
+        context["chunks"] = extend_chunks(params, "diffuse_ps", "hold")
+    elif protocol == "tensile":
+        context["axes"] = tensile_axes(params)
+        context["rate"] = rate_label(params["rate_per_s"])
     elif protocol in ("sweep", "pore"):
         context["segments"] = sweep_segments(params)
         context["n_vdos"] = lambda ps: steps(ps, params["vdos_dt_fs"])

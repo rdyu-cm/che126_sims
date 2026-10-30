@@ -4,7 +4,7 @@
     ff.setup()   - units, styles, special_bonds, read_data, all coefficients, neighbor, timestep
     ff.pair()    - pair_style + pair_modify + pair_coeff + kspace (re-issue after a pair switch)
     ff.thermo()  - thermo_style + thermo_modify, the same columns in every protocol
-                   (pore systems add pxx pyy pzz, D44)
+                   (pore systems add pxx pyy pzz, D44; so does ff.thermo(stress=true), D54)
     ff.shake()   - fix shake on the manifest's constrained bond types (if any)
     ff.write(stage) - write_data <stage>.data + write_restart <stage>.restart
     ff.write_data(stage) - write_data <stage>.data only
@@ -71,8 +71,8 @@ neigh_modify delay 0 every 1 check yes
 timestep {{ p.dt_fs | num }}
 {% endmacro %}
 
-{% macro thermo() %}
-thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz{% if pore %} pxx pyy pzz{% endif %} evdwl ecoul elong ebond eangle edihed cpu
+{% macro thermo(stress=false) %}
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz{% if pore or stress %} pxx pyy pzz{% endif %} evdwl ecoul elong ebond eangle edihed cpu
 thermo_modify flush yes
 {% endmacro %}
 

@@ -201,6 +201,17 @@ def build_parser() -> argparse.ArgumentParser:
         "cool": "Step-cool alone (D47): the prep's 8-step cool from a 500 K snapshot (--data,"
         " e.g. ../extend/hold_ext_60ns.data) to 298.15 K, cool.dcd, cooled.data for the"
         " sweep (--data ../cool/cooled.data). Writes OUT/in.cool.",
+        "diffuse": "Chain diffusion hold (D53): long NPT hold at t_c (deg C, --set t_c=90) from a"
+        " sweep snapshot (--data ../sweep/hold_90C.data), CG default 300 ns in 25 ns chunks"
+        " each ending in write_data hold_<ns>ns.data, frames every 100 ps into hold.dcd;"
+        " `sepsim progress` reports D_COM. Default OUT: results/runs/<id>/diffuse_<T>C."
+        " Writes OUT/in.diffuse.",
+        "tensile": "Uniaxial tensile test (D54) at t_c (deg C) from a sweep snapshot (--data"
+        " ../sweep/hold_25C.data): per axis in axes (default x,y,z, each from the same"
+        " snapshot) fix deform erate rate_per_s (default 1e8 /s) to strain_max (0.5), lateral"
+        " axes NPT at 1 atm (coupled); averages every avg_ps into tensile_<axis>.txt for"
+        " `sepsim analyze tensile`. Default OUT: results/runs/<id>/tensile_<T>C (+ _r<rate>"
+        " for a non-default rate). Writes OUT/in.tensile.",
     }
     stage_rel = (
         "; a relative path is taken relative to OUT (the run directory) unless it exists"
@@ -216,6 +227,8 @@ def build_parser() -> argparse.ArgumentParser:
         "extend": "data file to start from (default: OUT/../prep/hold.data; a replicated"
         " system, D50, has no prep: give its SYSTEM/data.lmp)" + stage_rel,
         "cool": "data file to cool (required), e.g. ../extend/hold_ext_60ns.data" + stage_rel,
+        "diffuse": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
+        "tensile": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
     }
     for name, help_text in protocol_help.items():
         pr = protocols.add_parser(name, help=help_text, description=help_text, parents=[common])
@@ -245,6 +258,23 @@ def build_parser() -> argparse.ArgumentParser:
     sw.add_argument("--no-traj", action="store_true", help="thermo only: skip the DCD analyses")
     sw.add_argument(
         "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
+    tensile_help = (
+        "Tensile runs (D54): per axis engineering strain, true stress -(P_axis - p_atm)"
+        " (MPa), apparent modulus over --fit-max, Poisson ratio, peak and flow stress,"
+        " mean ± SD over axes (and run directories). Writes results.md, results.json and"
+        " PNGs to results/analysis/<system>/<stage>/ (or --out)."
+    )
+    te = analyses.add_parser("tensile", help=tensile_help, description=tensile_help)
+    te.add_argument("run_dirs", nargs="+", metavar="RUN_DIR", help="tensile run directories")
+    te.add_argument(
+        "--fit-max",
+        type=float,
+        default=0.02,
+        help="engineering strain up to which E and ν are fitted (default %(default)s)",
+    )
+    te.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
     )
     prog_help = (
         "Write progress.md, progress.json and PNG plots for run directories (D45): status,"
@@ -423,6 +453,8 @@ def _analyze(args: argparse.Namespace) -> int:
     if args.analysis is None:
         args.analyze_parser.print_help()
         return 2
+    if args.analysis == "tensile":
+        return _analyze_tensile(args)
     from sepsim.analyze import AnalyzeError, analyze_sweep, write_results
 
     try:
@@ -436,6 +468,19 @@ def _analyze(args: argparse.Namespace) -> int:
         write_results(report, out_dir)
     except (AnalyzeError, OSError) as exc:
         print(f"sepsim analyze sweep: error: {exc}", file=sys.stderr)
+        return 1
+    print(out_dir / "results.md")
+    return 0
+
+
+def _analyze_tensile(args: argparse.Namespace) -> int:
+    from sepsim.analyze_tensile import TensileError, analyze_tensile, write_results
+
+    try:
+        report, out_dir = analyze_tensile(args.run_dirs, out=args.out, fit_max=args.fit_max)
+        write_results(report, out_dir)
+    except (TensileError, OSError) as exc:
+        print(f"sepsim analyze tensile: error: {exc}", file=sys.stderr)
         return 1
     print(out_dir / "results.md")
     return 0
@@ -504,8 +549,11 @@ def _render(args: argparse.Namespace) -> int:
     from sepsim.lammps.render import (
         STAGE_INPUT,
         RenderError,
+        data_temperature_warning,
         default_data,
+        default_stage,
         parse_overrides,
+        resolve_params,
         write_deck,
     )
     from sepsim.lammps.slurm import JobError, JobOptions, job_dir_for, write_job
@@ -516,7 +564,9 @@ def _render(args: argparse.Namespace) -> int:
         return 1
     try:
         manifest = yaml.safe_load((Path(args.system) / "manifest.yaml").read_text())
-        run_dir = Path(args.out or Path("results") / "runs" / manifest["id"] / args.protocol)
+        overrides = parse_overrides(args.overrides)
+        stage = default_stage(args.protocol, manifest["resolution"], overrides)
+        run_dir = Path(args.out or Path("results") / "runs" / manifest["id"] / stage)
         out = run_dir
         if args.job:
             n_atoms = manifest["counts"]["total"]["atoms"]
@@ -535,12 +585,15 @@ def _render(args: argparse.Namespace) -> int:
                 " (made by an earlier stage); the deck header records no hash for it",
                 file=sys.stderr,
             )
+        params = resolve_params(manifest["resolution"], args.preset, overrides, args.protocol)
+        if warn := data_temperature_warning(args.protocol, data, params.get("t_c", 0.0)):
+            print(f"sepsim render {args.protocol}: warning: {warn}", file=sys.stderr)
         deck = write_deck(
             args.protocol,
             args.system,
             out,
             data=data,
-            overrides=parse_overrides(args.overrides),
+            overrides=overrides,
             preset=args.preset,
             run_dir=run_dir,
             require_data=not missing_ok,

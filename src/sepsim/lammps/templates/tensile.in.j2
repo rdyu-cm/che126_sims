@@ -1,0 +1,47 @@
+{#- Uniaxial tensile test (D54) at t_c (deg C) from the sweep's hold_<T>C.data
+    (velocities kept). One segment per axis in `axes`, run in sequence as pseudo-replicas:
+    each starts from the same snapshot (`clear`, then the force-field setup and read_data
+    again; variables survive `clear`, so their names carry the axis). Along the axis
+    `fix deform erate` (engineering rate, 1/fs in units real); the two lateral axes are
+    barostatted at p_atm, coupled (fix npt; no dimension is in both fixes). Every avg_ps
+    the averages of the engineering strain, Pxx Pyy Pzz (atm), Lx Ly Lz and T go to
+    tensile_<axis>.txt; frames every tensile_dump_ps into tensile_<axis>.dcd.
+    `sepsim analyze tensile` reads the .txt files. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% set pdamp = p.pdamp_dt * p.dt_fs %}
+{% set t_k = p.t_c + 273.15 %}
+{% set erate = p.rate_per_s * 1e-15 %}
+{% set navg = n(p.avg_ps) %}
+{% for a in axes %}
+{% if not loop.first %}
+
+# next axis from the same start snapshot: reset everything except variables
+clear
+{% endif %}
+{{ ff.setup() -}}
+{{ ff.thermo(stress=true) -}}
+{{ ff.shake() -}}
+# velocities come from the data file (no velocity create)
+thermo {{ n(p.thermo_ps) }}
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+# ---- Segment {{ a.index }}: tensile along {{ a.ax }} at {{ p.t_c | num }} C, {{ rate }} /s (D54) -> {{ a.txt }}, {{ a.dcd }}
+# engineering strain rate {{ erate | num }} 1/fs, {{ n(a.run_ps) }} steps ({{ a.run_ps | num }} ps) to strain {{ p.strain_max | num }}; {{ a.lat | join(" and ") }} at {{ p.p_atm | num }} atm, coupled
+variable {{ a.var }}_l0 equal $(l{{ a.ax }})
+variable {{ a.var }}_e equal (l{{ a.ax }}-v_{{ a.var }}_l0)/v_{{ a.var }}_l0
+{% for b in ("x", "y", "z") %}
+variable {{ a.var }}_l{{ b }} equal l{{ b }}
+{% endfor %}
+fix md all npt temp {{ t_k | num }} {{ t_k | num }} {{ tdamp | num }}{% for b in a.lat %} {{ b }} {{ p.p_atm | num }} {{ p.p_atm | num }} {{ pdamp | num }}{% endfor %} couple {{ a.couple }}
+fix pull all deform 1 {{ a.ax }} erate {{ erate | num }} remap x
+fix {{ a.var }}_avg all ave/time 1 {{ navg }} {{ navg }} v_{{ a.var }}_e c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] v_{{ a.var }}_lx v_{{ a.var }}_ly v_{{ a.var }}_lz c_thermo_temp file {{ a.txt }}
+dump {{ a.var }} all dcd {{ n(p.tensile_dump_ps) }} {{ a.dcd }}
+dump_modify {{ a.var }} unwrap yes
+run {{ n(a.run_ps) }}
+undump {{ a.var }}
+unfix {{ a.var }}_avg
+unfix pull
+unfix md
+{% endfor %}

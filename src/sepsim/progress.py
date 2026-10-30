@@ -20,6 +20,9 @@ For a hold extension (``extend``, D47) the chain checks run on the sibling
 ``../prep/hold.dcd`` followed by ``hold_ext.dcd`` as one trajectory, also while the
 extension runs (at most every 2 h, and only when the DCD has grown), and report the
 D47 criteria (end-to-end ACF < 1/e and COM MSD >= 2 <Rg^2> at half the combined run).
+A chain diffusion hold (``diffuse``, D53) gets the same checks on its ``hold.dcd``, also
+while running and throttled the same way, without the D37/D47 verdicts: it reports the
+chain COM self-diffusion coefficient D_COM (and a Rouse viscosity estimate) instead.
 
 Expensive results (the DCD analyses) are cached in ``progress.json``; a finished
 hold's chain check is never recomputed. A run whose manifest is finished or failed,
@@ -59,6 +62,8 @@ D47_ACF = float(np.exp(-1.0))  # D47: end-to-end vector ACF at half the run belo
 D47_MSD_RG2 = 2.0  # ... and chain COM MSD at half the run >= 2 <Rg^2>
 N_SIGMA = 2.0  # step vs hold disagreement threshold, in combined SEMs
 ATM_A_TO_MN_M = 101325.0 * 1e-10 * 1e3  # surface tension: atm * Angstrom -> mN/m
+A2_NS_TO_CM2_S = 1e-16 / 1e-9  # diffusion: Angstrom^2/ns -> cm^2/s
+LIVE_HOLDS = ("extend", "diffuse")  # holds checked while running (D47, D53)
 FINAL = {"finished", "failed", "interrupted", "dry-run", "cancelled/killed?"}
 
 _HEADER = re.compile(r"^#\s*----\s*(.+?)\s*$")
@@ -346,7 +351,7 @@ def hold_chain_checks(
         ree = np.empty((n_max, len(chains), 3))
         com = np.empty((n_max, int(molecule.max()) + 1, 3))
         rg2 = np.empty((n_max, com.shape[1]))
-        bb, kept, parts, prev = [], [], [], None
+        bb, kept, parts, prev, vols = [], [], [], None, []
         n = 0
         for path, reader in zip(dcds, readers, strict=True):
             taken = 0
@@ -355,6 +360,8 @@ def hold_chain_checks(
                 if j == 0 and prev is not None and np.allclose(x, prev, atol=1e-2):
                     continue  # the previous file's last frame, written again at step 0
                 ree[n] = x[last] - x[first]
+                if ts.dimensions is not None:
+                    vols.append(float(np.prod(ts.dimensions[:3])))
                 c, g = chain_com_rg2(x, molecule, masses)
                 com[n], rg2[n] = c[0], g[0]
                 if n in pick:
@@ -410,6 +417,8 @@ def hold_chain_checks(
             "r2_mean_A2": float(np.mean(np.sum(ree**2, axis=2))),
         },
         "com_msd": {"lag_ns": lag_ns, "msd_A2": msd_a2, "rg2_A2": rg2_mean, "ratio": ratio},
+        "n_chains": int(com.shape[1]),
+        "volume_A3": float(np.mean(vols)) if vols else None,
         "curves": {  # for the plots (ACF and MSD thinned to <= MAX_CURVE points)
             "n_carbons": m.n_carbons.tolist(),
             "c_n": _round(m.c_n),
@@ -436,6 +445,35 @@ def d47_criteria(result: dict) -> dict:
         "msd_passed": bool(msd_ok),
         "passed": bool(acf_ok and msd_ok),
     }
+
+
+def com_diffusion(lags_ns, msd_A2) -> dict:
+    """Chain COM self-diffusion (D53) from a COM MSD curve (lags in ns, MSD in A^2) by
+    :func:`sepsim.analysis.mobility.diffusion_coefficient` (the D49 criterion: local
+    log-slope >= 0.9 over a factor >= 2 in lag up to the longest lag). D in cm^2/s."""
+    from sepsim.analysis.mobility import diffusion_coefficient
+
+    fit = diffusion_coefficient(lags_ns, msd_A2, min_slope=0.9, min_span=2.0)
+    out = {
+        "diffusive": bool(fit.diffusive),
+        "slope_end": fit.slope_end,
+        "slope_max": fit.slope_max,
+        "D_A2_ns": fit.D,
+        "D_cm2_s": None if fit.D is None else fit.D * A2_NS_TO_CM2_S,
+        "D_err_cm2_s": None if fit.D_err is None else fit.D_err * A2_NS_TO_CM2_S,
+        "t_start_ns": fit.t_start,
+        "t_end_ns": fit.t_end,
+    }
+    return out
+
+
+def rouse_viscosity(d_cm2_s: float, r2_A2: float, t_k: float, n_chains: int, volume_A3: float):
+    """Rouse estimate eta_R = rho_N k_B T <R_ee^2> / (36 D) in Pa s (rho_N chains per
+    volume). Valid for unentangled chains; for entangled ones a lower bound."""
+    from sepsim.analysis.units import KB_J_PER_K
+
+    rho_n = n_chains / (volume_A3 * 1e-30)  # 1/m^3
+    return rho_n * KB_J_PER_K * t_k * r2_A2 * 1e-20 / (36.0 * d_cm2_s * 1e-4)
 
 
 MAX_CURVE = 400
@@ -759,6 +797,9 @@ def progress_report(
         report["errors"] = log.errors[-3:]
     segments = parse_deck(deck)
     rows, info = _segments_with_log(segments, log)
+    if protocol == "tensile":  # D54: Pxx Pyy Pzz are the load, not a surface tension
+        for r in rows:
+            (r.get("stats") or {}).pop("gamma", None)
     if info["extra_runs"]:
         report["notes"].append(f"log has {info['extra_runs']} more runs than the deck")
     total = sum(s.steps for s in segments)
@@ -790,7 +831,7 @@ def progress_report(
         report["remaining_h"] = remaining / rate / 3600.0
 
     # hold chain checks: the prep hold once complete; a hold extension also while running
-    hold_dcd = {"prep": "hold.dcd", "extend": "hold_ext.dcd"}.get(protocol)
+    hold_dcd = {"prep": "hold.dcd", "extend": "hold_ext.dcd", "diffuse": "hold.dcd"}.get(protocol)
     hold = next((r for r in rows if hold_dcd in r["dcd"]), None) if hold_dcd else None
     if hold is not None:
         report["hold"] = _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now)
@@ -877,7 +918,7 @@ def make_plots(report, log, prep_rows, sweep_rows, out_dir: Path, previous: dict
 
     title = f"{report['system']} / {report['stage']}"
     jobs = []  # (name, title, key, draw(path))
-    timeline = report["protocol"] in ("prep", "extend", "cool")
+    timeline = report["protocol"] in ("prep", "extend", "cool", "diffuse")
     if timeline and _timeline_data(log, report["segments"], 1) is not None:
         jobs.append(
             (
@@ -893,6 +934,8 @@ def make_plots(report, log, prep_rows, sweep_rows, out_dir: Path, previous: dict
         marks = hold.get("boundaries_ns") or []
         hk = ["hold", _key(c), ref, marks]
         what = "500 K hold + extension" if hold.get("extend") else "500 K hold"
+        if hold.get("diffuse"):
+            what = f"NPT hold at {hold['t_c']:g} C"
         jobs += [
             (
                 "hold_cn",
@@ -971,8 +1014,11 @@ def _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now=No
     extension (D47: prep hold.dcd + hold_ext.dcd as one trajectory, also while running,
     at most every CHAIN_EVERY_S and only when hold_ext.dcd has grown)."""
     extend = report["protocol"] == "extend"
+    live = report["protocol"] in LIVE_HOLDS
     out = {"segment": hold["index"], "state": hold["state"], "extend": extend}
-    if hold["state"] != "done" and not (extend and hold["state"] == "running"):
+    if report["protocol"] == "diffuse":
+        out.update(diffuse=True, t_c=hold["t_target_k"] - 273.15)
+    if hold["state"] != "done" and not (live and hold["state"] == "running"):
         return out
     name = "hold_ext.dcd" if extend else "hold.dcd"
     dcd = run_dir / name
@@ -988,12 +1034,12 @@ def _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now=No
     entry = cache.get("hold_chain")
     start = (manifest or {}).get("start_time")
     complete = hold["state"] == "done"
-    key = [_stat(d) for d in dcds] if extend else _stat(dcd)
+    key = [_stat(d) for d in dcds] if live else _stat(dcd)
     valid = bool(
         entry
         and entry.get("version") == CHAIN_VERSION
         and entry.get("start_time") == start
-        and (entry.get("files") == [d.name for d in dcds] if extend else entry.get("complete"))
+        and (entry.get("files") == [d.name for d in dcds] if live else entry.get("complete"))
     )
     if valid:
         if entry.get("complete"):
@@ -1021,6 +1067,8 @@ def _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now=No
         return out
     if extend:
         result["d47"] = d47_criteria(result)
+    if out.get("diffuse"):
+        _add_diffusion(result, hold["t_target_k"])
     cache["hold_chain"] = {
         "version": CHAIN_VERSION,
         "complete": complete,
@@ -1032,6 +1080,41 @@ def _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now=No
     }
     out.update(result, cached=False, computed_at=now)
     return out
+
+
+def _add_diffusion(result: dict, t_k: float) -> None:
+    """D53: D_COM from the hold's COM MSD curve and, when diffusive, the Rouse viscosity."""
+    c = result["curves"]
+    try:
+        d = com_diffusion(c["msd_lag_ns"], c["msd_A2"])
+    except ValueError as exc:  # too few positive lags
+        result["d_com"] = {"error": str(exc)}
+        return
+    if d["diffusive"] and d["D_cm2_s"] > 0 and result.get("volume_A3"):
+        d["eta_rouse_pa_s"] = rouse_viscosity(
+            d["D_cm2_s"],
+            result["ree_acf"]["r2_mean_A2"],
+            t_k,
+            result["n_chains"],
+            result["volume_A3"],
+        )
+    result["d_com"] = d
+
+
+def d_com_flag(d: dict) -> str:
+    """Flag line for a D53 diffusion hold, e.g. ``D_COM diffusive 4.1e-07 cm²/s over
+    60–150 ns`` or ``D_COM not diffusive (max log-slope 0.86)``."""
+    if "error" in d:
+        return f"D_COM: {d['error'][:60]}"
+    if not d["diffusive"]:
+        return f"D_COM not diffusive (max log-slope {d['slope_max']:.2f})"
+    text = (
+        f"D_COM diffusive {d['D_cm2_s']:.2g} cm²/s over"
+        f" {d['t_start_ns']:.3g}–{d['t_end_ns']:.3g} ns"
+    )
+    if d.get("eta_rouse_pa_s") is not None:
+        text += f"; η_Rouse {d['eta_rouse_pa_s']:.2g} Pa·s"
+    return text
 
 
 def _prep_hold_dcd(run_dir: Path, frame_ps: float) -> tuple[Path | None, str | None]:
@@ -1057,6 +1140,11 @@ def _prep_hold_dcd(run_dir: Path, frame_ps: float) -> tuple[Path | None, str | N
 def _flags(report: dict) -> list[str]:
     flags = []
     hold = report.get("hold") or {}
+    if hold.get("diffuse") and "msid" in hold:  # D53: no D37/D47 verdicts
+        if "d_com" in hold:
+            flags.append(d_com_flag(hold["d_com"]))
+        flags.append(f"MSD/Rg2 {hold['com_msd']['ratio']:.2f}")
+        return _other_flags(report, flags)
     if "msid" in hold:
         m = hold["msid"]
         ok = "PASS" if m["passed"] else "FAIL"
@@ -1104,6 +1192,31 @@ def _other_flags(report: dict, flags: list[str]) -> list[str]:
 
 
 # --------------------------------------------------------------------------- markdown
+
+
+def _diffuse_lines(hold: dict) -> list[str]:
+    """D53 markdown lines: D_COM (or why not) and the Rouse viscosity estimate."""
+    d = hold.get("d_com")
+    if not d:
+        return []
+    out = [f"- {d_com_flag(d)}"]
+    if d.get("diffusive"):
+        out.append(
+            f"- D_COM = {d['D_cm2_s']:.3g} ± {d['D_err_cm2_s']:.2g} cm²/s (slope/6 of the COM"
+            f" MSD over {d['t_start_ns']:.3g}–{d['t_end_ns']:.3g} ns, local log-slope ≥ 0.9;"
+            " error from the OLS slope, a lower bound)"
+        )
+        if d.get("eta_rouse_pa_s") is not None:
+            out.append(
+                f"- Rouse viscosity η_R = ρ_N k_B T ⟨R_ee²⟩/(36 D) ≈ {d['eta_rouse_pa_s']:.3g} Pa·s"
+                " (unentangled chains; a lower bound if they are entangled)"
+            )
+    else:
+        out.append(
+            f"- COM MSD local log-slope {d['slope_end']:.2f} at the longest lag (max"
+            f" {d['slope_max']:.2f}); diffusive needs ≥ 0.9 over a factor ≥ 2 in lag"
+        )
+    return out
 
 
 def _pm(ms: dict | None, fmt: str) -> str:
@@ -1205,7 +1318,10 @@ def render_markdown(r: dict) -> str:
     hold = r.get("hold")
     if hold:
         ext = hold.get("extend")
-        lines += ["", "## 500 K hold checks" + (" (prep hold + extension, D47)" if ext else ""), ""]
+        title = "## 500 K hold checks" + (" (prep hold + extension, D47)" if ext else "")
+        if hold.get("diffuse"):
+            title = f"## NPT hold at {hold['t_c']:g} C: chain diffusion (D53)"
+        lines += ["", title, ""]
         if "msid" not in hold:
             if "error" in hold:
                 lines.append(f"- error: {hold['error']}")
@@ -1225,9 +1341,10 @@ def render_markdown(r: dict) -> str:
                 + ")"
                 + (" (cached" + when + ")" if hold.get("cached") else when)
             )
-            if ext and hold["state"] != "done":
+            if (ext or hold.get("diffuse")) and hold["state"] != "done":
                 lines.append(
-                    f"- extension running: rechecked at most every {CHAIN_EVERY_S / 3600:g} h"
+                    f"- {'extension' if ext else 'hold'} running: rechecked at most every"
+                    f" {CHAIN_EVERY_S / 3600:g} h"
                 )
             ref = m["reference"]
             drift = (
@@ -1237,12 +1354,19 @@ def render_markdown(r: dict) -> str:
                 f" (Δ {m['delta']:+.3f} ± {m['delta_sem']:.3f}),"
                 f" drift {'**yes**' if m['drift'] else 'no'}"
             )
-            lines.append(
-                f"- D37 C_n plateau (n ≥ 100 C, {m['frames_used']} frames):"
-                f" **{m['plateau']:.3f}** vs melt {ref[0]:g} ±10%"
-                f" ({'within' if m['within_reference'] else '**outside**'}); {drift}"
-                f" -> **{'PASS' if m['passed'] else 'FAIL'}**"
-            )
+            if hold.get("diffuse"):  # D53: no D37 verdict
+                lines += _diffuse_lines(hold)
+                lines.append(
+                    f"- C_n plateau (n ≥ 100 C, {m['frames_used']} frames):"
+                    f" {m['plateau']:.3f}; {drift}"
+                )
+            else:
+                lines.append(
+                    f"- D37 C_n plateau (n ≥ 100 C, {m['frames_used']} frames):"
+                    f" **{m['plateau']:.3f}** vs melt {ref[0]:g} ±10%"
+                    f" ({'within' if m['within_reference'] else '**outside**'}); {drift}"
+                    f" -> **{'PASS' if m['passed'] else 'FAIL'}**"
+                )
             t = a["t_1e_ns"]
             lines.append(
                 f"- end-to-end ACF <R(t)·R(0)>/<R²>: {a['acf_at_lag']:.3f} at"

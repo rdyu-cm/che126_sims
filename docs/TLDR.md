@@ -76,6 +76,14 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --time
   uv run sepsim render cool   --system $S --data ../extend/hold_ext_60ns.data --job --node rdyu-server --cpus 4 --time 2-00:00:00
   uv run sepsim render sweep  --system $S --data ../cool/cooled.data --job --node rdyu-server --cpus 4 --time 7-00:00:00
   ```
+- Chain diffusion (D53) and tensile tests (D54) per sweep temperature, from the sweep's `hold_<T>C.data` (on the node that has it; the CG C240 sweep ran on rdyu-rog and was collected to rdyu-server). Stage directories default to `diffuse_<T>C`, `tensile_<T>C` and `tensile_<T>C_r<rate>` (from `--set t_c=`/`rate_per_s=`). `sepsim progress` flags D_COM on a diffuse run; `sepsim analyze tensile` gives E_app, ν, peak and flow stress:
+  ```
+  S=systems/pe_cg_amorph_n40_c240_s1
+  uv run sepsim render diffuse --system $S --data ../sweep/hold_90C.data --set t_c=90 --job --node rdyu-server --cpus 2 --time 3-00:00:00   # CG 300 ns, hold.dcd + hold_<ns>ns.data every 25 ns
+  uv run sepsim render tensile --system $S --data ../sweep/hold_90C.data --set t_c=90 --job --node rdyu-rog --cpus 2 --time 1-00:00:00     # x, y, z to strain 0.5 at 1e8 /s
+  uv run sepsim render tensile --system $S --data ../sweep/hold_90C.data --set t_c=90 --set rate_per_s=1e9 --job --node rdyu-rog --cpus 2 --time 06:00:00
+  uv run sepsim analyze tensile results/runs/pe_cg_amorph_n40_c240_s1/tensile_90C [more run dirs] [--fit-max 0.02]
+  ```
 - Sweep and pore holds write a dense 10 ps burst at 0.1 ps every 1 ns into `segNN_hold_XXC_burstKK.dcd` (D46); `--set burst_period_ps=0` turns them off.
 - Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`, extend `../prep/hold.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.
 - Render, then `ssubmit` (not plain `sbatch`), so the deck reaches the other node. Re-render and resubmit after changes.
