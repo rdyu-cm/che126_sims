@@ -45,7 +45,9 @@ from sepsim.progress import (
 )
 from sepsim.progress import (
     LOG_NAME,
+    _block_rows,
     _concat_thermo,
+    _enthalpy_mean_sem,
     _input_stage,
     _mean_sem,
     _round,
@@ -110,10 +112,12 @@ def window_stats(thermo: dict, skip: float) -> dict:
         ("volume", "Volume", 0.0),
     ):
         if col in thermo:
-            ms = _mean_sem(thermo[col][k:])
+            ms = _mean_sem(thermo[col][k:], _block_rows(thermo))  # D55 block means
             if ms is not None:
                 ms["mean"] += shift
             out[key] = ms
+    if out.get("enthalpy"):  # D55: SEM from E + p_ext V
+        out["enthalpy"] = _enthalpy_mean_sem(thermo, slice(k, None))
     return out
 
 
@@ -227,7 +231,7 @@ EQ_POINTS = 500  # points per series and segment kept in results.json "convergen
 CONV_BLOCKS = (32, 16, 8)  # block counts of the block-average SEM check
 
 
-def drift_flags(series: dict, skip: float) -> dict:
+def drift_flags(series: dict, skip: float, block: int | None = None) -> dict:
     """Halves of the analysis window (rows after ``skip``) compared per named series:
     :func:`sepsim.analysis.chain.drift_check` (mean difference > 2 combined SEM)."""
     from sepsim.analysis.chain import drift_check
@@ -239,7 +243,7 @@ def drift_flags(series: dict, skip: float) -> dict:
         if len(w) < 12 or np.ptp(w) == 0:
             continue
         try:
-            a, b, delta, sem, drift = drift_check(w)
+            a, b, delta, sem, drift = drift_check(w, block=block)
         except ValueError:  # a zero-variance half
             continue
         out[name] = {"first": a, "second": b, "delta": delta, "sem": sem, "drift": drift}
@@ -258,14 +262,14 @@ def block_averages(t, x, n_blocks: int = EQ_BLOCKS) -> list[dict]:
     return out
 
 
-def block_convergence(x, skip: float) -> dict | None:
+def block_convergence(x, skip: float, block: int | None = None) -> dict | None:
     """Block-average check of the window's SEM: the SEM from the statistical inefficiency
     (D26) vs the SEM of the means of ``CONV_BLOCKS`` blocks; once blocks are longer than
     the correlation time the block SEM plateaus at the statistical-inefficiency value.
     ``converged``: the 8-block SEM is within a factor 2 of it."""
     x = np.asarray(x, dtype=float)
     w = x[int(np.floor(skip * len(x))) :]
-    ms = _mean_sem(w)
+    ms = _mean_sem(w, block)
     if ms is None or not ms["sem"]:
         return None
     blocks = {}
@@ -281,7 +285,7 @@ def block_convergence(x, skip: float) -> dict | None:
     }
 
 
-def quantity_convergence(t_ps, x, skip: float) -> dict:
+def quantity_convergence(t_ps, x, skip: float, block: int | None = None) -> dict:
     """Convergence record of one series over a segment (``results.json`` ``convergence``):
     the series thinned to <= ``EQ_POINTS`` points (t_ps, value), ``EQ_BLOCKS`` block
     averages over the whole segment, and over the analysis window (after ``skip``) the
@@ -291,6 +295,8 @@ def quantity_convergence(t_ps, x, skip: float) -> dict:
     from sepsim.analysis.stats import timeseries_mean
 
     t, x = np.asarray(t_ps, dtype=float), np.asarray(x, dtype=float)
+    if block is None and len(t) >= 2:  # D55: 100 ps block means for thermo series
+        block = _block_rows({"Time": t * 1000.0})
     k = int(np.floor(skip * len(x)))
     w = x[k:]
     step = max(1, -(-len(x) // EQ_POINTS))
@@ -305,11 +311,11 @@ def quantity_convergence(t_ps, x, skip: float) -> dict:
         "drift": None,
     }
     if len(w) >= 3 and np.ptp(w) > 0:
-        tm = timeseries_mean(w)
+        tm = timeseries_mean(w, block=block)
         out.update(sem=tm.sem, g=tm.g)
         if len(w) >= 12:
             try:
-                _, _, delta, sem, drift = drift_check(w)
+                _, _, delta, sem, drift = drift_check(w, block=block)
                 out.update(
                     halves={"delta": delta, "sem": sem, "z": delta / sem if sem else None},
                     drift=drift,
@@ -619,13 +625,14 @@ def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRA
     lc, vc, _sc = combine(b_com, lags_h, com_h)
     lp, vp, _sp = combine(b_p2, lags_h, p2_h)
 
-    fit = diffusion_coefficient(lc, vc, D_MIN_SLOPE, D_MIN_SPAN)
+    fit = diffusion_coefficient(lc, vc, D_MIN_SLOPE, D_MIN_SPAN, rg2=float(tr["rg2"].mean()))
     com = {
         "lag_max_ps": float(lc[-1]),
         "msd_at_max_A2": float(vc[-1]),
         "diffusive": fit.diffusive,
         "slope_end": fit.slope_end,
         "slope_max": fit.slope_max,
+        "msd_rg2_end": fit.msd_rg2_end,
     }
     if fit.diffusive:
         com.update(
@@ -830,9 +837,10 @@ def analyze_sweep(
             main = {
                 k: th[c] for k, c in (("density", "Density"), ("enthalpy", "Enthalpy")) if c in th
             }
-            row["drift"] = drift_flags(main, skip)
+            blk = _block_rows(th)
+            row["drift"] = drift_flags(main, skip, blk)
             if seg.sweep_kind == "hold":
-                row["convergence"] = {k: block_convergence(x, skip) for k, x in main.items()}
+                row["convergence"] = {k: block_convergence(x, skip, blk) for k, x in main.items()}
             cols = {
                 k: th[c]
                 for k, c in (
@@ -1102,8 +1110,10 @@ def render_markdown(r: dict) -> str:
             " to the system's mass centre. MSD and P2 combine the D46 bursts (0.1 ps frames,"
             " lags < the hold frame interval) with the hold DCD (lags up to half the hold)."
             f" D_COM from an OLS line over the end of the COM MSD where the local log-slope"
-            f' stays ≥ {D_MIN_SLOPE:g} over a factor ≥ {D_MIN_SPAN:g} in lag; else "not'
-            ' diffusive" (largest slope given). Rg mass-weighted over all atoms of a chain;'
+            f" stays ≥ {D_MIN_SLOPE:g} over a factor ≥ {D_MIN_SPAN:g} in lag and the MSD ≥ 2⟨Rg²⟩"
+            ' (D55; error: slope spread of the two halves of that range); else "not'
+            ' diffusive" (log-slope at the longest lag given). Rg mass-weighted over all atoms'
+            " of a chain;"
             f" C_n plateau over n ≥ 100 carbons (D37) on ≤ {r['method']['max_frames']} frames."
         ),
         "",
@@ -1125,7 +1135,7 @@ def render_markdown(r: dict) -> str:
         d = (
             f"{cm['D_cm2_s']:.2e} ± {cm['D_err_cm2_s']:.1e}"
             if cm["diffusive"]
-            else f"not diffusive (max log-slope {cm['slope_max']:.2f})"
+            else f"not diffusive (log-slope {cm['slope_end']:.2f} at the longest lag)"
         )
         p2t = (
             f"{p2['t_1e_ps']:.1f}"

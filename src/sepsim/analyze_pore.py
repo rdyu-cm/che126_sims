@@ -81,6 +81,7 @@ from sepsim.analyze import (
 )
 from sepsim.progress import (
     ATM_A_TO_MN_M,
+    _block_rows,
     _mean_sem,
     _round,
     deck_system,
@@ -138,9 +139,9 @@ def pore_window_stats(thermo: dict, skip: float, factor: float) -> dict:
         ("etotal", "TotEng"),
     ):
         if col in thermo:
-            out[key] = _mean_sem(thermo[col][k:])
+            out[key] = _mean_sem(thermo[col][k:], _block_rows(thermo))
     if all(c in thermo for c in ("Pxx", "Pyy", "Pzz", "Lz")):
-        out["gamma"] = _mean_sem(gamma_series(thermo, factor)[k:])
+        out["gamma"] = _mean_sem(gamma_series(thermo, factor)[k:], _block_rows(thermo))
     return out
 
 
@@ -645,7 +646,8 @@ def bulk_energies(bulk: dict, manifest: dict | None) -> dict[float, dict]:
             continue
         k = int(np.floor((HOLD_SKIP if seg.sweep_kind == "hold" else STEP_SKIP) * len(th["Step"])))
         out[round(seg.t_c, 3)] = {
-            key: _mean_sem(th[col][k:]) for key, col in (("etotal", "TotEng"), ("pe", "PotEng"))
+            key: _mean_sem(th[col][k:], _block_rows(th))
+            for key, col in (("etotal", "TotEng"), ("pe", "PotEng"))
         } | {"run_dir": str(run)}
     return out
 
@@ -870,9 +872,10 @@ def analyze_pore(
             main = {"pe": th["PotEng"]} if "PotEng" in th else {}
             if all(c in th for c in ("Pxx", "Pyy", "Pzz", "Lz")):
                 main["gamma"] = gamma_series(th, factor)
-            row["drift"] = drift_flags(main, skip)
+            blk = _block_rows(th)
+            row["drift"] = drift_flags(main, skip, blk)
             if kind == "hold":
-                row["convergence"] = {k: block_convergence(v, skip) for k, v in main.items()}
+                row["convergence"] = {k: block_convergence(v, skip, blk) for k, v in main.items()}
             cols = {"T": th["Temp"]} if "Temp" in th else {}
             cols |= {k: th[c] for k, c in (("pe", "PotEng"), ("etotal", "TotEng")) if c in th}
             if "gamma" in main:

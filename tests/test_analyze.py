@@ -88,19 +88,46 @@ def test_diffusion_criterion():
     d, dt = 0.25, 1.0
     r = np.cumsum(rng.normal(0, np.sqrt(2 * d * dt), size=(2000, 300, 3)), axis=0)
     lags, m = msd(r, dt, 500)
-    fit = diffusion_coefficient(lags, m)
+    fit = diffusion_coefficient(lags, m, rg2=None)
     assert fit.diffusive and fit.D == pytest.approx(d, rel=0.05)
     assert fit.t_end == pytest.approx(500.0) and fit.t_end / fit.t_start >= 2.0
     # subdiffusive (t^0.5): not diffusive, max slope reported
     t = np.arange(0, 1000.0)
-    sub = diffusion_coefficient(t, 3.0 * np.sqrt(t))
+    sub = diffusion_coefficient(t, 3.0 * np.sqrt(t), rg2=None)
     assert not sub.diffusive and sub.D is None and sub.slope_max == pytest.approx(0.5, abs=0.02)
     # crossover t^0.5 -> t: local slope (6Dt + 5 sqrt t)/(6Dt + 10 sqrt t) passes 0.9 near t = 180
-    fit = diffusion_coefficient(t, 6 * 0.5 * t + 10.0 * np.sqrt(t))
+    fit = diffusion_coefficient(t, 6 * 0.5 * t + 10.0 * np.sqrt(t), rg2=None)
     assert fit.diffusive and 120 < fit.t_start < 300 and fit.D == pytest.approx(0.5, rel=0.1)
     # slope >= 0.9 only over less than a factor 2 at the end: not diffusive
     late = np.where(t < 700, np.sqrt(t), np.sqrt(700) * (t / 700))
-    assert not diffusion_coefficient(t, late).diffusive
+    assert not diffusion_coefficient(t, late, rg2=None).diffusive
+
+
+def test_diffusion_requires_msd_beyond_two_rg2():
+    """D55: a Rouse-like pre-Fickian COM MSD (ballistic burst, then log-slope ~0.95)
+    that stays below <Rg^2> is not diffusive even though its slope passes 0.9; the
+    reported slope is the one at the longest lag, not the ballistic maximum."""
+    t = np.concatenate([np.linspace(0.1, 1.0, 10), np.arange(2.0, 20001.0)])
+    rouse = np.where(t < 1.0, 0.5 * t**2, 0.5 * t**0.95)  # ballistic t^2, then t^0.95
+    rg2 = 2.0 * rouse[-1]  # MSD reaches only 0.5 <Rg^2>
+    assert diffusion_coefficient(t, rouse, rg2=None).diffusive  # the old (D49) criterion
+    fit = diffusion_coefficient(t, rouse, rg2=rg2)
+    assert not fit.diffusive and fit.D is None
+    assert fit.slope_end == pytest.approx(0.95, abs=0.01) and fit.slope_max > 1.5
+    assert fit.msd_rg2_end == pytest.approx(0.5)
+    # Fickian beyond 2 <Rg^2>: diffusive, D recovered, the fit starts where MSD >= 2 Rg^2
+    rng = np.random.default_rng(11)
+    d = 0.25
+    r = np.cumsum(rng.normal(0, np.sqrt(2 * d), size=(4000, 300, 3)), axis=0)
+    lags, m = msd(r, 1.0, 2000)
+    fit = diffusion_coefficient(lags, m, rg2=500.0)
+    assert fit.diffusive and fit.D == pytest.approx(d, rel=0.05)
+    assert np.interp(fit.t_start, lags, m) >= 2 * 500.0 and fit.t_start > 600
+    assert 0 < fit.D_err < 0.05 * d and fit.msd_rg2_end > 2
+    # 2 <Rg^2> only reached over less than a factor 2 in lag: not diffusive
+    assert not diffusion_coefficient(lags, m, rg2=0.4 * m[-1]).diffusive
+    with pytest.raises(ValueError, match="rg2"):
+        diffusion_coefficient(lags, m, rg2=0.0)
 
 
 # ---- end to end on a tiny fake sweep ----
@@ -237,6 +264,12 @@ def test_cli_analyze_sweep_end_to_end(fake_sweep, tmp_path, capsys):
     md = (out / "results.md").read_text()
     assert "## Isothermal compressibility" in md and "trajectory not available" in md
     assert "not comparable to experiment" in md
+    # D55: tiny random-walk steps keep the COM MSD << 2 <Rg^2>: not diffusive, and the
+    # report quotes the log-slope at the longest lag (not the ballistic maximum)
+    cm = t25["com_msd"]
+    assert not cm["diffusive"] and cm["msd_rg2_end"] < 2.0
+    assert f"not diffusive (log-slope {cm['slope_end']:.2f} at the longest lag)" in md
+    assert hold["volume"]["sem_lower_bound"] is True  # 91 rows: < 20 blocks of 100 rows
     assert set(r["segments"][0]["drift"]) == {"density", "enthalpy"}
     assert set(r["segments"][0]["convergence"]) == {"density", "enthalpy"}
     assert "## Equilibration" in md and "| drift |" in md

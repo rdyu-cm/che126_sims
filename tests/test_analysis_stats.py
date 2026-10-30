@@ -4,7 +4,14 @@ import numpy as np
 import pytest
 from scipy.signal import lfilter
 
-from sepsim.analysis.stats import linear_fit, statistical_inefficiency, timeseries_mean
+from sepsim.analysis.chain import drift_check
+from sepsim.analysis.stats import (
+    block_means,
+    blocking_sem,
+    linear_fit,
+    statistical_inefficiency,
+    timeseries_mean,
+)
 
 
 def _ar1(phi, n, seed):
@@ -27,6 +34,83 @@ def _g_loop(x, mintime=3):
         g += 2.0 * c * (1.0 - t / n)
         t += 1
     return max(g, 1.0)
+
+
+def _ringing(n, seed, phi_slow=0.995, slow_frac=0.03):
+    """Barostat-like series (D55): a strongly damped oscillation (AR(2), period 6
+    samples, C(t) negative from t = 2) plus a weak slow AR(1) tail holding
+    ``slow_frac`` of the variance. Returns (x, exact long-run variance), i.e.
+    N Var(mean) for N >> the correlation time."""
+    r, th = 0.8, 2 * np.pi / 6
+    a1, a2 = 2 * r * np.cos(th), -(r**2)
+    rng = np.random.default_rng(seed)
+    burn = 2000
+    osc = lfilter([1.0], [1.0, -a1, -a2], rng.normal(size=n + burn))[burn:]
+    var_osc = (1 - a2) / ((1 + a2) * ((1 - a2) ** 2 - a1**2))  # AR(2) stationary variance
+    sd_slow = np.sqrt(slow_frac * var_osc)
+    slow = sd_slow * np.sqrt(1 - phi_slow**2) * _ar1(phi_slow, n, seed + 1000)
+    lrv = 1.0 / (1 - a1 - a2) ** 2 + sd_slow**2 * (1 + phi_slow) / (1 - phi_slow)
+    return osc + slow, lrv
+
+
+def test_block_sem_resolves_slow_tail_under_ringing():
+    """The plain truncated ACF stops at the first negative lag (t ~ 4) and misses the
+    slow tail; SI on 100-sample block means recovers the true SEM (D55)."""
+    n = 50_000
+    old, new, true = [], [], []
+    for seed in range(8):
+        x, lrv = _ringing(n, seed)
+        true.append(np.sqrt(lrv / n))
+        old.append(timeseries_mean(x).sem)
+        r = timeseries_mean(x, block=100)
+        assert r.block == 100 and r.n_blocks == 500 and not r.lower_bound
+        assert r.mean == pytest.approx(x.mean()) and r.n_eff == pytest.approx(n / r.g)
+        new.append(r.sem)
+    true = np.mean(true)
+    assert np.mean(new) == pytest.approx(true, rel=0.3)
+    assert np.mean(old) < 0.6 * true  # the plain estimator underestimates
+
+
+def test_block_sem_fallback_marks_lower_bound():
+    x = _ar1(0.5, 1500, 4)  # 15 blocks of 100 < 20: fall back to 10 blocks of 150
+    r = timeseries_mean(x, block=100)
+    assert r.lower_bound and r.block == 150 and r.n_blocks == 10
+    r = timeseries_mean(x, block=50)
+    assert not r.lower_bound and r.block == 50 and r.n_blocks == 30
+    # block=None and block=1: the plain estimator
+    assert timeseries_mean(x, block=1).sem == pytest.approx(timeseries_mean(x).sem)
+    np.testing.assert_allclose(block_means(np.arange(7.0), 3), [1.0, 4.0])
+
+
+def test_blocking_sem_white_noise_and_ar1():
+    x = np.random.default_rng(2).normal(0.0, 2.0, size=2**16)
+    b = blocking_sem(x)
+    assert b.block_sizes[0] == 1 and b.n_blocks[b.block_sizes == b.block][0] >= 20
+    assert b.sems[0] == pytest.approx(2.0 / np.sqrt(len(x)), rel=0.02)
+    assert b.sem == pytest.approx(2.0 / np.sqrt(len(x)), rel=0.35)
+    phi = 0.9
+    sems, want = [], []
+    for seed in range(5):
+        y = _ar1(phi, 2**17, seed)
+        sems.append(blocking_sem(y).sem)
+        want.append(y.std() * np.sqrt((1 + phi) / (1 - phi) / len(y)))
+    assert np.mean(sems) == pytest.approx(np.mean(want), rel=0.2)
+    # the naive SEM rises with block size to the plateau
+    assert blocking_sem(y).sems[0] < 0.4 * np.mean(want)
+
+
+def test_drift_check_block_means_under_ringing():
+    """Stationary ringing series: halves agree within 2 sigma at about the nominal
+    rate with block-mean SEMs, while the plain SEMs give many false drifts; a real
+    ramp is still detected."""
+    false_old = false_new = 0
+    for seed in range(30):
+        x, _ = _ringing(20_000, 100 + seed)
+        false_old += drift_check(x)[4]
+        false_new += drift_check(x, block=100)[4]
+    assert false_new <= 5 and false_old >= false_new + 5
+    x, _ = _ringing(20_000, 7)
+    assert drift_check(x + np.linspace(0.0, 2.0, len(x)), block=100)[4]
 
 
 def test_statistical_inefficiency_matches_reference_loop():

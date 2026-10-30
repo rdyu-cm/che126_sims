@@ -116,13 +116,14 @@ def stitch_curves(short_lags, short_vals, long_lags, long_vals):
 class DiffusionFit:
     """Outcome of :func:`diffusion_coefficient`."""
 
-    diffusive: bool  # a trailing range with local log-slope >= min_slope was found
+    diffusive: bool  # a trailing Fickian range (slope and MSD >= min_msd_rg2 <Rg^2>) was found
     D: float | None  # MSD units per lag unit (e.g. A^2/ns), MSD = 2 dim D t + c
-    D_err: float | None  # from the OLS slope error (correlated points: a lower bound)
+    D_err: float | None  # |D_1 - D_2| of the two halves of the range, floored by the OLS error
     t_start: float | None  # fit range in lag units
     t_end: float | None
-    slope_end: float  # local log-slope at the longest lag
-    slope_max: float  # largest local log-slope over the curve
+    slope_end: float  # local log-slope at the longest lag (report this when not diffusive)
+    slope_max: float  # largest local log-slope over the curve (often the ballistic regime)
+    msd_rg2_end: float | None = None  # MSD at the longest lag / <Rg^2> (None without rg2)
 
 
 def local_log_slope(lags, values, factor: float = 1.25):
@@ -148,29 +149,63 @@ def local_log_slope(lags, values, factor: float = 1.25):
 
 
 def diffusion_coefficient(
-    lags, msd_values, min_slope: float = 0.9, min_span: float = 2.0, dim: int = 3
+    lags,
+    msd_values,
+    min_slope: float = 0.9,
+    min_span: float = 2.0,
+    dim: int = 3,
+    *,
+    rg2: float | None,
+    min_msd_rg2: float = 2.0,
 ) -> DiffusionFit:
     """Self-diffusion coefficient from the diffusive (Fickian) end of an MSD curve.
 
     Criterion: the local log-slope (:func:`local_log_slope`) is >= ``min_slope`` at
-    every point from some lag t_start up to the longest lag t_end, and t_end /
-    t_start >= ``min_span``. Then D = slope / (2 dim) of an OLS line through the MSD
-    points with t_start <= t <= t_end; otherwise ``diffusive`` is False and D None.
+    every point from some lag t_start up to the longest lag t_end, the MSD is
+    >= ``min_msd_rg2`` * ``rg2`` at every lag from t_start on (D55: a chain COM must
+    have moved beyond its own size, else a slope near 1 is the pre-Fickian Rouse
+    regime; ``rg2`` = <Rg^2> in MSD units, None only for point particles), and
+    t_end / t_start >= ``min_span``. Then D = slope / (2 dim) of an OLS line through
+    the MSD points with t_start <= t <= t_end; otherwise ``diffusive`` is False and D
+    None. MSD points at neighbouring lags are strongly correlated, so the OLS slope
+    error is meaningless; D_err is the conservative |D_1 - D_2| of separate OLS fits
+    to the first and second half of the fitted lag range (floored by the OLS error).
     """
     t, s = local_log_slope(lags, msd_values)
+    lag, m = np.asarray(lags, dtype=float), np.asarray(msd_values, dtype=float)
     k = len(s)
     while k > 0 and s[k - 1] >= min_slope:
         k -= 1
     slope_end, slope_max = float(s[-1]), float(s.max())
-    if k == len(s) or t[-1] / t[k] < min_span:
-        return DiffusionFit(False, None, None, None, None, slope_end, slope_max)
-    lag, m = np.asarray(lags, dtype=float), np.asarray(msd_values, dtype=float)
+    ratio_end = None
+    if rg2 is not None:
+        if not rg2 > 0:
+            raise ValueError("rg2 must be positive")
+        ratio_end = float(m[-1] / rg2)
+        mt = np.interp(t, lag, m)  # MSD at the log-spaced lags
+        while k < len(t) and mt[k:].min() < min_msd_rg2 * rg2:
+            k += 1
+    fail = DiffusionFit(False, None, None, None, None, slope_end, slope_max, ratio_end)
+    if k >= len(s) or t[-1] / t[k] < min_span:
+        return fail
     sel = (lag >= t[k]) & (lag <= t[-1])
     if sel.sum() < 3:
-        return DiffusionFit(False, None, None, None, None, slope_end, slope_max)
+        return fail
     slope, _, err, _ = linear_fit(lag[sel], m[sel])
+    mid = 0.5 * (t[k] + t[-1])
+    first, second = sel & (lag <= mid), sel & (lag >= mid)
+    spread = 0.0
+    if first.sum() >= 3 and second.sum() >= 3:
+        spread = abs(linear_fit(lag[first], m[first])[0] - linear_fit(lag[second], m[second])[0])
     return DiffusionFit(
-        True, slope / (2 * dim), err / (2 * dim), float(t[k]), float(t[-1]), slope_end, slope_max
+        True,
+        slope / (2 * dim),
+        max(spread, err) / (2 * dim),
+        float(t[k]),
+        float(t[-1]),
+        slope_end,
+        slope_max,
+        ratio_end,
     )
 
 

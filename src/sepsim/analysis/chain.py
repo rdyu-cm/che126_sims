@@ -112,15 +112,17 @@ def characteristic_ratio(
     return n * carbons_per_site, c_n if per_frame else c_n.mean(axis=0)
 
 
-def drift_check(series, n_sigma: float = 2.0):
+def drift_check(series, n_sigma: float = 2.0, block: int | None = None):
     """Compare halves of a per-frame series: (mean_1, mean_2, delta, delta_sem, drift).
 
     SEMs from :func:`sepsim.analysis.stats.timeseries_mean` (statistical
-    inefficiency); drift if |mean_2 - mean_1| > n_sigma * sqrt(SEM_1^2 + SEM_2^2).
+    inefficiency; on ``block``-sample block means if given, D55, for thermo series);
+    drift if |mean_2 - mean_1| > n_sigma * sqrt(SEM_1^2 + SEM_2^2).
     """
     s = np.asarray(series, dtype=float)
     half = len(s) // 2
-    a, b = timeseries_mean(s[:half]), timeseries_mean(s[half : 2 * half])
+    a = timeseries_mean(s[:half], block=block)
+    b = timeseries_mean(s[half : 2 * half], block=block)
     delta, sem = b.mean - a.mean, float(np.hypot(a.sem, b.sem))
     return a.mean, b.mean, delta, sem, bool(abs(delta) > n_sigma * sem)
 

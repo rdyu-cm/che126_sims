@@ -153,13 +153,18 @@ def test_com_diffusion_of_a_random_walk():
     dt_ns, s = 0.1, 2.0  # frame interval, per-axis step SD (A)
     walk = np.cumsum(rng.normal(scale=s, size=(400, 200, 3)), axis=0)
     lags, m = msd(walk, dt_ns)
-    d = pg.com_diffusion(lags, m)
+    d = pg.com_diffusion(lags, m, rg2_A2=10.0)
     assert d["diffusive"] and d["D_A2_ns"] == pytest.approx(s**2 / (2 * dt_ns), rel=0.1)
     assert d["D_cm2_s"] == pytest.approx(d["D_A2_ns"] * 1e-7)
     flag = pg.d_com_flag(d)
     assert flag.startswith("D_COM diffusive ") and "cm²/s over" in flag
-    sub = pg.com_diffusion(lags[1:], 5.0 * lags[1:] ** 0.5)  # subdiffusive
-    assert not sub["diffusive"] and pg.d_com_flag(sub) == "D_COM not diffusive (max log-slope 0.50)"
+    sub = pg.com_diffusion(lags[1:], 5.0 * lags[1:] ** 0.5, rg2_A2=1.0)  # subdiffusive
+    assert not sub["diffusive"]
+    assert pg.d_com_flag(sub).startswith("D_COM not diffusive (log-slope 0.50 at the longest lag")
+    # D55: slope ~1 but the chains have not left their own size: not diffusive
+    big = pg.com_diffusion(lags, m, rg2_A2=float(m[-1]))
+    assert not big["diffusive"] and big["msd_rg2_end"] == pytest.approx(1.0)
+    assert "MSD/Rg² 1.00" in pg.d_com_flag(big)
     eta = pg.rouse_viscosity(1e-7, 5000.0, 400.0, 40, 3.0e5)
     rho_n = 40 / 3.0e5 * 1e30
     assert eta == pytest.approx(rho_n * 1.380649e-23 * 400 * 5000e-20 / (36 * 1e-11))
@@ -177,7 +182,7 @@ def test_progress_reports_d_com_for_a_diffuse_run(tmp_path):
     mol = data.sorted_atoms()[:, 1].astype(int)
     _, mol = np.unique(mol, return_inverse=True)
     rng = np.random.default_rng(0)
-    s = 1.5  # A per axis per 10 ps frame
+    s = 4.0  # A per axis per 10 ps frame: COM MSD at the longest lags >> 2 <Rg^2> (D55)
     steps = rng.normal(scale=s, size=(200, mol.max() + 1, 3))
     steps[0] = 0.0
     shift = np.cumsum(steps, axis=0)

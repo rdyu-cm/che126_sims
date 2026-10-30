@@ -63,6 +63,12 @@ D47_MSD_RG2 = 2.0  # ... and chain COM MSD at half the run >= 2 <Rg^2>
 N_SIGMA = 2.0  # step vs hold disagreement threshold, in combined SEMs
 ATM_A_TO_MN_M = 101325.0 * 1e-10 * 1e3  # surface tension: atm * Angstrom -> mN/m
 A2_NS_TO_CM2_S = 1e-16 / 1e-9  # diffusion: Angstrom^2/ns -> cm^2/s
+SEM_BLOCK_PS = 100.0  # D55: thermo SEMs from 100 ps block means (>= 10 x CG Pdamp 10 ps)
+SEM_BLOCK_ROWS = 100  # ... = 100 rows at the D28 1 ps thermo interval (no Time column)
+SEM_RESOLVE_BLOCKS = 100  # D55: windows < 100 blocks (10 ns) cannot resolve the ns-scale
+# tail of the thermo autocorrelation, so their SEMs are flagged as lower bounds
+P_EXT_ATM = 1.0  # D55: enthalpy SEM from E + p_ext V (all decks: 1 atm barostat target)
+NKTV2P = 68568.4  # LAMMPS real units: atm * A^3 per kcal/mol
 LIVE_HOLDS = ("extend", "diffuse")  # holds checked while running (D47, D53)
 FINAL = {"finished", "failed", "interrupted", "dry-run", "cancelled/killed?"}
 
@@ -222,26 +228,64 @@ def deck_system(path: str | Path) -> tuple[str | None, str | None]:
 # --------------------------------------------------------------------------- thermo stats
 
 
-def _mean_sem(x) -> dict | None:
+def _mean_sem(x, block: int | None = None) -> dict | None:
+    """Mean +- SEM (:func:`sepsim.analysis.stats.timeseries_mean`). Thermo series pass
+    ``block`` (D55: SEM from block means of that many rows, :func:`_block_rows`) and get
+    ``sem_lower_bound``: fewer than SEM_RESOLVE_BLOCKS blocks (or fewer than 20, the
+    stats fallback), i.e. the window is too short to resolve the slow tail of the
+    autocorrelation. Without ``block`` (per-frame chain series) the plain statistical
+    inefficiency, no flag."""
     x = np.asarray(x, dtype=float)
     if len(x) < 3:
         return None
     if np.ptp(x) == 0.0:  # NVT/NVE density: constant, no statistical inefficiency
         return {"mean": float(x[0]), "sem": 0.0}
-    r = timeseries_mean(x)
-    return {"mean": r.mean, "sem": r.sem}
+    r = timeseries_mean(x, block=block)
+    if block is None:
+        return {"mean": r.mean, "sem": r.sem}
+    low = bool(r.lower_bound or len(x) < SEM_RESOLVE_BLOCKS * block)
+    return {"mean": r.mean, "sem": r.sem, "sem_lower_bound": low}
+
+
+def _block_rows(thermo: dict) -> int:
+    """Thermo rows per SEM_BLOCK_PS from the Time column (fs), else SEM_BLOCK_ROWS."""
+    t = thermo.get("Time")
+    if t is not None and len(t) >= 2:
+        dt_ps = float(np.median(np.diff(t[: min(len(t), 1000)]))) / 1000.0
+        if dt_ps > 0:
+            return max(1, round(SEM_BLOCK_PS / dt_ps))
+    return SEM_BLOCK_ROWS
+
+
+def _enthalpy_mean_sem(thermo: dict, rows: slice) -> dict | None:
+    """Enthalpy mean (the LAMMPS ``enthalpy`` column, E + P_inst V) with its SEM from
+    E + p_ext V (TotEng + P_EXT_ATM Volume / NKTV2P, D55): the white instantaneous-
+    pressure noise in P_inst V hides the slow correlation from the statistical
+    inefficiency. Falls back to the column's own SEM without TotEng/Volume."""
+    if "Enthalpy" not in thermo:
+        return None
+    block = _block_rows(thermo)
+    ms = _mean_sem(thermo["Enthalpy"][rows], block)
+    if ms is None or not all(c in thermo for c in ("TotEng", "Volume")):
+        return ms
+    epv = thermo["TotEng"][rows] + P_EXT_ATM * thermo["Volume"][rows] / NKTV2P
+    alt = _mean_sem(epv, block)
+    if alt is not None and "sem_lower_bound" in alt:
+        ms.update(sem=alt["sem"], sem_lower_bound=alt["sem_lower_bound"], sem_from="E+p_ext*V")
+    return ms
 
 
 def segment_stats(thermo: dict[str, np.ndarray]) -> dict:
     """Second-half means of a segment's thermo block, and a density drift flag.
 
     T (C), density (g/cm^3) and enthalpy (kcal/mol) as mean +- SEM
-    (:func:`sepsim.analysis.stats.timeseries_mean`) over the second half of the
-    rows; for pore decks (Pxx, Pyy, Pzz, Lz columns) also the surface tension per
+    (:func:`sepsim.analysis.stats.timeseries_mean` on 100 ps block means, D55; the
+    enthalpy SEM from E + p_ext V) over the second half of the rows; for pore decks (Pxx, Pyy, Pzz, Lz columns) also the surface tension per
     surface gamma = (Lz/2) [Pzz - (Pxx + Pyy)/2] in mN/m (D48: fixed box). ``drift``: :func:`sepsim.analysis.chain.drift_check` on that same
     window's density (its two quarters differ by > 2 combined SEM), i.e. the
     averaging window itself is not stationary; None for constant density (NVT,
-    NVE) or < 12 rows.
+    NVE) or < 12 rows. Pore decks get the same test on gamma as ``gamma_drift``.
+    Both use the block-mean SEMs (D55).
     """
     from sepsim.analysis.chain import drift_check
 
@@ -250,27 +294,30 @@ def segment_stats(thermo: dict[str, np.ndarray]) -> dict:
     if n < 6:
         return out
     half = slice(n // 2, None)
+    block = _block_rows(thermo)
     for key, col, shift in (
         ("t_c", "Temp", -273.15),
         ("density", "Density", 0.0),
-        ("enthalpy", "Enthalpy", 0.0),
     ):
         if col in thermo:
-            ms = _mean_sem(thermo[col][half])
+            ms = _mean_sem(thermo[col][half], block)
             if ms is not None:
                 ms["mean"] += shift
             out[key] = ms
+    if "Enthalpy" in thermo:
+        out["enthalpy"] = _enthalpy_mean_sem(thermo, half)
+    gamma = None
     if all(c in thermo for c in ("Pxx", "Pyy", "Pzz", "Lz")):
         p_lat = 0.5 * (thermo["Pxx"] + thermo["Pyy"])
         gamma = 0.5 * thermo["Lz"] * (thermo["Pzz"] - p_lat) * ATM_A_TO_MN_M
-        out["gamma"] = _mean_sem(gamma[half])
-    rho = thermo.get("Density")
-    if rho is not None and n - n // 2 >= 12 and np.ptp(rho[half]) > 0:
-        try:
-            a, b, delta, sem, drift = drift_check(rho[half])
-            out["drift"] = {"first": a, "second": b, "delta": delta, "sem": sem, "drift": drift}
-        except ValueError:  # a zero-variance quarter
-            pass
+        out["gamma"] = _mean_sem(gamma[half], block)
+    for key, x in (("drift", thermo.get("Density")), ("gamma_drift", gamma)):
+        if x is not None and n - n // 2 >= 12 and np.ptp(x[half]) > 0:
+            try:
+                a, b, delta, sem, drift = drift_check(x[half], block=block)
+                out[key] = {"first": a, "second": b, "delta": delta, "sem": sem, "drift": drift}
+            except ValueError:  # a zero-variance quarter
+                pass
     return out
 
 
@@ -447,17 +494,21 @@ def d47_criteria(result: dict) -> dict:
     }
 
 
-def com_diffusion(lags_ns, msd_A2) -> dict:
+def com_diffusion(lags_ns, msd_A2, rg2_A2: float) -> dict:
     """Chain COM self-diffusion (D53) from a COM MSD curve (lags in ns, MSD in A^2) by
     :func:`sepsim.analysis.mobility.diffusion_coefficient` (the D49 criterion: local
-    log-slope >= 0.9 over a factor >= 2 in lag up to the longest lag). D in cm^2/s."""
+    log-slope >= 0.9 over a factor >= 2 in lag up to the longest lag, plus D55: COM
+    MSD >= 2 <Rg^2> over the fitted range). D in cm^2/s."""
     from sepsim.analysis.mobility import diffusion_coefficient
 
-    fit = diffusion_coefficient(lags_ns, msd_A2, min_slope=0.9, min_span=2.0)
+    fit = diffusion_coefficient(
+        lags_ns, msd_A2, min_slope=0.9, min_span=2.0, rg2=rg2_A2, min_msd_rg2=D47_MSD_RG2
+    )
     out = {
         "diffusive": bool(fit.diffusive),
         "slope_end": fit.slope_end,
         "slope_max": fit.slope_max,
+        "msd_rg2_end": fit.msd_rg2_end,
         "D_A2_ns": fit.D,
         "D_cm2_s": None if fit.D is None else fit.D * A2_NS_TO_CM2_S,
         "D_err_cm2_s": None if fit.D_err is None else fit.D_err * A2_NS_TO_CM2_S,
@@ -1052,6 +1103,8 @@ def _hold_checks(run_dir, hold, system, systems, manifest, cache, report, now=No
             fresh = not grown or (age is not None and age < CHAIN_EVERY_S)
         if fresh:
             out.update(entry["result"], cached=True, computed_at=entry.get("computed_at"))
+            if out.get("diffuse") and "curves" in out:  # cheap: refit with the current
+                _add_diffusion(out, hold["t_target_k"])  # criterion (D55)
             return out
     if not dcd.is_file():
         out["error"] = f"{name} not found"
@@ -1086,7 +1139,7 @@ def _add_diffusion(result: dict, t_k: float) -> None:
     """D53: D_COM from the hold's COM MSD curve and, when diffusive, the Rouse viscosity."""
     c = result["curves"]
     try:
-        d = com_diffusion(c["msd_lag_ns"], c["msd_A2"])
+        d = com_diffusion(c["msd_lag_ns"], c["msd_A2"], result["com_msd"]["rg2_A2"])
     except ValueError as exc:  # too few positive lags
         result["d_com"] = {"error": str(exc)}
         return
@@ -1103,11 +1156,14 @@ def _add_diffusion(result: dict, t_k: float) -> None:
 
 def d_com_flag(d: dict) -> str:
     """Flag line for a D53 diffusion hold, e.g. ``D_COM diffusive 4.1e-07 cm²/s over
-    60–150 ns`` or ``D_COM not diffusive (max log-slope 0.86)``."""
+    60–150 ns`` or ``D_COM not diffusive (log-slope 0.86 at the longest lag, MSD/Rg² 1.2)``."""
     if "error" in d:
         return f"D_COM: {d['error'][:60]}"
     if not d["diffusive"]:
-        return f"D_COM not diffusive (max log-slope {d['slope_max']:.2f})"
+        text = f"D_COM not diffusive (log-slope {d['slope_end']:.2f} at the longest lag"
+        if d.get("msd_rg2_end") is not None:
+            text += f", MSD/Rg² {d['msd_rg2_end']:.2f}"
+        return text + ")"
     text = (
         f"D_COM diffusive {d['D_cm2_s']:.2g} cm²/s over"
         f" {d['t_start_ns']:.3g}–{d['t_end_ns']:.3g} ns"
@@ -1203,8 +1259,8 @@ def _diffuse_lines(hold: dict) -> list[str]:
     if d.get("diffusive"):
         out.append(
             f"- D_COM = {d['D_cm2_s']:.3g} ± {d['D_err_cm2_s']:.2g} cm²/s (slope/6 of the COM"
-            f" MSD over {d['t_start_ns']:.3g}–{d['t_end_ns']:.3g} ns, local log-slope ≥ 0.9;"
-            " error from the OLS slope, a lower bound)"
+            f" MSD over {d['t_start_ns']:.3g}–{d['t_end_ns']:.3g} ns, local log-slope ≥ 0.9"
+            " and MSD ≥ 2⟨Rg²⟩; error: spread of the slopes of the two halves of the range)"
         )
         if d.get("eta_rouse_pa_s") is not None:
             out.append(
@@ -1215,6 +1271,7 @@ def _diffuse_lines(hold: dict) -> list[str]:
         out.append(
             f"- COM MSD local log-slope {d['slope_end']:.2f} at the longest lag (max"
             f" {d['slope_max']:.2f}); diffusive needs ≥ 0.9 over a factor ≥ 2 in lag"
+            " with COM MSD ≥ 2⟨Rg²⟩"
         )
     return out
 

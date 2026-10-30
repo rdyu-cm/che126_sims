@@ -140,6 +140,40 @@ def test_segment_stats_guards_constant_density():
     assert pg.segment_stats({"Step": np.arange(3.0)}) == {"rows": 3}
 
 
+def test_segment_stats_block_sems_enthalpy_and_gamma_drift():
+    """D55: thermo SEMs from 100 ps block means (rows per block from Time), the enthalpy
+    SEM from TotEng + p_ext V, a lower-bound flag for windows < 10 ns and a gamma drift
+    test for pore columns."""
+    n = 30_000  # 1 ps rows: second half 15 ns = 150 blocks
+    rng = np.random.default_rng(3)
+    v = 3.0e5 + 50.0 * rng.normal(size=n)
+    e = -1000.0 + rng.normal(size=n)
+    th = {
+        "Step": np.arange(n, dtype=float) * 100,
+        "Time": np.arange(n, dtype=float) * 1000.0,  # fs
+        "Temp": 300 + rng.normal(size=n),
+        "Density": 0.8 + 1e-4 * rng.normal(size=n),
+        "TotEng": e,
+        "Volume": v,
+        "Enthalpy": e + 5.0 * rng.normal(size=n),  # white P_inst V noise on top
+        "Lz": np.full(n, 100.0),
+        "Pxx": rng.normal(size=n),
+        "Pyy": rng.normal(size=n),
+        "Pzz": rng.normal(size=n),
+    }
+    st = pg.segment_stats(th)
+    h = st["enthalpy"]
+    assert h["mean"] == pytest.approx(th["Enthalpy"][n // 2 :].mean())  # mean: the column
+    assert h["sem_from"] == "E+p_ext*V" and h["sem_lower_bound"] is False
+    epv = (e + v / pg.NKTV2P)[n // 2 :]
+    assert h["sem"] == pytest.approx(epv.std() / np.sqrt(len(epv)), rel=0.3)
+    assert st["density"]["sem_lower_bound"] is False
+    assert st["gamma_drift"]["drift"] is False and st["drift"]["drift"] is False
+    short = {k: x[:5000] for k, x in th.items()}  # 2.5 ns window: SEMs are lower bounds
+    assert pg.segment_stats(short)["density"]["sem_lower_bound"] is True
+    assert pg._block_rows(th) == 100 and pg._block_rows({"Time": np.arange(5.0) * 2000}) == 50
+
+
 def _seg(index, t_k, rho, h=0.0, sem=1e-4, **kw):
     d = {"index": index, "state": "done", "ensemble": "npt", "t_target_k": t_k, "vdos": False}
     d["stats"] = {"density": {"mean": rho, "sem": sem}, "enthalpy": {"mean": h, "sem": 1.0}}
