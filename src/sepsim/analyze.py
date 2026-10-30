@@ -17,7 +17,11 @@ DCDs) this writes ``results.md``, ``results.json`` and PNG plots into
   frame interval, the hold DCD from there to half the hold), D_COM from the diffusive
   end of the COM MSD (local log-slope >= 0.9 over a factor >= 2 in lag), the
   backbone bond P2 autocorrelation and its 1/e time, and <Rg^2>^1/2,
-  <R_ee^2>^1/2 and the C_n plateau (n >= 100 carbons, D37) averaged over the hold.
+  <R_ee^2>^1/2 and the C_n plateau (n >= 100 carbons, D37) averaged over the hold
+  (with <= 100 block means of each for convergence plots);
+- per hold (D56): the end-to-end vector and Rouse mode (p = 1..5) autocorrelations with
+  their 1/e times and exponential fits (``chain_relaxation``), and a crystallinity
+  monitor (D26 alignment order, fixed uncalibrated threshold; ``crystallinity_monitor``).
 
 The segment parser, log reader and thermo concatenation are those of
 :mod:`sepsim.progress`; the DCDs are read with MDAnalysis ``DCDReader`` (id-sorted,
@@ -503,13 +507,14 @@ def read_frames(path: Path, sys_arr: dict) -> dict:
             raise ValueError(
                 f"{path.name}: {reader.n_atoms} atoms, data.lmp has {sys_arr['n_atoms']}"
             )
-        bb, com, rg2 = [], [], []
+        bb, com, rg2, box = [], [], [], []
         for ts in reader:
             x = ts.positions.astype(float)
             c, g = chain_com_rg2(x, sys_arr["molecule"], sys_arr["masses"])
             bb.append(x[sys_arr["bb_rows"]].astype(np.float32))
             com.append(c[0])
             rg2.append(g[0])
+            box.append(ts.dimensions if ts.dimensions is not None else np.full(6, np.nan))
     finally:
         reader.close()
     if not bb:
@@ -521,7 +526,27 @@ def read_frames(path: Path, sys_arr: dict) -> dict:
         "bb": bb - origin[:, None, :].astype(np.float32),
         "com": com - origin[:, None, :],
         "rg2": np.array(rg2),
+        "box": np.array(box, dtype=float),  # MDAnalysis [lx, ly, lz, alpha, beta, gamma]
     }
+
+
+def concat_frames(parts: list[dict]) -> tuple[dict, list[int]]:
+    """Frames of consecutive DCDs of one continuous run (:func:`read_frames` outputs) as
+    one trajectory; a part's first frame is dropped when it repeats the previous part's
+    last frame (a run continued from a write_data of its last step), as in
+    :func:`sepsim.progress.hold_chain_checks`. Returns (frames, frames taken per part)."""
+    keep, taken = [], []
+    for k, p in enumerate(parts):
+        start = 0
+        if k and np.allclose(p["bb"][0], parts[k - 1]["bb"][-1], atol=1e-2):
+            start = 1
+        keep.append(start)
+        taken.append(len(p["bb"]) - start)
+    out = {
+        key: np.concatenate([p[key][s:] for p, s in zip(parts, keep, strict=True)])
+        for key in parts[0]
+    }
+    return out, taken
 
 
 def _bond_vectors(bb: np.ndarray, chains: list[np.ndarray]) -> np.ndarray:
@@ -545,9 +570,13 @@ def _root(ms: dict) -> dict:
     return {"mean": r, "sem": None if ms["sem"] is None else ms["sem"] / (2 * r)}
 
 
-def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRAMES) -> dict:
-    """Mobility and chain-size results of one hold (a :class:`sepsim.progress.Segment`)
-    from its DCD and burst DCDs."""
+def hold_trajectory(
+    run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRAMES, before=()
+) -> dict:
+    """Mobility, chain-size and chain-relaxation results of one hold (a
+    :class:`sepsim.progress.Segment`) from its DCD and burst DCDs. ``before``: DCDs of
+    the same continuous run read ahead of the hold DCD as one trajectory (an extension
+    after the prep hold, D47/D56), all with the hold's frame interval."""
     from sepsim.analysis.chain import (
         CARBONS_PER_SITE,
         characteristic_ratio,
@@ -573,6 +602,14 @@ def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRA
     dcd, every = hold[0]
     frame_ps = every * seg.dt_fs / 1000.0
     tr = read_frames(run_dir / dcd, sys_arr)
+    if before:
+        names_all = [Path(b) for b in before] + [run_dir / dcd]
+        tr, taken = concat_frames([read_frames(Path(b), sys_arr) for b in before] + [tr])
+        starts = np.cumsum(taken)[:-1]
+        out["parts"] = [
+            {"file": str(f), "frames": n} for f, n in zip(names_all, taken, strict=True)
+        ]
+        out["boundaries_ps"] = [float((k - 0.5) * frame_ps) for k in starts]
     nf = len(tr["bb"])
     if nf < 6:
         out["notes"].append(f"trajectory not available ({dcd}: only {nf} frames)")
@@ -639,6 +676,8 @@ def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRA
             D_cm2_s=fit.D * A2_PS_TO_CM2_S,
             D_err_cm2_s=fit.D_err * A2_PS_TO_CM2_S,
             fit_ps=[fit.t_start, fit.t_end],
+            t_start_ps=fit.t_start,
+            t_end_ps=fit.t_end,
         )
     t_1e = decorrelation_time(lp, vp)
     seg_msd = {"lag_max_ps": float(lm[-1]), "msd_at_max_A2": float(vm[-1])}
@@ -652,7 +691,10 @@ def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRA
     first = np.array([c[0] for c in chains])
     last = np.array([c[-1] for c in chains])
     ree = tr["bb"][:, last].astype(float) - tr["bb"][:, first]
-    ree2 = _mean_sd(np.sum(ree**2, axis=2).mean(axis=1))
+    ree2_t = np.sum(ree**2, axis=2).mean(axis=1)
+    ree2 = _mean_sd(ree2_t)
+    t_ps = np.arange(nf) * frame_ps
+    relax, relax_curves = chain_relaxation(ree, tr["bb"], chains, frame_ps, lag_max)
     pick = np.unique(np.linspace(0, nf - 1, min(nf, max_frames)).round().astype(int))
     res = sys_arr["manifest"]["resolution"]
     cg = res == "cg"
@@ -664,7 +706,12 @@ def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRA
         per_frame=True,
     )
     sel = nc >= 100
-    cn_plateau = _mean_sd(cn[:, sel].mean(axis=1)) if sel.any() else None
+    cn_t = cn[:, sel].mean(axis=1) if sel.any() else None
+    cn_plateau = _mean_sd(cn_t) if sel.any() else None
+    try:
+        cryst = crystallinity_monitor(tr, chains, sys_arr["manifest"])
+    except (ValueError, KeyError, OSError) as exc:
+        cryst = {"available": False, "note": f"crystallinity not computed: {exc}"}
     out.update(
         segment_msd=seg_msd,
         com_msd=com,
@@ -674,14 +721,25 @@ def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRA
             "at_max": float(vp[-1]),
             "vectors": "bead-bead bonds" if cg else "backbone C-C bonds",
         },
-        rg={"rg2_A2": rg2, "rg_A": _root(rg2)},
-        ree={"ree2_A2": ree2, "ree_A": _root(ree2)},
+        rg={
+            "rg2_A2": rg2,
+            "rg_A": _root(rg2),
+            "series": block_series(t_ps, tr["rg2"].mean(axis=1), "rg2_A2"),
+        },
+        ree={
+            "ree2_A2": ree2,
+            "ree_A": _root(ree2),
+            "series": block_series(t_ps, ree2_t, "ree2_A2"),
+        },
         c_n={
             "plateau": cn_plateau,
             "frames": len(pick),
             "n_min": 100,
             "bond_length": 1.54 if cg else None,
+            "series": None if cn_t is None else block_series(t_ps[pick], cn_t, "plateau"),
         },
+        relaxation=relax,
+        crystallinity=cryst,
         curves={
             "msd_lag_ps": _round(_log_thin(lm)),
             "msd_A2": _round(vm[_log_idx(lm)]),
@@ -692,9 +750,158 @@ def hold_trajectory(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRA
             "p2": _round(vp[_log_idx(lp)]),
             "cn_n": nc.tolist(),
             "cn": _round(cn.mean(axis=0)),
+            **relax_curves,
         },
     )
     return out
+
+
+ROUSE_P_MAX = 5  # Rouse modes p = 1..ROUSE_P_MAX (D56)
+SERIES_BLOCKS = 100  # block means per hold in the rg/ree/c_n "series" (D56)
+
+
+def block_series(t_ps, x, name: str, n_blocks: int = SERIES_BLOCKS) -> dict:
+    """<= ``n_blocks`` consecutive block means of a per-frame series with each block's
+    mid time (ps from the first hold frame): ``{"t_ps": [...], name: [...]}``."""
+    t, x = np.asarray(t_ps, dtype=float), np.asarray(x, dtype=float)
+    idx = [b for b in np.array_split(np.arange(len(x)), min(n_blocks, len(x))) if len(b)]
+    return {
+        "t_ps": _round([t[b].mean() for b in idx]),
+        name: _round([x[b].mean() for b in idx], 8),
+        "frames_per_block": int(len(x) // max(1, len(idx))),
+    }
+
+
+def chain_relaxation(ree, bb, chains, frame_ps: float, lag_max: int, p_max: int = ROUSE_P_MAX):
+    """D56 relaxation block of a hold: the end-to-end vector ACF and the Rouse mode ACFs
+    (p = 1..p_max) over lags up to ``lag_max`` frames, each with its 1/e time and an
+    exponential fit (:func:`sepsim.analysis.chain.relaxation_time`), the mode amplitudes
+    <X_p^2> and p^2 <X_p^2> (flat for an ideal Rouse chain), and tau_1 estimated as
+    p^2 tau_p from every mode whose 1/e time is reached. Returns (block, plot curves)."""
+    from sepsim.analysis.chain import (
+        end_to_end_autocorrelation,
+        mode_autocorrelation,
+        relaxation_time,
+        rouse_modes,
+    )
+
+    lags, c_ee = end_to_end_autocorrelation(ree, frame_ps, lag_max)
+    ee = relaxation_time(lags, c_ee)
+    lags_p, c_p, amp, p2_amp = mode_autocorrelation(
+        rouse_modes(bb, chains, p_max), frame_ps, lag_max
+    )
+    rouse = []
+    for k in range(p_max):
+        rt = relaxation_time(lags_p, c_p[k])
+        rouse.append(
+            {
+                "p": k + 1,
+                "amp_A2": float(amp[k]),
+                "p2_amp_A2": float(p2_amp[k]),
+                "t_1e_ps": rt["t_1e"],
+                "tau_fit_ps": rt["tau_fit"],
+                "reached": rt["reached"],
+                "extrapolated": rt["extrapolated"],
+                "acf_at_max": rt["acf_at_max"],
+            }
+        )
+    block = {
+        "lag_max_ps": float(lags[-1]),
+        "ree": {
+            "t_1e_ps": ee["t_1e"],
+            "tau_fit_ps": ee["tau_fit"],
+            "reached": ee["reached"],
+            "extrapolated": ee["extrapolated"],
+            "acf_at_max": ee["acf_at_max"],
+            "fit_ps": ee["fit_t"],
+        },
+        "rouse": rouse,
+        "tau1_from_p": {str(m["p"]): m["p"] ** 2 * m["t_1e_ps"] for m in rouse if m["reached"]},
+        "p2_amp_rel": [float(v / p2_amp[0]) for v in p2_amp],
+    }
+    idx = _log_idx(lags)
+    curves = {
+        "relax_lag_ps": _round(lags[idx]),
+        "ree_acf": _round(c_ee[idx]),
+        "rouse_acf": [_round(c[idx]) for c in c_p],
+    }
+    return block, curves
+
+
+CRYSTAL_THRESHOLD = 0.4  # D56: fixed p2 threshold, uncalibrated (no crystal reference)
+CRYSTAL_FRAMES = 50  # hold frames (evenly spaced) for the crystallinity monitor
+CRYSTAL_RC_UA_AA = 6.5  # Angstrom, backbone carbons (UA/AA)
+CRYSTAL_LABEL = "uncalibrated, melt baseline"
+
+
+def crystal_parameters(manifest: dict) -> dict:
+    """D56 crystallinity-monitor settings for a system: r_c = 1.4 sigma of the CG
+    backbone bead pair (from the force-field YAML named in the manifest) or 6.5 A for
+    UA/AA backbone carbons; chord half-span 1 (PE) or 3 (iPP 3_1 helix); l_proj the CG
+    backbone bond r0, else 1.27 A (PE) / 1.08 A (iPP) (:func:`sepsim.analysis.order.
+    crystallinity`)."""
+    import yaml
+
+    from sepsim.ff.params import FORCEFIELD_DIR
+
+    ipp = manifest.get("polymer") == "ipp"
+    half_span, l_proj, r_c = (3, 1.08, CRYSTAL_RC_UA_AA) if ipp else (1, 1.27, CRYSTAL_RC_UA_AA)
+    if manifest["resolution"] == "cg":
+        ff = yaml.safe_load((FORCEFIELD_DIR / manifest["forcefield"]["file"]).read_text())
+        bead = "CM"  # the SDK PE backbone bead (CT only at the chain ends)
+        pair = next(v for v in ff["pair_types"].values() if v["pattern"] == [bead, bead])
+        bond = next(v for v in ff["bond_types"].values() if v["pattern"] == [bead, bead])
+        r_c, l_proj = 1.4 * float(pair["sigma"]), float(bond["r0"])
+    return {"r_c_A": r_c, "half_span": half_span, "l_proj_A": l_proj}
+
+
+def crystallinity_monitor(tr: dict, chains, manifest: dict, n_frames: int = CRYSTAL_FRAMES):
+    """D56 crystallinity monitor over <= ``n_frames`` evenly spaced hold frames: the
+    D26 local-alignment order (:func:`sepsim.analysis.order.crystallinity`) with the
+    :func:`crystal_parameters` cutoff and a fixed, uncalibrated threshold p2 >=
+    ``CRYSTAL_THRESHOLD`` (no crystal reference: a melt baseline, to confirm the boxes
+    stay amorphous). Fraction (mean, SD, first/last frame, max) and largest cluster."""
+    from MDAnalysis.lib.mdamath import triclinic_vectors
+
+    from sepsim.analysis.order import crystallinity
+
+    par = crystal_parameters(manifest)
+    nf = len(tr["bb"])
+    pick = np.unique(np.linspace(0, nf - 1, min(nf, n_frames)).round().astype(int))
+    order = np.concatenate(chains)
+    chain_id = np.concatenate([np.full(len(c), k) for k, c in enumerate(chains)])
+    frac, largest, p2m = [], [], []
+    for f in pick:
+        box = tr["box"][f]
+        if not np.all(np.isfinite(box)):
+            raise ValueError("DCD frames carry no box")
+        r = crystallinity(
+            tr["bb"][f][order].astype(float),
+            chain_id,
+            triclinic_vectors(box),
+            r_c=par["r_c_A"],
+            threshold=CRYSTAL_THRESHOLD,
+            half_span=par["half_span"],
+            l_proj=par["l_proj_A"],
+        )
+        frac.append(r.fraction)
+        largest.append(r.largest_cluster)
+        p2m.append(float(np.nanmean(r.p2)))
+    frac = np.array(frac)
+    return {
+        "available": True,
+        "label": CRYSTAL_LABEL,
+        "threshold": CRYSTAL_THRESHOLD,
+        **par,
+        "frames": len(pick),
+        "sites": len(order),
+        "fraction": {"mean": float(frac.mean()), "sd": float(frac.std())},
+        "fraction_first": float(frac[0]),
+        "fraction_last": float(frac[-1]),
+        "fraction_max": float(frac.max()),
+        "largest_cluster": {"mean": float(np.mean(largest)), "max": int(np.max(largest))},
+        "p2_mean": float(np.mean(p2m)),
+    }
 
 
 def _log_idx(lags, n: int = 300) -> np.ndarray:
@@ -982,6 +1189,15 @@ def make_plots(report: dict, out_dir: Path, eq: list[dict] | None = None) -> dic
             ("p2_acf", "bond P2 autocorrelation", lambda p: ap.p2_curves(p, tr, title)),
             ("chain_vs_T", "Rg, R_ee and C_n vs T", lambda p: ap.chain_vs_t(p, tr, title)),
         ]
+        rel = [(h["t_c"], h["traj"]) for h in tr if h["traj"].get("relaxation")]
+        if rel:
+            jobs.append(
+                (
+                    "relaxation",
+                    "end-to-end and Rouse mode ACFs, p²τ_p vs p",
+                    lambda p: ap.relaxation_curves(p, rel, title),
+                )
+            )
     jobs += equilibration_jobs(eq or [], SWEEP_EQ_PANELS, title)
     return draw_plots(jobs, report, out_dir)
 
@@ -1150,6 +1366,7 @@ def render_markdown(r: dict) -> str:
             f" {_pm(t['ree']['ree_A'], '.1f')} | {_pm(t['c_n']['plateau'], '.3f')} |"
         )
     lines += [""] + notes if notes else []
+    lines += relaxation_markdown([(h["t_c"], h["traj"]) for h in r["holds"]], r.get("resolution"))
     lines += equilibration_markdown(r, LOCAL_NOTE, CHAIN_NOTE)
     lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
     if r.get("plots"):
@@ -1157,6 +1374,100 @@ def render_markdown(r: dict) -> str:
         for p in r["plots"].values():
             lines += [f"**{p['title']}**", "", f"![{p['title']}]({p['file']})", ""]
     return "\n".join(lines) + "\n"
+
+
+def _ns(ps: float | None) -> str:
+    return "n/a" if ps is None else f"{ps / 1000:.3g}"
+
+
+def _tau_cell(m: dict, t_key: str = "t_1e_ps") -> str:
+    """A relaxation time in ns: the 1/e time if reached, else the fit marked extrapolated."""
+    if m.get("reached"):
+        return _ns(m[t_key])
+    fit = m.get("tau_fit_ps")
+    tail = f"C {m['acf_at_max']:.2f} at max lag"
+    return f"not reached ({tail}; fit {_ns(fit)}, extrap.)" if fit else f"not reached ({tail})"
+
+
+def relaxation_markdown(items, resolution: str | None, what: str = "hold") -> list[str]:
+    """results.md "Chain relaxation" section (D56) shared by `analyze sweep`, `analyze
+    pore` (whole film) and `analyze hold`. ``items``: (T in C, traj dict) per hold."""
+    rows = [(t, tr) for t, tr in items if tr and tr.get("available") and tr.get("relaxation")]
+    lines = ["", f"## Chain relaxation ({what}s; D56)", ""]
+    if not rows:
+        return lines + ["No trajectory results."]
+    lag = rows[0][1]["relaxation"]["lag_max_ps"]
+    lines += [
+        (
+            "End-to-end vector ACF ⟨R(t)·R(0)⟩/⟨R²⟩ and Rouse mode ACFs ⟨X_p(t)·X_p(0)⟩/⟨X_p²⟩,"
+            " X_p = (1/N) Σ_n cos(pπ(n−½)/N) r_n over the backbone sites, every time origin,"
+            f" lags up to half the {what} ({lag / 1000:g} ns here). Times in ns: the first 1/e"
+            " crossing; if C stays above 1/e within the lag window the time is 'not reached'"
+            " and only an exponential fit of ln C over 0.2 ≤ C ≤ 0.9 is given (marked"
+            " extrap.: it extrapolates the early decay). τ_ee fit is that fit for R_ee. τ_1/τ_2"
+            " is 4 for Rouse chains. p²⟨X_p²⟩ (relative to p = 1, p = 2…5) is flat for an ideal"
+            " Rouse chain; it falls at high p where the chain is stiffer than Gaussian on that"
+            " scale. Crystallinity: D26 local alignment, fraction of backbone sites with"
+            f" p2 ≥ {CRYSTAL_THRESHOLD:g} (**{CRYSTAL_LABEL}**: no crystal reference, so the"
+            " number is a baseline for an amorphous box, not a calibrated crystallinity) and"
+            " the largest crystalline cluster (sites)."
+        ),
+        "",
+        (
+            "| T (°C) | τ_ee 1/e (ns) | τ_ee fit (ns) | τ_1 (ns) | τ_2 (ns) | τ_3 (ns) |"
+            " τ_1/τ_2 (Rouse 4) | p²⟨X_p²⟩ / p=1 (p = 2…5) | crystallinity |"
+        ),
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    est = []
+    for t, tr in rows:
+        rx = tr["relaxation"]
+        ee, modes = rx["ree"], {m["p"]: m for m in rx["rouse"]}
+        ee_fit = _ns(ee["tau_fit_ps"]) + (" (extrap.)" if ee["extrapolated"] else "")
+        m1, m2 = modes.get(1), modes.get(2)
+        ratio = "n/a"
+        if m1 and m2:
+            if m1["reached"] and m2["reached"]:
+                ratio = f"{m1['t_1e_ps'] / m2['t_1e_ps']:.2f}"
+            elif m1["tau_fit_ps"] and m2["tau_fit_ps"]:
+                ratio = f"{m1['tau_fit_ps'] / m2['tau_fit_ps']:.2f} (fits)"
+        flat = " / ".join(f"{v:.2f}" for v in rx["p2_amp_rel"][1:])
+        cr = tr.get("crystallinity") or {}
+        crys = (
+            f"{cr['fraction']['mean']:.3f} (max {cr['fraction_max']:.3f}; cluster ≤"
+            f" {cr['largest_cluster']['max']})"
+            if cr.get("available")
+            else "n/a"
+        )
+        cells = [_tau_cell(modes[p]) if p in modes else "n/a" for p in (1, 2, 3)]
+        lines.append(
+            f"| {t:g} | {_tau_cell(ee)} | {ee_fit} | {' | '.join(cells)} | {ratio} | {flat} |"
+            f" {crys} |"
+        )
+        if not (m1 or {}).get("reached") and rx["tau1_from_p"]:
+            vals = ", ".join(f"p={p}: {_ns(v)}" for p, v in rx["tau1_from_p"].items())
+            est.append(f"- {t:g} °C: τ_1 ≈ p²τ_p from the reached modes: {vals} ns.")
+    if est:
+        lines += [
+            "",
+            (
+                "Where τ_1 is not reached, p²τ_p of the faster modes estimates it under ideal"
+                " Rouse scaling (τ_p ∝ p⁻²). Real melts show τ_p ∝ p^−2.2…−2.4 (stiffness,"
+                " local friction), so p²τ_p underestimates τ_1, more so the higher p:"
+            ),
+            "",
+            *est,
+        ]
+    if resolution == "cg":
+        lines += [
+            "",
+            (
+                "CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE"
+                " (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07"
+                " before comparing with experiment."
+            ),
+        ]
+    return lines
 
 
 LOCAL_NOTE = (

@@ -55,6 +55,12 @@ A fair comparison needs amorphous or melt data at the same temperature and a sim
 
 8b. **Long-hold D_COM (`diffuse`, D53).** The same D_COM criterion on a dedicated 300 ns NPT hold at one sweep temperature (CG), checked by `sepsim progress` while it runs. Only once the MSD is diffusive (and well beyond ⟨Rg²⟩) is D_COM a chain self-diffusion coefficient. The Rouse estimate η_R = ρ_N k_B T ⟨R_ee²⟩/(36 D), with ρ_N the chain number density, converts it into a melt viscosity; it assumes unentangled chains, so for entangled ones it is a lower bound. For a PE melt of this chain length expect roughly 0.1 Pa·s (order of magnitude only); CG dynamics are faster, so CG viscosities come out lower.
 
+8g. **End-to-end relaxation time τ_ee (D56).** ⟨R(t)·R(0)⟩/⟨R²⟩ of the chain end-to-end vectors over every time origin, with the lag at which it falls to 1/e. It is the time a chain takes to forget its overall orientation and is the longest single-chain relaxation time; chain-scale averages (Rg, R_ee, C_n) at a temperature are only equilibrated over holds of several τ_ee. The lags reach half the hold (CG sweep holds 12.5 ns, UA 5 ns, AA 2.5 ns).
+
+8h. **Rouse modes and τ_p (D56).** X_p = (1/N) Σ_n cos(pπ(n−½)/N) r_n splits a chain into standing waves along its backbone: p = 1 is the whole chain, p = 2 each half, p = N/p beads per wave. Each mode decorrelates on its own time τ_p (1/e of ⟨X_p(t)·X_p(0)⟩/⟨X_p²⟩), so the faster high-p modes are measurable in a short hold even when τ_1 ≈ τ_ee is not. For an ideal, unentangled (Rouse) chain τ_p = τ_1/p², so τ_1/τ_2 = 4 and p²τ_p is flat; and ⟨X_p²⟩ ∝ 1/p², so p²⟨X_p²⟩ is flat (it falls at high p where the chain is stiffer than Gaussian). Real melts give τ_p ∝ p^−2.2…−2.4, so τ_1 estimated as p²τ_p from a high p is a lower bound. C240 PE is near the entanglement length, so Rouse scaling is only approximate. CG times are model times (× 4.07 for experiment).
+
+8i. **"not reached" and "extrapolated" (D56).** A relaxation time whose ACF stays above 1/e out to the longest lag is "not reached". The table then gives only an exponential fit of ln C over 0.2 ≤ C ≤ 0.9, marked extrap.: it extends the early decay beyond the data, typically underestimates a stretched decay, and is an order-of-magnitude figure, not a measurement.
+
 ### Mechanical properties (`tensile`, `sepsim analyze tensile`, D54)
 
 8c. **Stress–strain curve.** The box is stretched along one axis at a constant engineering strain rate (10⁸ or 10⁹ s⁻¹) while the other two axes are held at 1 atm; this is repeated along x, y and z from the same starting snapshot. True stress σ = −(P_axis − 1 atm), tension positive; engineering stress is σ times the current over the initial cross-section.
@@ -70,6 +76,8 @@ A fair comparison needs amorphous or melt data at the same temperature and a sim
 9. **D47 (chain mixing at 500 K).**
    - The criterion: the end-to-end vector ACF is below 1/e and the chain COM MSD is at least 2⟨Rg²⟩, at a lag of half the combined 500 K hold.
    - Very long chains such as C1500 cannot reach it in affordable time. They are accepted on a stable C_n plateau.
+
+9b. **Crystallinity monitor (D56).** The D26 local-alignment order on ≤ 50 frames per hold: each backbone site's mean P2 with the chord vectors of other stems within r_c (CG: 1.4 σ of the bead pair, 6.3 Å; UA/AA: 6.5 Å), counted as ordered if p2 ≥ 0.4, with the fraction of ordered sites and the largest connected cluster. The threshold is **uncalibrated** (no crystal reference has been simulated), so the number is a melt baseline, not a crystallinity: a box that stays amorphous keeps a small, constant fraction with small clusters, and a fraction or cluster that grows during a hold would flag ordering. The baseline depends on the model (CG beads with near-straight bond angles show more local alignment than UA).
 
 10. **Drift flags and hysteresis.** "drift seg …" marks segments whose thermo shows a significant trend over the analysis window; it is informational. Hysteresis is the largest density difference between the cooling and heating branches at the same T.
 

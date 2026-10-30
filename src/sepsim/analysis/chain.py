@@ -18,6 +18,11 @@ Equilibration diagnostics over a hold (D45): the end-to-end vector autocorrelati
 chain centre-of-mass MSD relative to <Rg^2> (``chain_com_rg2``, ``com_msd_over_rg2``).
 A chain has relaxed when its end-to-end vector has decorrelated (C < 1/e) and its
 centre of mass has moved at least its own size (MSD/<Rg^2> >= 1).
+
+Chain relaxation (D56): Rouse normal modes X_p of each chain (``rouse_modes``), their
+normalized autocorrelations and amplitudes (``mode_autocorrelation``), and the
+relaxation time of a normalized ACF from its 1/e crossing and an exponential fit
+(``relaxation_time``).
 """
 
 from dataclasses import dataclass
@@ -275,3 +280,81 @@ def com_msd_over_rg2(com, rg2, dt: float, max_lag: int | None = None):
     lags, m = msd(c, dt, max_lag)
     rg2_mean = float(np.mean(rg2))
     return float(lags[-1]), float(m[-1]), rg2_mean, float(m[-1] / rg2_mean)
+
+
+# ---- chain relaxation: Rouse modes (D56) ----
+
+
+def rouse_modes(positions, chains, p_max: int = 5) -> np.ndarray:
+    """Rouse normal modes X_p(t) = (1/N) sum_n cos(p pi (n - 1/2) / N) r_n(t) per chain.
+
+    ``positions``: (n_frames, n_sites, 3) or (n_sites, 3), unwrapped; ``chains``:
+    ordered backbone index arrays into the site axis (N = len(chain), n = 1..N; chains
+    may differ in length). Returns (n_frames, n_chains, p_max, 3) for p = 1..p_max
+    (Doi & Edwards, *The Theory of Polymer Dynamics*, OUP 1986, sec. 4.1, discrete
+    form; the transform is a DCT-II, inverted by r_n = X_0 + 2 sum_p X_p cos(...)).
+    For an ideal Rouse chain the modes are independent, <X_p(t).X_p(0)> decays as
+    exp(-t/tau_p) with tau_p = tau_1/p^2, and p^2 <X_p^2> is independent of p.
+    """
+    x = _frames(positions)
+    p = np.arange(1, p_max + 1)
+    out = np.empty((x.shape[0], len(chains), p_max, 3))
+    for k, c in enumerate(chains):
+        c = np.asarray(c, dtype=np.int64)
+        n = len(c)
+        cos = np.cos(np.pi * p[:, None] * (np.arange(1, n + 1)[None, :] - 0.5) / n) / n
+        out[:, k] = np.einsum("pn,fnk->fpk", cos, x[:, c].astype(float))
+    return out
+
+
+def mode_autocorrelation(modes, dt: float, max_lag: int | None = None):
+    """Normalized mode autocorrelation C_p(t) = <X_p(t0).X_p(t0+t)> / <X_p^2>.
+
+    ``modes``: (n_frames, n_chains, p_max, 3) from :func:`rouse_modes`; averaged
+    over chains and all time origins (FFT, :func:`sepsim.analysis._corr.autocorr`).
+    Returns (lag_times, acf (p_max, n_lags), amp (p_max,) = <X_p^2> in the squared
+    position unit, p2_amp = p^2 <X_p^2>), lags 0..max_lag (default n_frames // 2).
+    """
+    m = np.asarray(modes, dtype=float)
+    max_lag = check_max_lag(m.shape[0], max_lag)
+    c = autocorr(m, max_lag).sum(axis=3).mean(axis=1)  # (lags, p)
+    amp = c[0].copy()
+    p = np.arange(1, m.shape[2] + 1)
+    return np.arange(max_lag + 1) * dt, (c / amp).T, amp, p**2 * amp
+
+
+def relaxation_time(lag_times, acf, fit_range: tuple[float, float] = (0.2, 0.9)) -> dict:
+    """Relaxation time of a normalized ACF: first 1/e crossing and an exponential fit.
+
+    ``t_1e``: :func:`decorrelation_time` (None if C never drops below 1/e), ``reached``
+    = t_1e is not None. ``tau_fit``: -1/slope of a least-squares line ln C = a - t/tau
+    over the lags > 0 with lo <= C <= hi (``fit_range``), taken up to the first lag where
+    C < lo (later lags are noise) or to the longest lag; None if fewer than 2 points or
+    the slope is not negative. ``extrapolated``: the 1/e point is beyond the lag window,
+    so tau rests on the fit alone (an extrapolation of the early decay). Also the fit
+    window ``fit_t`` [t0, t1], its point count, ``acf_at_max`` and ``lag_max``.
+    """
+    t = np.asarray(lag_times, dtype=float)
+    c = np.asarray(acf, dtype=float)
+    lo, hi = fit_range
+    t_1e = decorrelation_time(t, c)
+    below = np.flatnonzero(c < lo)
+    end = int(below[0]) if len(below) else len(c)
+    sel = np.zeros(len(c), bool)
+    sel[:end] = True
+    sel &= (t > 0) & (c >= lo) & (c <= hi)
+    tau = None
+    if sel.sum() >= 2:
+        slope = np.polyfit(t[sel], np.log(c[sel]), 1)[0]
+        if slope < 0:
+            tau = float(-1.0 / slope)
+    return {
+        "t_1e": t_1e,
+        "reached": t_1e is not None,
+        "tau_fit": tau,
+        "fit_t": [float(t[sel][0]), float(t[sel][-1])] if sel.any() else None,
+        "fit_points": int(sel.sum()),
+        "extrapolated": t_1e is None,
+        "acf_at_max": float(c[-1]),
+        "lag_max": float(t[-1]),
+    }

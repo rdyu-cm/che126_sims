@@ -74,6 +74,7 @@ from sepsim.analyze import (
     hold_trajectory,
     out_dir_for,
     quantity_convergence,
+    relaxation_markdown,
     segment_convergence,
     segment_thermo,
     sem_vs_block,
@@ -1065,6 +1066,15 @@ def make_plots(report: dict, out_dir: Path, eq: list[dict] | None = None) -> dic
                 lambda p: ap.film_vs_time(p, fs, title),
             )
         )
+        rel = [(h["t_c"], h["film"]) for h in tr if (h.get("film") or {}).get("relaxation")]
+        if rel:
+            jobs.append(
+                (
+                    "relaxation",
+                    "whole film: end-to-end and Rouse mode ACFs, p²τ_p vs p",
+                    lambda p: ap.relaxation_curves(p, rel, title),
+                )
+            )
     jobs += equilibration_jobs(eq or [], PORE_EQ_PANELS, title)
     return draw_plots(jobs, report, out_dir)
 
@@ -1333,6 +1343,9 @@ def render_markdown(r: dict) -> str:
         for n in h["traj"].get("notes", []) + (h.get("film") or {}).get("notes", []):
             notes.append(f"- {h['t_c']:g} °C: {n}")
     lines += [""] + notes if notes else []
+    lines += relaxation_markdown(
+        [(h["t_c"], h.get("film")) for h in holds], r.get("resolution"), "hold (whole film)"
+    )
     lines += equilibration_markdown(r, PORE_LOCAL_NOTE, CHAIN_NOTE)
     lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
     if r.get("plots"):

@@ -1,7 +1,7 @@
 # Sweep analysis: pe_cg_amorph_n40_c240_s1 / sweep
 
 - system: `pe_cg_amorph_n40_c240_s1` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/sweep` (status finished, node rdyu-rog, run code commit 4d12e74601)
-- analysis: `sepsim analyze sweep` (D49), code commit 56b2b8890f (dirty), 2026-10-30 18:23 on rdyu-server
+- analysis: `sepsim analyze sweep` (D49), code commit 05d80a64df (dirty), 2026-10-30 19:22 on rdyu-server
 - windows: steps second half (50% of rows dropped); holds without the first 10% of rows; SEM from the statistical inefficiency (D26)
 - system mass 134737.9 g/mol (from Density × Volume)
 
@@ -59,6 +59,26 @@ Backbone sites (CG: beads; UA/AA: backbone carbons) and chains, positions relati
 | 90 | 2501 × 10 ps | 25 | 16.5 / 1280 (12.5 ns) | 396 | not diffusive (log-slope 0.98 at the longest lag) | 25.5 | 32.21 ± 0.21 | 84.2 ± 1.0 | 11.782 ± 0.190 |
 | 130 | 2501 × 10 ps | 25 | 21.1 / 1602 (12.5 ns) | 523 | not diffusive (log-slope 0.90 at the longest lag) | 12.7 | 30.84 ± 0.34 | 77.6 ± 2.1 | 10.583 ± 0.358 |
 | 160 | 2501 × 10 ps | 25 | 24.8 / 1570 (12.5 ns) | 573 | not diffusive (log-slope 0.99 at the longest lag) | 7.6 | 30.80 ± 0.39 | 78.3 ± 1.4 | 10.704 ± 0.344 |
+
+## Chain relaxation (holds; D56)
+
+End-to-end vector ACF ⟨R(t)·R(0)⟩/⟨R²⟩ and Rouse mode ACFs ⟨X_p(t)·X_p(0)⟩/⟨X_p²⟩, X_p = (1/N) Σ_n cos(pπ(n−½)/N) r_n over the backbone sites, every time origin, lags up to half the hold (12.5 ns here). Times in ns: the first 1/e crossing; if C stays above 1/e within the lag window the time is 'not reached' and only an exponential fit of ln C over 0.2 ≤ C ≤ 0.9 is given (marked extrap.: it extrapolates the early decay). τ_ee fit is that fit for R_ee. τ_1/τ_2 is 4 for Rouse chains. p²⟨X_p²⟩ (relative to p = 1, p = 2…5) is flat for an ideal Rouse chain; it falls at high p where the chain is stiffer than Gaussian on that scale. Crystallinity: D26 local alignment, fraction of backbone sites with p2 ≥ 0.4 (**uncalibrated, melt baseline**: no crystal reference, so the number is a baseline for an amorphous box, not a calibrated crystallinity) and the largest crystalline cluster (sites).
+
+| T (°C) | τ_ee 1/e (ns) | τ_ee fit (ns) | τ_1 (ns) | τ_2 (ns) | τ_3 (ns) | τ_1/τ_2 (Rouse 4) | p²⟨X_p²⟩ / p=1 (p = 2…5) | crystallinity |
+|---|---|---|---|---|---|---|---|---|
+| 25 | not reached (C 0.72 at max lag; fit 46.5, extrap.) | 46.5 (extrap.) | not reached (C 0.86 at max lag; fit 103, extrap.) | not reached (C 0.57 at max lag; fit 21.9, extrap.) | not reached (C 0.43 at max lag; fit 15, extrap.) | 4.72 (fits) | 1.26 / 1.27 / 1.18 / 1.03 | 0.168 (max 0.197; cluster ≤ 492) |
+| 90 | not reached (C 0.61 at max lag; fit 30.7, extrap.) | 30.7 (extrap.) | not reached (C 0.76 at max lag; fit 46.1, extrap.) | 9.77 | 4.89 | 4.14 (fits) | 0.82 / 0.91 / 0.83 / 0.76 | 0.112 (max 0.130; cluster ≤ 167) |
+| 130 | not reached (C 0.45 at max lag; fit 18.2, extrap.) | 18.2 (extrap.) | not reached (C 0.60 at max lag; fit 25, extrap.) | 7.44 | 3.12 | 2.84 (fits) | 0.90 / 0.94 / 0.84 / 0.78 | 0.103 (max 0.133; cluster ≤ 88) |
+| 160 | not reached (C 0.55 at max lag; fit 25.5, extrap.) | 25.5 (extrap.) | not reached (C 0.66 at max lag; fit 33.1, extrap.) | 5.87 | 2.21 | 5.03 (fits) | 0.84 / 0.81 / 0.80 / 0.72 | 0.094 (max 0.113; cluster ≤ 76) |
+
+Where τ_1 is not reached, p²τ_p of the faster modes estimates it under ideal Rouse scaling (τ_p ∝ p⁻²). Real melts show τ_p ∝ p^−2.2…−2.4 (stiffness, local friction), so p²τ_p underestimates τ_1, more so the higher p:
+
+- 25 °C: τ_1 ≈ p²τ_p from the reached modes: p=4: 104, p=5: 93.3 ns.
+- 90 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 39.1, p=3: 44, p=4: 44.9, p=5: 41.1 ns.
+- 130 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 29.7, p=3: 28, p=4: 22.8, p=5: 22.4 ns.
+- 160 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 23.5, p=3: 19.9, p=4: 18.1, p=5: 15.9 ns.
+
+CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07 before comparing with experiment.
 
 ## Equilibration
 
@@ -127,6 +147,10 @@ Chain-scale quantities (Rg, R_ee, C_n, chain COM motion) relax on the end-to-end
 **Rg, R_ee and C_n vs T**
 
 ![Rg, R_ee and C_n vs T](chain_vs_T.png)
+
+**end-to-end and Rouse mode ACFs, p²τ_p vs p**
+
+![end-to-end and Rouse mode ACFs, p²τ_p vs p](relaxation.png)
 
 **thermo vs time, analysis windows shaded, block averages ± SEM**
 

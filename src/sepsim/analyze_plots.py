@@ -540,3 +540,40 @@ def film_vs_time(path, segments, title="") -> Path:
     axes[-1].set_xlabel("time in segment (ns)")
     axes[0].set_title(title + " (shaded: analysis windows)", fontsize=9)
     return _save(fig, Path(path))
+
+
+def relaxation_curves(path, items, title="") -> Path:
+    """D56: end-to-end vector ACF (thick) and Rouse mode ACFs p = 1..5 (thin, lighter with
+    p) vs lag (log x), one colour per hold, 1/e marked; inset p²τ_p vs p (1/e times
+    reached; flat for Rouse scaling). ``items``: (T in C, traj dict) per hold."""
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    col = _hold_colors([{"t_c": t} for t, _ in items])
+    ins = ax.inset_axes([0.07, 0.08, 0.3, 0.35])
+    for t, tr in items:
+        c = tr["curves"]
+        lag = np.asarray(c["relax_lag_ps"]) / 1000.0
+        ax.semilogx(lag, c["ree_acf"], color=col[t], lw=2.0, label=f"{t:g} °C R_ee")
+        for k, acf in enumerate(c["rouse_acf"]):
+            ax.semilogx(lag, acf, color=col[t], lw=0.8, alpha=max(0.25, 0.9 - 0.15 * k))
+        modes = [m for m in tr["relaxation"]["rouse"] if m["reached"]]
+        if modes:
+            ins.plot(
+                [m["p"] for m in modes],
+                [m["p"] ** 2 * m["t_1e_ps"] / 1000.0 for m in modes],
+                "o-",
+                color=col[t],
+                ms=3,
+            )
+    ax.axhline(np.exp(-1.0), color="0.4", ls="--", lw=0.8, label="1/e")
+    ax.axhline(0.0, color="0.6", lw=0.5)
+    ax.set_xlabel("lag (ns)")
+    ax.set_ylabel("normalized ACF")
+    ax.set_title(title + "\nthick: R_ee; thin: Rouse X_p, p = 1…5 (lighter = higher p)", fontsize=9)
+    ax.legend(fontsize=7, loc="upper right")
+    ins.set_xlabel("p", fontsize=7)
+    ins.set_ylabel("p²τ_p (ns)", fontsize=7)
+    ins.tick_params(labelsize=6)
+    ins.set_ylim(bottom=0)
+    ins.set_xticks(range(1, 6))
+    ins.set_xlim(0.5, 5.5)
+    return _save(fig, Path(path))

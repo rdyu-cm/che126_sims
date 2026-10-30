@@ -280,6 +280,23 @@ def test_cli_analyze_sweep_end_to_end(fake_sweep, tmp_path, capsys):
         assert (out / f"{p}.png").stat().st_size > 1000
     for p in ("thermo_vs_T", "kappa_T", "alpha_V", "msd", "p2_acf", "chain_vs_T"):
         assert (out / f"{p}.png").stat().st_size > 1000
+    # D56: relaxation block, block series, crystallinity monitor, table and plot
+    rx = t25["relaxation"]
+    assert rx["lag_max_ps"] == pytest.approx(0.5)  # half the 11-frame hold
+    assert set(rx["ree"]) >= {"t_1e_ps", "tau_fit_ps", "reached", "extrapolated", "acf_at_max"}
+    assert [m["p"] for m in rx["rouse"]] == [1, 2, 3, 4, 5]
+    assert set(rx["rouse"][0]) >= {"amp_A2", "p2_amp_A2", "t_1e_ps", "tau_fit_ps", "reached"}
+    assert rx["p2_amp_rel"][0] == pytest.approx(1.0)
+    assert len(t25["rg"]["series"]["t_ps"]) == len(t25["rg"]["series"]["rg2_A2"]) == 11
+    assert t25["ree"]["series"]["t_ps"][-1] == pytest.approx(1.0)
+    assert len(t25["c_n"]["series"]["plateau"]) == 11
+    cr = t25["crystallinity"]
+    assert cr["available"] and cr["r_c_A"] == pytest.approx(1.4 * 4.506)
+    assert cr["fraction"]["mean"] < 0.3 and cr["label"] == "uncalibrated, melt baseline"
+    assert len(t25["curves"]["rouse_acf"]) == 5
+    assert "## Chain relaxation (holds; D56)" in md and "uncalibrated, melt baseline" in md
+    assert "τ_1/τ_2 (Rouse 4)" in md
+    assert (out / "relaxation.png").stat().st_size > 1000
     assert not (fake_sweep / "results.md").exists()
 
 

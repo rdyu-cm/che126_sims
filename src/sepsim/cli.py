@@ -291,6 +291,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="bulk `analyze sweep` results.json (default: from the pore manifest's bulk"
         " sources, results/analysis/<bulk>/sweep/results.json)",
     )
+    hold_help = (
+        "Isothermal NPT hold (D56): an extend (D47, 500 K; ../prep/hold.dcd read ahead of"
+        " hold_ext.dcd as one trajectory) or diffuse (D53) run. Thermo and κ_T of the hold,"
+        " and from its DCD: MSD, chain COM MSD and D_COM (D55 criterion), bond P2, Rg,"
+        " R_ee, C_n, the end-to-end and Rouse mode relaxation times and the crystallinity"
+        " monitor. Writes results.md, results.json and PNGs to"
+        " results/analysis/<system>/<stage>/ (or --out)."
+    )
+    ho = analyses.add_parser("hold", help=hold_help, description=hold_help)
+    ho.add_argument("run_dir", metavar="RUN_DIR", help="extend or diffuse run directory")
+    ho.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
+    )
+    ho.add_argument(
+        "--max-frames",
+        type=int,
+        default=500,
+        help="evenly spaced hold frames for the C_n plateau (default %(default)s)",
+    )
+    ho.add_argument(
+        "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
     tensile_help = (
         "Tensile runs (D54): per axis engineering strain, true stress -(P_axis - p_atm)"
         " (MPa), apparent modulus over --fit-max, Poisson ratio, peak and flow stress,"
@@ -490,7 +512,13 @@ def _analyze(args: argparse.Namespace) -> int:
     from sepsim.analyze import AnalyzeError, analyze_sweep, write_results
 
     try:
-        if args.analysis == "pore":
+        if args.analysis == "hold":
+            from sepsim.analyze_hold import analyze_hold, write_results
+
+            report, out_dir = analyze_hold(
+                args.run_dir, out=args.out, systems=args.systems, max_frames=args.max_frames
+            )
+        elif args.analysis == "pore":
             from sepsim.analyze_pore import analyze_pore, write_results
 
             report, out_dir = analyze_pore(

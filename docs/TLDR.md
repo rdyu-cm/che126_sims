@@ -123,6 +123,12 @@ Both commands also check equilibration (D51). `equilibration.png` shows thermo v
 uv run sepsim analyze pore results/runs/pe_cg_pore_w5nm_n40_c240_s1/pore             # --no-traj; --max-frames N (profile frames, default 500); --out DIR; --bulk-analysis PATH
 ```
 
+## Chain relaxation and analysing a hold (D56)
+Both analyses now report, per hold (pores: whole film), the end-to-end vector and Rouse mode (p = 1–5) relaxation times (1/e, or "not reached" with an extrapolated exponential fit; τ_1 ≈ p²τ_p from the reached modes), p²⟨X_p²⟩, `relaxation.png`, block series of Rg²/R_ee²/C_n for the dashboard, and a crystallinity monitor (D26 alignment, fixed p2 ≥ 0.4: uncalibrated, a melt baseline). `sepsim analyze hold` does the same for an `extend` (500 K; `../prep/hold.dcd` read ahead of `hold_ext.dcd`) or `diffuse` run, plus the hold thermo, κ_T and D_COM (D55 criterion); run it where the hold DCD is:
+```
+uv run sepsim analyze hold results/runs/pe_ua_amorph_n40_c240_s1/extend              # --max-frames N; --out DIR; --systems DIR
+```
+
 **Snapshots for showing the pores (PNG/movie, headless):** `scripts/render_snapshots.py`, run with the OVITO environment's Python; topology from the DCD path like the viewer, look from `ovito_view.STYLE`; pores default to a side view along x (z across the image, the films as walls left and right of the gap), all colored by chain (CG drawn as beads on bonds); pores are shifted so the gap sits in the middle of the cell (`--no-center` to skip) and drawn with periodic images (`--images NX NY NZ`; pore defaults 1 3 3 for side views, 2 2 2 for perspective; the cell outlined in black, images in grey); `--highlight N` colors N random whole chains and greys out the rest (file suffix `_hl<N>`). Bulk defaults to a perspective view. Output in the gitignored `results/figures/<system>/<stage>/`. Views `side`, `side_zup`, `front`, `top`, `perspective`; `--frames last|first,last|0,50,last|N` (N evenly spaced); `--movie mp4|gif|png` (OVITO's built-in encoder, ~1.5 s per 1600×1000 frame on 2 threads). Renders take ~0.5–2 s per image on 2 CPU threads (`--threads`, default 2).
 ```
 ~/projects/installations/ovito-viewer/bin/python scripts/render_snapshots.py \

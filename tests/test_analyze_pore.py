@@ -464,6 +464,12 @@ def test_cli_analyze_pore_end_to_end(fake_pore, tmp_path, capsys):
     assert g["g"] >= 1 and "z" in g["halves"] and isinstance(g["drift"], bool)
     assert c25["sem_vs_block"]["gamma"] and conv["Stage 3 cool 1/2 (400.0 K)"]["kind"] == "cool"
     assert h25["traj"]["profile"]["frames"] == 10
+    # D56: whole-film relaxation block, crystallinity monitor, table and plot
+    rx = h25["film"]["relaxation"]
+    assert [m["p"] for m in rx["rouse"]] == [1, 2, 3, 4, 5] and "ree" in rx
+    assert h25["film"]["crystallinity"]["available"]
+    assert "## Chain relaxation (hold (whole film)s; D56)" in md
+    assert (out / "relaxation.png").stat().st_size > 1000
     assert not (run / "results.md").exists()
 
 

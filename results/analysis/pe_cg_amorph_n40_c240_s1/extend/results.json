@@ -1,0 +1,81 @@
+{
+ "caveats": [
+  "CG time is not real time: SDK beads move \u2248 4.07\u00d7 faster than real PE, so MSD, D_COM and relaxation times are model times (docs/experiment_comparison.md).",
+  "No trajectory results: hold_ext.dcd is not in this run directory (a run on another node may keep its DCD there) or could not be read."
+ ],
+ "code_git": {
+  "branch": "chain-relaxation",
+  "commit": "05d80a64df834e22a2f67fa4fedd31d55c1ddf47",
+  "dirty": true
+ },
+ "combined_with": [],
+ "complete": true,
+ "generated": "2026-10-30T19:25:07+00:00",
+ "generated_on": "rdyu-server",
+ "kappa": {
+  "V_mean_A3": 309172.6584592878,
+  "V_std_A3": 2140.227068324266,
+  "g": 3.7098979194830073,
+  "kappa_T_GPa": 2.146176017796467,
+  "samples": 54001,
+  "sem": 0.025272507186810428
+ },
+ "method": {
+  "hold_window": "without the first 10% of rows",
+  "max_frames": 500,
+  "sem": "100 ps block means (D55)"
+ },
+ "notes": [
+  "../prep/hold.dcd not found: chain checks use the extension alone"
+ ],
+ "planned_ns": 60.0,
+ "plots": {},
+ "protocol": "extend",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/extend",
+ "run_git": {
+  "branch": "main",
+  "commit": "cb4513655e96705709ec5321e377cbc65db05d6f",
+  "dirty": true
+ },
+ "run_node": "rdyu-rog",
+ "run_status": "finished",
+ "segment": "Stage 1: NPT hold extension 60000 ps at 500 K, 1 atm",
+ "stage": "extend",
+ "stats": {
+  "density": {
+   "mean": 0.7237000380487398,
+   "sem": 7.328780443945311e-05,
+   "sem_lower_bound": false
+  },
+  "enthalpy": {
+   "mean": 492.62450165514866,
+   "sem": 3.617687706667276,
+   "sem_from": "E+p_ext*V",
+   "sem_lower_bound": false
+  },
+  "rows": 60001,
+  "rows_used": 54001,
+  "t_c": {
+   "mean": 226.83947055313797,
+   "sem": 0.03125431779977902,
+   "sem_lower_bound": false
+  },
+  "volume": {
+   "mean": 309172.6584592878,
+   "sem": 31.301138939356946,
+   "sem_lower_bound": false
+  },
+  "window_ps": 54000.0
+ },
+ "system": "pe_cg_amorph_n40_c240_s1",
+ "t_c": 226.85000000000002,
+ "t_k": 500.0,
+ "traj": {
+  "available": false,
+  "notes": [
+   "trajectory not available (hold_ext.dcd not found)"
+  ]
+ },
+ "version": 1
+}

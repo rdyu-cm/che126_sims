@@ -1,10 +1,10 @@
 # Pore analysis: pe_cg_pore_w5nm_n40_c240_s1 / pore
 
 - system: `pe_cg_pore_w5nm_n40_c240_s1` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_pore_w5nm_n40_c240_s1/pore` (status finished, node rdyu-rog, run code commit eb03f2965b)
-- analysis: `sepsim analyze pore` (D51), code commit 56b2b8890f (dirty), 2026-10-30 18:25 on rdyu-server
+- analysis: `sepsim analyze pore` (D51), code commit 05d80a64df (dirty), 2026-10-30 19:29 on rdyu-server
 - pore: nominal width 5 nm at 25 °C, wall 64.9 Å at 25 °C, Lz 114.87 Å (fixed), slab mass 134738 g/mol; units real
 - windows: steps, cool stages and the re-relaxation second half (50% of rows dropped); holds without the first 10% of rows; SEM from the statistical inefficiency (D26)
-- bulk reference: `/home/rdyu/projects/worktrees/rerun-analyses/results/analysis/pe_cg_amorph_n40_c240_s1/sweep/results.json`
+- bulk reference: `results/analysis/pe_cg_amorph_n40_c240_s1/sweep/results.json`
 
 ## Segments: box, pressure tensor and surface tension
 
@@ -152,6 +152,26 @@ Film-averaged results of the `analyze sweep` hold analysis (FFT MSD over every o
 | 130 | 1468 / 1602 | 470 / 523 | 9.1 / 12.7 | 29.25 ± 0.17 / 30.84 ± 0.34 | 71.2 ± 1.1 / 77.6 ± 2.1 | 9.09 ± 0.14 / 10.58 ± 0.36 |
 | 160 | 1723 / 1570 | 627 / 573 | 6.0 / 7.6 | 27.31 ± 0.15 / 30.80 ± 0.39 | 66.6 ± 0.5 / 78.3 ± 1.4 | 7.85 ± 0.12 / 10.70 ± 0.34 |
 
+## Chain relaxation (hold (whole film)s; D56)
+
+End-to-end vector ACF ⟨R(t)·R(0)⟩/⟨R²⟩ and Rouse mode ACFs ⟨X_p(t)·X_p(0)⟩/⟨X_p²⟩, X_p = (1/N) Σ_n cos(pπ(n−½)/N) r_n over the backbone sites, every time origin, lags up to half the hold (whole film) (12.5 ns here). Times in ns: the first 1/e crossing; if C stays above 1/e within the lag window the time is 'not reached' and only an exponential fit of ln C over 0.2 ≤ C ≤ 0.9 is given (marked extrap.: it extrapolates the early decay). τ_ee fit is that fit for R_ee. τ_1/τ_2 is 4 for Rouse chains. p²⟨X_p²⟩ (relative to p = 1, p = 2…5) is flat for an ideal Rouse chain; it falls at high p where the chain is stiffer than Gaussian on that scale. Crystallinity: D26 local alignment, fraction of backbone sites with p2 ≥ 0.4 (**uncalibrated, melt baseline**: no crystal reference, so the number is a baseline for an amorphous box, not a calibrated crystallinity) and the largest crystalline cluster (sites).
+
+| T (°C) | τ_ee 1/e (ns) | τ_ee fit (ns) | τ_1 (ns) | τ_2 (ns) | τ_3 (ns) | τ_1/τ_2 (Rouse 4) | p²⟨X_p²⟩ / p=1 (p = 2…5) | crystallinity |
+|---|---|---|---|---|---|---|---|---|
+| 25 | not reached (C 0.71 at max lag; fit 46.4, extrap.) | 46.4 (extrap.) | not reached (C 0.83 at max lag; fit 66.8, extrap.) | not reached (C 0.55 at max lag; fit 22.4, extrap.) | 9.27 | 2.98 (fits) | 1.23 / 1.23 / 1.11 / 0.89 | 0.181 (max 0.237; cluster ≤ 536) |
+| 90 | not reached (C 0.65 at max lag; fit 39.7, extrap.) | 39.7 (extrap.) | not reached (C 0.74 at max lag; fit 45.1, extrap.) | 9.78 | 4.41 | 3.83 (fits) | 0.85 / 0.87 / 0.78 / 0.71 | 0.128 (max 0.149; cluster ≤ 152) |
+| 130 | not reached (C 0.46 at max lag; fit 18.7, extrap.) | 18.7 (extrap.) | not reached (C 0.59 at max lag; fit 24.9, extrap.) | 6.95 | 2.61 | 2.59 (fits) | 1.18 / 1.07 / 0.99 / 0.96 | 0.110 (max 0.135; cluster ≤ 94) |
+| 160 | 11.5 | 14.4 | not reached (C 0.42 at max lag; fit 15.1, extrap.) | 3.59 | 1.79 | 3.60 (fits) | 1.11 / 1.23 / 1.20 / 1.11 | 0.109 (max 0.137; cluster ≤ 63) |
+
+Where τ_1 is not reached, p²τ_p of the faster modes estimates it under ideal Rouse scaling (τ_p ∝ p⁻²). Real melts show τ_p ∝ p^−2.2…−2.4 (stiffness, local friction), so p²τ_p underestimates τ_1, more so the higher p:
+
+- 25 °C: τ_1 ≈ p²τ_p from the reached modes: p=3: 83.4, p=4: 78.4, p=5: 73 ns.
+- 90 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 39.1, p=3: 39.7, p=4: 29.8, p=5: 28 ns.
+- 130 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 27.8, p=3: 23.5, p=4: 20.5, p=5: 18.8 ns.
+- 160 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 14.3, p=3: 16.1, p=4: 15.1, p=5: 13.5 ns.
+
+CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07 before comparing with experiment.
+
 ## Equilibration
 
 Every average uses only the analysis window: steps second half (50% of rows dropped), holds without the first 10% of rows (the rest is equilibration after the T change; see `equilibration.png`, windows shaded, block averages ± SEM overlaid, and `equilibration_holds.png`). Drift: the window's two halves differ by > 2 combined SEM (statistical inefficiency).
@@ -231,6 +251,10 @@ Chain-scale quantities (Rg, R_ee, C_n, chain COM motion) relax on the end-to-end
 **film thickness, gap, interior density and closest approach vs time (holds)**
 
 ![film thickness, gap, interior density and closest approach vs time (holds)](film_vs_time.png)
+
+**whole film: end-to-end and Rouse mode ACFs, p²τ_p vs p**
+
+![whole film: end-to-end and Rouse mode ACFs, p²τ_p vs p](relaxation.png)
 
 **thermo vs time, analysis windows shaded, block averages ± SEM**
 
