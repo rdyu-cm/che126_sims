@@ -237,9 +237,32 @@ def test_cli_analyze_sweep_end_to_end(fake_sweep, tmp_path, capsys):
     md = (out / "results.md").read_text()
     assert "## Isothermal compressibility" in md and "trajectory not available" in md
     assert "not comparable to experiment" in md
+    assert set(r["segments"][0]["drift"]) == {"density", "enthalpy"}
+    assert set(r["segments"][0]["convergence"]) == {"density", "enthalpy"}
+    assert "## Equilibration" in md and "| drift |" in md
+    c = r["convergence"][0]
+    assert c["kind"] == "hold" and set(c["quantities"]) == {"T", "density", "volume", "enthalpy"}
+    assert c["window"][0] > c["t_start_ps"] and c["sem_vs_block"]["density"]
+    for p in ("equilibration", "equilibration_holds"):
+        assert (out / f"{p}.png").stat().st_size > 1000
     for p in ("thermo_vs_T", "kappa_T", "alpha_V", "msd", "p2_acf", "chain_vs_T"):
         assert (out / f"{p}.png").stat().st_size > 1000
     assert not (fake_sweep / "results.md").exists()
+
+
+def test_drift_flags_and_block_convergence():
+    from sepsim.analyze import block_averages, block_convergence, drift_flags
+
+    rng = np.random.default_rng(9)
+    flat = _ar1(rng, 4000, 1.0, 0.5)
+    ramp = flat + np.linspace(0.0, 3.0, 4000)
+    d = drift_flags({"flat": flat, "ramp": ramp, "const": np.ones(4000)}, 0.1)
+    assert not d["flat"]["drift"] and d["ramp"]["drift"] and "const" not in d
+    c = block_convergence(flat, 0.1)
+    assert c["converged"] and set(c["block_sem"]) == {"32", "16", "8"}
+    assert c["block_sem"]["32"] == pytest.approx(c["sem"], rel=0.5)
+    b = block_averages(np.arange(4000.0), ramp)
+    assert len(b) == 8 and b[-1]["mean"] > b[0]["mean"]
 
 
 def test_cli_analyze_rejects_pore_and_missing(tmp_path, capsys):

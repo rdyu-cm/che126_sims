@@ -172,3 +172,72 @@ def diffusion_coefficient(
     return DiffusionFit(
         True, slope / (2 * dim), err / (2 * dim), float(t[k]), float(t[-1]), slope_end, slope_max
     )
+
+
+def _origins(n_frames: int, lag: int, max_origins: int | None) -> np.ndarray:
+    k = np.arange(n_frames - lag)
+    if max_origins is not None and len(k) > max_origins:
+        k = np.unique(np.linspace(0, len(k) - 1, max_origins).round().astype(int))
+    return k
+
+
+def _chunks(origins: np.ndarray, per_frame: int, elems: int = 2_000_000):
+    size = max(1, elems // max(1, per_frame))
+    for s in range(0, len(origins), size):
+        yield origins[s : s + size]
+
+
+def msd_by_class(positions, labels, lags, n_classes: int, max_origins: int | None = None):
+    """Squared displacements per Cartesian component, split by a class fixed at the
+    time origin (e.g. surface layer vs film interior).
+
+    ``positions`` (n_frames, n_sites, 3) unwrapped; ``labels`` (n_frames, n_sites)
+    integer class of each site at each frame (negative: not counted); ``lags`` frame
+    counts >= 1. For lag m every origin k (or ``max_origins`` evenly spaced ones)
+    contributes |r_i(k+m) - r_i(k)|^2 per component to the class labels[k, i]. Returns
+    (sums (n_lags, n_classes, 3), counts (n_lags, n_classes)) so that several
+    trajectories (bursts) can be pooled; MSD_component = sums / counts.
+    """
+    x = np.asarray(positions)
+    lab = np.asarray(labels)
+    n, n_sites = x.shape[:2]
+    sums = np.zeros((len(lags), n_classes, 3))
+    counts = np.zeros((len(lags), n_classes))
+    for j, m in enumerate(lags):
+        for o in _chunks(_origins(n, int(m), max_origins), n_sites * 3):
+            d2 = (x[o + m].astype(float) - x[o]) ** 2
+            c = lab[o].ravel()
+            ok = c >= 0
+            for k in range(3):
+                sums[j, :, k] += np.bincount(c[ok], d2[..., k].ravel()[ok], minlength=n_classes)
+            counts[j] += np.bincount(c[ok], minlength=n_classes)
+    return sums, counts
+
+
+def unit_bonds(x, a, b) -> np.ndarray:
+    """Unit vectors from site ``a`` to site ``b`` of positions x (..., n_sites, 3)."""
+    v = x[..., b, :].astype(float) - x[..., a, :]
+    return v / np.linalg.norm(v, axis=-1, keepdims=True)
+
+
+def p2_by_class(positions, a, b, labels, lags, n_classes: int, max_origins: int | None = None):
+    """Bond reorientation <P2(u(0) . u(t))> split by a class fixed at the time origin.
+
+    Bonds run from site ``a[j]`` to ``b[j]`` of ``positions`` (n_frames, n_sites, 3);
+    ``labels`` (n_frames, n_bonds). Same origin sampling and return convention as
+    :func:`msd_by_class`: (sums (n_lags, n_classes), counts (n_lags, n_classes)).
+    """
+    x = np.asarray(positions)
+    lab = np.asarray(labels)
+    n = x.shape[0]
+    sums = np.zeros((len(lags), n_classes))
+    counts = np.zeros((len(lags), n_classes))
+    for j, m in enumerate(lags):
+        for o in _chunks(_origins(n, int(m), max_origins), len(a) * 6):
+            cos = np.sum(unit_bonds(x[o], a, b) * unit_bonds(x[o + m], a, b), axis=-1)
+            p2 = 1.5 * cos**2 - 0.5
+            c = lab[o].ravel()
+            ok = c >= 0
+            sums[j] += np.bincount(c[ok], p2.ravel()[ok], minlength=n_classes)
+            counts[j] += np.bincount(c[ok], minlength=n_classes)
+    return sums, counts

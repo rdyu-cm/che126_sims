@@ -242,7 +242,7 @@ def build_parser() -> argparse.ArgumentParser:
         " and classical Cp fits (25-160, 25-90, 90-160 C), and per hold from its DCD and"
         " D46 burst DCDs: backbone-site and chain COM MSD, D_COM, bond P2 autocorrelation,"
         " Rg, R_ee, C_n. Writes results.md, results.json and PNGs to"
-        " results/analysis/<system>/<stage>/ (or --out). Pore runs are not supported yet."
+        " results/analysis/<system>/<stage>/ (or --out). Pore runs: `sepsim analyze pore`."
     )
     sw = analyses.add_parser("sweep", help=sweep_help, description=sweep_help)
     sw.add_argument("run_dir", metavar="RUN_DIR", help="sweep run directory (in.sweep, log.lammps)")
@@ -258,6 +258,38 @@ def build_parser() -> argparse.ArgumentParser:
     sw.add_argument("--no-traj", action="store_true", help="thermo only: skip the DCD analyses")
     sw.add_argument(
         "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
+    pore_help = (
+        "Dry slit pore run (in.pore, D51): per segment Lx, Ly, Pxx, Pyy, Pzz and the surface"
+        " tension γ = (Lz/2)[Pzz − (Pxx+Pyy)/2] (mean ± SEM) and dγ/dT fits; per hold the"
+        " density profile about the film centre (plateau vs bulk, Gibbs and 50%% film"
+        " thickness, gap, 10-90 widths, clear gap), surface vs interior MSD and bond P2,"
+        " ⟨P2(cos θ_z)⟩ vs z, Rg components by layer, whole-film MSD/P2/Rg/C_n vs bulk; over"
+        " the sweep grid film thickness and interior density vs T, α_z and film α_V vs bulk,"
+        " classical Cv and the surface excess energy. Writes results.md, results.json and"
+        " PNGs to results/analysis/<system>/pore/ (or --out)."
+    )
+    po = analyses.add_parser("pore", help=pore_help, description=pore_help)
+    po.add_argument("run_dir", metavar="RUN_DIR", help="pore run directory (in.pore, log.lammps)")
+    po.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/pore)"
+    )
+    po.add_argument(
+        "--max-frames",
+        type=int,
+        default=500,
+        help="evenly spaced hold frames for the profile, gap, orientation, Rg and C_n"
+        " (default %(default)s)",
+    )
+    po.add_argument("--no-traj", action="store_true", help="thermo only: skip the DCD analyses")
+    po.add_argument(
+        "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
+    po.add_argument(
+        "--bulk-analysis",
+        metavar="PATH",
+        help="bulk `analyze sweep` results.json (default: from the pore manifest's bulk"
+        " sources, results/analysis/<bulk>/sweep/results.json)",
     )
     tensile_help = (
         "Tensile runs (D54): per axis engineering strain, true stress -(P_axis - p_atm)"
@@ -458,16 +490,30 @@ def _analyze(args: argparse.Namespace) -> int:
     from sepsim.analyze import AnalyzeError, analyze_sweep, write_results
 
     try:
-        report, out_dir = analyze_sweep(
-            args.run_dir,
-            out=args.out,
-            systems=args.systems,
-            max_frames=args.max_frames,
-            traj=not args.no_traj,
-        )
+        if args.analysis == "pore":
+            from sepsim.analyze_pore import analyze_pore, write_results
+
+            report, out_dir = analyze_pore(
+                args.run_dir,
+                out=args.out,
+                systems=args.systems,
+                max_frames=args.max_frames,
+                traj=not args.no_traj,
+                bulk_analysis=args.bulk_analysis,
+            )
+        else:
+            from sepsim.analyze import analyze_sweep, write_results
+
+            report, out_dir = analyze_sweep(
+                args.run_dir,
+                out=args.out,
+                systems=args.systems,
+                max_frames=args.max_frames,
+                traj=not args.no_traj,
+            )
         write_results(report, out_dir)
     except (AnalyzeError, OSError) as exc:
-        print(f"sepsim analyze sweep: error: {exc}", file=sys.stderr)
+        print(f"sepsim analyze {args.analysis}: error: {exc}", file=sys.stderr)
         return 1
     print(out_dir / "results.md")
     return 0

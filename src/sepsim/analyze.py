@@ -22,7 +22,8 @@ DCDs) this writes ``results.md``, ``results.json`` and PNG plots into
 The segment parser, log reader and thermo concatenation are those of
 :mod:`sepsim.progress`; the DCDs are read with MDAnalysis ``DCDReader`` (id-sorted,
 unwrapped, D39). Holds without a DCD are reported as "trajectory not available".
-Pore decks (``in.pore``) are rejected for now.
+Pore decks (``in.pore``) are rejected with a pointer to `sepsim analyze pore` (D51,
+:mod:`sepsim.analyze_pore`).
 """
 
 from __future__ import annotations
@@ -217,6 +218,236 @@ def _chi2_red(x, y, s, slope, intercept) -> float | None:
     if len(x) <= 2:
         return None
     return float(np.sum(((y - (slope * x + intercept)) / s) ** 2) / (len(x) - 2))
+
+
+# --------------------------------------------------------------------------- equilibration
+
+EQ_BLOCKS = 8  # block averages per segment in the equilibration plots
+EQ_POINTS = 500  # points per series and segment kept in results.json "convergence"
+CONV_BLOCKS = (32, 16, 8)  # block counts of the block-average SEM check
+
+
+def drift_flags(series: dict, skip: float) -> dict:
+    """Halves of the analysis window (rows after ``skip``) compared per named series:
+    :func:`sepsim.analysis.chain.drift_check` (mean difference > 2 combined SEM)."""
+    from sepsim.analysis.chain import drift_check
+
+    out = {}
+    for name, x in series.items():
+        x = np.asarray(x, dtype=float)
+        w = x[int(np.floor(skip * len(x))) :]
+        if len(w) < 12 or np.ptp(w) == 0:
+            continue
+        try:
+            a, b, delta, sem, drift = drift_check(w)
+        except ValueError:  # a zero-variance half
+            continue
+        out[name] = {"first": a, "second": b, "delta": delta, "sem": sem, "drift": drift}
+    return out
+
+
+def block_averages(t, x, n_blocks: int = EQ_BLOCKS) -> list[dict]:
+    """Mean +- SEM (statistical inefficiency) of ``n_blocks`` equal blocks of a series,
+    with each block's mid time."""
+    t, x = np.asarray(t, dtype=float), np.asarray(x, dtype=float)
+    out = []
+    for idx in np.array_split(np.arange(len(x)), n_blocks):
+        if len(idx) >= 3:
+            ms = _mean_sem(x[idx])
+            out.append({"t": float(t[idx].mean()), "mean": ms["mean"], "sem": ms["sem"]})
+    return out
+
+
+def block_convergence(x, skip: float) -> dict | None:
+    """Block-average check of the window's SEM: the SEM from the statistical inefficiency
+    (D26) vs the SEM of the means of ``CONV_BLOCKS`` blocks; once blocks are longer than
+    the correlation time the block SEM plateaus at the statistical-inefficiency value.
+    ``converged``: the 8-block SEM is within a factor 2 of it."""
+    x = np.asarray(x, dtype=float)
+    w = x[int(np.floor(skip * len(x))) :]
+    ms = _mean_sem(w)
+    if ms is None or not ms["sem"]:
+        return None
+    blocks = {}
+    for nb in CONV_BLOCKS:
+        if len(w) >= 3 * nb:
+            means = np.array([b.mean() for b in np.array_split(w, nb)])
+            blocks[str(nb)] = float(means.std(ddof=1) / np.sqrt(nb))
+    last = blocks.get(str(CONV_BLOCKS[-1]))
+    return {
+        "sem": ms["sem"],
+        "block_sem": blocks,
+        "converged": None if last is None else bool(last <= 2.0 * ms["sem"]),
+    }
+
+
+def quantity_convergence(t_ps, x, skip: float) -> dict:
+    """Convergence record of one series over a segment (``results.json`` ``convergence``):
+    the series thinned to <= ``EQ_POINTS`` points (t_ps, value), ``EQ_BLOCKS`` block
+    averages over the whole segment, and over the analysis window (after ``skip``) the
+    mean +- SEM, statistical inefficiency g, and the halves test (second - first half,
+    combined SEM, their ratio z, drift if |z| > 2)."""
+    from sepsim.analysis.chain import drift_check
+    from sepsim.analysis.stats import timeseries_mean
+
+    t, x = np.asarray(t_ps, dtype=float), np.asarray(x, dtype=float)
+    k = int(np.floor(skip * len(x)))
+    w = x[k:]
+    step = max(1, -(-len(x) // EQ_POINTS))
+    out: dict = {
+        "t_ps": _round(t[::step]),
+        "value": _round(x[::step], 8),
+        "blocks": block_averages(t, x),
+        "mean": float(w.mean()) if len(w) else None,
+        "sem": None,
+        "g": None,
+        "halves": None,
+        "drift": None,
+    }
+    if len(w) >= 3 and np.ptp(w) > 0:
+        tm = timeseries_mean(w)
+        out.update(sem=tm.sem, g=tm.g)
+        if len(w) >= 12:
+            try:
+                _, _, delta, sem, drift = drift_check(w)
+                out.update(
+                    halves={"delta": delta, "sem": sem, "z": delta / sem if sem else None},
+                    drift=drift,
+                )
+            except ValueError:
+                pass
+    elif len(w):
+        out.update(sem=0.0, g=1.0)
+    return out
+
+
+SEM_BLOCKS = (128, 64, 32, 16, 8, 4)  # block counts of the SEM-vs-block-size curve
+
+
+def sem_vs_block(t_ps, x, skip: float) -> list[dict]:
+    """SEM of the window mean from the means of n blocks, for n in ``SEM_BLOCKS`` (>= 3
+    rows per block), vs the block length; plateaus at the statistical-inefficiency SEM
+    once blocks outlast the correlation time."""
+    t, x = np.asarray(t_ps, dtype=float), np.asarray(x, dtype=float)
+    k = int(np.floor(skip * len(x)))
+    w, tw = x[k:], t[k:]
+    dt = float(np.median(np.diff(tw))) if len(tw) > 1 else 0.0
+    out = []
+    for nb in SEM_BLOCKS:
+        if len(w) >= 3 * nb:
+            means = np.array([b.mean() for b in np.array_split(w, nb)])
+            out.append(
+                {
+                    "n_blocks": nb,
+                    "block_ps": len(w) // nb * dt,
+                    "sem": float(means.std(ddof=1) / np.sqrt(nb)),
+                }
+            )
+    return out
+
+
+def segment_convergence(name: str, kind: str, thermo: dict, skip: float, cols: dict) -> dict:
+    """``results.json`` ``convergence`` entry of one segment: name, kind, start/end time
+    and analysis window (ps), :func:`quantity_convergence` per series in ``cols``, and for
+    holds the :func:`sem_vs_block` curve per series."""
+    t = np.asarray(thermo["Time"], dtype=float) / 1000.0  # fs -> ps
+    k = int(np.floor(skip * len(t)))
+    out = {
+        "name": name,
+        "kind": kind,
+        "t_start_ps": float(t[0]),
+        "t_end_ps": float(t[-1]),
+        "window": [float(t[k]), float(t[-1])],
+        "skip": skip,
+        "quantities": {q: quantity_convergence(t, x, skip) for q, x in cols.items()},
+    }
+    if kind == "hold":
+        out["sem_vs_block"] = {q: sem_vs_block(t, x, skip) for q, x in cols.items()}
+    return out
+
+
+def drift_cell(row: dict) -> str:
+    """results.md drift column: the quantities whose window drifts, else blank."""
+    return ", ".join(q for q, d in (row.get("drift") or {}).items() if d["drift"])
+
+
+def equilibration_markdown(r: dict, local: str, chain_scale: str) -> list[str]:
+    """The results.md "Equilibration" section shared by the sweep and pore analyses:
+    windows, segments whose window drifts, the block-average SEM check of the holds, and
+    local vs chain-scale quantities (chain COM MSD over <Rg^2> per hold)."""
+    m = r["method"]
+    lines = [
+        "",
+        "## Equilibration",
+        "",
+        (
+            f"Every average uses only the analysis window: steps {m['step_window']}, holds"
+            f" {m['hold_window']} (the rest is equilibration after the T change; see"
+            " `equilibration.png`, windows shaded, block averages ± SEM overlaid, and"
+            " `equilibration_holds.png`). Drift: the window's two halves differ by > 2"
+            " combined SEM (statistical inefficiency)."
+        ),
+        "",
+    ]
+    flagged = []
+    for s in r["segments"]:
+        bad = [
+            f"{q} {d['delta']:+.4g} ± {d['sem']:.2g}"
+            for q, d in (s.get("drift") or {}).items()
+            if d["drift"]
+        ]
+        if bad:
+            flagged.append(f"| {s['name']} | {s['t_set_c']:.4g} | {'; '.join(bad)} |")
+    tested = sorted({q for s in r["segments"] for q in (s.get("drift") or {})})
+    if flagged:
+        lines += [
+            f"Segments with a drifting window (tested: {', '.join(tested)}):",
+            "",
+            "| segment | T set (°C) | drift (second − first half ± SEM) |",
+            "|---|---|---|",
+            *flagged,
+        ]
+    else:
+        lines.append(f"No segment window drifts (tested: {', '.join(tested) or 'none'}).")
+    conv = [s for s in r["segments"] if s.get("convergence")]
+    if conv:
+        lines += [
+            "",
+            (
+                "Block-average check of the hold SEMs: SEM of the means of 32 / 16 / 8 blocks vs"
+                " the statistical-inefficiency SEM (blocks longer than the correlation time"
+                " plateau at it; flagged if the 8-block SEM exceeds it by > 2×)."
+            ),
+            "",
+            "| T (°C) | quantity | SEM (g) | block SEM 32 / 16 / 8 | converged |",
+            "|---|---|---|---|---|",
+        ]
+        for s in conv:
+            for q, c in s["convergence"].items():
+                if not c:
+                    continue
+                b = " / ".join(
+                    f"{c['block_sem'].get(k, float('nan')):.3g}" for k in ("32", "16", "8")
+                )
+                ok = {True: "yes", False: "**no**", None: "n/a"}[c["converged"]]
+                lines.append(f"| {s['t_set_c']:g} | {q} | {c['sem']:.3g} | {b} | {ok} |")
+    lines += ["", local, "", chain_scale]
+    for h in r.get("holds", []):
+        tr = h.get("film") or h.get("traj") or {}
+        if not tr.get("available") or "com_msd" not in tr:
+            continue
+        ratio = tr["com_msd"]["msd_at_max_A2"] / tr["rg"]["rg2_A2"]["mean"]
+        verdict = (
+            "chains have moved about their own size"
+            if ratio >= 1
+            else "chains have **not** moved their own size: chain-scale averages sample a"
+            " partly relaxed set of chain configurations"
+        )
+        lines.append(
+            f"- {h['t_c']:g} °C: chain COM MSD at {tr['com_msd']['lag_max_ps'] / 1000:g} ns"
+            f" / ⟨Rg²⟩ = {ratio:.2f}; {verdict}."
+        )
+    return lines
 
 
 # --------------------------------------------------------------------------- trajectories
@@ -545,8 +776,8 @@ def analyze_sweep(
     protocol = deck.name.split(".", 1)[1]
     if protocol == "pore":
         raise AnalyzeError(
-            f"{run_dir}: pore runs (in.pore, D48: NVT, fixed lateral area) are not supported"
-            " yet; `sepsim analyze sweep` handles bulk NPT sweeps only"
+            f"{run_dir}: pore runs (in.pore, D48: NVT, fixed lateral area) are analysed with"
+            " `sepsim analyze pore` (D51); `sepsim analyze sweep` handles bulk NPT sweeps only"
         )
     if protocol != "sweep":
         raise AnalyzeError(f"{run_dir}: deck {deck.name} is not a sweep (in.sweep)")
@@ -580,7 +811,7 @@ def analyze_sweep(
         },
         "notes": [],
     }
-    rows, mass = [], None
+    rows, mass, eq = [], None, []
     for seg, th in zip(segments, thermo, strict=True):
         if seg.sweep_index is None or seg.vdos:
             continue
@@ -596,6 +827,24 @@ def analyze_sweep(
         if th is not None and len(th.get("Step", ())) >= 6:
             skip = HOLD_SKIP if seg.sweep_kind == "hold" else STEP_SKIP
             row["stats"] = window_stats(th, skip)
+            main = {
+                k: th[c] for k, c in (("density", "Density"), ("enthalpy", "Enthalpy")) if c in th
+            }
+            row["drift"] = drift_flags(main, skip)
+            if seg.sweep_kind == "hold":
+                row["convergence"] = {k: block_convergence(x, skip) for k, x in main.items()}
+            cols = {
+                k: th[c]
+                for k, c in (
+                    ("T", "Temp"),
+                    ("density", "Density"),
+                    ("volume", "Volume"),
+                    ("enthalpy", "Enthalpy"),
+                )
+                if c in th
+            }
+            if "Time" in th:
+                eq.append(segment_convergence(row["name"], seg.sweep_kind, th, skip, cols))
             if mass is None and "Density" in th and "Volume" in th:
                 mass = float(th["Density"][0] * th["Volume"][0] * AVOGADRO * A3_CM3)
             if seg.sweep_kind == "hold":
@@ -653,12 +902,47 @@ def analyze_sweep(
             " represent, so MSD, D_COM and P2 times are model times (not rescaled)."
         )
     report["caveats"] = caveats
+    report["convergence"] = eq
     if plots:
-        report["plots"] = make_plots(report, out_dir)
+        report["plots"] = make_plots(report, out_dir, eq)
     return report, out_dir
 
 
-def make_plots(report: dict, out_dir: Path) -> dict:
+SWEEP_EQ_PANELS = (
+    ("T", "T (K)"),
+    ("density", "density (g/cm³)"),
+    ("volume", "V (Å³)"),
+    ("enthalpy", "H (kcal/mol)"),
+)
+
+
+def equilibration_jobs(eq: list[dict], panels, title: str) -> list:
+    """Plot jobs for ``equilibration.png`` (all segments on one time axis) and
+    ``equilibration_holds.png`` (one column per hold)."""
+    from sepsim import analyze_plots as ap
+
+    if not eq:
+        return []
+    jobs = [
+        (
+            "equilibration",
+            "thermo vs time, analysis windows shaded, block averages ± SEM",
+            lambda p: ap.equilibration(p, eq, panels, title),
+        )
+    ]
+    holds = [e for e in eq if e["kind"] == "hold"]
+    if holds:
+        jobs.append(
+            (
+                "equilibration_holds",
+                "holds: thermo vs time, analysis window shaded, block averages ± SEM",
+                lambda p: ap.equilibration_holds(p, holds, panels, title),
+            )
+        )
+    return jobs
+
+
+def make_plots(report: dict, out_dir: Path, eq: list[dict] | None = None) -> dict:
     from sepsim import analyze_plots as ap
 
     title = f"{report['system']} / {report['stage']}"
@@ -690,6 +974,13 @@ def make_plots(report: dict, out_dir: Path) -> dict:
             ("p2_acf", "bond P2 autocorrelation", lambda p: ap.p2_curves(p, tr, title)),
             ("chain_vs_T", "Rg, R_ee and C_n vs T", lambda p: ap.chain_vs_t(p, tr, title)),
         ]
+    jobs += equilibration_jobs(eq or [], SWEEP_EQ_PANELS, title)
+    return draw_plots(jobs, report, out_dir)
+
+
+def draw_plots(jobs, report: dict, out_dir: Path) -> dict:
+    """Draw (name, title, draw(path)) jobs into ``out_dir``/<name>.png; a failing plot is
+    noted in the report and skipped. Returns {name: {file, title}}."""
     out = {}
     out_dir.mkdir(parents=True, exist_ok=True)
     for name, desc, draw in jobs:
@@ -743,9 +1034,9 @@ def render_markdown(r: dict) -> str:
         "",
         (
             "| # | segment | T set (°C) | window (ns) | T (°C) | density (g/cm³) | H (kcal/mol) |"
-            " V (Å³) |"
+            " V (Å³) | drift |"
         ),
-        "|---|---|---|---|---|---|---|---|",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for s in r["segments"]:
         st = s.get("stats") or {}
@@ -754,8 +1045,9 @@ def render_markdown(r: dict) -> str:
             f"| {s['index']} | {s['kind']} | {s['t_set_c']:g} | {win} |"
             f" {_pm(st.get('t_c'), '.2f')} | {_pm(st.get('density'), '.5f')} |"
             f" {_pm(st.get('enthalpy'), '.1f')} | {_pm(st.get('volume'), '.0f')} |"
+            f" {drift_cell(s)} |"
             if st
-            else f"| {s['index']} | {s['kind']} | {s['t_set_c']:g} | not complete | | | | |"
+            else f"| {s['index']} | {s['kind']} | {s['t_set_c']:g} | not complete | | | | | |"
         )
     lines += [
         "",
@@ -848,6 +1140,7 @@ def render_markdown(r: dict) -> str:
             f" {_pm(t['ree']['ree_A'], '.1f')} | {_pm(t['c_n']['plateau'], '.3f')} |"
         )
     lines += [""] + notes if notes else []
+    lines += equilibration_markdown(r, LOCAL_NOTE, CHAIN_NOTE)
     lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
     if r.get("plots"):
         lines += ["", "## Plots", ""]
@@ -856,16 +1149,31 @@ def render_markdown(r: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+LOCAL_NOTE = (
+    "Local quantities (density, enthalpy, κ_T, segmental MSD, bond P2: relaxation times"
+    " ~10–100 ps in CG, the bond P2 1/e time above) equilibrate within the dropped part"
+    " of each segment; their windows are what the drift and block checks test."
+)
+CHAIN_NOTE = (
+    "Chain-scale quantities (Rg, R_ee, C_n, chain COM motion) relax on the end-to-end"
+    " time (CG C240 at 25 °C: of order 100 ns; C1500 far longer), longer than a 25 ns"
+    " hold: their hold"
+    " averages describe the chain configurations carried in from the 500 K equilibration"
+    " and cooling rather than a re-equilibrated state at T. Per hold:"
+)
+
+
 def _f(x, fmt: str = ".2f") -> str:
     return "n/a" if x is None else f"{x:{fmt}}"
 
 
-def write_results(report: dict, out_dir: Path) -> None:
-    """Write results.json and results.md atomically into ``out_dir``."""
+def write_results(report: dict, out_dir: Path, render=None) -> None:
+    """Write results.json and results.md (``render``, default the sweep report's
+    :func:`render_markdown`) atomically into ``out_dir``."""
     out_dir.mkdir(parents=True, exist_ok=True)
     for name, text in (
         (JSON_NAME, json.dumps(report, indent=1, sort_keys=True, default=_json) + "\n"),
-        (MD_NAME, render_markdown(report)),
+        (MD_NAME, (render or render_markdown)(report)),
     ):
         tmp = out_dir / (name + ".tmp")
         tmp.write_text(text)
