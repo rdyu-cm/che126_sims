@@ -4,13 +4,21 @@ Runs in the OVITO environment, not the project's:
 
     ~/projects/installations/ovito-viewer/bin/python scripts/render_snapshots.py \\
         results/runs/<system>/<stage>/<file>.dcd [--frames last] [--views side,top] \\
-        [--color z] [--replicate-z 2] [--movie mp4] [--out DIR]
+        [--color z] [--images 1 3 3] [--highlight 8] [--movie mp4] [--out DIR]
 
 The topology is the system's data.lmp, found from the DCD path like scripts/ovito_view.py
 (.../results/runs/<system>/<stage>/<file>.dcd -> .../systems/<system>/data.lmp); the look
-(radii, colors, wrapping, hidden H) is ovito_view.STYLE. Pore systems (``_pore`` in the id)
-default to a side view along x colored by z; bulk systems to a perspective view colored
-by chain. Images go to results/figures/<system>/<stage>/ (gitignored) by default.
+(radii, bond width, colors, wrapping, hidden H) is ovito_view.STYLE. Chains are colored by
+molecule id; --highlight N instead colors N random whole chains and greys out the rest.
+
+Pore systems (``_pore`` in the id) default to a side view along x (z across the image).
+Each frame is shifted along z so the gap sits mid-cell (ovito_view.center_gap; --no-center
+keeps the simulated z), and periodic images are drawn around the cell: by default none
+along the line of sight and three along z and across the film (side: 1 3 3, i.e.
+gap | film | gap | film | gap with the cell's own gap in the middle; perspective: 2 2 2).
+The cell is outlined in black, the images in grey. Bulk systems default to a perspective
+view without images. Images go to results/figures/<system>/<stage>/ (gitignored) by
+default, named <dcd>_<view>[_hl<N>]_f<frame>.png.
 
 OVITO 3.17 (pip) needs a Vulkan driver for every renderer, Tachyon included. Without a
 system driver (``sudo apt install mesa-vulkan-drivers``), the user-space Mesa lavapipe
@@ -21,6 +29,7 @@ the script re-executes itself with VK_DRIVER_FILES and LD_LIBRARY_PATH pointing 
 from __future__ import annotations
 
 import argparse
+import itertools
 import os
 import sys
 import time
@@ -42,7 +51,18 @@ VIEWS = {
     "top": ("Ortho", (0.0, 0.0, -1.0), (0.0, 1.0, 0.0)),  # down z: the film surface
     "perspective": ("Perspective", None, (0.0, 0.0, 1.0)),
 }
-MARGIN = 1.1  # zoom out from the fitted view, leaving room for the label
+# Default periodic images (NX, NY, NZ) of pore systems per view: none along the line of
+# sight, three along z (gap | film | gap | film | gap with the cell's gap in the middle)
+# and across the film so it reads as a continuous sheet.
+PORE_IMAGES = {
+    "side": [1, 3, 3],
+    "side_zup": [1, 3, 3],
+    "front": [3, 1, 3],
+    "top": [3, 3, 1],
+    "perspective": [2, 2, 2],
+}
+IMAGE_CELL_COLOR = (0.75, 0.75, 0.75)
+MARGIN = 1.2  # zoom out from the fitted view, leaving room for the label
 
 
 def parse_args(argv=None):
@@ -60,13 +80,31 @@ def parse_args(argv=None):
         help="comma list of " + ", ".join(VIEWS) + " (default: side for pores,"
         " perspective for bulk)",
     )
-    ap.add_argument("--color", choices=["chain", "z", "type"], help="default: z for pores, chain")
     ap.add_argument(
-        "--replicate-z",
+        "--color", choices=["chain", "z", "type"], default="chain", help="default %(default)s"
+    )
+    ap.add_argument(
+        "--images",
         type=int,
-        default=1,
-        help="show N periodic images along z (pores: 2"
-        " puts the whole gap between two films; default 1)",
+        nargs=3,
+        metavar=("NX", "NY", "NZ"),
+        help="periodic images to draw per direction, centred on the cell (outlined black;"
+        " the images in grey), for every view. Default for pores, per view: side/side_zup"
+        " 1 3 3 (gap | film | gap | film | gap, the film as a sheet), front 3 1 3, top 3 3 1,"
+        " perspective 2 2 2; bulk 1 1 1",
+    )
+    ap.add_argument(
+        "--highlight",
+        type=int,
+        default=0,
+        metavar="N",
+        help="color N random whole chains brightly, the rest faint grey (default off)",
+    )
+    ap.add_argument("--seed", type=int, default=0, help="--highlight chain choice (default 0)")
+    ap.add_argument(
+        "--no-center",
+        action="store_true",
+        help="pores: keep z as simulated (default: shift along z so the gap is mid-cell)",
     )
     ap.add_argument("--no-wrap", action="store_true", help="draw unwrapped coordinates")
     ap.add_argument("--data", help="topology (default: <project>/systems/<system>/data.lmp)")
@@ -115,6 +153,17 @@ def ensure_vulkan(threads: int) -> None:
         os.execve(sys.executable, [sys.executable, *sys.argv], env)
 
 
+def _image_range(n: int) -> range:
+    """Image indices ReplicateModifier makes for n copies: -(n-1)//2 .. n//2."""
+    return range(-((n - 1) // 2), n // 2 + 1)
+
+
+def _drop_particles(frame, data):
+    """Pipeline function: keep only the cell (for the image outlines)."""
+    if data.particles is not None:
+        data.objects.remove(data.particles)
+
+
 def pick_frames(spec: str, n: int) -> list[int]:
     """Frame indices for ``--frames`` (see the option help); out-of-range indices fail."""
     spec = spec.strip()
@@ -145,9 +194,11 @@ def main(argv=None) -> int:
     ensure_vulkan(args.threads)
 
     sys.path.insert(0, str(SCRIPTS))
+    import numpy as np
     import ovito
     import ovito_view as ov
     from ovito.modifiers import ReplicateModifier
+    from ovito.pipeline import Pipeline
     from ovito.qt_compat import QtCore
     from ovito.vis import (
         OpenGLRenderer,
@@ -177,7 +228,8 @@ def main(argv=None) -> int:
         if data is None:
             raise SystemExit(f"no systems/{system}/data.lmp under {', '.join(map(str, roots))}")
     pore = "_pore" in system
-    color = args.color or ("z" if pore else "chain")
+    if args.images and min(args.images) < 1:
+        raise SystemExit("--images: each count must be >= 1")
     views = (args.views or ("side" if pore else "perspective")).split(",")
     bad = [v for v in views if v not in VIEWS]
     if bad:
@@ -186,13 +238,52 @@ def main(argv=None) -> int:
     out.mkdir(parents=True, exist_ok=True)
 
     t0 = time.time()
-    pipeline = ov.pipeline_for(data, dcd, color=color, wrap=not args.no_wrap)
-    if args.replicate_z > 1:
-        pipeline.modifiers.append(ReplicateModifier(num_z=args.replicate_z, adjust_box=True))
-    pipeline.source.data.cell.vis.enabled = True
-    pipeline.source.data.cell.vis.rendering_color = (0.0, 0.0, 0.0)
+    pipeline = ov.pipeline_for(
+        data,
+        dcd,
+        color=args.color,
+        wrap=not args.no_wrap,
+        center_gap=pore and not args.no_center,
+        highlight=args.highlight,
+        highlight_seed=args.seed,
+    )
+    cell_vis = pipeline.source.data.cell.vis
+    cell_vis.enabled = True
+    cell_vis.rendering_color = (0.0, 0.0, 0.0)
     ovito.scene.pipelines.clear()
+    replicate = ReplicateModifier(adjust_box=False)
+    pipeline.modifiers.append(replicate)
     pipeline.add_to_scene()
+    # Faint outlines of the images: cell-only copies of the pipeline (sharing its
+    # trajectory), placed at the image's cell offset for each frame.
+    ghosts = {}
+    shown = []
+
+    def set_images(counts):
+        replicate.num_x, replicate.num_y, replicate.num_z = counts
+        replicate.enabled = list(counts) != [1, 1, 1]
+        for ghost, _ in shown:
+            ghost.remove_from_scene()
+        shown.clear()
+        for shift in itertools.product(*(_image_range(k) for k in counts)):
+            if shift == (0, 0, 0):
+                continue
+            if shift not in ghosts:
+                ghost = Pipeline(source=pipeline.source)
+                ghost.modifiers.append(pipeline.modifiers[0])  # the trajectory
+                ghost.modifiers.append(_drop_particles)
+                vis = ghost.make_vis_element_independent(cell_vis)
+                vis.rendering_color = IMAGE_CELL_COLOR
+                vis.line_width = 0.4 * cell_vis.line_width
+                ghosts[shift] = ghost
+            shown.append((ghosts[shift], np.array(shift, dtype=float)))
+
+    def place_outlines(frame):
+        if shown:
+            cell = np.asarray(shown[0][0].compute(frame).cell)
+            for ghost, shift in shown:
+                ghost.add_to_scene(translation=cell[:, :3] @ shift)
+
     n = pipeline.num_frames
     frames = pick_frames(args.frames, n)
     renderer = {
@@ -202,9 +293,17 @@ def main(argv=None) -> int:
     }[args.renderer]()
     print(f"{dcd}: {n} frames; topology {data}; t_load {time.time() - t0:.1f} s", flush=True)
 
+    tag = f"_hl{args.highlight}" if args.highlight else ""
+    # The cell itself in a bold line (the automatic width matches the faint image outlines).
+    cell_vis.line_width = 0.005 * float(
+        np.max(np.diag(np.asarray(pipeline.source.data.cell)[:, :3]))
+    )
     written = []
     for name in views:
         kind, cam, up = VIEWS[name]
+        counts = args.images or (PORE_IMAGES[name] if pore else [1, 1, 1])
+        set_images(counts)
+        print(f"{name}: images {' '.join(map(str, counts))}", flush=True)
         vp = Viewport(
             type=getattr(Viewport.Type, kind),
             camera_dir=cam or ov.STYLE["camera_dir"],
@@ -223,10 +322,11 @@ def main(argv=None) -> int:
         for f in frames:
             t = time.time()
             ovito.scene.anim.current_frame = f
+            place_outlines(f)
             fit(vp)
             if label is not None:
                 label.text = _label(f"{system}   {stage}/{dcd.name}   frame {f}/{n - 1}")
-            path = out / f"{dcd.stem}_{name}_f{f:05d}.png"
+            path = out / f"{dcd.stem}_{name}{tag}_f{f:05d}.png"
             vp.render_image(size=tuple(args.size), frame=f, filename=str(path), renderer=renderer)
             written.append(path)
             print(f"{path}  {time.time() - t:.1f} s", flush=True)
@@ -235,8 +335,9 @@ def main(argv=None) -> int:
             if label is not None:
                 label.text = _label(f"{system}   {stage}/{dcd.name}   every {every} frame(s)")
             ovito.scene.anim.current_frame = n - 1
+            place_outlines(n - 1)
             fit(vp)
-            stem = f"{dcd.stem}_{name}_movie"
+            stem = f"{dcd.stem}_{name}{tag}_movie"
             path = out / (f"{stem}.{args.movie}" if args.movie != "png" else f"{stem}_*.png")
             t = time.time()
             vp.render_anim(
