@@ -1160,7 +1160,10 @@ def d_com_flag(d: dict) -> str:
     if "error" in d:
         return f"D_COM: {d['error'][:60]}"
     if not d["diffusive"]:
-        text = f"D_COM not diffusive (log-slope {d['slope_end']:.2f} at the longest lag"
+        slope = d.get("slope_end")  # absent in progress.json written before D55
+        if slope is None:
+            return "D_COM not diffusive"
+        text = f"D_COM not diffusive (log-slope {slope:.2f} at the longest lag"
         if d.get("msd_rg2_end") is not None:
             text += f", MSD/Rg² {d['msd_rg2_end']:.2f}"
         return text + ")"

@@ -295,3 +295,141 @@ def test_pore_film_panels(cd, tree):
     out = tmp / "pore.png"
     cd.draw_dashboard(out, p, ctx, data)
     assert out.stat().st_size > 10_000
+
+
+# ---------------------------------------------------------------- property convergence
+
+
+def test_kappa_record_stationary_and_changing(cd):
+    rng = np.random.default_rng(5)
+    t = np.arange(4000) * 0.005
+    v = 3e5 + 1000 * rng.standard_normal(4000)
+    k = cd.kappa_record(t, v, 300.0)
+    # kappa = var(V) / (kB T <V>): 1e6 A^6 / (4.14e-21 J * 3e5 A^3) = 0.805 / GPa
+    assert k["kappa"] == pytest.approx(0.805, rel=0.08)
+    assert k["drift"] is False and len(k["blocks"]) == cd.KAPPA_BLOCKS
+    assert k["running"][-1][1] == pytest.approx(k["kappa"], rel=1e-6)
+    v2 = 3e5 + np.r_[500 * rng.standard_normal(2000), 2000 * rng.standard_normal(2000)]
+    assert cd.kappa_record(t, v2, 300.0)["drift"] is True
+    assert cd.kappa_record(t, np.full(4000, 3e5), 300.0) is None  # NVT: constant volume
+    assert cd.kappa_record(t[:20], v[:20], 300.0) is None  # too short
+
+
+def test_log_slope_and_fit_residuals(cd):
+    lag = np.logspace(-1, 4, 100)
+    _x, s = cd.log_slope(lag, 3 * lag)
+    assert np.allclose(s, 1.0)
+    _x, s = cd.log_slope(lag, lag**0.5)
+    assert np.allclose(s, 0.5)
+    assert len(cd.log_slope(lag[:3], lag[:3])[0]) == 0
+    res = {
+        "segments": [
+            {
+                "done": True,
+                "t_set_c": t,
+                "stats": {"volume": {"mean": 2 * (t + 273.15) + 5 + d, "sem": 0.5}},
+            }
+            for t, d in ((25.0, 0.0), (90.0, 1.0), (160.0, -1.0))
+        ],
+        "fits": {"alpha_V": [{"window_c": [25.0, 160.0], "line": [2.0, 5.0], "chi2_red": 4.0}]},
+    }
+    r = cd.fit_residuals(res, "alpha_V")
+    assert r[0]["t"] == [25.0, 90.0, 160.0]
+    assert r[0]["resid"] == pytest.approx([0.0, 1.0, -1.0])
+    assert cd.fit_residuals(None, "cp") == [] and cd.fit_residuals(res, "cp") == []
+
+
+def _rich_sweep(ana, sid):
+    lag = list(np.logspace(-1, 4, 60))
+    holds = []
+    for t, m, diff in ((25.0, 180.0, False), (90.0, 2400.0, True)):
+        holds.append(
+            {
+                "t_c": t,
+                "kappa": {"kappa_T_GPa": 1.0, "sem": 0.02},
+                "traj": {
+                    "com_msd": {
+                        "msd_at_max_A2": m,
+                        "diffusive": diff,
+                        "slope_end": 0.9,
+                        "D_cm2_s": 5e-7 if diff else None,
+                    },
+                    "rg": {"rg2_A2": {"mean": 1000.0}, "rg_A": {"mean": 31.0, "sem": 0.2}},
+                    "ree": {"ree_A": {"mean": 77.0, "sem": 0.5}},
+                    "c_n": {"plateau": {"mean": 10.0, "sem": 0.1}},
+                    "p2": {"t_1e_ps": 120.0 if t > 50 else None},
+                    "curves": {
+                        "msd_lag_ps": lag,
+                        "msd_A2": list(np.asarray(lag) ** 0.6),
+                        "com_lag_ps": lag,
+                        "com_A2": list(0.01 * np.asarray(lag)),
+                        "p2_lag_ps": lag,
+                        "p2": list(np.exp(-np.asarray(lag) / 100)),
+                    },
+                },
+            }
+        )
+    res = {
+        "holds": holds,
+        "fits": {
+            "alpha_V": [{"window_c": [25.0, 160.0], "line": [1.0, 0.0], "chi2_red": 49.7}],
+            "cp": [{"window_c": [25.0, 160.0], "line": [1.0, 0.0], "chi2_red": 2.0}],
+        },
+        "segments": [],
+    }
+    (ana / sid / "sweep" / "results.json").write_text(json.dumps(res))
+
+
+def test_new_overview_columns_and_extra_runs(cd, tree):
+    runs, ana, systems, tmp = tree
+    a = "pe_cg_amorph_n40_c240_s1"
+    _rich_sweep(ana, a)
+    hold = _hold(0.5, 0.3)
+    hold.update(diffuse=True, t_c=160.0, d_com={"diffusive": False, "slope_max": 0.8})
+    _progress(runs, a, "diffuse_160C", status="running", percent=40.0, hold=hold)
+    _progress(runs, a, "tensile_25C_r1e9")
+    (ana / a / "tensile_25C_r1e9").mkdir(parents=True)
+    (ana / a / "tensile_25C_r1e9" / "results.json").write_text(
+        json.dumps(
+            {
+                "runs": [
+                    {
+                        "summary": {
+                            "E_MPa": {"mean": 141.0, "sd": 133.0},
+                            "nu_fit": {"mean": 0.46, "sd": 0.01},
+                        }
+                    }
+                ]
+            }
+        )
+    )
+    ctx = cd.ss.build_context([runs], ana, systems)
+    data = cd.system_data(a, ctx, None)
+    c = cd.overview_cells(a, ctx, data)
+    assert {k for k, _ in cd.COLUMNS} <= set(c)
+    assert c["fit"] == (cd.INFO, "α 49.7 / Cp 2\ncurved in T")
+    assert c["dyn"] == (cd.FLAG, "D_COM diffusive 1/2\nP2 1/e reached 1/2")
+    assert c["diffuse"] == (cd.RUN, "160C 40%, not diff.")
+    assert c["tensile"] == (cd.PASS, "25C_r1e9: E 141±133")
+    assert c["hole"] == (cd.NA, "")
+    assert c["kappa"][0] in (cd.PASS, cd.FLAG, cd.NOTRUN)
+    p = cd.overview_cells(
+        "pe_cg_pore_w5nm_n40_c240_s1", ctx, cd.system_data("pe_cg_pore_w5nm_n40_c240_s1", ctx, None)
+    )
+    assert p["kappa"] == (cd.NA, "") and p["fit"] == (cd.NA, "")
+    assert p["dyn"] == (cd.NOTRUN, "no analysis")
+    out = tmp / "dash.png"
+    cd.draw_dashboard(out, a, ctx, data)  # with the extra row and all property panels
+    assert out.stat().st_size > 10_000
+
+
+def test_validity_overview_written(cd, tree):
+    runs, ana, systems, tmp = tree
+    out = tmp / "out2"
+    res = cd.build([runs], ana, systems, out, cache_dir=None, log=lambda *_: None)
+    assert (out / "validity_overview.png").stat().st_size > 10_000
+    assert set(res["validity"]) == set(res["order"])
+    v = res["validity"]["pe_cg_amorph_n40_c240_s1"]
+    assert v["cp"]["verdict"] == "not meaningful"
+    assert v["chainT"]["verdict"] == "trend"  # hold ratios 0.18 / 0.60 < 1
+    assert res["validity"]["pe_cg_pore_w5nm_n40_c240_s1"]["rho"]["verdict"] == "n/a"

@@ -14,8 +14,9 @@ files, and anything missing is shown as "—".
 the other node's progress files); for the same system/stage the report with the most MD
 steps done (then the newest log) wins.
 
-Stage directories: ``prep``, ``extend``, ``cool``, ``sweep``, ``pore_relax``, ``pore``
-(a suffix such as ``sweep_d47`` is the same stage). Directories whose suffix contains
+Stage directories: ``prep``, ``extend``, ``cool``, ``sweep``, ``pore_relax``, ``pore``,
+``diffuse`` (D53), ``tensile`` (D54), ``hole`` (D52) (a suffix such as ``sweep_d47`` or
+``tensile_25C_r1e9`` is the same stage). Directories whose suffix contains
 ``old``, ``cancel`` or ``timeout`` are superseded: listed, never used for results.
 ``bench*`` and ``smoke*`` directories are ignored.
 """
@@ -36,10 +37,13 @@ import yaml
 from sepsim.analysis.chain import MELT_C_INF_500K, msid_check
 from sepsim.progress import D47_ACF, D47_MSD_RG2
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import validity
+
 ROOT = Path(__file__).resolve().parents[1]
 DASH = "—"
 
-STAGES = ("prep", "extend", "cool", "sweep", "pore_relax", "pore")
+STAGES = ("prep", "extend", "cool", "sweep", "pore_relax", "pore", "diffuse", "tensile", "hole")
 IGNORED_PREFIXES = ("bench", "smoke")
 SUPERSEDED_MARKERS = ("old", "cancel", "timeout")
 POLYMER_ORDER = {"pe": 0, "ipp": 1}
@@ -1179,6 +1183,16 @@ def build_context(run_roots: list[Path], analysis_root: Path, systems_root: Path
     return ctx
 
 
+def current_systems(ctx: dict, order: list[str]) -> list[str]:
+    """Non-superseded systems with something to show (runs or an inherited verdict),
+    in ``order``: the rows of the convergence and validity overviews."""
+    return [
+        s
+        for s in order
+        if not is_superseded(s, ctx) and (ctx["runs"].get(s) or ctx["eq"][s].get("checks"))
+    ]
+
+
 def convergence_links(base: Path | None, order: list[str]) -> list[str]:
     """'Convergence figures' line linking the files of scripts/convergence_dashboard.py
     (relative to ``base``, the summary's directory) that exist; none -> no line."""
@@ -1187,6 +1201,8 @@ def convergence_links(base: Path | None, order: list[str]) -> list[str]:
     links = []
     if (base / "convergence_overview.png").is_file():
         links.append("[overview](convergence_overview.png)")
+    if (base / "validity_overview.png").is_file():
+        links.append("[physical validity](validity_overview.png)")
     links += [
         f"[`{s}`](convergence/{s}.png)"
         for s in order
@@ -1198,7 +1214,10 @@ def convergence_links(base: Path | None, order: list[str]) -> list[str]:
 def render(ctx: dict, guide: str | None = None, base: Path | None = None) -> str:
     order = sorted(ctx["meta"], key=lambda s: sort_key(s, ctx["meta"][s], ctx["systems"].get(s)))
     lines = header(ctx) + convergence_links(base, order)
-    lines += overview(ctx, order) + pending(ctx, order) + superseded(ctx, order)
+    lines += overview(ctx, order)
+    fig = "validity_overview.png" if base and (base / "validity_overview.png").is_file() else None
+    lines += validity.markdown(ctx, current_systems(ctx, order), fig)
+    lines += pending(ctx, order) + superseded(ctx, order)
     lines += properties(ctx, order) + pores(ctx, order)
     lines += ["## Per-system details", ""]
     for sid in order:

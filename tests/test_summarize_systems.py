@@ -150,7 +150,7 @@ def _render(summ, tree):
 
 
 def _overview_rows(text: str) -> list[list[str]]:
-    sec = text.split("## Overview", 1)[1].split("## Pending", 1)[0]
+    sec = text.split("## Overview", 1)[1].split("\n## ", 1)[0]
     rows = [ln for ln in sec.splitlines() if ln.startswith("| ")][1:]
     rows = [[c.strip() for c in ln.strip("|").split(" | ")] for ln in rows]
     for r in rows:
@@ -335,3 +335,23 @@ def test_guide_appended_and_d47_stop(summ, tree, tmp_path):
 def test_eta_converted_to_utc(summ):
     assert summ.utc("2026-11-02T16:09:33-08:00") == "2026-11-03 00:09 UTC"
     assert summ.utc(None) == "—"
+
+
+def test_validity_section(summ, tree):
+    _, text = _render(summ, tree)
+    sec = text.split("## Physical validity by system", 1)[1].split("\n## ", 1)[0]
+    assert "scripts/validity.py" in sec and "docs/experiment_comparison.md" in sec
+    rows = {
+        r.split(" | ")[0].strip("| `"): [c.strip() for c in r.strip("|").split(" | ")]
+        for r in sec.splitlines()
+        if r.startswith("| `")
+    }
+    ua = rows["pe_ua_amorph_n40_c240_s1"]
+    assert ua[4] == "no"  # UA Cp: not meaningful
+    assert ua[5] == "comp"  # 500 K chain size: D47 passed
+    assert ua[6] == "todo"  # sweep T chain size: no hold COM MSD in results.json
+    assert ua[7] == "corr"  # UA segmental dynamics: time mapping
+    ipp = rows["ipp_ua_amorph_n40_c240_s1"]
+    assert ipp[5] == "trend!"  # D47 failed: not accepted, flagged
+    assert "pe_aa_amorph_n40_c240_s1" not in rows  # superseded
+    assert "<details>" in sec and "not yet computed" in sec
