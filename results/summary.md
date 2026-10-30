@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-10-30 16:46 UTC
-- Git commit: 3a241c8 (dirty)
-- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/che126_sims/results/analysis; systems /home/rdyu/projects/che126_sims/systems
+- Generated: 2026-10-30 17:29 UTC
+- Git commit: 8942598 (dirty)
+- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/che126_sims/results/analysis; systems /home/rdyu/projects/worktrees/comparability/systems
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -26,18 +26,18 @@
 | `pe_cg_pore_w5nm_n40_c240_s1` | CG | PE | pore (narrow, 5 nm) | 40 × C240 | 3,200 beads | done | finished: pore | from pe_cg_pore500k_w10nm_n40_c240_s1 ← pe_cg_amorph_n40_c240_s1: D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨Rg²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | no |
 | `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` | CG | PE | pore (wide, 10 nm) | 320 × C240 | 25,600 beads | done | finished: pore_relax | from pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | CG | PE | pore (narrow, 5 nm) | 320 × C240 | 25,600 beads | done | finished: pore | from pe_cg_pore500k_w10nm_n320_c240_s1_rep222 ← pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
-| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | sweep | running, 0.6% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-05 16:43 UTC | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | prep | running, 0.9% (2/14 segments, Stage 4: NVT 100 ps at 500 K); ETA 2026-11-02 02:14 UTC | from pe_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | sweep | running, 40.2% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 05:21 UTC | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
+| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | sweep | running, 0.9% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 04:21 UTC | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | prep | running, 2.0% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:11 UTC | from pe_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | sweep | running, 40.7% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 06:27 UTC | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 | `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | sweep | not started (prep done) | from ipp_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 
 ## Pending and known items
 
 - `pe_cg_pore_w5nm_n40_c240_s1`: pore analysis not run
 - `pe_cg_pore_w5nm_n320_c240_s1_rep222`: pore analysis not run
-- `pe_ua_amorph_n40_c240_s1`: sweep: running, 0.6% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-05 16:43 UTC
-- `pe_aa_amorph_n40_c240_s1_from_ua`: prep: running, 0.9% (2/14 segments, Stage 4: NVT 100 ps at 500 K); ETA 2026-11-02 02:14 UTC; sweep not started
-- `ipp_ua_amorph_n40_c240_s1`: sweep: running, 40.2% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 05:21 UTC
+- `pe_ua_amorph_n40_c240_s1`: sweep: running, 0.9% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 04:21 UTC
+- `pe_aa_amorph_n40_c240_s1_from_ua`: prep: running, 2.0% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:11 UTC; sweep not started
+- `ipp_ua_amorph_n40_c240_s1`: sweep: running, 40.7% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 06:27 UTC
 - `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep not started
 
 ## Superseded (kept, not used)
@@ -52,7 +52,7 @@
 - Runs of `pe_cg_pore_w5nm_n40_c240_s1`: pore_old_20ns_box_cancelled (cancelled/killed?)
 - Runs of `pe_ua_amorph_n40_c240_s1`: sweep_old_unrelaxed_cancelled (cancelled/killed?)
 - Runs of `ipp_ua_amorph_n40_c240_s1`: prep_server_cancelled (cancelled/killed?)
-- Runs of `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep_cancelled_pe_first (running)
+- Runs of `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep_cancelled_pe_first (stalled?)
 
 ## Measured properties (bulk sweeps, holds)
 
@@ -317,7 +317,7 @@ Not analyzed yet: `pe_cg_amorph_n320_c240_s1_rep222`, `pe_ua_amorph_n40_c240_s1`
   - 500 K hold 98.2 ns: D47 PASS (R_ee ACF 0.16 at 49.1 ns, 1/e at 19.27 ns; COM MSD/⟨Rg²⟩ 2.28); C_n 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53)
 - **cool** (rdyu-server): finished; started 2026-10-29 11:30 UTC, ended 2026-10-30 15:50 UTC; reads `../extend/hold_ext_70ns.data`
   - monitor flags: drift seg 3,4,7
-- **sweep** (rdyu-server): running, 0.6% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-05 16:43 UTC; started 2026-10-30 15:50 UTC; reads `../cool/cooled.data`
+- **sweep** (rdyu-server): running, 0.9% (0/18 segments, seg 01 hold 25 C); ETA 2026-11-07 04:21 UTC; started 2026-10-30 15:50 UTC; reads `../cool/cooled.data`
 - Superseded (not used): sweep_old_unrelaxed_cancelled (cancelled/killed?)
 
 ### `pe_aa_amorph_n40_c240_s1` (superseded)
@@ -354,7 +354,7 @@ Not analyzed yet: `pe_cg_amorph_n320_c240_s1_rep222`, `pe_ua_amorph_n40_c240_s1`
 
 **Stages**
 
-- **prep** (rdyu-rog): running, 0.9% (2/14 segments, Stage 4: NVT 100 ps at 500 K); ETA 2026-11-02 02:14 UTC; started 2026-10-30 16:16 UTC; reads `systems/pe_aa_amorph_n40_c240_s1_from_ua/data.lmp`
+- **prep** (rdyu-rog): running, 2.0% (3/14 segments, Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2)); ETA 2026-11-02 04:11 UTC; started 2026-10-30 16:16 UTC; reads `systems/pe_aa_amorph_n40_c240_s1_from_ua/data.lmp`
 
 ### `ipp_ua_amorph_n40_c240_s1`
 
@@ -377,7 +377,7 @@ Not analyzed yet: `pe_cg_amorph_n320_c240_s1_rep222`, `pe_ua_amorph_n40_c240_s1`
   - 500 K hold 60.0 ns: D47 PASS (R_ee ACF 0.19 at 30.0 ns, 1/e at 14.68 ns; COM MSD/⟨Rg²⟩ 2.06); C_n 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25)
 - **cool** (rdyu-rog): finished; started 2026-10-26 18:02 UTC, ended 2026-10-28 07:16 UTC; reads `../extend/hold_ext_40ns.data`
   - monitor flags: drift seg 4; hyst max 0.67%
-- **sweep** (rdyu-rog): running, 40.2% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 05:21 UTC; started 2026-10-28 07:16 UTC; reads `../cool/cooled.data`
+- **sweep** (rdyu-rog): running, 40.7% (8/18 segments, seg 09 hold 90 C); ETA 2026-11-03 06:27 UTC; started 2026-10-28 07:16 UTC; reads `../cool/cooled.data`
   - monitor flags: drift seg 1,5,8; hyst max 0.67%
 - Superseded (not used): prep_server_cancelled (cancelled/killed?)
 
@@ -400,12 +400,29 @@ Not analyzed yet: `pe_cg_amorph_n320_c240_s1_rep222`, `pe_ua_amorph_n40_c240_s1`
 - **prep** (rdyu-rog): finished; started 2026-10-26 18:04 UTC, ended 2026-10-29 11:25 UTC; reads `systems/ipp_aa_amorph_n40_c240_s1_from_ua/data.lmp`
   - 500 K hold 5.0 ns: D47 criteria on this hold FAIL (R_ee ACF 0.72 at 2.5 ns, 1/e not reached; COM MSD/⟨Rg²⟩ 0.25); C_n 5.58 vs 6.15 (in band, info); no drift (Δ -0.01 ± 0.16)
   - monitor flags: R_ee not decorrelated (0.72 at 2.5 ns); MSD/Rg2 0.25; drift seg 9,12
-- Superseded (not used): sweep_cancelled_pe_first (running)
+- Superseded (not used): sweep_cancelled_pe_first (stalled?)
 
 
 ## Property guide: what each calculated quantity means
 
 Reference values are approximate textbook values for amorphous or molten PE, to give a sense of scale. They have not been checked against a specific source. All boxes stay amorphous at every temperature. Real separator PE is semicrystalline below about 130 °C, so 25–130 °C here describes the amorphous phase only. CG and UA times are model times: CG dynamics in particular run several times faster than real PE, so only their trends with temperature are meaningful.
+
+### Comparability with experiment
+
+A fair comparison needs amorphous or melt data at the same temperature and a similar chain length (our chains are C240, about 3.4 kg/mol, and C1500, about 21 kg/mol).
+
+| Property | Comparable to experiment? | Compare against, and caveats |
+|---|---|---|
+| Density ρ(T), thermal expansion α_V | **Yes**, all resolutions | Melt data above Tm. Below Tm, the amorphous density extrapolated from the melt, not a semicrystalline sample. Accuracy is a property of the force field (SDK CG was fitted to density). |
+| Compressibility κ_T (bulk modulus 1/κ_T) | **Yes** | Melt PVT data at 1 atm. CG models usually come out too compressible. |
+| Surface tension γ, dγ/dT | **Yes** | Melt γ vs T at a similar molecular weight. SDK CG was partly fitted to γ. Our value depends on the cutoff (no tail correction at surfaces, D48), which tends to bias it low. |
+| Chain size Rg, R_ee, C_n | **Yes** | Neutron-scattering melt data (PE C∞ ≈ 6.7–7.4). CG and UA come out high, which is a force-field result. |
+| Heat capacity Cp | **AA only, after the quantum correction** (VDOS, D12c) | CG and UA remove degrees of freedom (H atoms, motions inside a bead), so their Cp is far too low. Classical MD gives every vibration k_B T, while real high-frequency C–H modes are mostly frozen, so classical AA Cp is too high until corrected. |
+| Dynamics: D, viscosity, P2 times, MSD | **AA roughly; UA partly; CG only with a time-mapping factor** | CG runs several times faster than real PE (smoothed energy landscape). UA is also somewhat fast (no hydrogen friction). Temperature trends are meaningful; absolute CG times need scaling to one experimental or AA point. |
+| Young's modulus, Poisson ratio, yield (tensile) | **Not against separator data** | Real separator stiffness and yield come from crystals, and MD strain rates (10⁸–10⁹ s⁻¹) are about 10⁹× faster than tests. Only the amorphous-phase response and its trends with temperature and rate. |
+| Pores: surface structure, hole closure | **No direct experiment** | The mechanism, and comparisons within our own simulations. |
+
+**Comparisons that hold at every resolution are the ones within our own simulations:** temperature trends from 25 to 160 °C, PE vs iPP at the same resolution, CG vs UA vs AA on the same property, and small vs 2×2×2 boxes. Most of the separator conclusions rest on these, not on absolute agreement with experiment.
 
 ### Thermodynamic properties
 
@@ -438,6 +455,18 @@ Reference values are approximate textbook values for amorphous or molten PE, to 
    - Mean-square displacement of backbone sites and of whole chains, combining the dense 0.1 ps bursts and the 10 ps hold frames (D46).
    - D_COM = slope/6 when the MSD is diffusive, meaning a log-slope of at least 0.9 over at least a factor of 2 in lag. Otherwise it is "not diffusive" and the largest slope is reported.
    - In a 12.5 ns hold the chains move less than their own size, so true chain diffusion would need much longer runs.
+
+8b. **Long-hold D_COM (`diffuse`, D53).** The same D_COM criterion on a dedicated 300 ns NPT hold at one sweep temperature (CG), checked by `sepsim progress` while it runs. Only once the MSD is diffusive (and well beyond ⟨Rg²⟩) is D_COM a chain self-diffusion coefficient. The Rouse estimate η_R = ρ_N k_B T ⟨R_ee²⟩/(36 D), with ρ_N the chain number density, converts it into a melt viscosity; it assumes unentangled chains, so for entangled ones it is a lower bound. For a PE melt of this chain length expect roughly 0.1 Pa·s (order of magnitude only); CG dynamics are faster, so CG viscosities come out lower.
+
+### Mechanical properties (`tensile`, `sepsim analyze tensile`, D54)
+
+8c. **Stress–strain curve.** The box is stretched along one axis at a constant engineering strain rate (10⁸ or 10⁹ s⁻¹) while the other two axes are held at 1 atm; this is repeated along x, y and z from the same starting snapshot. True stress σ = −(P_axis − 1 atm), tension positive; engineering stress is σ times the current over the initial cross-section.
+
+8d. **Apparent modulus E_app.** Slope of σ against strain up to `--fit-max` (default 0.02). For an amorphous melt above Tg this is a high-frequency, rate-dependent response, not an equilibrium modulus; it falls as the rate falls. Bulk semicrystalline PE is of order 1 GPa because of its crystallinity, which these boxes do not have; an amorphous PE melt has no equilibrium modulus at all.
+
+8e. **Poisson ratio ν.** ν = −d ln L_lateral / d ln L_axis. A melt that flows at constant volume gives 0.5; glassy polymers about 0.33–0.4. At MD rates the lateral barostat lags the pull, which biases ν low at small strain.
+
+8f. **Peak and flow stress.** The maximum of the smoothed σ (with its strain), and the mean σ over strains 0.3–0.5. In a melt there is no true yield: the plateau is a viscous flow stress, about 3η × strain rate for a simple liquid, so it scales with the rate.
 
 ### Equilibration and quality checks
 
