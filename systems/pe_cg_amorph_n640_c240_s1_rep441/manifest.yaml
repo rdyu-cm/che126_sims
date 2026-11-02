@@ -1,0 +1,49 @@
+id: pe_cg_amorph_n640_c240_s1_rep441
+polymer: pe
+resolution: cg
+n_chains: 640
+n_carbons: 240
+seed: 1
+box_angstrom:
+- [11.63544872039845, 281.29500051708]
+- [11.63544872039845, 281.29500051708]
+- [11.63544872039845, 79.05033666956882]
+density_g_cm3: 0.7302498215068075
+counts:
+  per_chain: {atoms: 80, bonds: 79, angles: 78, dihedrals: 0}
+  total: {atoms: 51200, bonds: 50560, angles: 49920, dihedrals: 0}
+formula:
+  per_chain: C240H482
+  total: {C: 153600, H: 308480}
+total_mass_g_mol: 2155806.592
+forcefield: {name: sdk_cg, file: sdk_cg.yaml, sha256: 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba}
+sepsim_version: 0.1.0
+git: {commit: 886edbaae3135fe2c04a921ecacbd48d01b22f6e, dirty: false}
+type_ids:
+  atom: {CM: 1, CT: 2}
+  bond: {CM-CM: 1, CM-CT: 2}
+  angle: {CM-CM-CM: 1, CM-CM-CT: 2}
+  dihedral: {}
+shake_bond_types: {}
+lammps_styles:
+  pair: lj/spica
+  mixing: none
+  bond: harmonic
+  angle: spica
+  dihedral: none
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 1.0]
+    angle: true
+replicate:
+  factors: [4, 4, 1]
+  source_id: pe_cg_amorph_n40_c240_s1
+  source_box_angstrom:
+  - [11.63544872039845, 79.05033666956882]
+  - [11.63544872039845, 79.05033666956882]
+  - [11.63544872039845, 79.05033666956882]
+  max_bond_angstrom: 4.882277039627105
+  correlated: 'the replica images are copies of one box and stay correlated until
+    decorrelated (D50: a 500 K extend run before any pore is cut)'
+source: {id: pe_cg_amorph_n40_c240_s1, manifest_sha256: be94805b7ab7d340773f4aac950d8c88ba3106377c963af80451fabc5b7ef4b3,
+  data_file: results/runs/pe_cg_amorph_n40_c240_s1/extend/hold_ext_60ns.data, data_sha256: 0d698cd7dfde40cda87e6e45b1845f2bd9a3937e5df3e45f716374eeed5b9bf2}
