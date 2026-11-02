@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-11-02 14:16 UTC
-- Git commit: 91e1157 (dirty)
-- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/worktrees/diffuse-results/results/analysis; systems /home/rdyu/projects/worktrees/diffuse-results/systems
+- Generated: 2026-11-02 14:17 UTC
+- Git commit: cb9bf07 (dirty)
+- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/worktrees/c1500-rerun/results/analysis; systems /home/rdyu/projects/worktrees/c1500-rerun/systems
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -81,7 +81,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - P2, segment MSD: **needs correction**: SDK CG dynamics are faster than real PE (smoothed landscape). Correction: multiply CG times (P2, MSD times) by 4.07, i.e. D_real ≈ D_CG/4.07, η_real ≈ 4.07·η_CG (Hall, Sirk, Klein, Shinoda, J. Chem. Phys. 150, 244901, 2019); the factor depends on T, so recalibrate per T against our own UA/AA at the same T once available; T trends as is; vs experiment: CG PE dynamics ≈ 4× too fast (P2: a different vector than ¹³C NMR C–H) (docs/experiment_comparison.md)
   - not yet computed: D_COM, viscosity (then needs correction): sweep holds too short (COM MSD/⟨Rg²⟩ ≤ 0.01, 4/4 not diffusive); needs a long D53 diffuse hold
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
-  - **comparable**: ρ(T) (vs experiment: CG PE ≈ 2% low (C1500 1–2%) (docs/experiment_comparison.md); no principled correction for the offset (model property): compare our UA/AA values); α_V (V(T) curved (χ²_red 77 over 25–160 °C): α_V depends on T, quote the 25–90 / 90–160 °C windows; vs experiment: CG PE ≈ 5% low (docs/experiment_comparison.md); no principled correction for the offset (model property): compare our UA/AA values); κ_T (vs experiment: CG PE 50–60% too compressible (docs/experiment_comparison.md); no principled correction for the offset (model property): compare our UA/AA values)
+  - **comparable**: ρ(T) (vs experiment: CG PE ≈ 2% low (C1500 1–2%) (docs/experiment_comparison.md); no principled correction for the offset (model property): compare our UA/AA values); α_V (V(T) curved (χ²_red 27 over 25–160 °C): α_V depends on T, quote the 25–90 / 90–160 °C windows; vs experiment: CG PE ≈ 5% low (docs/experiment_comparison.md); no principled correction for the offset (model property): compare our UA/AA values); κ_T (vs experiment: CG PE 50–60% too compressible (docs/experiment_comparison.md); no principled correction for the offset (model property): compare our UA/AA values)
 - `pe_cg_amorph_n320_c240_s1_rep222`
   - Cp: **not meaningful**: CG removes all motion inside a 3-CH2 bead (a bead keeps 3 of 27 atomic degrees of freedom): classical Cp per gram far too low. No principled correction (a hybrid vibrational add-on is only approximate): use AA; vs experiment: CG PE classical Cp ≈ 65% low (docs/experiment_comparison.md)
   - not yet computed: ρ(T) (then comparable), α_V (then comparable), κ_T (then comparable), Rg/R_ee/C_n sweep T (then comparable), P2, segment MSD (then needs correction): no sweep run yet
@@ -210,20 +210,20 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 
 ### `pe_cg_amorph_n40_c1500_s1` sweep (CG PE C1500, 500.0 ns at 500 K)
 
-`sepsim analyze sweep`, generated 2026-10-26 20:41 UTC on rdyu-rog, run finished.
+`sepsim analyze sweep`, generated 2026-11-02 14:00 UTC on rdyu-rog, run finished.
 
 | T (°C) | ρ (g/cm³) | κ_T (GPa⁻¹) | Rg (Å) | R_ee (Å) | C_n | P2 1/e (ps) | COM MSD max (Å²) (lag) | D_COM (cm²/s) | traj |
 |---|---|---|---|---|---|---|---|---|---|
-| 25 | 0.83817 ± 0.00001 | 0.995 ± 0.015 | 67.79 ± 0.11 | 175.1 ± 1.4 | 7.91 ± 0.02 | 128 | 21.94 (12.5 ns) | not diffusive (slope 0.42) | yes |
-| 90 | 0.80154 ± 0.00002 | 1.265 ± 0.022 | 70.28 ± 0.13 | 179.3 ± 1.0 | 8.46 ± 0.03 | 26.9 | 29.7 (12.5 ns) | not diffusive (slope 0.69) | yes |
-| 130 | 0.78019 ± 0.00002 | 1.435 ± 0.026 | 70.04 ± 0.16 | 185.2 ± 1.6 | 8.44 ± 0.03 | 14.3 | 37.17 (12.5 ns) | not diffusive (slope 0.48) | yes |
-| 160 | 0.76444 ± 0.00002 | 1.572 ± 0.029 | 68.89 ± 0.25 | 169.2 ± 1.9 | 8.06 ± 0.07 | 8.78 | 44.85 (12.5 ns) | not diffusive (slope 0.50) | yes |
+| 25 | 0.83817 ± 0.00004 | 0.995 ± 0.015 | 67.79 ± 0.11 | 175.1 ± 1.4 | 7.91 ± 0.02 | 128 | 21.94 (12.5 ns) | not diffusive (slope 0.42) | yes |
+| 90 | 0.80154 ± 0.00006 | 1.265 ± 0.022 | 70.28 ± 0.13 | 179.3 ± 1.0 | 8.46 ± 0.03 | 26.9 | 29.7 (12.5 ns) | not diffusive (slope 0.69) | yes |
+| 130 | 0.78019 ± 0.00004 | 1.435 ± 0.026 | 70.04 ± 0.16 | 185.2 ± 1.6 | 8.44 ± 0.03 | 14.3 | 37.17 (12.5 ns) | not diffusive (slope 0.48) | yes |
+| 160 | 0.76444 ± 0.00003 | 1.572 ± 0.029 | 68.89 ± 0.25 | 169.2 ± 1.9 | 8.06 ± 0.07 | 8.78 | 44.85 (12.5 ns) | not diffusive (slope 0.50) | yes |
 
 | Fit window (°C) | α_V (10⁻⁴ K⁻¹) | χ²_red α | Cp classical (J g⁻¹ K⁻¹) | χ²_red Cp | points |
 |---|---|---|---|---|---|
-| 25–160 | 6.783 ± 0.017 | 76.8 | 0.815 ± 0.004 | 306 | 15 |
-| 90–160 | 6.757 ± 0.027 | 29.5 | 0.793 ± 0.001 | 10.1 | 8 |
-| 25–90 | 6.866 ± 0.013 | 12 | 0.838 ± 0.003 | 39.7 | 8 |
+| 25–160 | 6.809 ± 0.022 | 27.2 | 0.812 ± 0.003 | 72.7 | 15 |
+| 90–160 | 6.797 ± 0.033 | 11.8 | 0.793 ± 0.001 | 2.48 | 8 |
+| 25–90 | 6.862 ± 0.018 | 2.29 | 0.840 ± 0.005 | 14.9 | 8 |
 
 - Note: Cp is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k_B/2 per quadratic term; CG also drops degrees of freedom (all motion inside a 3-CH2 bead), so its Cp per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
 - Note: Chains may not be relaxed: the D47 criteria fail on the prep hold + extension (extend/progress.json: end-to-end ACF 0.68 at 250.0 ns, needs < 1/e; COM MSD/<Rg²> 0.12, needs >= 2).
