@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-11-02 17:56 UTC
-- Git commit: a4b34d3 (dirty)
-- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/worktrees/summary-glossary/results/analysis; systems /home/rdyu/projects/worktrees/summary-glossary/systems
+- Generated: 2026-11-02 18:00 UTC
+- Git commit: 5953b5b
+- Inputs: runs /home/rdyu/projects/che126_sims/results/runs, /home/rdyu/projects/che126_sims/results/progress/rdyu-rog; analysis /home/rdyu/projects/worktrees/presentation-figures/results/analysis; systems /home/rdyu/projects/worktrees/presentation-figures/systems
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -15,16 +15,18 @@
 - Run status comes from `sepsim progress` ("cancelled/killed?" = log silent > 6 h without a finished manifest; ETAs converted to UTC). Superseded systems and run directories (renamed old/cancelled runs, rebuilt sources) are listed separately and never used for the numbers.
 - **"drift seg …"** (monitor flag): those segments show a significant trend in a thermo quantity over their analysis window. It is informational.
 
+**Presentation figures:** [results/presentation](presentation/README.md) (`uv run --frozen python scripts/presentation_figures.py`)
+
 **Convergence figures:** [overview](convergence_overview.png), [physical validity](validity_overview.png), [`pe_cg_amorph_n40_c240_s1`](convergence/pe_cg_amorph_n40_c240_s1.png), [`pe_cg_amorph_n40_c1500_s1`](convergence/pe_cg_amorph_n40_c1500_s1.png), [`pe_cg_amorph_n320_c240_s1_rep222`](convergence/pe_cg_amorph_n320_c240_s1_rep222.png), [`pe_cg_pore500k_w10nm_n40_c240_s1`](convergence/pe_cg_pore500k_w10nm_n40_c240_s1.png), [`pe_cg_pore_w5nm_n40_c240_s1`](convergence/pe_cg_pore_w5nm_n40_c240_s1.png), [`pe_cg_pore500k_w10nm_n320_c240_s1_rep222`](convergence/pe_cg_pore500k_w10nm_n320_c240_s1_rep222.png), [`pe_cg_pore_w5nm_n320_c240_s1_rep222`](convergence/pe_cg_pore_w5nm_n320_c240_s1_rep222.png), [`pe_ua_amorph_n40_c240_s1`](convergence/pe_ua_amorph_n40_c240_s1.png), [`pe_aa_amorph_n40_c240_s1_from_ua`](convergence/pe_aa_amorph_n40_c240_s1_from_ua.png), [`ipp_ua_amorph_n40_c240_s1`](convergence/ipp_ua_amorph_n40_c240_s1.png), [`ipp_aa_amorph_n40_c240_s1_from_ua`](convergence/ipp_aa_amorph_n40_c240_s1_from_ua.png)
 
 ## Overview
 
 | System | Res | Polymer | Kind | Chains × length | Sites | Stage now | Status | Equilibration (D47) | C_n plateau (D37) | Analysis |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `pe_cg_amorph_n40_c240_s1` | CG | PE | bulk | 40 × C240 | 3,200 beads | done | finished: prep, extend, cool, sweep, diffuse_25C (interrupted, 92.5%), diffuse_160C (interrupted, 85.2%), diffuse_90C (interrupted, 58.7%), diffuse_130C (running, 12.4% (0/1 segments, Stage 1: NPT hold 300000 ps at 403.15 K); ETA 2026-11-03 21:21 UTC), tensile_160C_r1e9, tensile_90C_r1e9, tensile_25C_r1e9, tensile_130C_r1e9, tensile_25C, tensile_160C, tensile_90C, tensile_130C | D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨Rg²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | diffuse_160C, diffuse_25C, diffuse_90C, extend, sweep, tensile_130C, tensile_130C_r1e9, tensile_160C, tensile_160C_r1e9, tensile_25C, tensile_25C_r1e9, tensile_90C, tensile_90C_r1e9 |
+| `pe_cg_amorph_n40_c240_s1` | CG | PE | bulk | 40 × C240 | 3,200 beads | done | finished: prep, extend, cool, sweep, diffuse_25C (interrupted, 92.5%), diffuse_160C (interrupted, 85.2%), diffuse_90C (interrupted, 58.7%), diffuse_130C (running, 12.9% (0/1 segments, Stage 1: NPT hold 300000 ps at 403.15 K); ETA 2026-11-03 21:06 UTC), tensile_160C_r1e9, tensile_90C_r1e9, tensile_25C_r1e9, tensile_130C_r1e9, tensile_25C, tensile_160C, tensile_90C, tensile_130C | D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨Rg²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | diffuse_160C, diffuse_25C, diffuse_90C, extend, sweep, tensile_130C, tensile_130C_r1e9, tensile_160C, tensile_160C_r1e9, tensile_25C, tensile_25C_r1e9, tensile_90C, tensile_90C_r1e9 |
 | `pe_cg_amorph_n40_c1500_s1` | CG | PE | bulk | 40 × C1500 | 20,000 beads | done | finished: prep, extend, cool, sweep | D47 n/a (long CG chain); ACF 0.68 at 250.0 ns, MSD/⟨Rg²⟩ 0.12; 500.0 ns at 500 K; no C_n drift: accepted | 7.43 vs 6.7 (outside band, info); no drift (Δ +0.21 ± 0.30) | sweep |
 | `pe_cg_amorph_n320_c240_s1_rep222` | CG | PE | bulk (derived) | 320 × C240 | 25,600 beads | done | finished: extend (stopped after D47 PASS) | D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
-| `pe_cg_amorph_n640_c240_s1_rep441` | CG | PE | bulk (derived) | 640 × C240 | 51,200 beads | extend | running, 0.2% (0/1 segments, Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm); ETA 2026-11-05 14:11 UTC | — | — | no |
+| `pe_cg_amorph_n640_c240_s1_rep441` | CG | PE | bulk (derived) | 640 × C240 | 51,200 beads | extend | running, 0.4% (0/1 segments, Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm); ETA 2026-11-05 13:49 UTC | — | — | no |
 | `pe_cg_pore500k_w10nm_n40_c240_s1` | CG | PE | pore (wide, 10 nm) | 40 × C240 | 3,200 beads | done | finished: pore_relax | from pe_cg_amorph_n40_c240_s1: D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨Rg²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | no |
 | `pe_cg_pore_w5nm_n40_c240_s1` | CG | PE | pore (narrow, 5 nm) | 40 × C240 | 3,200 beads | done | finished: pore | from pe_cg_pore500k_w10nm_n40_c240_s1 ← pe_cg_amorph_n40_c240_s1: D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨Rg²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | pore |
 | `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` | CG | PE | pore (wide, 10 nm) | 320 × C240 | 25,600 beads | done | finished: pore_relax | from pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
@@ -35,9 +37,9 @@
 | `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 90 °C) | 320 × C240 | 25,600 beads | hole | not started | from pe_cg_pore_w5nm_n320_c240_s1_rep222 ← pe_cg_pore500k_w10nm_n320_c240_s1_rep222 ← pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 4 nm, 160 °C) | 320 × C240 | 25,600 beads | hole | not started | from pe_cg_pore_w5nm_n320_c240_s1_rep222 ← pe_cg_pore500k_w10nm_n320_c240_s1_rep222 ← pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | CG | PE | pore (narrow, 5 nm) | 320 × C240 | 25,600 beads | done | finished: pore | from pe_cg_pore500k_w10nm_n320_c240_s1_rep222 ← pe_cg_amorph_n320_c240_s1_rep222: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨Rg²⟩ 2.65; 72.5 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | pore |
-| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | sweep | running, 62.5% (13/18 segments, seg 14 hold 130 C); ETA 2026-11-04 13:35 UTC | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | extend |
+| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | sweep | running, 62.6% (13/18 segments, seg 14 hold 130 C); ETA 2026-11-04 14:52 UTC | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | extend |
 | `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | sweep | failed, 0.0% | from pe_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨Rg²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | sweep | running, 79.4% (14/18 segments, seg 15 step 140 C); ETA 2026-11-03 11:37 UTC | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
+| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | sweep | running, 79.6% (15/18 segments, seg 16 step 150 C); ETA 2026-11-03 10:38 UTC | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 | `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | sweep | failed, 0.0% | from ipp_ua_amorph_n40_c240_s1: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨Rg²⟩ 2.06; 60.0 ns at 500 K; accepted (C_n drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 
 **Abbreviations:**
@@ -193,8 +195,8 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
 - `ipp_ua_amorph_n40_c240_s1`
   - Cp: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical Cp is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
-  - not yet computed: ρ(T) (then comparable), α_V (then comparable), κ_T (then comparable), Rg/R_ee/C_n sweep T (then comparable), P2, segment MSD (then needs correction): no sweep analysis yet (sweep running 79%)
-  - not yet computed: D_COM, viscosity (then needs correction): no sweep analysis yet (sweep running 79%); needs a long D53 diffuse hold
+  - not yet computed: ρ(T) (then comparable), α_V (then comparable), κ_T (then comparable), Rg/R_ee/C_n sweep T (then comparable), P2, segment MSD (then needs correction): no sweep analysis yet (sweep running 80%)
+  - not yet computed: D_COM, viscosity (then needs correction): no sweep analysis yet (sweep running 80%); needs a long D53 diffuse hold
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
   - **comparable**: Rg/R_ee/C_n 500 K (no principled correction for the offset (model property): compare our UA/AA values)
 - `ipp_aa_amorph_n40_c240_s1_from_ua`
@@ -207,16 +209,16 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 
 ## Pending and known items
 
-- `pe_cg_amorph_n640_c240_s1_rep441`: extend: running, 0.2% (0/1 segments, Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm); ETA 2026-11-05 14:11 UTC; no equilibration verdict yet
+- `pe_cg_amorph_n640_c240_s1_rep441`: extend: running, 0.4% (0/1 segments, Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm); ETA 2026-11-05 13:49 UTC; no equilibration verdict yet
 - `pe_cg_hole_r2nm_160C_n320_c240_s1_rep222`: hole not started
 - `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222`: hole not started
 - `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222`: hole_free: interrupted, 0.1%
 - `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`: hole_ramp_held: interrupted, 2.6%
 - `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`: hole not started
 - `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222`: hole not started
-- `pe_ua_amorph_n40_c240_s1`: sweep: running, 62.5% (13/18 segments, seg 14 hold 130 C); ETA 2026-11-04 13:35 UTC
+- `pe_ua_amorph_n40_c240_s1`: sweep: running, 62.6% (13/18 segments, seg 14 hold 130 C); ETA 2026-11-04 14:52 UTC
 - `pe_aa_amorph_n40_c240_s1_from_ua`: sweep: failed, 0.0%
-- `ipp_ua_amorph_n40_c240_s1`: sweep: running, 79.4% (14/18 segments, seg 15 step 140 C); ETA 2026-11-03 11:37 UTC
+- `ipp_ua_amorph_n40_c240_s1`: sweep: running, 79.6% (15/18 segments, seg 16 step 150 C); ETA 2026-11-03 10:38 UTC
 - `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep: failed, 0.0%
 
 ## Superseded (kept, not used)
@@ -517,7 +519,7 @@ segments:
 - **diffuse_90C** (rdyu-rog): interrupted, 58.7%; started 2026-10-31 17:54 UTC, ended 2026-11-02 13:57 UTC; reads `../sweep/hold_90C.data`
   - 500 K hold 174.2 ns: D47 criteria on this hold FAIL (R_ee ACF 0.08 at 87.1 ns, 1/e at 37.79 ns; COM MSD/⟨Rg²⟩ 1.98); C_n 11.42 vs 6.7 (outside band, info); drift (Δ -1.10 ± 0.52)
   - monitor flags: D_COM not diffusive (log-slope 1.03 at the longest lag, MSD/Rg² 1.98); MSD/Rg2 1.98
-- **diffuse_130C** (rdyu-rog): running, 12.4% (0/1 segments, Stage 1: NPT hold 300000 ps at 403.15 K); ETA 2026-11-03 21:21 UTC; started 2026-11-02 14:00 UTC; reads `../sweep/hold_130C.data`
+- **diffuse_130C** (rdyu-rog): running, 12.9% (0/1 segments, Stage 1: NPT hold 300000 ps at 403.15 K); ETA 2026-11-03 21:06 UTC; started 2026-11-02 14:00 UTC; reads `../sweep/hold_130C.data`
   - 500 K hold 22.6 ns (so far): D47 criteria on this hold FAIL (R_ee ACF 0.56 at 11.3 ns, 1/e not reached; COM MSD/⟨Rg²⟩ 0.43); C_n 11.34 vs 6.7 (outside band, info); no drift (Δ -1.15 ± 0.68)
   - monitor flags: D_COM not diffusive (log-slope 0.87 at the longest lag, MSD/Rg² 0.43); MSD/Rg2 0.43
 - **tensile_160C_r1e9** (rdyu-rog): finished; started 2026-10-30 17:26 UTC, ended 2026-10-30 18:00 UTC; reads `../sweep/hold_160C.data`
@@ -593,9 +595,9 @@ segments:
 
 **Stages**
 
-- **extend** (rdyu-rog): running, 0.2% (0/1 segments, Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm); ETA 2026-11-05 14:11 UTC; started 2026-11-02 17:43 UTC; reads `systems/pe_cg_amorph_n640_c240_s1_rep441/data.lmp`
-  - hold check error: ValueError: hold_ext.dcd: only 2 frames
-  - monitor flags: hold check: ValueError: hold_ext.dcd: only 2 frames
+- **extend** (rdyu-rog): running, 0.4% (0/1 segments, Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm); ETA 2026-11-05 13:49 UTC; started 2026-11-02 17:43 UTC; reads `systems/pe_cg_amorph_n640_c240_s1_rep441/data.lmp`
+  - hold check error: ValueError: hold_ext.dcd: only 4 frames
+  - monitor flags: hold check: ValueError: hold_ext.dcd: only 4 frames
 
 ### `pe_cg_pore500k_w10nm_n40_c240_s1`
 
@@ -838,7 +840,7 @@ segments:
   - 500 K hold 98.2 ns: D47 PASS (R_ee ACF 0.16 at 49.1 ns, 1/e at 19.27 ns; COM MSD/⟨Rg²⟩ 2.28); C_n 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53)
 - **cool** (rdyu-server): finished; started 2026-10-29 11:30 UTC, ended 2026-10-30 15:50 UTC; reads `../extend/hold_ext_70ns.data`
   - monitor flags: drift seg 3,4,7; hyst max 0.36%
-- **sweep** (rdyu-server): running, 62.5% (13/18 segments, seg 14 hold 130 C); ETA 2026-11-04 13:35 UTC; started 2026-10-30 15:50 UTC; reads `../cool/cooled.data`
+- **sweep** (rdyu-server): running, 62.6% (13/18 segments, seg 14 hold 130 C); ETA 2026-11-04 14:52 UTC; started 2026-10-30 15:50 UTC; reads `../cool/cooled.data`
   - monitor flags: drift seg 2,5,11,13; step!=hold 90 C; hyst max 0.36%
 - Superseded (not used): sweep_old_unrelaxed_cancelled (cancelled/killed?)
 
@@ -903,7 +905,7 @@ segments:
   - 500 K hold 60.0 ns: D47 PASS (R_ee ACF 0.19 at 30.0 ns, 1/e at 14.68 ns; COM MSD/⟨Rg²⟩ 2.06); C_n 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25)
 - **cool** (rdyu-rog): finished; started 2026-10-26 18:02 UTC, ended 2026-10-28 07:16 UTC; reads `../extend/hold_ext_40ns.data`
   - monitor flags: drift seg 4; hyst max 0.67%
-- **sweep** (rdyu-rog): running, 79.4% (14/18 segments, seg 15 step 140 C); ETA 2026-11-03 11:37 UTC; started 2026-10-28 07:16 UTC; reads `../cool/cooled.data`
+- **sweep** (rdyu-rog): running, 79.6% (15/18 segments, seg 16 step 150 C); ETA 2026-11-03 10:38 UTC; started 2026-10-28 07:16 UTC; reads `../cool/cooled.data`
   - monitor flags: drift seg 1,5,8,12,13; step!=hold 90 C,130 C; hyst max 0.67%
 - Superseded (not used): prep_server_cancelled (cancelled/killed?)
 

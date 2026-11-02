@@ -1273,9 +1273,22 @@ def convergence_links(base: Path | None, order: list[str]) -> list[str]:
     return [f"**Convergence figures:** {', '.join(links)}", ""] if links else []
 
 
+def presentation_link(base: Path | None) -> list[str]:
+    """Link to the slide figures of scripts/presentation_figures.py, if written."""
+    if base is None or not (base / "presentation" / "README.md").is_file():
+        return []
+    return [
+        (
+            "**Presentation figures:** [results/presentation](presentation/README.md)"
+            " (`uv run --frozen python scripts/presentation_figures.py`)"
+        ),
+        "",
+    ]
+
+
 def render(ctx: dict, guide: str | None = None, base: Path | None = None) -> str:
     order = sorted(ctx["meta"], key=lambda s: sort_key(s, ctx["meta"][s], ctx["systems"].get(s)))
-    lines = header(ctx) + convergence_links(base, order)
+    lines = header(ctx) + presentation_link(base) + convergence_links(base, order)
     lines += overview(ctx, order)
     fig = "validity_overview.png" if base and (base / "validity_overview.png").is_file() else None
     lines += validity.markdown(ctx, current_systems(ctx, order), fig)
