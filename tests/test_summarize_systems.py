@@ -149,6 +149,12 @@ def _render(summ, tree):
     return ctx, summ.render(ctx)
 
 
+def _system(text: str, sid: str) -> str:
+    """The ### subsection of one system in ## Systems."""
+    sec = text.split("\n## Systems", 1)[1]
+    return sec.split(f"### `{sid}`", 1)[1].split("\n### ", 1)[0].split("\n## ", 1)[0]
+
+
 def _overview_rows(text: str) -> list[list[str]]:
     sec = text.split("## Overview", 1)[1].split("\n## ", 1)[0]
     rows = [ln for ln in sec.splitlines() if ln.startswith("| ")][1:]
@@ -178,14 +184,14 @@ def test_overview_rows_and_order(summ, tree):
     assert rows[0][10] == "no"
     sup = text.split("## Superseded", 1)[1].split("##", 1)[0]
     assert "System `pe_aa_amorph_n40_c240_s1`: superseded by" in sup
-    assert "Runs of `pe_ua_amorph_n40_c240_s1`: sweep_old_unrelaxed_cancelled (x)" in sup
+    assert "Runs of `pe_ua_amorph_n40_c240_s1`: `sweep_old_unrelaxed_cancelled` (x)" in sup
 
 
 def test_pass_fail_rendering(summ, tree):
     ctx, text = _render(summ, tree)
     rows = {r[0]: r for r in _overview_rows(text)}
     ua = rows["pe_ua_amorph_n40_c240_s1"][8]
-    assert ua.startswith("D47 PASS") and "ACF 0.16" in ua and "MSD/⟨Rg²⟩ 2.28" in ua
+    assert ua.startswith("D47 PASS") and "ACF 0.16" in ua and "MSD/⟨R<sub>g</sub>²⟩ 2.28" in ua
     assert "98.2 ns at 500 K" in ua and ua.endswith("accepted")
     # C_n outside the band is information only, the drift is the check
     cn = rows["pe_ua_amorph_n40_c240_s1"][9]
@@ -195,14 +201,14 @@ def test_pass_fail_rendering(summ, tree):
     assert ipp.startswith("D47 FAIL") and "not accepted" in ipp
     assert ctx["eq"]["ipp_ua_amorph_n40_c240_s1"]["accepted"] is False
     cg = rows["pe_cg_amorph_n40_c240_s1"]
-    assert cg[8].startswith("D47 PASS") and "accepted (C_n drift" in cg[8]
+    assert cg[8].startswith("D47 PASS") and "accepted (C<sub>n</sub> drift" in cg[8]
     assert ctx["eq"]["pe_cg_amorph_n40_c240_s1"]["accepted"] is True
     assert "; drift" in cg[9]
     # pore and ua2aa inherit the source's verdict
     assert rows["pe_ua_pore_w5nm_n40_c240_s1"][8].startswith(
-        "from pe_ua_amorph_n40_c240_s1: D47 PASS"
+        "from `pe_ua_amorph_n40_c240_s1`: D47 PASS"
     )
-    assert rows["pe_aa_amorph_n40_c240_s1_from_ua"][8].startswith("from pe_ua_amorph")
+    assert rows["pe_aa_amorph_n40_c240_s1_from_ua"][8].startswith("from `pe_ua_amorph")
 
 
 def test_prep_only_and_long_cg(summ, tree):
@@ -228,11 +234,11 @@ def test_missing_data_and_pending(summ, tree):
     pore = rows["pe_ua_pore_w5nm_n40_c240_s1"]
     assert pore[6] == "pore" and pore[7] == "not started"
     # analysis table: the hold without data renders dashes, not an error
-    sec = text.split("### `pe_ua_amorph_n40_c240_s1` sweep", 1)[1].split("###", 1)[0]
+    sec = _system(text, "pe_ua_amorph_n40_c240_s1").split("**`sweep` analysis**", 1)[1]
     assert "| 90 | — | — | — | — | — | — | — | — | — |" in sec
     assert "| 25 | 0.83450 ± 0.00003 | 1.000 ± 0.015 | 31.24 ± 0.12 |" in sec
     assert "| 25–160 | 6.900 ± 0.034 |" in sec
-    assert "Note: Cp is the classical" in sec
+    assert "Note: C<sub>p</sub> is the classical" in sec
     assert "bench_r1t1" not in text
     pend = text.split("## Pending and known items", 1)[1].split("##", 1)[0]
     assert "`pe_ua_pore_w5nm_n40_c240_s1`: pore not started" in pend
@@ -265,9 +271,9 @@ def test_pore_results_generic(summ, tree):
     }
     (d / "results.json").write_text(json.dumps(res))
     _, text = _render(summ, tree)
-    sec = text.split("### `pe_ua_pore_w5nm_n40_c240_s1` pore", 1)[1].split("###", 1)[0]
-    assert "gap_width_nm: 4.8" in sec
-    assert "| t_c | gamma_mN_m |" in sec
+    sec = _system(text, "pe_ua_pore_w5nm_n40_c240_s1").split("**`pore` analysis**", 1)[1]
+    assert "`gap_width_nm`: 4.8" in sec
+    assert "| T (°C) | `gamma_mN_m` |" in sec
     assert "| 25 | 34.4 ± 0.4 |" in sec and "| 90 | — |" in sec
 
 
@@ -355,3 +361,150 @@ def test_validity_section(summ, tree):
     assert ipp[5] == "trend!"  # D47 failed: not accepted, flagged
     assert "pe_aa_amorph_n40_c240_s1" not in rows  # superseded
     assert "<details>" in sec and "not yet computed" in sec
+
+
+def test_notation(summ):
+    n = summ.notation
+    assert n("C_n plateau, R_ee, κ_T, α_V, D_COM, χ²_red") == (
+        "C<sub>n</sub> plateau, R<sub>ee</sub>, κ<sub>T</sub>, α<sub>V</sub>,"
+        " D<sub>COM</sub>, χ²<sub>red</sub>"
+    )
+    assert n("MSD/⟨Rg²⟩ 2.3; MSD/Rg2 0.9; Cp, τ_ee") == (
+        "MSD/⟨R<sub>g</sub>²⟩ 2.3; MSD/R<sub>g</sub>² 0.9; C<sub>p</sub>, τ<sub>ee</sub>"
+    )
+    # code spans, link targets and tags untouched; leftover identifiers become code
+    assert n("reads `../extend/hold_ext_60ns.data` (C_n)") == (
+        "reads `../extend/hold_ext_60ns.data` (C<sub>n</sub>)"
+    )
+    assert n("[`a_b`](convergence/pe_cg_x.png)") == "[`a_b`](convergence/pe_cg_x.png)"
+    assert n("from pe_ua_amorph_n40_c240_s1: ok; diffuse_25C.") == (
+        "from `pe_ua_amorph_n40_c240_s1`: ok; `diffuse_25C`."
+    )
+    assert n("C240H482, D47, 3-CH2") == "C240H482, D47, 3-CH<sub>2</sub>"
+    assert n(n("C_n")) == n("C_n")  # idempotent
+
+
+def _outside_code(line: str) -> str:
+    import re
+
+    return "".join(re.split(r"(`[^`]*`|\]\([^)]*\)|</?[A-Za-z]+>)", line)[0::2])
+
+
+def test_render_has_no_raw_subscripts_and_consistent_tables(summ, tree):
+    _, text = _render(summ, tree)
+    lines = text.splitlines()
+    assert not [ln for ln in lines if "_" in _outside_code(ln)]
+    width = None
+    for ln in lines:
+        if ln.startswith("|"):
+            n = len(ln.replace("\\|", "").strip().strip("|").split("|"))
+            assert width in (None, n), ln
+            width = n
+        else:
+            width = None
+
+
+def test_systems_section_layout(summ, tree):
+    _, text = _render(summ, tree)
+    heads = [h.split("\n", 1)[0] for h in text.split("\n## ")[1:]]
+    assert heads == [
+        "Overview",
+        "Physical validity by system",
+        "Pending and known items",
+        "Superseded (kept, not used)",
+        "Systems",
+    ]
+    assert "## Measured properties" not in text and "## Per-system details" not in text
+    sec = text.split("\n## Systems", 1)[1]
+    ids = [h.split("`")[1] for h in sec.split("\n### ")[1:]]
+    # overview order, superseded systems last and marked
+    assert ids == [
+        "pe_cg_amorph_n40_c240_s1",
+        "pe_ua_amorph_n40_c240_s1",
+        "pe_ua_pore_w5nm_n40_c240_s1",
+        "pe_aa_amorph_n40_c240_s1_from_ua",
+        "ipp_ua_amorph_n40_c240_s1",
+        "pe_aa_amorph_n40_c240_s1",
+    ]
+    assert "### `pe_aa_amorph_n40_c240_s1` (superseded)" in sec
+    # one abbreviation list, before the first system, only for symbols that are used
+    assert sec.count("**Abbreviations") == 1
+    abbr = sec.split("\n### ", 1)[0]
+    assert "**ρ**: mass density" in abbr and "**C<sub>p</sub>**" in abbr
+    assert "**γ**" not in abbr and "**E<sub>app</sub>**" not in abbr  # no pore/tensile data
+    tables = [ln for ln in sec.split("<details>")[0].splitlines() if ln.startswith("| ")]
+    assert "**comp**" in abbr and "**no**" in abbr  # validity codes that are used
+    assert "**n/a**" not in abbr or any(" n/a |" in ln for ln in tables)
+    ua = _system(text, "pe_ua_amorph_n40_c240_s1")
+    assert ua.lstrip().startswith("PE UA, bulk amorphous box, 40 chains × C240, 1,234 united")
+    rows = {
+        r.strip("|").split(" | ")[0].strip(): [c.strip() for c in r.strip().strip("|").split(" | ")]
+        for r in ua.split("<details>", 1)[0].splitlines()
+        if r.startswith("| ") and not r.startswith("| Property")
+    }
+    assert rows["ρ (g/cm³)"] == [
+        "ρ (g/cm³)", "0.83450 ± 0.00003", "—", "—", "—", "—", "comp", "`sweep`"
+    ]  # fmt: skip
+    assert rows["κ<sub>T</sub> (GPa⁻¹)"][1] == "1.000 ± 0.015"
+    assert rows["α<sub>V</sub> (10⁻⁴ K⁻¹)"][5] == "25–160 °C: 6.900 ± 0.034"
+    assert rows["C<sub>p</sub>, classical (J g⁻¹ K⁻¹)"][6] == "no"  # UA Cp not meaningful
+    assert rows["D<sub>COM</sub> (cm²/s)"][1] == "5.1e-07 ± 2e-10"
+    assert rows["500 K equilibration (D47)"][5].startswith("D47 PASS")
+    assert rows["C<sub>n</sub> plateau, 500 K (D37)"][5] == "500 K: 8.20 (melt 6.7)"
+    # the old details and analysis tables are kept in the collapsed block
+    det = ua.split("<details><summary>Full analysis tables and checks</summary>", 1)[1]
+    assert "**Provenance**" in det and "**Stages**" in det and "</details>" in det
+    assert "| 25 | 0.83450 ± 0.00003 | 1.000 ± 0.015 | 31.24 ± 0.12 |" in det
+    # a system without own results: one line instead of a table
+    pore = _system(text, "pe_ua_pore_w5nm_n40_c240_s1")
+    assert "No analysed properties yet; pending: pore not started." in pore
+    assert "| Property" not in pore and "| Kind | Gap (nominal)" in pore
+
+
+def test_hold_and_tensile_rows(summ, tree):
+    sid = "pe_ua_amorph_n40_c240_s1"
+    d = tree["analysis"] / sid
+    (d / "diffuse_160C").mkdir()
+    (d / "diffuse_160C" / "results.json").write_text(
+        json.dumps(
+            {
+                "t_c": 160.0,
+                "t_k": 433.15,
+                "stats": {"density": {"mean": 0.7596, "sem": 5e-5}},
+                "traj": {
+                    "com_msd": {"diffusive": True, "D_cm2_s": 6.1e-7, "D_err_cm2_s": 6e-9},
+                    "relaxation": {"ree": {"t_1e_ps": 16800.0}, "rouse": [{"p": 1}]},
+                },
+            }
+        )
+    )
+    (d / "extend").mkdir()
+    (d / "extend" / "results.json").write_text(
+        json.dumps({"t_c": 226.85, "t_k": 500.0, "traj": {"rg": {"rg_A": {"mean": 27.3}}}})
+    )
+    (d / "tensile_25C").mkdir()
+    run = {
+        "t_c": 25.0,
+        "rate_per_s": 1e8,
+        "summary": {"E_MPa": {"mean": -54.77, "sd": 37.2}, "nu_run": {"mean": 0.502, "sd": 0.002}},
+        "axes": [{"axis": "x", "E_MPa": -71.9, "E_err_MPa": 73.4}],
+    }
+    (d / "tensile_25C" / "results.json").write_text(json.dumps({"runs": [run]}))
+    _, text = _render(summ, tree)
+    ua = _system(text, sid)
+    table = ua.split("<details>", 1)[0]
+    assert "| D<sub>COM</sub> (cm²/s), long hold (D53) | — | — | — | 6.1e-07 ± 6e-09 |" in table
+    assert "| τ<sub>ee</sub>, end-to-end vector 1/e time (ns), long hold (D53) |" in table
+    assert "| 16.8 |" in table and "not reached" in table  # τ_1 without a 1/e time
+    assert (
+        "| R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 27.30 | comp | `extend` |"
+        in table
+    )
+    assert "| E<sub>app</sub> (MPa), 10⁸ s⁻¹, mean ± SD | -54.8 ± 37.2 |" in table
+    assert "`tensile_25C` |" in table
+    det = ua.split("<details>", 1)[1]
+    assert "**`tensile_25C` analysis**" in det and "| x | — | -71.9 ± 73 |" in det
+    assert "**`diffuse_160C` analysis**" in det
+    abbr = text.split("\n## Systems", 1)[1].split("\n### ", 1)[0]
+    assert "**E<sub>app</sub>**" in abbr and "**SD**" in abbr and "**τ<sub>ee</sub>**" in abbr
+    assert "**long hold (D53)**" in abbr
