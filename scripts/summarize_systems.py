@@ -222,6 +222,7 @@ def meta(sid: str, man: dict | None) -> dict:
     pol = man.get("polymer") or (parts[0] if parts else None)
     res = man.get("resolution") or (parts[1] if len(parts) > 1 else None)
     pore = man.get("pore") if isinstance(man.get("pore"), dict) else None
+    hole = man.get("hole") if isinstance(man.get("hole"), dict) else None
     if pore is None and "pore" in sid:
         pore = {"kind": "wide" if "pore500k" in sid else "narrow"}
     if pore:
@@ -230,7 +231,7 @@ def meta(sid: str, man: dict | None) -> dict:
         category = 1
     else:
         category = 0
-    return {"polymer": pol, "resolution": res, "pore": pore, "category": category}
+    return {"polymer": pol, "resolution": res, "pore": pore, "hole": hole, "category": category}
 
 
 def sort_key(sid: str, m: dict, man: dict | None) -> tuple:
@@ -536,10 +537,69 @@ def overview(ctx: dict, order: list[str]) -> list[str]:
             rows,
         ),
         "",
+        "**Abbreviations:**",
+        "",
+        *(f"- **{a}**: {m}" for a, m in OVERVIEW_ABBREVIATIONS),
+        "",
     ]
 
 
+# Written out below the overview table
+OVERVIEW_ABBREVIATIONS = (
+    (
+        "Res",
+        (
+            "resolution: CG = coarse-grained (SDK/SPICA, 3 carbons per bead), UA = united-atom"
+            " (TraPPE-UA, CH_x groups as one site), AA = all-atom (OPLS, explicit hydrogens)"
+        ),
+    ),
+    ("PE / iPP", "polyethylene / isotactic polypropylene"),
+    ("Chains × length", "number of chains × backbone carbons per chain (C240 = 240 carbons)"),
+    ("Sites", "interaction sites in the box: atoms (AA), united atoms (UA) or beads (CG)"),
+    (
+        "System id",
+        (
+            "<polymer>_<res>_<kind>_n<chains>_c<carbons>_s<seed>; amorph = bulk amorphous"
+            " box; pore500k_w10nm = wide 10 nm pore made at 500 K; pore_w5nm = 5 nm dry slit pore;"
+            " hole_r3nm_160C = film with a 3 nm-radius cylindrical hole at 160 °C; rep222 / rep441 ="
+            " box replicated 2×2×2 / 4×4×1; from_ua = AA box converted from the relaxed UA box"
+        ),
+    ),
+    (
+        "prep / extend / cool / sweep",
+        (
+            "build and 500 K hold / longer 500 K hold (D47) /"
+            " step-cool to 25 °C / 25–160 °C heating sweep with holds"
+        ),
+    ),
+    ("D37, D47, …", "decision numbers in docs/decisions.md (the rule each check follows)"),
+    (
+        "D47 PASS",
+        ("500 K melt accepted as equilibrated: end-to-end ACF < 1/e and chain COM MSD ≥ 2⟨Rg²⟩"),
+    ),
+    ("ACF", "autocorrelation function (here of the chain end-to-end vector)"),
+    (
+        "COM MSD / ⟨Rg²⟩",
+        (
+            "chain centre-of-mass mean-squared displacement over the mean squared"
+            " radius of gyration (≥ 2: chains have moved about their own size)"
+        ),
+    ),
+    (
+        "C_n plateau (D37)",
+        (
+            "characteristic ratio of long sub-chains vs the PE melt value 6.7 ± 10%;"
+            " informational (D47 decides acceptance)"
+        ),
+    ),
+    ("Δ", "change between the first and second half of the hold (drift test)"),
+)
+
+
 def kind_label(m: dict) -> str:
+    if m.get("hole"):
+        h = m["hole"]
+        return f"hole (R {fnum(h.get('radius_nm'), 'g')} nm, {fnum(h.get('t_c'), 'g')} °C)"
     if m["pore"]:
         w = m["pore"].get("nominal_width_nm")
         return f"pore ({m['pore'].get('kind', DASH)}, {fnum(w, 'g')} nm)"
@@ -896,6 +956,8 @@ def expected_stages(sid: str, ctx: dict) -> list[str]:
     man = ctx["systems"].get(sid) or {}
     m = ctx["meta"][sid]
     have = {r["kind"] for r in current_runs(ctx["runs"].get(sid, {}))}
+    if m.get("hole"):
+        return ["hole"]
     if m["pore"]:
         return ["pore_relax"] if m["pore"].get("kind") == "wide" else ["pore"]
     if man.get("replicate"):

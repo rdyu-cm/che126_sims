@@ -91,6 +91,34 @@ PROPERTIES = (
     ("hole", "hole closure"),
 )
 PROP_LABEL = dict(PROPERTIES)
+# Written out below the validity table (summary.md)
+ABBREVIATIONS = (
+    ("ρ(T)", "mass density vs temperature (g/cm³)"),
+    ("α_V", "volumetric thermal expansion coefficient, (1/V) dV/dT (10⁻⁴ K⁻¹)"),
+    ("κ_T", "isothermal compressibility, from volume fluctuations (GPa⁻¹)"),
+    ("Cp", "isobaric specific heat capacity, dH/dT (J g⁻¹ K⁻¹)"),
+    ("Rg", "radius of gyration of a chain"),
+    ("R_ee", "chain end-to-end distance"),
+    ("C_n", "characteristic ratio ⟨R_ee²⟩ / (n l²), chain stiffness (n bonds of length l)"),
+    ("500 K", "the equilibrated melt hold (prep/extend) before cooling"),
+    ("sweep T", "the 25–160 °C heating-sweep holds"),
+    (
+        "P2",
+        "bond orientation autocorrelation (second Legendre polynomial), local segment reorientation",
+    ),
+    ("MSD", "mean-squared displacement"),
+    ("segment MSD", "MSD of backbone sites (segmental mobility)"),
+    ("D_COM", "chain centre-of-mass self-diffusion coefficient"),
+    ("γ", "surface tension of the free film surface (mN/m), from the pressure anisotropy"),
+    ("dγ/dT", "temperature slope of γ (mN m⁻¹ K⁻¹)"),
+    ("film structure", "pore film density profile ρ(z), thickness, gap width, interfacial width"),
+    ("E", "Young's (tensile) modulus"),
+    ("ν", "Poisson ratio"),
+    ("yield", "peak / flow stress of the tensile curve"),
+    ("hole closure", "closure time and speed of a cylindrical hole through the film (D52)"),
+    ("VDOS", "vibrational density of states (quantum correction for Cp)"),
+    ("CG / UA / AA", "coarse-grained (SDK/SPICA) / united-atom (TraPPE-UA) / all-atom (OPLS)"),
+)
 
 CHAIN_RELAXED = 1.0  # hold COM MSD / <Rg^2> below this: chain size inherited (D45/D49)
 # D_COM is chain self-diffusion only if the COM MSD is diffusive AND >= 2 <Rg^2> (as D47;
@@ -786,6 +814,10 @@ def markdown(ctx: dict, order: list[str], figure: str | None = None) -> list[str
         "| " + " | ".join(head) + " |",
         "|" + "---|" * len(head),
         *("| " + " | ".join(r) + " |" for r in rows),
+        "",
+        "**Abbreviations:**",
+        "",
+        *(f"- **{a}**: {m}" for a, m in ABBREVIATIONS),
         "",
         "<details><summary>Reasons per system</summary>",
         "",
