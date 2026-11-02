@@ -1,14 +1,27 @@
-"""scripts/presentation_figures.py: series lookup by id, empty inputs, a real-data smoke run."""
+"""scripts/presentation_figures.py: series lookup by id, empty inputs (pending placeholders),
+synthetic hole results, PyMOL helpers, and a real-data smoke run."""
 
 import importlib.util
 import json
+import shutil
 import sys
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 SCRIPTS = REPO / "scripts"
+ALL_FIGS = (
+    "fig1_models",
+    "fig2_equilibration",
+    "fig3_thermo",
+    "fig4_chains",
+    "fig5_pore",
+    "fig6_dynamics",
+    "fig7_mechanics",
+    "fig8_holes",
+)
 
 
 def _load(name):
@@ -24,10 +37,16 @@ def pf():
     return _load("presentation_figures")
 
 
+@pytest.fixture(scope="module")
+def prm():
+    return _load("pymol_render")
+
+
 def test_series_by_id(pf):
     s = pf.series_info("ipp_ua_amorph_n40_c240_s1")
     assert (s["polymer"], s["res"], s["kind"], s["primary"]) == ("ipp", "ua", "bulk", True)
     assert s["label"] == "UA iPP" and s["marker"] == "s" and s["color"] == pf.RES_COLOR["ua"]
+    assert s["rls"] == "--"
     aa = pf.series_info("pe_aa_amorph_n40_c240_s1_from_ua")
     assert aa["res"] == "aa" and aa["primary"]
     assert pf.superseded("pe_aa_amorph_n40_c240_s1", {"pe_aa_amorph_n40_c240_s1_from_ua"})
@@ -38,29 +57,97 @@ def test_series_by_id(pf):
     assert pf.series_info("pe_cg_pore500k_w10nm_n40_c240_s1")["kind"] == "wide_pore"
     assert pf.series_info("pe_cg_hole_r3nm_160C_n320_c240_s1_rep222")["kind"] == "hole"
     assert pf.series_info("not_an_id") is None
+    assert pf.t_color(226.85) == pf.GREY_500K and pf.t_label(226.85) == "500 K"
 
 
 def test_empty_inputs_write_placeholders(pf, tmp_path):
-    data = pf.load_data(tmp_path / "a", tmp_path / "s", [tmp_path / "r"])
+    data = pf.load_data(tmp_path / "a", tmp_path / "s", [tmp_path / "r"], render=False)
     out = pf.build(data, tmp_path / "out", log=lambda *_: None)
     names = {p.name for p in out["written"]}
-    for fig in ("fig1_convergence", "fig2_properties_vs_T", "fig3_structures", "fig4_mechanics"):
+    for fig in ALL_FIGS:
         assert {f"{fig}.png", f"{fig}.pdf", f"{fig}.svg"} <= names
     text = out["readme"].read_text()
-    assert "## fig4_mechanics" in text and "Hole runs" not in text  # caption, not panel text
-    assert out["infos"]["fig3_structures"]["d"]["pending"]
+    for fig in ALL_FIGS:
+        assert f"## {fig}" in text
+    assert out["infos"]["fig8_holes"]["pending"] and out["infos"]["fig8_holes"]["a"]["pending"]
 
 
-def test_hole_panel_uses_results(pf, tmp_path):
-    d = tmp_path / "a" / "pe_cg_hole_r3nm_160C_n320_c240_s1_rep222" / "hole_free"
-    d.mkdir(parents=True)
-    frames = [{"t_ns": t, "phase": "production", "r_eff": 30.0 - 2 * t} for t in range(10)]
-    res = {"radius_nominal_nm": 3.0, "t_c": 160.0, "variant": "free", "frames": frames}
-    (d / "results.json").write_text(json.dumps(res))
-    data = pf.load_data(tmp_path / "a", tmp_path / "s", [])
-    out = pf.build(data, tmp_path / "out", only=["fig3"], log=lambda *_: None)
-    info = out["infos"]["fig3_structures"]["d"]
-    assert not info["pending"] and len(info["runs"]) == 1
+def _hole_result(t_c=160.0, variant="free", closes=True, r0=30.0):
+    frames = []
+    for k in range(12):
+        t = 0.1 * k
+        r = max(r0 - 40.0 * t, 0.0) if closes else r0 - 2.0 * t
+        frames.append(
+            {
+                "t_ns": t,
+                "phase": "production",
+                "r_eff": r,
+                "r_min": r * 0.9,
+                "slab_z": [40.0, 50.0, 60.0, 70.0],
+                "slab_r": [r * 1.1, r * 0.9, r * 0.9, r * 1.1],
+            }
+        )
+    return {
+        "radius_nominal_nm": r0 / 10,
+        "t_c": t_c,
+        "variant": variant,
+        "film_thickness_angstrom": 130.0,
+        "r_t0": r0,
+        "t_close_ns": 0.8 if closes else None,
+        "production_ns": 1.1,
+        "frames": frames,
+    }
+
+
+def test_hole_panels_use_results(pf, tmp_path):
+    runs = {
+        ("pe_cg_hole_r3nm_160C_n320_c240_s1_rep222", "hole_free"): _hole_result(),
+        ("pe_cg_hole_r3nm_25C_n320_c240_s1_rep222", "hole_ramp_held"): _hole_result(
+            25.0, "annulus d=2.5 nm, held, ramp", closes=False
+        ),
+        ("pe_cg_hole_r8nm_160C_n640_c240_s1_rep441", "hole_free"): _hole_result(r0=80.0),
+    }
+    for (sid, stage), res in runs.items():
+        d = tmp_path / "a" / sid / stage
+        d.mkdir(parents=True)
+        (d / "results.json").write_text(json.dumps(res))
+    data = pf.load_data(tmp_path / "a", tmp_path / "s", [], render=False)
+    out = pf.build(data, tmp_path / "out", only=["fig8"], log=lambda *_: None)
+    info = out["infos"]["fig8_holes"]
+    assert not info["pending"] and len(info["b"]) == 3
+    assert info["c"]["times"][0] == 0.0 and len(info["c"]["times"]) <= 5
+    rows = {r["sid"]: r for r in info["d"]}
+    assert rows["pe_cg_hole_r3nm_160C_n320_c240_s1_rep222"]["closed"]
+    assert not rows["pe_cg_hole_r3nm_25C_n320_c240_s1_rep222"]["closed"]
+    assert rows["pe_cg_hole_r8nm_160C_n640_c240_s1_rep441"]["thin"]
+    assert rows["pe_cg_hole_r3nm_160C_n320_c240_s1_rep222"]["x"] == pytest.approx(30 / 130)
+    caption = pf.caption_fig8(info, data)
+    assert "Pending" not in caption and "R₀/h" in caption
+
+
+def test_pdb_writer_and_render_fallback(prm, tmp_path, monkeypatch):
+    pos = np.array([[0.0, 0.0, 0.0], [1.5, 0.0, 0.0], [2.0, 1.4, 0.0]])
+    txt = prm.pdb_text(pos, "C", [1, 1, 2], [[0, 1], [1, 2]], names=["C3", "C2", "C2"])
+    lines = txt.splitlines()
+    assert lines[0].startswith("HETATM    1  C3 ") and lines[0][30:38].strip() == "0.000"
+    assert "CONECT    1    2" in txt and lines[-1] == "END"
+    assert len(prm.box_edges(prm.box_corners([0, 0, 0], [1, 1, 1]))) == 12
+    monkeypatch.setattr(prm, "pymol_exe", lambda: None)
+    png, status = prm.render("x", {"a.pdb": txt}, ["load a.pdb"], tmp_path, (64, 48))
+    assert png is None and status == "no pymol on PATH"
+    (tmp_path / "x.png").write_bytes(b"old")
+    png, status = prm.render("x", {"a.pdb": txt}, ["load a.pdb"], tmp_path, (64, 48))
+    assert png == tmp_path / "x.png" and status.startswith("stale cache")
+
+
+@pytest.mark.skipif(shutil.which("pymol") is None, reason="pymol not installed")
+def test_pymol_render_and_cache(prm, tmp_path):
+    pos = np.array([[0.0, 0.0, 0.0], [1.5, 0.0, 0.0], [2.0, 1.4, 0.0]])
+    files = {"a.pdb": prm.pdb_text(pos, "C", [1, 1, 1], [[0, 1], [1, 2]])}
+    body = [*prm.style_lines(), "load a.pdb, a", "show sticks", *prm.view_lines(4, 3, 80, 60, 10)]
+    png, status = prm.render("t", files, body, tmp_path, (80, 60))
+    assert status == "rendered" and png.stat().st_size > 0
+    assert prm.render("t", files, body, tmp_path, (80, 60))[1] == "cached"
 
 
 @pytest.mark.skipif(
@@ -68,13 +155,23 @@ def test_hole_panel_uses_results(pf, tmp_path):
     reason="committed CG analysis not present",
 )
 def test_real_data_smoke(pf, tmp_path):
-    data = pf.load_data(REPO / "results/analysis", REPO / "systems", [])
-    out = pf.build(data, tmp_path, only=["fig2", "fig4"], log=lambda *_: None)
-    assert (tmp_path / "fig2_properties_vs_T.png").stat().st_size > 10_000
-    info = out["infos"]["fig2_properties_vs_T"]
-    assert "CG PE" in info["a"]["series"]
-    rates = out["infos"]["fig4_mechanics"]["rates"]
-    assert rates == [1e8, 1e9]
+    data = pf.load_data(
+        REPO / "results/analysis", REPO / "systems", [REPO / "results/run_sidecars"], render=False
+    )
+    out = pf.build(
+        data, tmp_path, only=["fig2", "fig3", "fig4", "fig5", "fig6", "fig7"], log=lambda *_: None
+    )
+    assert (tmp_path / "fig3_thermo.png").stat().st_size > 10_000
+    infos = out["infos"]
+    assert "CG PE" in infos["fig3_thermo"]["a"]["series"]
+    assert infos["fig7_mechanics"]["rates"] == [1e8, 1e9]
+    assert any(r["t_1e_ns"] > 0 for r in infos["fig2_equilibration"]["a"])
+    assert "CG PE" in infos["fig4_chains"]["a"]
+    assert infos["fig5_pore"]["c"]["CG PE"]["dgdT"] < 0
+    d = infos["fig6_dynamics"]["c"]["CG PE"]
+    assert any(not p["bound"] for p in d)  # the diffusive 160 C long hold
+    for name, info in infos.items():
+        assert pf.CAPTIONS[name](info, data).startswith("**Figure")
 
 
 def test_summary_links_presentation(tmp_path):
