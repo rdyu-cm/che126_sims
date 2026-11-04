@@ -1,0 +1,112 @@
+id: pe_ua_pore_w5nm_n40_c240_s1
+polymer: pe
+resolution: ua
+n_chains: 40
+n_carbons: 240
+seed: 1
+box_angstrom:
+- [11.86298975, 78.82322818]
+- [11.86298975, 78.82322818]
+- [11.86298975, 125.62143122264658]
+density_g_cm3: 0.4386594690739211
+counts:
+  per_chain: {atoms: 240, bonds: 239, angles: 238, dihedrals: 237}
+  total: {atoms: 9600, bonds: 9560, angles: 9520, dihedrals: 9480}
+formula:
+  per_chain: C240H482
+  total: {C: 9600, H: 19280}
+total_mass_g_mol: 134739.84
+forcefield: {name: trappe_ua, file: trappe_ua.yaml, sha256: 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b}
+sepsim_version: 0.1.0
+git: {commit: 762a019e3e1d237eecc50207c7e1fb5525aa63e3, dirty: false}
+type_ids:
+  atom: {CH3: 1, CH2: 2}
+  bond: {CHx-CHy: 1}
+  angle: {CHx-CH2-CHy: 1}
+  dihedral: {CHx-CH2-CH2-CHy: 1}
+shake_bond_types: {}
+lammps_styles:
+  pair: lj/cut
+  mixing: arithmetic
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 0.0]
+    coul: [0.0, 0.0, 0.0]
+pore:
+  kind: narrow
+  method: 'D48 step 2: relaxed 500 K wide pore re-centred (whole molecules), x, y
+    kept, Lz = M / (rho_bulk(25 C) A(25 C)) + width; Lz fixed in the pore run'
+  temperature_k: 500.0
+  nominal_width_nm: 5.0
+  width_definition: 'at 25 C: Lz - M / (rho_bulk(298.15 K) * A(298.15 K)), A from
+    the D48 lateral rule (heating branch)'
+  width_500k_nm: 4.684799704378307
+  replicate_z: 1
+  wall_thickness_angstrom: 63.75844147264658
+  wall_thickness_500k_angstrom: 66.91044442886351
+  lz_source_angstrom: 166.96023843
+  lz_new_angstrom: 113.75844147264658
+  area_angstrom2: 4483.673530602449
+  area_25c_angstrom2: 4071.191571692274
+  slab_mass_g_mol: 134739.84
+  bulk_density_g_cm3: 0.8619575809018196
+  bulk_density_500k_g_cm3: 0.7457911536086245
+  cut_z_angstrom: 11.86298975
+  slab_z_extent_angstrom: [25.480232486000716, 116.69547017568482]
+  window_z_angstrom: [35.28698827189153, 102.19743270075504]
+  protrusion_angstrom: [9.806755785890815, 14.498037474929774]
+  clear_gap_angstrom: 22.54320378296248
+  lateral:
+    sources:
+      hold: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/extend,
+        deck: in.extend, deck_sha256: c4020826f42b10cd074df2e101b14b10f4ddbaed19e485b276659cada241cb15,
+        log_sha256: 4c954c7aa1855b1addad5b2c87d618d578a5afef328f215b3d764e749dbf30ed,
+        segments: '1: Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm'}
+      cool: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/cool,
+        deck: in.cool, deck_sha256: dda0cf1d99cdbf49e54ec72caf2e37d1091a696c5e2f5dba54e5925faa6cdb7e,
+        log_sha256: 1a45f6da0942df6d897cd629326e5cfc5dfd738df41f18cfe20bf36556482a6e,
+        segments: 8 step-cool stages + the hold}
+      sweep: {run_dir: /home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/sweep,
+        deck: in.sweep, deck_sha256: 1e8e7de50483cdade92586fa1339d519c2fa79d41ffb0f61b90241248618ddb0,
+        log_sha256: b84bdd1217c611fb945a5239a866b15291883e623384791b070816cfd1617191,
+        segments: 18 sweep segments}
+    t_source_k: 500.0
+    rho_source_g_cm3: 0.7457911536086245
+    cooling:
+    - [298.15, 0.8601267784815184]
+    - [323.38125, 0.8460073940959042]
+    - [348.6125, 0.8295998655944057]
+    - [373.84375, 0.8161882654345655]
+    - [399.075, 0.8016392837962037]
+    - [424.30625, 0.7870376210389611]
+    - [449.5375, 0.7728014113186813]
+    - [474.76875, 0.7593189432167834]
+    - [500.0, 0.7457911536086245]
+    heating:
+    - [298.15, 0.8619575809018196]
+    - [308.15, 0.8560895145554445]
+    - [318.15, 0.8498926274225773]
+    - [328.15, 0.8449206608291707]
+    - [338.15, 0.8378927532767233]
+    - [348.15, 0.8327819307992008]
+    - [358.15, 0.8283044743156843]
+    - [363.15, 0.8226273098260346]
+    - [373.15, 0.8176584635764237]
+    - [383.15, 0.8106916477122876]
+    - [393.15, 0.8058050212987014]
+    - [403.15, 0.8000503424075184]
+    - [413.15, 0.7947437462037962]
+    - [423.15, 0.7894183972527473]
+    - [433.15, 0.7829740005738852]
+    l_source_angstrom: [66.96023842994143, 66.96023842994143]
+source:
+  id: pe_ua_pore500k_w10nm_n40_c240_s1
+  manifest_sha256: 7e31f07d6fa92c52608e24b7214c8c4d9eb4d0ddf17452b42dadd7674cd6c648
+  data_file: rdyu-rog:results/runs/pe_ua_pore500k_w10nm_n40_c240_s1/pore_relax/relaxed.data
+  data_sha256: acd2dae646005310faccf823df3d8eba6ecd66642561c697737d7f6148af42f4
+  source: {id: pe_ua_amorph_n40_c240_s1, manifest_sha256: 8ec8f0c6884e41f6fcf79fdb45d61bc3a036e70492adea9d48a5e42aafb9775b,
+    data_file: 'rdyu-server:results/runs/pe_ua_amorph_n40_c240_s1/extend/hold_ext_70ns.data',
+    data_sha256: 76c9b3c4cfc76a4a8c37eb2057fef8fbafbda754999bd6b3960d47ab9229ab5e}
