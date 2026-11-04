@@ -1,0 +1,60 @@
+id: ipp_ua_pore500k_w10nm_n40_c240_s1
+polymer: ipp
+resolution: ua
+n_chains: 40
+n_carbons: 240
+seed: 1
+box_angstrom:
+- [12.064291100640943, 78.62192683922908]
+- [12.064291100640943, 78.62192683922908]
+- [12.064291100640943, 178.6219268392291]
+density_g_cm3: 0.30323882445632927
+counts:
+  per_chain: {atoms: 319, bonds: 318, angles: 554, dihedrals: 315}
+  total: {atoms: 12760, bonds: 12720, angles: 22160, dihedrals: 12600}
+formula:
+  per_chain: C240H482
+  total: {C: 9600, H: 19280}
+total_mass_g_mol: 134739.83999999997
+forcefield: {name: trappe_ua, file: trappe_ua.yaml, sha256: 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b}
+sepsim_version: 0.1.0
+git: {commit: 81fd6be3194fe41f1a989c822b0cfe7cb2bdc816, dirty: false}
+type_ids:
+  atom: {CH3: 1, CH2: 2, CH: 3, H: 4}
+  bond: {CHx-CHy: 1, CH-H: 2}
+  angle: {CHx-CH2-CHy: 1, CHx-CH-CHy: 2, H-CH-CHx: 3}
+  dihedral: {CHx-CH2-CH2-CHy: 1, CHx-CH2-CH-CHy: 2}
+shake_bond_types: {CH-H: 2}
+lammps_styles:
+  pair: lj/cut
+  mixing: arithmetic
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 0.0]
+    coul: [0.0, 0.0, 0.0]
+pore:
+  kind: wide
+  method: 'D48 step 1: 500 K bulk box enlarged along z (Hapke et al., cond-mat/9607112,
+    method 2); relax with pore_relax, then narrow'
+  temperature_k: 500.0
+  nominal_width_nm: 10.0
+  width_definition: 'mass-equivalent at the source density: Lz_new - M / (rho_src
+    * Lx * Ly)'
+  replicate_z: 1
+  wall_thickness_angstrom: 66.55763573858813
+  lz_source_angstrom: 66.55763573858813
+  lz_new_angstrom: 166.55763573858815
+  area_angstrom2: 4429.918875110584
+  slab_mass_g_mol: 134739.83999999997
+  bulk_density_g_cm3: 0.7588421839977207
+  cut_z_angstrom: 12.064291100640943
+  slab_z_extent_angstrom: [39.73762721838022, 147.2556680151176]
+  window_z_angstrom: [57.962126978834654, 124.5197627174228]
+  protrusion_angstrom: [18.224499760454435, 22.735905297694828]
+  clear_gap_angstrom: 59.039594941850766
+source: {id: ipp_ua_amorph_n40_c240_s1, manifest_sha256: 38b4573a1b4938692479940180c192fc859b9070fd39e26a88a8fd5c7c820097,
+  data_file: 'rdyu-rog:results/runs/ipp_ua_amorph_n40_c240_s1/extend/hold_ext_40ns.data',
+  data_sha256: e1f601ac5a3ccd4aaeed84ef22f78374341f209898d2619295ef58237535f20d}

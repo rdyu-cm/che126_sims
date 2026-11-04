@@ -1,0 +1,60 @@
+id: pe_ua_pore500k_w10nm_n40_c240_s1
+polymer: pe
+resolution: ua
+n_chains: 40
+n_carbons: 240
+seed: 1
+box_angstrom:
+- [11.862989754985875, 78.8232281849273]
+- [11.862989754985875, 78.8232281849273]
+- [11.862989754985875, 178.8232281849273]
+density_g_cm3: 0.2988808473707011
+counts:
+  per_chain: {atoms: 240, bonds: 239, angles: 238, dihedrals: 237}
+  total: {atoms: 9600, bonds: 9560, angles: 9520, dihedrals: 9480}
+formula:
+  per_chain: C240H482
+  total: {C: 9600, H: 19280}
+total_mass_g_mol: 134739.84
+forcefield: {name: trappe_ua, file: trappe_ua.yaml, sha256: 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b}
+sepsim_version: 0.1.0
+git: {commit: 81fd6be3194fe41f1a989c822b0cfe7cb2bdc816, dirty: false}
+type_ids:
+  atom: {CH3: 1, CH2: 2}
+  bond: {CHx-CHy: 1}
+  angle: {CHx-CH2-CHy: 1}
+  dihedral: {CHx-CH2-CH2-CHy: 1}
+shake_bond_types: {}
+lammps_styles:
+  pair: lj/cut
+  mixing: arithmetic
+  bond: harmonic
+  angle: harmonic
+  dihedral: opls
+  improper: none
+  special_bonds:
+    lj: [0.0, 0.0, 0.0]
+    coul: [0.0, 0.0, 0.0]
+pore:
+  kind: wide
+  method: 'D48 step 1: 500 K bulk box enlarged along z (Hapke et al., cond-mat/9607112,
+    method 2); relax with pore_relax, then narrow'
+  temperature_k: 500.0
+  nominal_width_nm: 10.0
+  width_definition: 'mass-equivalent at the source density: Lz_new - M / (rho_src
+    * Lx * Ly)'
+  replicate_z: 1
+  wall_thickness_angstrom: 66.96023842994143
+  lz_source_angstrom: 66.96023842994143
+  lz_new_angstrom: 166.96023842994143
+  area_angstrom2: 4483.673530594605
+  slab_mass_g_mol: 134739.84
+  bulk_density_g_cm3: 0.7452365569361793
+  cut_z_angstrom: 17.862989754985875
+  slab_z_extent_angstrom: [34.538521923802925, 174.3770169939341]
+  window_z_angstrom: [58.478740163691626, 125.43897859363305]
+  protrusion_angstrom: [23.9402182398887, 48.93803840030104]
+  clear_gap_angstrom: 27.121743359810267
+source: {id: pe_ua_amorph_n40_c240_s1, manifest_sha256: 8ec8f0c6884e41f6fcf79fdb45d61bc3a036e70492adea9d48a5e42aafb9775b,
+  data_file: 'rdyu-server:results/runs/pe_ua_amorph_n40_c240_s1/extend/hold_ext_70ns.data',
+  data_sha256: 76c9b3c4cfc76a4a8c37eb2057fef8fbafbda754999bd6b3960d47ab9229ab5e}
