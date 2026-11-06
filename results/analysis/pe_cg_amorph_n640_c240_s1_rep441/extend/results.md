@@ -1,0 +1,52 @@
+# Hold analysis: pe_cg_amorph_n640_c240_s1_rep441 / extend
+
+- system: `pe_cg_amorph_n640_c240_s1_rep441` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n640_c240_s1_rep441/extend` (extend, status finished, node rdyu-rog, run code commit dc583962cf)
+- analysis: `sepsim analyze hold` (D56), code commit da2b347314 (dirty), 2026-11-06 02:08 on rdyu-rog
+- segment: Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm (80 ns planned, complete); thermo window without the first 10% of rows, SEM from 100 ps block means (D55)
+- note: ../prep/hold.dcd not found: chain checks use the extension alone
+
+## Thermo
+
+| window (ns) | T (°C) | density (g/cm³) | H (kcal/mol) | V (Å³) | κ_T (GPa⁻¹) |
+|---|---|---|---|---|---|
+| 72.00 | 226.84 ± 0.01 | 0.72364 ± 0.00002 | 7933.6 ± 14.0 | 4946950 ± 128 | 2.118 ± 0.021 |
+
+## Trajectory: mobility and chain size
+
+801 frames × 100 ps (80 ns).
+
+| COM MSD max (Å²) at lag (ns) | D_COM (D55 criterion) | bond P2 1/e | Rg (Å) | R_ee (Å) | C_n plateau |
+|---|---|---|---|---|---|
+| 2723 at 40 | not diffusive (log-slope 0.97 at the longest lag, MSD/⟨Rg²⟩ 3.35) | 68.3 ps | 28.53 ± 0.05 | 71.3 ± 0.2 | 8.937 ± 0.043 |
+
+- no burst DCDs (deck without D46 bursts): lags from the hold DCD only
+
+## Chain relaxation (holds; D56)
+
+End-to-end vector ACF ⟨R(t)·R(0)⟩/⟨R²⟩ and Rouse mode ACFs ⟨X_p(t)·X_p(0)⟩/⟨X_p²⟩, X_p = (1/N) Σ_n cos(pπ(n−½)/N) r_n over the backbone sites, every time origin, lags up to half the hold (40 ns here). Times in ns: the first 1/e crossing; if C stays above 1/e within the lag window the time is 'not reached' and only an exponential fit of ln C over 0.2 ≤ C ≤ 0.9 is given (marked extrap.: it extrapolates the early decay). τ_ee fit is that fit for R_ee. τ_1/τ_2 is 4 for Rouse chains. p²⟨X_p²⟩ (relative to p = 1, p = 2…5) is flat for an ideal Rouse chain; it falls at high p where the chain is stiffer than Gaussian on that scale. Crystallinity: D26 local alignment, fraction of backbone sites with p2 ≥ 0.4 (**uncalibrated, melt baseline**: no crystal reference, so the number is a baseline for an amorphous box, not a calibrated crystallinity) and the largest crystalline cluster (sites).
+
+| T (°C) | τ_ee 1/e (ns) | τ_ee fit (ns) | τ_1 (ns) | τ_2 (ns) | τ_3 (ns) | τ_1/τ_2 (Rouse 4) | p²⟨X_p²⟩ / p=1 (p = 2…5) | crystallinity |
+|---|---|---|---|---|---|---|---|---|
+| 226.85 | 10.7 | 14.5 | 14.5 | 3.37 | 1.34 | 4.30 | 0.99 / 0.94 / 0.89 / 0.83 | 0.092 (max 0.099; cluster ≤ 76) |
+
+CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07 before comparing with experiment.
+
+## Caveats
+
+- Relaxation times use lags up to half the analysed hold (40 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
+- CG time is not real time: SDK beads move ≈ 4.07× faster than real PE, so MSD, D_COM and relaxation times are model times (docs/experiment_comparison.md).
+
+## Plots
+
+**backbone-site and chain COM MSD**
+
+![backbone-site and chain COM MSD](msd.png)
+
+**bond P2 autocorrelation**
+
+![bond P2 autocorrelation](p2_acf.png)
+
+**end-to-end and Rouse mode ACFs, p²τ_p vs p**
+
+![end-to-end and Rouse mode ACFs, p²τ_p vs p](relaxation.png)
+
