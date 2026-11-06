@@ -756,6 +756,71 @@ def hold_trajectory(
     return out
 
 
+def step_static(run_dir: Path, seg, sys_arr: dict, skip: float = STEP_SKIP) -> dict:
+    """Static chain properties of one sweep step (a :class:`sepsim.progress.Segment`) from
+    its DCD over the step's analysis window (frames after ``skip``, the second half as for
+    its thermo stats): <Rg^2>^1/2, <R_ee^2>^1/2 and the C_n plateau (n >= 100 carbons) with
+    SEMs from the statistical inefficiency of the per-frame values, and the crystallinity
+    monitor. No MSD / ACF / relaxation: a 5 ns step is too short for them."""
+    from sepsim.analysis.chain import CARBONS_PER_SITE, characteristic_ratio
+
+    files = [f for f in seg.dcd if "_burst" not in f]
+    out: dict = {"available": False, "notes": []}
+    if not files or not (run_dir / files[0]).is_file():
+        out["notes"].append(
+            f"trajectory not available ({files[0] if files else 'step DCD'} not found)"
+        )
+        return out
+    dcd = files[0]
+    frame_ps = seg.dump_every[seg.dcd.index(dcd)] * seg.dt_fs / 1000.0
+    tr = read_frames(run_dir / dcd, sys_arr)
+    n_all = len(tr["bb"])
+    k0 = int(np.floor(skip * n_all))
+    tr = {k: v[k0:] for k, v in tr.items()}
+    nf = len(tr["bb"])
+    if nf < 3:
+        out["notes"].append(f"trajectory not available ({dcd}: only {nf} frames in the window)")
+        return out
+    chains = sys_arr["chains"]
+    first = np.array([c[0] for c in chains])
+    last = np.array([c[-1] for c in chains])
+    ree = tr["bb"][:, last].astype(float) - tr["bb"][:, first]
+    rg2 = _mean_sd(tr["rg2"].mean(axis=1))
+    ree2 = _mean_sd(np.sum(ree**2, axis=2).mean(axis=1))
+    res = sys_arr["manifest"]["resolution"]
+    cg = res == "cg"
+    nc, cn = characteristic_ratio(
+        tr["bb"].astype(float),
+        chains,
+        carbons_per_site=CARBONS_PER_SITE[res],
+        bond_length=1.54 if cg else None,
+        per_frame=True,
+    )
+    sel = nc >= 100
+    try:
+        cryst = crystallinity_monitor(tr, chains, sys_arr["manifest"])
+    except (ValueError, KeyError, OSError) as exc:
+        cryst = {"available": False, "note": f"crystallinity not computed: {exc}"}
+    out.update(
+        available=True,
+        dcd=dcd,
+        frames=nf,
+        frames_total=n_all,
+        frame_ps=frame_ps,
+        window_ns=(nf - 1) * frame_ps / 1000,
+        rg={"rg2_A2": rg2, "rg_A": _root(rg2)},
+        ree={"ree2_A2": ree2, "ree_A": _root(ree2)},
+        c_n={
+            "plateau": _mean_sd(cn[:, sel].mean(axis=1)) if sel.any() else None,
+            "frames": nf,
+            "n_min": 100,
+            "bond_length": 1.54 if cg else None,
+        },
+        crystallinity=cryst,
+    )
+    return out
+
+
 ROUSE_P_MAX = 5  # Rouse modes p = 1..ROUSE_P_MAX (D56)
 SERIES_BLOCKS = 100  # block means per hold in the rg/ree/c_n "series" (D56)
 
@@ -1026,6 +1091,7 @@ def analyze_sweep(
         "notes": [],
     }
     rows, mass, eq = [], None, []
+    step_kappa: dict = {}  # sweep index -> kappa_T of a step (second half, as its stats)
     for seg, th in zip(segments, thermo, strict=True):
         if seg.sweep_index is None or seg.vdos:
             continue
@@ -1064,6 +1130,8 @@ def analyze_sweep(
                 mass = float(th["Density"][0] * th["Volume"][0] * AVOGADRO * A3_CM3)
             if seg.sweep_kind == "hold":
                 row["kappa"] = kappa_t(th, seg.t_target_k, HOLD_SKIP)
+            elif seg.sweep_kind == "step":
+                step_kappa[seg.sweep_index] = kappa_t(th, seg.t_target_k, STEP_SKIP)
         rows.append(row)
     report["segments"] = rows
     report["mass_gmol"] = mass
@@ -1100,6 +1168,26 @@ def analyze_sweep(
                 h["traj"] = {"available": False, "notes": [f"trajectory failed: {exc}"]}
         holds.append(h)
     report["holds"] = holds
+    # per-step kappa_T and static chain properties (steps: second half, as their stats)
+    steps = []
+    seg_steps = {s.sweep_index: s for s in segments if s.sweep_kind == "step" and not s.vdos}
+    for r in rows:
+        if r["kind"] != "step":
+            continue
+        st = {"index": r["index"], "t_c": r["t_set_c"], "kappa": step_kappa.get(r["index"])}
+        if not traj:
+            st["traj"] = {"available": False, "notes": ["trajectory analysis skipped (--no-traj)"]}
+        elif sys_arr is None:
+            st["traj"] = {"available": False, "notes": ["trajectory not available (no system)"]}
+        elif not r["done"]:
+            st["traj"] = {"available": False, "notes": ["step not complete"]}
+        else:
+            try:
+                st["traj"] = step_static(run_dir, seg_steps[r["index"]], sys_arr)
+            except (OSError, ValueError) as exc:
+                st["traj"] = {"available": False, "notes": [f"trajectory failed: {exc}"]}
+        steps.append(st)
+    report["steps"] = steps
     caveats = [_cp_caveat(resolution)]
     caveats += chain_relaxation_caveat(run_dir)
     caveats.append(
@@ -1293,6 +1381,36 @@ def render_markdown(r: dict) -> str:
             if k
             else f"| {h['t_c']:g} | n/a | | | | |"
         )
+    steps = r.get("steps") or []
+    if steps:
+        lines += [
+            "",
+            "## Sweep steps: κ_T and chain size",
+            "",
+            (
+                "Per step, over its second half (as its thermo stats): κ_T as for the holds and"
+                " the static chain properties from the step DCD (no MSD / relaxation). The"
+                " steps are short, so κ_T is noisier and the chain shape is largely inherited"
+                " from the segment before."
+            ),
+            "",
+            "| T (°C) | κ_T (GPa⁻¹) | frames | R_g (Å) | R_ee (Å) | C_n plateau | ordered fraction |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for st in steps:
+            k, t = st.get("kappa"), st.get("traj") or {}
+            kap = f"{k['kappa_T_GPa']:.3f} ± {k['sem']:.3f}" if k else "n/a"
+            if t.get("available"):
+                cr = t.get("crystallinity") or {}
+                frac = f"{cr['fraction']['mean']:.3f}" if cr.get("available") else "n/a"
+                lines.append(
+                    f"| {st['t_c']:g} | {kap} | {t['frames']} | {_pm(t['rg']['rg_A'], '.2f')} |"
+                    f" {_pm(t['ree']['ree_A'], '.1f')} | {_pm(t['c_n']['plateau'], '.2f')} |"
+                    f" {frac} |"
+                )
+            else:
+                note = "; ".join(t.get("notes") or []) or "no trajectory"
+                lines.append(f"| {st['t_c']:g} | {kap} | {note} | | | | |")
     f = r.get("fits")
     lines += ["", "## Thermal expansion and classical Cp (fits over the sweep)", ""]
     if not f:

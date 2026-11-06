@@ -224,6 +224,7 @@ def fake_sweep(tmp_path_factory):
     for k in (1, 2):
         _write_dcd(run / f"seg01_hold_25C_burst{k:02d}.dcd", walk(11, 0.05))
     _write_dcd(run / "seg05_hold_160C.dcd", walk(11, 0.4))  # no bursts at 160 C
+    _write_dcd(run / "seg02_step_50C.dcd", walk(11, 0.3))  # step: 11 frames, second half used
     return run
 
 
@@ -298,6 +299,31 @@ def test_cli_analyze_sweep_end_to_end(fake_sweep, tmp_path, capsys):
     assert "τ_1/τ_2 (Rouse 4)" in md
     assert (out / "relaxation.png").stat().st_size > 1000
     assert not (fake_sweep / "results.md").exists()
+
+
+def test_sweep_steps_kappa_and_static_chain(fake_sweep, tmp_path):
+    from sepsim.analyze import analyze_sweep, render_markdown, step_static
+
+    r, _ = analyze_sweep(fake_sweep, tmp_path / "o", systems=CG.parent, plots=False)
+    assert [s["index"] for s in r["steps"]] == [2] and r["steps"][0]["t_c"] == 50.0
+    st = r["steps"][0]
+    expect = 1000.0**2 / (KB_J_PER_K * (50.0 + 273.15) * _volume(50.0)) * 1e-21
+    assert st["kappa"]["kappa_T_GPa"] == pytest.approx(expect, rel=0.4)
+    assert st["kappa"]["samples"] == 51  # second half of the 101 thermo rows
+    t = st["traj"]
+    assert t["available"] and t["frames_total"] == 11 and t["frames"] == 6  # second half
+    assert t["rg"]["rg_A"]["mean"] > 10.0 and t["ree"]["ree_A"]["mean"] > 10.0
+    assert t["c_n"]["plateau"]["mean"] > 1.0 and t["crystallinity"]["available"]
+    assert not {"com_msd", "relaxation", "curves", "p2"} & set(t)  # static only
+    # existing keys untouched: kappa stays a hold-only segment field
+    assert "kappa" not in r["segments"][1] and len(r["holds"]) == 4
+    md = render_markdown(r)
+    assert "## Sweep steps: κ_T and chain size" in md and "| 50 |" in md
+    seg = next(s for s in pg.parse_deck(fake_sweep / "in.sweep") if s.sweep_kind == "step")
+    seg.dcd = ["missing.dcd"]
+    assert "not found" in step_static(fake_sweep, seg, {})["notes"][0]
+    r2, _ = analyze_sweep(fake_sweep, tmp_path / "p", systems=CG.parent, traj=False, plots=False)
+    assert r2["steps"][0]["kappa"] and not r2["steps"][0]["traj"]["available"]
 
 
 def test_drift_flags_and_block_convergence():

@@ -15,8 +15,9 @@ caption per figure) into ``results/presentation/`` by default (appendix figures 
 - ``fig3_thermo``: rho(T), local alpha_V(T), kappa_T, cooling-vs-heating hysteresis, against
   experiment; appendix ``fig3_1_cp_chain_length`` (classical Cp, C1500 vs C240) and
   ``fig3_2_convergence`` (hold running-mean density and kappa_T vs time);
-- ``fig4_chains``: Rg, C_n vs T, C_n(n), ordered-site fraction; appendix
-  ``fig4_1_ree_length`` (R_ee vs T, C240 vs C1500 <R_ee^2>/M);
+- ``fig4_chains``: Rg and C_n vs T, C_n(n) (with the 5 ns sweep steps when the sweep
+  results.json has ``steps``); appendix ``fig4_1_ree_length`` (R_ee vs T, C240 vs C1500
+  <R_ee^2>/M, ordered-site fraction);
 - ``fig5_pore``: slit-pore render, rho(z), gamma(T), film/gap/interface, surface vs
   interior mobility, bond orientation, chain flattening, surface excess energy;
 - ``fig6_dynamics``: segment and chain COM MSD, D_COM, P2 times, tau_ee / tau_1, Rouse
@@ -415,6 +416,11 @@ def fig_legend(fig, rows: list[list], **kw) -> None:
     )
 
 
+def legend_rows(handles: list, n: int) -> list[list]:
+    """``handles`` cut into rows of ``n`` (for :func:`fig_legend`)."""
+    return [handles[k : k + n] for k in range(0, len(handles), n)]
+
+
 def _key(label: str, marker: str = "", ls: str = "", mfc: str = "0.3", **kw) -> Line2D:
     """Grey style-key handle (marker fill, line style) for a shared legend."""
     return Line2D(
@@ -536,6 +542,13 @@ def long_holds(data: dict, sid: str) -> list[dict]:
 def sweep_holds(s: dict | None, data: dict) -> list[dict]:
     res = g(data["analysis"], s["sid"], "sweep") if s else None
     return [h for h in (res or {}).get("holds") or [] if g(h, "traj", "available")]
+
+
+def sweep_steps(s: dict | None, data: dict) -> list[dict]:
+    """The sweep's 5 ns steps with static chain results (results.json ``steps``: index,
+    t_c, kappa, traj); empty for analyses that predate the per-step extension."""
+    res = g(data["analysis"], s["sid"], "sweep") if s else None
+    return [st for st in (res or {}).get("steps") or [] if g(st, "traj", "available")]
 
 
 def relaxed(tr: dict) -> bool:
@@ -1681,6 +1694,32 @@ def _f3_kappa(ax, data, sweeps, info) -> None:
     for i, s in enumerate(sweeps):
         off = (i - (n - 1) / 2) * 3.0
         hs = [h for h in g(s, "results", "sweep", "holds") or [] if h.get("kappa")]
+        st = [x for x in g(s, "results", "sweep", "steps") or [] if x.get("kappa")]
+        if st:  # 5 ns sweep steps: small markers, one plain line through steps and holds
+            line = sorted(hs + st, key=lambda x: x["t_c"])
+            ax.plot(
+                [x["t_c"] + off for x in line],
+                [x["kappa"]["kappa_T_GPa"] for x in line],
+                color=s["color"],
+                ls=s["ls"],
+                lw=1.1,
+            )
+            ax.errorbar(
+                [x["t_c"] + off for x in st],
+                [x["kappa"]["kappa_T_GPa"] for x in st],
+                [x["kappa"].get("sem") or 0 for x in st],
+                fmt=s["marker"],
+                color=s["color"],
+                mfc=s["mfc"],
+                ms=STEP_MS,
+                elinewidth=0.8,
+                capsize=1.5,
+                ls="",
+            )
+            info["c_steps"] = True
+            info.setdefault("c_step_rows", {})[s["label"]] = [
+                (x["t_c"], x["kappa"]["kappa_T_GPa"]) for x in st
+            ]
         ax.errorbar(
             [h["t_c"] + off for h in hs],
             [h["kappa"]["kappa_T_GPa"] for h in hs],
@@ -1688,8 +1727,9 @@ def _f3_kappa(ax, data, sweeps, info) -> None:
             fmt=s["marker"],
             color=s["color"],
             mfc=s["mfc"],
-            ls=s["ls"],
+            ls="" if st else s["ls"],
             lw=1.5,
+            zorder=3,
         )
         info["c"][s["label"]] = [(h["t_c"], h["kappa"]["kappa_T_GPa"]) for h in hs]
         lh = [r for r in long_holds(data, s["sid"]) if g(r, "res", "kappa", "kappa_T_GPa")]
@@ -2007,16 +2047,19 @@ def fig3_thermo(data: dict, out: Path) -> tuple[list[Path], dict]:
     ]
     if info.get("c_long"):
         extra.append(_key("half-filled: long hold (D53), κ$_T$", "o", **LONG_KW))
+    if info.get("c_steps"):
+        extra.append(_key("small markers: 5 ns sweep steps, κ$_T$", "o", ms=STEP_MS))
+    exp_h = []
     for pol in _exp_polymers(sweeps):
         e = EXPERIMENT.get(pol, {})
         if "density" in e or "kappa_T" in e:
-            extra.append(
+            exp_h.append(
                 Line2D([], [], color="black", marker="x", ls="", label=f"{POLY_NAME[pol]} expt.")
             )
         if "alpha_V" in e:
-            extra.append(Patch(fc="0.2", alpha=0.15, label=f"{POLY_NAME[pol]} expt. α$_V$"))
+            exp_h.append(Patch(fc="0.2", alpha=0.15, label=f"{POLY_NAME[pol]} expt. α$_V$"))
     if sweeps or hyst:
-        fig_legend(fig, [_legend_handles(legend), extra])
+        fig_legend(fig, [_legend_handles(legend), extra, exp_h])
     info["sids"] = [s["sid"] for s in sweeps]
     paths = save(fig, out, "fig3_thermo")
     # appendix Fig. 3.1: classical Cp, chain length; Fig. 3.2: hold convergence
@@ -2058,8 +2101,10 @@ def _traj_point(tr: dict, t_c: float, src: str) -> dict:
 
 
 def chain_points(data: dict, s: dict) -> list[dict]:
-    """Chain size per T of a bulk system: sweep holds, long holds (D53), 500 K melt."""
+    """Chain size per T of a bulk system: sweep holds, 5 ns sweep steps (results.json
+    ``steps``, when the analysis has them), long holds (D53), 500 K melt."""
     pts = [_traj_point(h["traj"], float(h["t_c"]), "sweep") for h in sweep_holds(s, data)]
+    pts += [_traj_point(st["traj"], float(st["t_c"]), "step") for st in sweep_steps(s, data)]
     for r in long_holds(data, s["sid"]):
         tr = g(r, "res", "traj") or {}
         if tr.get("available"):
@@ -2086,6 +2131,50 @@ def chain_points(data: dict, s: dict) -> list[dict]:
 
 
 LONG_DX = 4.0  # x offset (°C) of the long-hold points next to the sweep holds
+STEP_MS = 4.0  # marker size of the 5 ns sweep steps (holds: 7)
+
+
+def draw_chain_points(ax, s: dict, pts: list[dict], val, err) -> None:
+    """Fig. 4 points of one series: a plain line through the sweep (holds and steps in T
+    order) to the 500 K melt; sweep holds open, steps small open (both inherit the chain
+    shape), long holds (D53) filled at +4 °C, the 500 K melt a filled diamond."""
+    sw = sorted((p for p in pts if p["src"] in ("sweep", "step", "500K")), key=lambda p: p["t_c"])
+    ax.plot([p["t_c"] for p in sw], [val(p) for p in sw], color=s["color"], ls=s["ls"], lw=1.1)
+    for p in pts:
+        if p["src"] == "step":
+            ax.errorbar(
+                p["t_c"],
+                val(p),
+                err(p) or 0,
+                fmt=s["marker"],
+                color=s["color"],
+                mfc="white",
+                ms=STEP_MS,
+                elinewidth=0.8,
+                capsize=1.5,
+                zorder=2,
+            )
+            continue
+        ax.errorbar(
+            p["t_c"] + (LONG_DX if p["src"] == "long" else 0.0),
+            val(p),
+            err(p) or 0,
+            fmt="D" if p["src"] == "500K" else s["marker"],
+            color=s["color"],
+            mfc=s["color"] if p["src"] in ("long", "500K") else "white",
+            ms=7,
+            zorder=3,
+        )
+
+
+def long_hold_ns(series: list[dict]) -> tuple[float, float, bool] | None:
+    """(shortest, longest) long-hold length in ns over the series, and whether all long
+    holds are CG; None without long holds."""
+    rows = [(p.get("hold_ns"), s["res"]) for s in series for p in s["pts"] if p["src"] == "long"]
+    ns = [h for h, _ in rows if h]
+    if not ns:
+        return None
+    return min(ns), max(ns), all(r == "cg" for _, r in rows)
 
 
 def _chain_panel(ax, data, series, key, ylabel, letter, title, info, exp=None) -> None:
@@ -2097,19 +2186,7 @@ def _chain_panel(ax, data, series, key, ylabel, letter, title, info, exp=None) -
         if not pts:
             continue
         shown.append(s)
-        sw = sorted((p for p in pts if p["src"] in ("sweep", "500K")), key=lambda p: p["t_c"])
-        ax.plot([p["t_c"] for p in sw], [p[key] for p in sw], color=s["color"], ls=s["ls"], lw=1.2)
-        for p in pts:  # long holds (D53): ordinary points, offset +4 °C
-            ax.errorbar(
-                p["t_c"] + (LONG_DX if p["src"] == "long" else 0.0),
-                p[key],
-                p.get(key + "_sem") or 0,
-                fmt="D" if p["src"] == "500K" else s["marker"],
-                color=s["color"],
-                mfc=s["color"] if p["relaxed"] else "white",
-                ms=7,
-                zorder=3,
-            )
+        draw_chain_points(ax, s, pts, lambda p: p[key], lambda p: p.get(key + "_sem"))
         info[letter][s["label"]] = [(p["t_c"], p["src"], p[key], p["relaxed"]) for p in pts]
     if not shown:
         no_data(ax, "no chain-size data", pending=True)
@@ -2124,18 +2201,31 @@ def _chain_panel(ax, data, series, key, ylabel, letter, title, info, exp=None) -
     return shown, extra
 
 
-def _point_keys() -> list:
-    """Fig. 4 point-style keys (fill = re-equilibrated or inherited, diamond = 500 K)."""
-    return [
-        _key("filled: re-equilibrated at T", "o"),
-        _key("open: inherited from 500 K", "o", mfc="white"),
-        _key("500 K melt", "D"),
-    ]
+def _point_keys(long: tuple | None = None, steps: bool = False) -> list:
+    """Fig. 4 point-style keys: what each fill / size / shape is."""
+    h = [_key("open: sweep hold (chains inherited from 500 K)", "o", mfc="white")]
+    if long:
+        lo, hi, cg = long
+        h.append(
+            _key(
+                f"filled: long hold, {lo:.0f}–{hi:.0f} ns{', CG only' if cg else ''}"
+                " (chains moved ≥ own size)",
+                "o",
+            )
+        )
+    if steps:
+        h.append(_key("small open: 5 ns sweep step", "o", mfc="white", ms=STEP_MS))
+    return h + [_key("diamond: 500 K melt", "D")]
 
 
-def _chain_legend_handles(series: list[dict], extra: list) -> list:
-    """Model colour x polymer marker, then the point-style keys (in-panel legends)."""
-    return _legend_handles(series, ls=False) + _point_keys() + extra
+EXP_PT = {"ms": 8, "mfc": "black", "mec": "black", "capsize": 4, **EXP_KW}  # Fig. 4 expt.
+
+
+def exp_key() -> Line2D:
+    """Fig. 4 / 4.1 legend entry: experiment in black with the polymer's marker."""
+    return Line2D(
+        [], [], color="black", marker="o", ls="", label="black: experiment (circle PE, square iPP)"
+    )
 
 
 def _exp_rg(ax):
@@ -2144,29 +2234,26 @@ def _exp_rg(ax):
         e["t_c"],
         0.5 * (e["lo"] + e["hi"]),
         0.5 * (e["hi"] - e["lo"]),
-        fmt="x",
-        ms=9,
-        mew=1.8,
-        capsize=4,
-        **EXP_KW,
+        fmt=POLY_MARKER["pe"],
+        **EXP_PT,
     )
-    return [Line2D([], [], color="black", marker="x", ls="", label="PE C240 expt. [D]")]
+    return []
 
 
 def _exp_ree(ax):
     e = EXPERIMENT["pe"]["r2_over_m"]
     m = 240 * CH2_G + 2 * 1.008
-    ax.plot(e["t_c"], np.sqrt(e["value"] * m), "x", ms=9, mew=1.8, **EXP_KW)
-    return [Line2D([], [], color="black", marker="x", ls="", label="PE C240 expt. [D]")]
+    ax.errorbar(e["t_c"], np.sqrt(e["value"] * m), fmt=POLY_MARKER["pe"], **EXP_PT)
+    return []
 
 
 def _exp_cn(ax):
     pts = np.array(EXPERIMENT["pe"]["c_inf"])
-    ax.plot(pts[:, 0], pts[:, 1], "x", ms=9, mew=1.8, **EXP_KW)
-    ax.plot(T500_C, EXPERIMENT["pe"]["c_melt_500k"], "x", ms=9, mew=1.8, **EXP_KW)
+    ax.errorbar(pts[:, 0], pts[:, 1], fmt=POLY_MARKER["pe"], **EXP_PT)
+    ax.errorbar(T500_C, EXPERIMENT["pe"]["c_melt_500k"], fmt=POLY_MARKER["pe"], **EXP_PT)
     ipp = EXPERIMENT["ipp"].get("c_melt_500k")
     if ipp:  # the only sourced iPP value: the D37 melt reference at 500 K
-        ax.plot(T500_C + 7, ipp, "+", ms=11, mew=2.2, **EXP_KW)
+        ax.errorbar(T500_C + 7, ipp, fmt=POLY_MARKER["ipp"], **EXP_PT)
     return []
 
 
@@ -2225,34 +2312,22 @@ def _f4_cn_n(ax, data, series, info) -> None:
 
 
 def _f4_cryst(ax, data, series, info) -> None:
-    panel_label(ax, "d", "Ordered-site fraction vs T")
-    info["d"] = {}
+    panel_label(ax, "c", "Ordered-site fraction vs T")
+    info["c"] = {}
     shown = []
     for s in series:
         pts = [p for p in s["pts"] if p.get("cryst")]
         if not pts:
             continue
         shown.append(s)
-        sw = sorted((p for p in pts if p["src"] != "long"), key=lambda p: p["t_c"])
-        ax.plot(
-            [p["t_c"] for p in sw],
-            [p["cryst"]["fraction"]["mean"] for p in sw],
-            color=s["color"],
-            ls=s["ls"],
-            lw=1.2,
+        draw_chain_points(
+            ax,
+            s,
+            pts,
+            lambda p: p["cryst"]["fraction"]["mean"],
+            lambda p: p["cryst"]["fraction"].get("sd"),
         )
-        for p in pts:  # long holds (D53): ordinary points, offset +4 °C
-            ax.errorbar(
-                p["t_c"] + (LONG_DX if p["src"] == "long" else 0.0),
-                p["cryst"]["fraction"]["mean"],
-                p["cryst"]["fraction"].get("sd") or 0,
-                fmt="D" if p["src"] == "500K" else s["marker"],
-                color=s["color"],
-                mfc=s["color"] if p["relaxed"] else "white",
-                ms=7,
-                zorder=3,
-            )
-        info["d"][s["label"]] = [
+        info["c"][s["label"]] = [
             (
                 p["t_c"],
                 p["src"],
@@ -2283,7 +2358,7 @@ def _f4_cryst(ax, data, series, info) -> None:
             ls=":",
             lw=1.2,
         )
-        info["d"][s["label"] + " film"] = [
+        info["c"][s["label"] + " film"] = [
             (h["t_c"], h["film"]["crystallinity"]["fraction"]["mean"]) for h in hs
         ]
     if not shown and not films:
@@ -2328,90 +2403,61 @@ def _f4_length(ax, data, info) -> None:
     for s in bulk_systems(data, derived=False):
         if s["res"] != "cg":
             continue
-        pts = [p for p in chain_points(data, s) if p.get("ree2")]
+        pts = [p for p in chain_points(data, s) if p.get("ree2") and p["src"] != "step"]
         if not pts:
             continue
         m = mass_per_chain(s)
         shown.append(s)
-        sw = sorted((p for p in pts if p["src"] != "long"), key=lambda p: p["t_c"])
-        ax.plot(
-            [p["t_c"] for p in sw],
-            [p["ree2"] / m for p in sw],
-            color=s["color"],
-            ls=s["ls"],
-            lw=1.2,
+        draw_chain_points(
+            ax, s, pts, lambda p, m=m: p["ree2"] / m, lambda p, m=m: (p.get("ree2_sem") or 0) / m
         )
-        for p in pts:
-            ax.errorbar(
-                p["t_c"] + (LONG_DX if p["src"] == "long" else 0),
-                p["ree2"] / m,
-                (p.get("ree2_sem") or 0) / m,
-                fmt="D" if p["src"] == "500K" else s["marker"],
-                color=s["color"],
-                mfc=s["color"] if p["relaxed"] else "white",
-                ms=7,
-            )
         info["b"][s["label"]] = [(p["t_c"], p["src"], p["ree2"] / m) for p in pts]
     if not shown:
         no_data(ax, "no CG chain sizes", pending=True)
         return
     e = EXPERIMENT["pe"]["r2_over_m"]
-    ax.plot(e["t_c"], e["value"], "x", ms=10, mew=2, **EXP_KW)
-    ax.text(e["t_c"] + 5, e["value"], "PE melt expt.", va="center", fontsize=9.5)
+    ax.errorbar(e["t_c"], e["value"], fmt=POLY_MARKER["pe"], **EXP_PT)
+    ax.text(e["t_c"] + 6, e["value"], "PE melt expt.", va="center", fontsize=9.5)
     ax.set_xlabel("T (°C)")
     ax.set_ylabel(r"⟨R$_{ee}^2$⟩ / M (Å$^2$ mol g$^{-1}$)")
     ax.set_xticks([25, 90, 130, 160, T500_C], ["25", "90", "130", "160", "500 K"])
     ax.set_xlim(10, 245)
     ax.set_ylim(0, None)
-    ax.legend(
-        handles=[
-            Line2D([], [], color=s["color"], ls=s["ls"], label=f"{s['label']} (line)")
-            for s in shown
-        ]
-        + [
-            _key("filled: re-equilibrated at T", "o"),
-            _key("open: inherited from 500 K", "o", mfc="white"),
-            _key("500 K melt", "D"),
-        ],
-        loc="lower right",
-        fontsize=8.5,
-        ncols=2,
-    )
+    info["b_series"] = shown
+
+
+FIG13 = (15.0, 5.6)  # 1 x 3 panels below a shared legend row
 
 
 def fig4_chains(data: dict, out: Path) -> tuple[list[Path], dict]:
-    fig, axes = plt.subplots(2, 2, figsize=FIG22L, layout="constrained")
+    fig, axes = plt.subplots(1, 3, figsize=FIG13, layout="constrained")
     info: dict = {}
     series = [s | {"pts": chain_points(data, s)} for s in bulk_systems(data) if s["primary"]]
     series = [s for s in series if s["pts"]]
+    keys = {
+        "long": long_hold_ns(series),
+        "steps": any(p["src"] == "step" for s in series for p in s["pts"]),
+    }
+    info["keys"] = keys
     shown = {}
     for ax, key, lab, letter, title, exp in (
-        (axes[0, 0], "rg", r"R$_g$ (Å)", "a", "Radius of gyration", _exp_rg),
-        (axes[0, 1], "cn", r"C$_n$ plateau (n ≥ 100)", "b", "Characteristic ratio", _exp_cn),
+        (axes[0], "rg", r"R$_g$ (Å)", "a", "Radius of gyration", _exp_rg),
+        (axes[1], "cn", r"C$_n$ plateau (n ≥ 100)", "b", "Characteristic ratio", _exp_cn),
     ):
         r = _chain_panel(ax, data, series, key, lab, letter, title, info, exp)
         if r:
             shown |= {s["sid"]: s for s in r[0]}
-    _f4_cn_n(axes[1, 0], data, series, info)
-    _f4_cryst(axes[1, 1], data, series, info)
+    _f4_cn_n(axes[2], data, series, info)
     if series:
-        extra = [Line2D([], [], color="black", marker="x", ls="", label="PE expt.")]
-        if EXPERIMENT["ipp"].get("c_melt_500k"):
-            extra.append(
-                Line2D(
-                    [],
-                    [],
-                    color="black",
-                    marker="+",
-                    ms=10,
-                    mew=2,
-                    ls="",
-                    label="iPP melt C$_\\infty$ (500 K)",
-                )
-            )
-        extra.append(_key("line: joins sweep holds", ls="-", lw=1.2))
         fig_legend(
-            fig, [_legend_handles(list(shown.values()) or series, ls=False), _point_keys() + extra]
+            fig,
+            legend_rows(
+                _legend_handles(list(shown.values()) or series, ls=False)
+                + [exp_key()]
+                + _point_keys(**keys)
+                + [_key("line: joins the sweep points", ls="-", lw=1.2)],
+                4,
+            ),
         )
     info["long_drift"] = {
         s["label"]: [p for p in s["pts"] if p["src"] == "long" and p.get("cn_first")]
@@ -2420,9 +2466,9 @@ def fig4_chains(data: dict, out: Path) -> tuple[list[Path], dict]:
     }
     info["sids"] = [s["sid"] for s in series]
     paths = save(fig, out, "fig4_chains")
-    # appendix Fig. 4.1: R_ee vs T, C240 vs C1500 <R_ee^2>/M
-    fig, axes = plt.subplots(1, 2, figsize=FIG12, layout="constrained")
-    app: dict = {}
+    # appendix Fig. 4.1: R_ee vs T, C240 vs C1500 <R_ee^2>/M, ordered-site fraction
+    fig, axes = plt.subplots(1, 3, figsize=FIG13, layout="constrained")
+    app: dict = {"long": keys["long"], "steps": keys["steps"]}
     r = _chain_panel(
         axes[0],
         data,
@@ -2434,17 +2480,29 @@ def fig4_chains(data: dict, out: Path) -> tuple[list[Path], dict]:
         app,
         _exp_ree,
     )
-    if r:
-        lo, hi = axes[0].get_ylim()
-        axes[0].set_ylim(lo, hi + 0.45 * (hi - lo))
-        axes[0].legend(
-            handles=_chain_legend_handles(r[0], r[1]),
-            loc="upper left",
-            fontsize=8.5,
-            ncols=3,
-            columnspacing=0.8,
-        )
     _f4_length(axes[1], data, app)
+    _f4_cryst(axes[2], data, series, app)
+    # shared legend: models (a, c), the CG chain lengths of (b) by line style, point keys
+    models = list((r[0] if r else []) or [])
+    lengths = [
+        Line2D(
+            [], [], color=s["color"], ls=s["ls"], marker=s["marker"], mfc="white", label=s["label"]
+        )
+        for s in app.pop("b_series", [])
+        if not s["primary"]
+    ]
+    if models or lengths:
+        fig_legend(
+            fig,
+            legend_rows(
+                _legend_handles(models, ls=False)
+                + lengths
+                + [exp_key()]
+                + _point_keys(**keys)
+                + [_key("line: joins the sweep points (dashed: C1500)", ls="-")],
+                4,
+            ),
+        )
     info["appendix"] = {"fig4_1_ree_length": app}
     paths += save(fig, out / APPENDIX, "fig4_1_ree_length")
     return paths, info
@@ -4134,12 +4192,20 @@ def caption_fig3(info: dict, data: dict) -> str:
         f" Local ranges: {rng}.{glass} Full 25–160 °C fits (results.json fits.alpha_V,"
         f" Birge-scaled errors): {full}. Grey band: PE experiment 7.0–7.5 over 25–160 °C"
         " [derived from SANS densities / Tait]. (c) κ<sub>T</sub> from the hold volume"
-        " fluctuations ± SEM; half-filled = the 180–280 ns CG long holds (D53), which agree"
+        " fluctuations ± SEM; half-filled = the CG long holds (D53), which agree"
         " with the 25 ns holds; experiment 0.94 / 1.08 GPa⁻¹ at 130 / 160 °C (Tait fit of"
         " Sato PVT data [D]); CG is 50–60 % too compressible, UA closer"
         f" ({kua} GPa⁻¹ at 25/90/130/160 °C). The CG 90 and 130 °C values may be slight"
         " underestimates (κ<sub>T</sub> still rising at the end of the hold; appendix"
-        " Fig. 3.2). (d) Cooling-branch minus heating-branch"
+        " Fig. 3.2)."
+        + (
+            " Small markers joined by the plain line: κ<sub>T</sub> of each 5 ns sweep step"
+            " over its second half (same estimator); steps are 5 ns, so their κ<sub>T</sub>"
+            " is noisier."
+            if info.get("c_steps")
+            else ""
+        )
+        + " (d) Cooling-branch minus heating-branch"
         " density at the same T. Protocol: 500 K melt → cooled to 25 °C in 8 steps of 5 ns"
         " (≈25 K each) → heating sweep 25 → 160 °C in 10 °C steps with long holds at"
         " 25/90/130/160 °C; the comparison is at the cooling-step temperatures (25, 50, 76,"
@@ -4223,55 +4289,62 @@ def caption_fig3_2(info: dict, data: dict) -> str:
     )
 
 
+STEP_CHAIN_TXT = (
+    " Small open = 5 ns sweep steps (static properties over the second half of each step,"
+    " joined to the holds by the plain line): in 5 ns at low T the chain shape is largely"
+    " inherited (chains do not relax), so the steps mostly track the inherited conformation."
+)
+
+
+def _fill_txt(keys: dict) -> str:
+    """Fig. 4 / 4.1 caption: what open / filled / diamond points are."""
+    long = keys.get("long")
+    txt = (
+        " Open = sweep hold (chains inherited from 500 K: COM MSD < ⟨R<sub>g</sub>²⟩ in the"
+        " hold, so the T dependence is not resolved; validity: trend);"
+    )
+    if long:
+        lo, hi, cg = long
+        txt += (
+            f" filled = long hold (D53, {lo:.0f}–{hi:.0f} ns{', CG only' if cg else ''}; chains"
+            " moved ≥ their own size; drawn at +4 °C);"
+        )
+    txt += " diamond = 500 K melt."
+    return txt + (STEP_CHAIN_TXT if keys.get("steps") else "")
+
+
+EXP_TXT = " Experiment in black with the polymer's marker (circle PE, square iPP)."
+
+
 def caption_fig4(info: dict, data: dict) -> str:
-    d = info.get("d") or {}
     drift = [
         f"{k} {p['t_c']:g} °C: C<sub>n</sub> {p['cn_first']:.1f} → {p['cn_last']:.1f},"
         f" R<sub>g</sub> {p['rg_first']:.1f} → {p['rg_last']:.1f} Å"
         for k, pts in (info.get("long_drift") or {}).items()
         for p in pts
     ]
-    fdrift = _join(
-        f"{k} {t:g} °C {f0:.3f} → {f1:.3f}"
-        for k, rows in d.items()
-        if not k.endswith("film")
-        for t, src, _, _, f0, f1 in rows
-        if src == "long" and f0 is not None and f1 is not None
-    )
-    cryst = _join(
-        f"{k}: "
-        + ", ".join(
-            f"{t_label(t)}{' long' if src == 'long' else ''} {v:.3f}" for t, src, v, *_ in rows
-        )
-        for k, rows in d.items()
-        if not k.endswith("film")
-    )
     return (
-        "**Figure 4. Chain dimensions and order** (primary 40 × C240 boxes; colour = model,"
-        " marker = polymer, diamond = 500 K melt, × = experiment; one shared legend). (a)"
+        "**Figure 4. Chain dimensions** (primary 40 × C240 boxes; colour = model, marker ="
+        " polymer, diamond = 500 K melt, black = experiment; one shared legend). (a)"
         " R<sub>g</sub> and (b) C<sub>n</sub> plateau (n ≥ 100) ± SEM vs T: sweep holds (25"
-        " ns CG, 10 ns UA), the CG long holds (D53, 180–280 ns; plain points drawn at +4 °C)"
-        " and the 500 K melt. Filled = the chains moved at least their own size in that hold"
-        " (COM MSD ≥ ⟨R<sub>g</sub>²⟩); open = inherited from the 500 K melt (the T"
-        " dependence is not resolved; validity: trend). Long-hold drift from the first to the"
-        " last 10 % of the hold: "
+        " ns CG, 10 ns UA), long holds and the 500 K melt."
+        + _fill_txt(info.get("keys") or {})
+        + " Long-hold drift from the first to the last 10 % of the hold: "
         + _join(drift)
-        + "; the rise at 25 °C goes with the box starting to order (see d). iPP chains are"
-        " shorter in backbone (80 monomers, 160 backbone carbons), hence the smaller sizes."
-        " Experiment: C240 PE R<sub>g</sub> 25–26.5 Å at 140 °C [D from ⟨R²⟩/M = 1.25 Å²"
-        " mol/g], PE C∞ 8.26 (25 °C) and 7.38 (140 °C) (Fetters, Lohse, Colby 2007) and the"
-        " 500 K melt value 6.7 used by D37 (×); iPP: only the 500 K melt C∞ = 6.15 (D37) is"
-        " sourced (+, drawn just right of 500 K). CG PE C<sub>n</sub> of 10–14 vs the"
-        " experimental 7.4 is a known CG over-stiffening (CG chains ≈20 % too large, a"
-        " force-field property). (c) C<sub>n</sub>(n) internal-distance curves: CG PE C240"
-        " sweep holds (colour = T) and every system's 500 K melt (grey; line style = model;"
-        " iPP curves end at 160 backbone carbons). (d) Ordered-site fraction (D26 local"
-        " alignment, p2 ≥ 0.4, uncalibrated: a melt baseline, not a crystallinity) ± sd over"
-        f" frames: bulk sweep holds, long holds and the 500 K melt ({cryst}) and the pore"
-        f" films (triangles, −4 °C). Long-hold first → last frame: {fdrift}. The 25 °C CG"
-        " long hold's largest ordered cluster grows to 672 of 3,200 beads (vs ≤ 492 in the"
-        " sweep hold). R<sub>ee</sub> and the C240 vs C1500 ⟨R<sub>ee</sub>²⟩/M are in"
-        " appendix Fig. 4.1." + validity_text(data, info.get("sids") or [], ["chain500", "chainT"])
+        + "; the 25 °C CG long-hold rise of R<sub>g</sub> and C<sub>n</sub> goes with the"
+        " onset of local ordering shown in appendix Fig. 4.1c. iPP chains are shorter in"
+        " backbone (80 monomers, 160 backbone carbons), hence the smaller sizes."
+        + EXP_TXT
+        + " C240 PE R<sub>g</sub> 25–26.5 Å at 140 °C [D from ⟨R²⟩/M = 1.25 Å² mol/g], PE C∞"
+        " 8.26 (25 °C) and 7.38 (140 °C) (Fetters, Lohse, Colby 2007) and the 500 K melt"
+        " value 6.7 used by D37; iPP: only the 500 K melt C∞ = 6.15 (D37) is sourced (square,"
+        " drawn just right of 500 K). CG PE C<sub>n</sub> of 10–14 vs the experimental 7.4 is"
+        " a known CG over-stiffening (CG chains ≈20 % too large, a force-field property). (c)"
+        " C<sub>n</sub>(n) internal-distance curves: CG PE C240 sweep holds (colour = T) and"
+        " every system's 500 K melt (grey; line style = model; iPP curves end at 160 backbone"
+        " carbons); dashed = PE C∞ 7.38 (140 °C). R<sub>ee</sub>, the C240 vs C1500"
+        " ⟨R<sub>ee</sub>²⟩/M and the ordered-site fraction are in appendix Fig. 4.1."
+        + validity_text(data, info.get("sids") or [], ["chain500", "chainT"])
     )
 
 
@@ -4281,17 +4354,41 @@ def caption_fig4_1(info: dict, data: dict) -> str:
         v = [100 * (x / EXPERIMENT["pe"]["r2_over_m"]["value"] - 1) for _, _, x in rows]
         if v:
             excess.append(f"{k} {min(v):+.0f} to {max(v):+.0f} %")
+    c = info.get("c") or {}
+    fdrift = _join(
+        f"{k} {t:g} °C {f0:.3f} → {f1:.3f}"
+        for k, rows in c.items()
+        if not k.endswith("film")
+        for t, src, _, _, f0, f1 in rows
+        if src == "long" and f0 is not None and f1 is not None
+    )
+    cryst = _join(
+        f"{k}: "
+        + ", ".join(
+            f"{t_label(t)}{' long' if src == 'long' else ''} {v:.3f}"
+            for t, src, v, *_ in rows
+            if src != "step"
+        )
+        for k, rows in c.items()
+        if not k.endswith("film")
+    )
     return (
-        "**Figure 4.1 (appendix). End-to-end distance and chain length.** Symbols as in"
-        " Fig. 4 (filled = re-equilibrated at T, open = inherited from 500 K, diamond = 500 K"
-        " melt; long holds at +4 °C). (a) R<sub>ee</sub> = ⟨R<sub>ee</sub>²⟩<sup>1/2</sup> ±"
-        " SEM vs T for the primary boxes; experiment: C240 PE R<sub>ee</sub> ≈ 65 Å at"
-        " 140 °C [D from ⟨R²⟩/M = 1.25 Å² mol/g, Fetters, Lohse, Colby 2007]. (b)"
-        " ⟨R<sub>ee</sub>²⟩/M for CG PE C240 and C1500 vs the PE melt value 1.25 Å² mol/g"
-        " (140 °C; "
+        "**Figure 4.1 (appendix). End-to-end distance, chain length and local order.**"
+        " Symbols as in Fig. 4."
+        + _fill_txt({"long": info.get("long"), "steps": info.get("steps")})
+        + EXP_TXT
+        + " (a) R<sub>ee</sub> = ⟨R<sub>ee</sub>²⟩<sup>1/2</sup> ± SEM vs T for the primary"
+        " boxes; experiment: C240 PE R<sub>ee</sub> ≈ 65 Å at 140 °C [D from ⟨R²⟩/M = 1.25"
+        " Å² mol/g, Fetters, Lohse, Colby 2007]. (b) ⟨R<sub>ee</sub>²⟩/M for CG PE C240 and"
+        " C1500 (dashed) vs the PE melt value 1.25 Å² mol/g (140 °C; "
         + _join(excess)
         + "); the C1500 values are all inherited (D47 not reachable for C1500, validity:"
-        " trend)."
+        " trend). (c) Ordered-site fraction (D26 local alignment, p2 ≥ 0.4, uncalibrated: a"
+        " melt baseline, not a crystallinity) ± sd over frames: bulk sweep holds, long holds"
+        f" and the 500 K melt ({cryst}) and the pore films (triangles, −4 °C). Long-hold first"
+        f" → last frame: {fdrift}. The 25 °C CG long hold's largest ordered cluster grows to"
+        " 672 of 3,200 beads (vs ≤ 492 in the sweep hold): the onset of local ordering that"
+        " goes with its R<sub>g</sub> / C<sub>n</sub> rise in Fig. 4."
     )
 
 

@@ -195,6 +195,58 @@ def test_real_data_smoke(pf, tmp_path):
         assert fn(infos[parent]["appendix"][name], data).startswith("**Figure")
 
 
+def _with_steps(src: Path, dst: Path, sid: str) -> None:
+    """Copy an analysis tree and give ``sid``'s sweep a synthetic ``steps`` list (the
+    per-step extension of `sepsim analyze sweep`): each step takes the nearest hold's
+    kappa and static chain results, scaled slightly with T."""
+    shutil.copytree(src, dst)
+    p = dst / sid / "sweep" / "results.json"
+    r = json.loads(p.read_text())
+    holds = r["holds"]
+    steps = []
+    for seg in r["segments"]:
+        if seg["kind"] != "step":
+            continue
+        h = min(holds, key=lambda h: abs(h["t_c"] - seg["t_set_c"]))
+        f = 1 + 0.001 * (seg["t_set_c"] - h["t_c"])
+        tr = {k: h["traj"][k] for k in ("rg", "ree", "c_n", "crystallinity")}
+        tr = json.loads(json.dumps(tr))
+        tr["rg"]["rg_A"]["mean"] *= f
+        tr["available"], tr["frames"] = True, 25
+        kap = dict(h["kappa"], kappa_T_GPa=h["kappa"]["kappa_T_GPa"] * f)
+        steps.append({"index": seg["index"], "t_c": seg["t_set_c"], "kappa": kap, "traj": tr})
+    r["steps"] = steps
+    p.write_text(json.dumps(r))
+
+
+@pytest.mark.skipif(
+    not (REPO / "results/analysis/pe_cg_amorph_n40_c240_s1/sweep/results.json").is_file(),
+    reason="committed CG analysis not present",
+)
+def test_sweep_steps_drawn_when_present(pf, tmp_path):
+    sid = "pe_cg_amorph_n40_c240_s1"
+    _with_steps(REPO / "results/analysis", tmp_path / "a", sid)
+    data = pf.load_data(tmp_path / "a", REPO / "systems", [], render=False)
+    out = pf.build(data, tmp_path / "out", only=["fig3", "fig4"], log=lambda *_: None)
+    f3, f4 = out["infos"]["fig3_thermo"], out["infos"]["fig4_chains"]
+    assert f3["c_steps"] and len(f3["c_step_rows"]["CG PE C240"]) == 14
+    assert "5 ns sweep step" in pf.caption_fig3(f3, data)
+    assert f4["keys"]["steps"] and f4["keys"]["long"][2]  # long holds: CG only
+    rows = f4["a"]["CG PE C240"]
+    assert sum(src == "step" for _, src, *_ in rows) == 14
+    assert all(not rel for _, src, _, rel in rows if src == "step")  # inherited
+    assert "Small open = 5 ns sweep steps" in pf.caption_fig4(f4, data)
+    app = f4["appendix"]["fig4_1_ree_length"]
+    assert "step" not in {src for _, src, _ in app["b"]["CG PE C240"]}  # 4.1b: no steps
+    assert "Small open" in pf.caption_fig4_1(app, data)
+    # without the key (the committed results.json files): no step points or captions
+    data0 = pf.load_data(REPO / "results/analysis", REPO / "systems", [], render=False)
+    out0 = pf.build(data0, tmp_path / "out0", only=["fig3", "fig4"], log=lambda *_: None)
+    assert not out0["infos"]["fig3_thermo"].get("c_steps")
+    assert not out0["infos"]["fig4_chains"]["keys"]["steps"]
+    assert "5 ns sweep step" not in pf.caption_fig4(out0["infos"]["fig4_chains"], data0)
+
+
 def test_summary_links_presentation(tmp_path):
     ss = _load("summarize_systems")
     assert ss.presentation_link(tmp_path) == []
