@@ -18,10 +18,11 @@ caption per figure) into ``results/presentation/`` by default (appendix figures 
 - ``fig4_chains``: Rg and C_n vs T, C_n(n) (with the 5 ns sweep steps when the sweep
   results.json has ``steps``); appendix ``fig4_1_ree_length`` (R_ee vs T, C240 vs C1500
   <R_ee^2>/M, ordered-site fraction);
-- ``fig5_pore``: slit-pore render, rho(z), gamma(T), film/gap/interface, surface vs
-  interior mobility, bond orientation, chain flattening, surface excess energy;
-- ``fig6_dynamics``: segment and chain COM MSD, D_COM, P2 times, tau_ee / tau_1, Rouse
-  spectrum;
+- ``fig5_pore``: slit-pore render, gamma(T), segment MSD by layer, bond orientation;
+  appendix ``fig5_1_pore_checks`` (rho vs z - z_Gibbs, chain shape by layer, interfacial
+  width);
+- ``fig6_dynamics``: D_COM vs T, tau_ee / tau_1 (CG x 4.07 ≈ real time); appendix
+  ``fig6_1_dynamics_curves`` (segment MSD, long-hold COM MSD, P2 times, Rouse spectrum);
 - ``fig7_mechanics``: CG tensile stress-strain, peak/flow stress, E_app;
 - ``fig8_holes``: cylindrical-hole snapshots, R_eff(t), R(z), closure vs R/h (pending
   placeholders until ``sepsim analyze hole`` results exist).
@@ -73,6 +74,7 @@ FIG33 = (13.0, 11.6)  # 3 x 3 panels
 FIG22 = (11.0, 8.0)  # 2 x 2 panels
 FIG22L = (11.0, 8.9)  # 2 x 2 panels below a shared legend row
 FIG12 = (11.0, 4.6)  # 1 x 2 appendix panels
+FIG13 = (15.0, 5.6)  # 1 x 3 panels below a shared legend row
 APPENDIX = "appendix"  # appendix figures: <out>/appendix/fig<N>_<k>_<name>.*
 CG_TIME_FACTOR = 4.07  # SDK PE dynamics are ~4.07x faster than real PE (Hall et al. 2019)
 INV_E = float(np.exp(-1.0))
@@ -144,10 +146,6 @@ EXPERIMENT = {
             "a": 39.05,
             "b": -0.0725,
             "source": "LLDPE melt, Moreira et al. 2003",
-        },
-        "gamma_points": {  # Wu compilation, unverified
-            "points": [(25.0, 35.4), (90.0, 31.7), (130.0, 29.4), (160.0, 27.7)],
-            "source": "Wu compilation (unverified)",
         },
         "D_com": {  # cm^2/s, short PE melt, read from a graph (+-30 %)
             "t_c": 175.0,
@@ -438,7 +436,8 @@ def _tc_of(name: str) -> float | None:
 
 
 def arrhenius_axes(ax, cg: bool, ticks=(25, 90, 130, 160, 227)) -> None:
-    """1000/T x axis with a °C top axis; CG x 4.07 real-time right axis when ``cg``."""
+    """1000/T x axis with a °C top axis; with ``cg`` a right axis in CG model time (the
+    main axis carries CG x 4.07 ≈ real time)."""
     ax.set_yscale("log")
     ax.set_xlabel(r"1000 / T (K$^{-1}$)")
     ax.set_xlim(1.9, 3.45)
@@ -452,11 +451,11 @@ def arrhenius_axes(ax, cg: bool, ticks=(25, 90, 130, 160, 227)) -> None:
     top.set_xticks(list(ticks))
     top.set_xticklabels([("500 K" if t > 200 else f"{t:g}") for t in ticks], fontsize=10)
     top.set_xlabel("T (°C)", fontsize=10.5)
-    if cg:
+    if cg:  # the main axis shows CG x 4.07 (Fig. 6 convention); right: CG model time
         right = ax.secondary_yaxis(
-            "right", functions=(lambda v: v * CG_TIME_FACTOR, lambda v: v / CG_TIME_FACTOR)
+            "right", functions=(lambda v: v / CG_TIME_FACTOR, lambda v: v * CG_TIME_FACTOR)
         )
-        right.set_ylabel("CG × 4.07 ≈ real time", fontsize=10.5)
+        right.set_ylabel("CG model time (ns)", fontsize=10.5)
         ax.spines["right"].set_visible(True)
 
 
@@ -2426,9 +2425,6 @@ def _f4_length(ax, data, info) -> None:
     info["b_series"] = shown
 
 
-FIG13 = (15.0, 5.6)  # 1 x 3 panels below a shared legend row
-
-
 def fig4_chains(data: dict, out: Path) -> tuple[list[Path], dict]:
     fig, axes = plt.subplots(1, 3, figsize=FIG13, layout="constrained")
     info: dict = {}
@@ -2588,7 +2584,7 @@ def pore_render(data: dict, pore: dict, snap: dict) -> tuple:
 
 def _f5_render(ax, data, info) -> None:
     pore = _main_pore(data)
-    title = f"{pore['label']} 5 nm slit pore, side view" if pore else "Slit pore"
+    title = f"{pore_label(pore)}, side view" if pore else "Slit pore"
     snap = snapshot(pore["sid"], data, "pore") if pore else None
     if snap is None:
         panel_label(ax, "a", title)
@@ -2613,45 +2609,47 @@ def _f5_render(ax, data, info) -> None:
 
 
 def _f5_profile(ax, pores, info) -> None:
-    panel_label(ax, "b", r"Density profile $\rho(z)$ vs bulk")
+    panel_label(ax, "a", r"$\rho$ vs distance from the Gibbs surface")
     ts = set()
-    info["b"] = {}
+    info["a"] = {}
     for s in pores:
         for h in s["results"]["pore"].get("holds") or []:
             p = g(h, "traj", "profile")
-            if not p or not p.get("rho_sym"):
+            hz = (p or {}).get("film_gibbs_A")
+            if not p or not p.get("rho_sym") or not hz:
                 continue
             tc = float(h["t_c"])
             ts.add(tc)
-            z = np.asarray(p["z_A"], float) / 10.0
+            z = (np.asarray(p["z_A"], float) - hz / 2) / 10.0  # each film's own Gibbs surface
             ax.plot(z, p["rho_sym"], color=t_color(tc), ls=s["ls"], lw=1.6)
             bulk = g(h, "bulk", "density", "mean")
             if bulk and s["primary"]:
-                ax.plot([0, 2.2], [bulk, bulk], color=t_color(tc), ls=":", lw=1.4)
-            info["b"].setdefault(s["label"], []).append(
-                (tc, g(p, "plateau", "mean"), bulk, p.get("film_gibbs_A"), p.get("gap_gibbs_A"))
+                ax.plot([-6.5, -0.5], [bulk, bulk], color=t_color(tc), ls=":", lw=1.4)
+            info["a"].setdefault(pore_label(s), []).append(
+                (tc, g(p, "plateau", "mean"), bulk, hz, p.get("gap_gibbs_A"))
             )
     if not ts:
         no_data(ax, "no ρ(z) profiles stored", pending=True)
         return
-    ax.set_xlabel("z from the film centre (nm)")
+    ax.axvline(0, color="0.5", lw=0.9, ls=":")
+    ax.set_xlabel("z − z$_{Gibbs}$ (nm; < 0 inside the film)")
     ax.set_ylabel(r"$\rho$ (g cm$^{-3}$)")
-    ax.set_ylim(0, 1.3)
-    ax.set_xlim(left=0)
-    _t_legend(ax, sorted(ts), loc="upper right", title=None, ncols=4, fontsize=9, columnspacing=0.8)
+    ax.set_xlim(-6.6, 2.5)
+    ax.set_ylim(0, 1.25)
+    _t_legend(
+        ax, sorted(ts), loc="upper left", title=None, ncols=4, fontsize=8.5, columnspacing=0.8
+    )
     ax.legend(
-        handles=[Line2D([], [], color="0.3", ls=s["ls"], label=s["label"]) for s in pores]
-        + [Line2D([], [], color="0.3", ls=":", label="bulk (same T)")],
-        loc="upper right",
-        bbox_to_anchor=(1, 0.9),
-        ncols=2,
-        fontsize=9,
+        handles=[Line2D([], [], color="0.3", ls=":", label="bulk (same T)")],
+        loc="upper left",
+        bbox_to_anchor=(0, 0.9),
+        fontsize=8.5,
     )
 
 
 def _f5_gamma(ax, pores, info) -> None:
-    panel_label(ax, "c", r"Surface tension $\gamma(T)$")
-    info["c"] = {}
+    panel_label(ax, "b", r"Surface tension $\gamma(T)$")
+    info["b"] = {}
     for i, s in enumerate(pores):
         res = s["results"]["pore"]
         hs = hold_segments(res)
@@ -2665,88 +2663,27 @@ def _f5_gamma(ax, pores, info) -> None:
             b, a = fit["line"]
             tt = np.array(fit["window_c"])
             ax.plot(tt, a + b * (tt + 273.15), color=s["color"], ls=s["ls"], lw=1.4)  # fit in K
-        info["c"][s["label"]] = {
+        info["b"][pore_label(s)] = {
             "sid": s["sid"],
+            "res": s["res"],
+            "polymer": s["polymer"],
             "holds": list(zip(tc.tolist(), gm.tolist(), ge.tolist(), strict=True)),
             "dgdT": g(fit, "dgamma_dT_mN_mK"),
             "dgdT_err": g(fit, "err"),
         }
-    extra = []
     for pol in _exp_polymers(pores):
-        e = EXPERIMENT.get(pol, {})
-        if "gamma_line" in e:
-            gl = e["gamma_line"]
+        gl = EXPERIMENT.get(pol, {}).get("gamma_line")
+        if gl:
             tt = np.array([25.0, 160.0])
             ax.plot(tt, gl["a"] + gl["b"] * tt, **EXP_KW, lw=1.6)
-            extra.append(
-                Line2D([], [], color="black", label=f"{POLY_NAME[pol]} LLDPE melt (Moreira)")
-            )
-        if "gamma_points" in e:
-            p = np.array(e["gamma_points"]["points"])
-            ax.plot(p[:, 0], p[:, 1], "x", ms=9, mew=1.8, **EXP_KW)
-            extra.append(Line2D([], [], color="black", marker="x", ls="", label="Wu (unverified)"))
-    ax.legend(handles=_legend_handles(pores, extra), loc="upper right", fontsize=8.5)
     ax.set_xlabel("T (°C)")
     ax.set_ylabel(r"$\gamma$ (mN m$^{-1}$)")
     ax.set_xlim(15, 175)
-    lo, hi = ax.get_ylim()
-    ax.set_ylim(lo - 1, hi + 0.5 * (hi - lo))
-
-
-def _f5_film(ax, pores, info) -> None:
-    panel_label(ax, "d", "Film thickness and gap width")
-    info["d"] = {}
-    for s in pores:
-        res = s["results"]["pore"]
-        pts = [p for p in g(res, "thermal", "points") or [] if g(p, "film_gibbs_A", "mean")]
-        if pts:
-            ax.plot(
-                [p["t_c"] for p in pts],
-                [p["film_gibbs_A"]["mean"] / 10 for p in pts],
-                color=s["color"],
-                ls="-",
-                marker=s["marker"],
-                mfc=s["mfc"],
-                ms=5,
-            )
-        hs = [h for h in res.get("holds") or [] if g(h, "traj", "profile", "gap_gibbs_A")]
-        if hs:
-            ax.plot(
-                [h["t_c"] for h in hs],
-                [h["traj"]["profile"]["gap_gibbs_A"] / 10 for h in hs],
-                color=s["color"],
-                ls="--",
-                marker=s["marker"],
-                mfc=s["mfc"],
-                ms=7,
-            )
-        info["d"][s["label"]] = {
-            "film": [(p["t_c"], p["film_gibbs_A"]["mean"] / 10) for p in pts],
-            "gap": [(h["t_c"], h["traj"]["profile"]["gap_gibbs_A"] / 10) for h in hs],
-        }
-    if not any(v["film"] or v["gap"] for v in info["d"].values()):
-        no_data(ax, "no film / gap data", pending=True)
-        return
-    ax.set_xlabel("T (°C)")
-    ax.set_ylabel("width between Gibbs surfaces (nm)")
-    ax.set_ylim(0, None)
-    _lo, hi = ax.get_ylim()
-    ax.set_ylim(0, hi * 1.25)
-    ax.legend(
-        handles=_legend_handles(pores, ls=False)
-        + [
-            Line2D([], [], color="0.3", ls="-", label="film (Gibbs)"),
-            Line2D([], [], color="0.3", ls="--", label="gap"),
-        ],
-        loc="upper left",
-        fontsize=9,
-        ncols=2,
-    )
 
 
 def _f5_interface(ax, pores, info) -> None:
-    panel_label(ax, "e", "Interfacial width (10–90 %)")
-    info["e"] = {}
+    panel_label(ax, "c", "Interfacial width (10–90 %)")
+    info["c"] = {}
     for s in pores:
         hs = [h for h in s["results"]["pore"].get("holds") or [] if g(h, "traj", "profile")]
         if not hs:
@@ -2762,8 +2699,8 @@ def _f5_interface(ax, pores, info) -> None:
         ax.plot(t, w, color=s["color"], ls="-", marker=s["marker"], mfc=s["mfc"])
         if all(v is not None for v in tw):
             ax.plot(t, tw, color=s["color"], ls=":", marker=s["marker"], mfc="white", ms=5)
-        info["e"][s["label"]] = list(zip(t, [float(x) for x in w], tw, strict=True))
-    if not info["e"]:
+        info["c"][pore_label(s)] = list(zip(t, [float(x) for x in w], tw, strict=True))
+    if not info["c"]:
         no_data(ax, "no profile widths", pending=True)
         return
     ax.set_xlabel("T (°C)")
@@ -2771,14 +2708,12 @@ def _f5_interface(ax, pores, info) -> None:
     _lo, hi = ax.get_ylim()
     ax.set_ylim(0, hi * 1.3)
     ax.legend(
-        handles=_legend_handles(pores, ls=False)
-        + [
+        handles=[
             Line2D([], [], color="0.3", ls="-", label="from the profile"),
             Line2D([], [], color="0.3", ls=":", label="tanh fit"),
         ],
         loc="lower right",
-        fontsize=9,
-        ncols=2,
+        fontsize=8.5,
     )
 
 
@@ -2790,24 +2725,21 @@ def _bulk_msd_at(h: dict, lag_ps: float) -> float | None:
     return float(np.interp(np.log(lag_ps), np.log(np.asarray(x, float)), np.asarray(y, float)))
 
 
+MSD_LAYERS = (("surface", "xy", "-"), ("surface", "z", "--"), ("interior", "xy", ":"))
+
+
 def _f5_mobility(ax, pores, info, lag: str = "1000") -> None:
-    panel_label(ax, "f", "Segment MSD at 1 ns by layer")
-    info["f"] = {}
-    any_ = False
+    panel_label(ax, "c", "Segment MSD at Δt = 1 ns by layer")
+    info["c"] = {}
     for s in pores:
         hs = [
             h for h in s["results"]["pore"].get("holds") or [] if g(h, "traj", "layers", "surface")
         ]
         if not hs:
             continue
-        any_ = True
         t = np.array([h["t_c"] for h in hs])
         rows = {}
-        for layer, comp, ls in (
-            ("surface", "xy", "-"),
-            ("surface", "z", "--"),
-            ("interior", "xy", ":"),
-        ):
+        for layer, comp, ls in MSD_LAYERS:
             y = [g(h, "traj", "layers", layer, "msd_at", lag, comp) for h in hs]
             ax.plot(t, y, color=s["color"], ls=ls, marker=s["marker"], mfc=s["mfc"])
             rows[f"{layer}_{comp}"] = y
@@ -2815,16 +2747,15 @@ def _f5_mobility(ax, pores, info, lag: str = "1000") -> None:
         if s["primary"] and all(v is not None for v in yb):
             ax.plot(t, yb, color="0.45", ls="-", lw=2.5, alpha=0.6, zorder=0)
             rows["bulk"] = yb
-        info["f"][s["label"]] = {"t": t.tolist()} | rows
-    if not any_:
+        info["c"][pore_label(s)] = {"t": t.tolist()} | rows
+    if not info["c"]:
         no_data(ax, "no layer dynamics stored", pending=True)
         return
     ax.set_yscale("log")
     ax.set_xlabel("T (°C)")
-    ax.set_ylabel("MSD per dimension at 1 ns (Å$^2$)")
-    ax.legend(
-        handles=_legend_handles(pores, ls=False)
-        + [
+    ax.set_ylabel("MSD per dimension at Δt = 1 ns (Å$^2$)")
+    ax.legend(  # layers are unique to this panel: in-panel key (line style = layer here)
+        handles=[
             Line2D([], [], color="0.3", ls="-", label="surface, in-plane"),
             Line2D([], [], color="0.3", ls="--", label="surface, normal"),
             Line2D([], [], color="0.3", ls=":", label="interior, in-plane"),
@@ -2833,15 +2764,17 @@ def _f5_mobility(ax, pores, info, lag: str = "1000") -> None:
         loc="upper left",
         fontsize=8.5,
         ncols=2,
+        title="line style = layer (this panel)",
+        title_fontsize=8.5,
     )
     lo, hi = ax.get_ylim()
     ax.set_ylim(lo, hi * 3)
 
 
 def _f5_p2z(ax, pores, info) -> None:
-    panel_label(ax, "g", r"Bond orientation $\langle P_2(\cos\theta_z)\rangle$")
+    panel_label(ax, "d", r"Bond orientation $\langle P_2(\cos\theta_z)\rangle$")
     ts = set()
-    info["g"] = {}
+    info["d"] = {}
     for s in pores:
         for h in s["results"]["pore"].get("holds") or []:
             c = g(h, "traj", "conformation")
@@ -2850,9 +2783,9 @@ def _f5_p2z(ax, pores, info) -> None:
                 continue
             tc = float(h["t_c"])
             ts.add(tc)
-            z = np.asarray(c["p2z_z_A"], float) - hz / 2
+            z = (np.asarray(c["p2z_z_A"], float) - hz / 2) / 10.0
             ax.plot(z, c["p2z"], color=t_color(tc), ls=s["ls"], lw=1.6)
-            info["g"].setdefault(s["label"], []).append(
+            info["d"].setdefault(pore_label(s), []).append(
                 (tc, g(c, "p2z_layer", "surface", "mean"), g(c, "p2z_layer", "interior", "mean"))
             )
     if not ts:
@@ -2860,35 +2793,27 @@ def _f5_p2z(ax, pores, info) -> None:
         return
     ax.axhline(0, color="0.5", lw=0.9)
     ax.axvline(0, color="0.5", lw=0.9, ls=":")
-    ax.text(1.0, -0.06, "Gibbs\nsurface", fontsize=9, color="0.4", va="top")
+    ax.text(0.1, -0.06, "Gibbs\nsurface", fontsize=9, color="0.4", va="top")
     ax.text(
         0.02,
-        0.95,
+        0.04,
         "−0.5: bonds parallel to the surface",
         transform=ax.transAxes,
         fontsize=9,
         color="0.35",
-        va="top",
     )
-    ax.set_xlabel("z − z$_{Gibbs}$ (Å; < 0 inside the film)")
+    ax.set_xlabel("z − z$_{Gibbs}$ (nm; < 0 inside the film)")
     ax.set_ylabel(r"$\langle P_2(\cos\theta_z)\rangle$")
     lo, hi = ax.get_ylim()
-    ax.set_ylim(lo, max(hi, 0.05) + 0.2)
+    ax.set_ylim(lo - 0.04, max(hi, 0.05) + 0.12)
     _t_legend(
-        ax, sorted(ts), loc="upper left", title=None, ncols=4, fontsize=9, bbox_to_anchor=(0, 0.9)
-    )
-    ax.legend(
-        handles=[Line2D([], [], color="0.3", ls=s["ls"], label=s["label"]) for s in pores],
-        loc="upper left",
-        bbox_to_anchor=(0, 0.8),
-        ncols=2,
-        fontsize=9,
+        ax, sorted(ts), loc="upper left", title=None, ncols=4, fontsize=8.5, columnspacing=0.8
     )
 
 
 def _f5_flatten(ax, pores, info) -> None:
-    panel_label(ax, "h", "Chain shape by layer")
-    info["h"] = {}
+    panel_label(ax, "b", "Chain shape by layer")
+    info["b"] = {}
     for s in pores:
         hs = [
             h for h in s["results"]["pore"].get("holds") or [] if g(h, "traj", "conformation", "rg")
@@ -2905,8 +2830,8 @@ def _f5_flatten(ax, pores, info) -> None:
             ]
             ax.plot(t, r, color=s["color"], ls=ls, marker=s["marker"], mfc=s["mfc"])
             rows[layer] = r
-        info["h"][s["label"]] = {"t": t} | rows
-    if not info["h"]:
+        info["b"][pore_label(s)] = {"t": t} | rows
+    if not info["b"]:
         no_data(ax, "no chain-shape data stored", pending=True)
         return
     ax.axhline(1.0, color="0.45", lw=2.5, alpha=0.6, zorder=0)
@@ -2915,102 +2840,89 @@ def _f5_flatten(ax, pores, info) -> None:
     ax.set_ylabel(r"R$_{g,z}^2$ / (R$_{g,xy}^2$/2)")
     ax.set_ylim(0, 1.6)
     ax.legend(
-        handles=_legend_handles(pores, ls=False)
-        + [
+        handles=[
             Line2D([], [], color="0.3", ls="-", label="surface chains"),
             Line2D([], [], color="0.3", ls=":", label="interior chains"),
         ],
         loc="upper left",
         ncols=2,
-        fontsize=9,
+        fontsize=8.5,
     )
 
 
-def _f5_energy(ax, pores, info) -> None:
-    panel_label(ax, "i", r"Surface excess energy $e_s$")
-    info["i"] = {}
-    for s in pores:
-        pts = [
-            p
-            for p in g(s, "results", "pore", "thermal", "points") or []
-            if g(p, "e_s_mJ_m2", "mean")
-        ]
-        if not pts:
-            continue
-        t = [p["t_c"] for p in pts]
-        ax.errorbar(
-            t,
-            [p["e_s_mJ_m2"]["mean"] for p in pts],
-            [p["e_s_mJ_m2"].get("sem") or 0 for p in pts],
-            fmt=s["marker"],
-            color=s["color"],
-            mfc=s["mfc"],
-            ms=5,
-            ls="-",
-            lw=1.2,
-        )
-        gt = [p.get("gamma_minus_TdgdT") for p in pts]
-        if all(v is not None for v in gt):
-            ax.plot(t, gt, color=s["color"], ls="--", lw=1.6)
-        info["i"][s["label"]] = {
-            "e_s": [(p["t_c"], p["e_s_mJ_m2"]["mean"]) for p in pts],
-            "g_TdgdT": [x for x in gt if x is not None][:1],
-        }
-    if not info["i"]:
-        no_data(ax, "no surface energies", pending=True)
-        return
-    gl = EXPERIMENT["pe"]["gamma_line"]
-    e_exp = gl["a"] - 273.15 * gl["b"]  # gamma - T dgamma/dT of the linear Moreira fit [D]
-    ax.axhline(e_exp, color="black", lw=1.6)
-    ax.text(
-        159,
-        e_exp + 0.3,
-        f"expt. γ − T dγ/dT ≈ {e_exp:.1f} (Moreira, [D])",
-        fontsize=9,
-        va="bottom",
-        ha="right",
-    )
-    ax.set_xlabel("T (°C)")
-    ax.set_ylabel(r"energy per area (mJ m$^{-2}$)")
-    lo, hi = ax.get_ylim()
-    ax.set_ylim(lo - 0.05 * (hi - lo), hi + 0.45 * (hi - lo))
-    ax.legend(
-        handles=_legend_handles(pores, ls=False)
-        + [
-            Line2D([], [], color="0.3", ls="-", marker="o", ms=4, label="$e_s$ (classical)"),
-            Line2D([], [], color="0.3", ls="--", label="γ − T dγ/dT (fit)"),
+def _pore_legend(fig, pores: list[dict], extra: list) -> None:
+    """Shared Fig. 5 / 5.1 legend, one row: each pore series (colour = model, marker =
+    polymer) with its box-size style (solid / filled 40 chains, dashed / open 320), then
+    the extra keys."""
+
+    def label(s):
+        style = "solid / filled" if s["primary"] else "dashed / open"
+        n = f"{s['n']} chains" + (", 2×2×2" if "rep222" in s["suffix"] else "")
+        w = f" {s['width_nm']:g} nm" if s.get("width_nm") else ""
+        return f"{s['base']}{w} pore ({n}): {style}"
+
+    fig_legend(
+        fig,
+        [
+            [
+                Line2D(
+                    [],
+                    [],
+                    color=s["color"],
+                    marker=s["marker"],
+                    mfc=s["mfc"],
+                    ls=s["ls"],
+                    label=label(s),
+                )
+                for s in pores
+            ]
+            + extra
         ],
-        loc="upper left",
-        fontsize=9,
-        ncols=2,
     )
-    info["i_exp"] = e_exp
 
 
 def fig5_pore(data: dict, out: Path) -> tuple[list[Path], dict]:
-    fig, axes = plt.subplots(3, 3, figsize=FIG33, layout="constrained")
+    fig, axes = plt.subplots(2, 2, figsize=FIG22L, layout="constrained")
     info: dict = {}
     pores = find_series(data, "pore", "pore")
     _f5_render(axes[0, 0], data, info)
-    fns = [
-        _f5_profile,
-        _f5_gamma,
-        _f5_film,
-        _f5_interface,
-        _f5_mobility,
-        _f5_p2z,
-        _f5_flatten,
-        _f5_energy,
-    ]
-    letters = "bcdefghi"
-    for ax, fn, letter in zip(axes.flat[1:], fns, letters, strict=True):
+    for ax, fn, letter in (
+        (axes[0, 1], _f5_gamma, "b"),
+        (axes[1, 0], _f5_mobility, "c"),
+        (axes[1, 1], _f5_p2z, "d"),
+    ):
         if not pores:
             panel_label(ax, letter, "")
             no_data(ax, "no pore results.json", pending=True)
             continue
         fn(ax, pores, info)
+    if pores:
+        extra = []
+        if any(EXPERIMENT.get(p, {}).get("gamma_line") for p in _exp_polymers(pores)):
+            extra.append(
+                Line2D([], [], color="black", lw=1.6, label="PE expt. γ (LLDPE melt, Moreira)")
+            )
+        _pore_legend(fig, pores, extra)
     info["sids"] = [s["sid"] for s in pores]
-    return save(fig, out, "fig5_pore"), info
+    paths = save(fig, out, "fig5_pore")
+    # appendix Fig. 5.1 (checks): rho(z - z_Gibbs), chain shape by layer, interfacial width
+    fig, axes = plt.subplots(1, 3, figsize=FIG13, layout="constrained")
+    app: dict = {}
+    for ax, fn, letter in (
+        (axes[0], _f5_profile, "a"),
+        (axes[1], _f5_flatten, "b"),
+        (axes[2], _f5_interface, "c"),
+    ):
+        if not pores:
+            panel_label(ax, letter, "")
+            no_data(ax, "no pore results.json", pending=True)
+            continue
+        fn(ax, pores, app)
+    if pores:
+        _pore_legend(fig, pores, [])
+    info["appendix"] = {"fig5_1_pore_checks": app}
+    paths += save(fig, out / APPENDIX, "fig5_1_pore_checks")
+    return paths, info
 
 
 # ================================================================== figure 6: dynamics
@@ -3020,44 +2932,43 @@ def _guide(ax, x0, y0, x1, slope, label, **kw) -> None:
     ax.text(x1, y0 * (x1 / x0) ** slope, f" {label}", fontsize=9.5, color="0.3", va="center")
 
 
+def tfac(s: dict) -> float:
+    """Fig. 6 / 6.1 time convention: CG times x 4.07 (≈ real PE time, Hall et al. 2019),
+    UA/AA as simulated (no mapping yet). Divide diffusion coefficients by it."""
+    return CG_TIME_FACTOR if s.get("res") == "cg" else 1.0
+
+
+TIME_LABEL = "CG × 4.07 ≈ real, UA model"  # axis-label suffix of every Fig. 6 time
+
+
 def _f6_seg_msd(ax, data, series, info) -> None:
     panel_label(ax, "a", "Segment MSD (bulk holds)")
     ts, res_seen = set(), set()
     info["a"] = {}
     for s in series:
-        for h in sweep_holds(s, data):
-            c = g(h, "traj", "curves")
+        curves = [(float(h["t_c"]), g(h, "traj", "curves")) for h in sweep_holds(s, data)]
+        curves.append((T500_C, g((hold500(s["sid"], data) or {}).get("traj"), "curves")))
+        for tc, c in curves:
             if not c or not c.get("msd_A2"):
                 continue
-            tc = float(h["t_c"])
-            x = np.asarray(c["msd_lag_ps"], float) / 1000.0
+            x = np.asarray(c["msd_lag_ps"], float) / 1000.0 * tfac(s)
             y = np.asarray(c["msd_A2"], float)
             ok = (x > 0) & (y > 0)
             ax.plot(x[ok], y[ok], color=t_color(tc), ls=s["rls"], lw=1.8)
             ts.add(tc)
             res_seen.add(s["res"])
-            info["a"].setdefault(s["label"], []).append(
-                (tc, g(h, "traj", "segment_msd", "msd_1000ps_A2"))
-            )
-        tr = (hold500(s["sid"], data) or {}).get("traj")
-        c = g(tr, "curves")
-        if c and c.get("msd_A2"):
-            x = np.asarray(c["msd_lag_ps"], float) / 1000.0
-            y = np.asarray(c["msd_A2"], float)
-            ok = (x > 0) & (y > 0)
-            ax.plot(x[ok], y[ok], color=GREY_500K, ls=s["rls"], lw=1.8)
-            ts.add(T500_C)
-            res_seen.add(s["res"])
+            if tc < 200:
+                info["a"].setdefault(s["label"], []).append(tc)
     if not ts:
         no_data(ax, "no segment MSD curves", pending=True)
         return
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_xlabel("lag (ns, model time)")
+    ax.set_xlabel(f"time interval Δt (ns; {TIME_LABEL})")
     ax.set_ylabel("backbone-site MSD (Å$^2$)")
-    _guide(ax, 0.05, 15, 2.0, 0.5, "t$^{1/2}$")
-    _t_legend(ax, sorted(ts), loc="upper left", title=None, ncols=2, fontsize=9)
-    ax.legend(handles=_res_ls_handles(res_seen), loc="lower right", fontsize=9)
+    _guide(ax, 0.2, 15, 8.0, 0.5, "t$^{1/2}$")
+    info["a_ts"] = sorted(ts)
+    info["a_res"] = res_seen
 
 
 def _f6_com(ax, data, series, info) -> None:
@@ -3069,7 +2980,7 @@ def _f6_com(ax, data, series, info) -> None:
             c = g(h, "traj", "curves")
             rg2 = g(h, "traj", "rg", "rg2_A2", "mean")
             if c and c.get("com_A2") and rg2:
-                x = np.asarray(c["com_lag_ps"], float) / 1000.0
+                x = np.asarray(c["com_lag_ps"], float) / 1000.0 * tfac(s)
                 y = np.asarray(c["com_A2"], float) / rg2
                 ok = (x > 0) & (y > 0)
                 ax.plot(x[ok], y[ok], color=t_color(h["t_c"]), ls=s["rls"], lw=1.0, alpha=0.45)
@@ -3078,7 +2989,7 @@ def _f6_com(ax, data, series, info) -> None:
             c, rg2 = tr.get("curves") or {}, g(tr, "rg", "rg2_A2", "mean")
             if not c.get("com_A2") or not rg2:
                 continue
-            x = np.asarray(c["com_lag_ps"], float) / 1000.0
+            x = np.asarray(c["com_lag_ps"], float) / 1000.0 * tfac(s)
             y = np.asarray(c["com_A2"], float) / rg2
             ok = (x > 0) & (y > 0)
             ax.plot(x[ok], y[ok], color=t_color(r["t_c"]), ls=s["rls"], lw=2.4)
@@ -3097,34 +3008,19 @@ def _f6_com(ax, data, series, info) -> None:
         return
     for yv, lab, f in ((1.0, "⟨R$_g^2$⟩", 0.55), (2.0, "2⟨R$_g^2$⟩ (D55 criterion)", 1.12)):
         ax.axhline(yv, color="0.45", ls=":", lw=1.2)
-        ax.text(0.0105, yv * f, lab, fontsize=9, color="0.35", va="bottom" if f > 1 else "top")
+        ax.text(0.042, yv * f, lab, fontsize=9, color="0.35", va="bottom" if f > 1 else "top")
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_xlim(0.01, None)
-    ax.set_xlabel("lag (ns, model time)")
+    ax.set_xlim(0.04, None)
+    ax.set_xlabel(f"time interval Δt (ns; {TIME_LABEL})")
     ax.set_ylabel(r"COM MSD / $\langle R_g^2\rangle$")
-    _guide(ax, 0.1, 1.5e-4, 3.0, 1.0, "t$^1$")
+    _guide(ax, 0.4, 1.5e-4, 12.0, 1.0, "t$^1$")
     ax.set_ylim(1e-4, None)
-    _t_legend(
-        ax,
-        sorted(ts),
-        loc="lower right",
-        title="long holds",
-        ncols=1,
-        fontsize=9,
-        bbox_to_anchor=(1.0, 0.16),
-    )
-    ax.legend(
-        handles=[Line2D([], [], color="0.4", lw=1, alpha=0.5, label="sweep holds (25 ns)")]
-        + _res_ls_handles(res_seen),
-        loc="lower right",
-        fontsize=9,
-    )
 
 
 def _d_points(data: dict, s: dict) -> list[dict]:
-    """D_COM per T: diffusive long holds (D53 criterion), else MSD/(6t) at the longest lag
-    as an upper bound; the 500 K melt from the extension."""
+    """D_COM per T (model time): diffusive long holds (D53 criterion), else MSD/(6t) at
+    the longest lag as an upper bound; the 500 K melt from the extension."""
     out = []
     for r in long_holds(data, s["sid"]):
         com = g(r, "res", "traj", "com_msd") or {}
@@ -3182,65 +3078,43 @@ def _d_points(data: dict, s: dict) -> list[dict]:
     return sorted(out, key=lambda p: p["t_c"])
 
 
-def _f6_dcom(ax, data, series, info) -> None:
-    panel_label(ax, "c", "Chain self-diffusion D$_{COM}$")
-    info["c"] = {}
+def _f6_dcom(ax, data, series, info) -> list[dict]:
+    panel_label(ax, "a", "Chain self-diffusion D$_{COM}$")
+    info["a"] = {}
     shown = []
     for s in series:
         pts = _d_points(data, s)
         if not pts:
             continue
         shown.append(s)
-        info["c"][s["label"]] = pts
+        f = tfac(s)
+        info["a"][s["label"]] = [p | {"D_shown": p["D"] / f, "factor": f} for p in pts]
         for p in pts:
+            d = p["D"] / f
             ax.errorbar(
                 p["t_c"],
-                p["D"],
-                (p.get("err") or 0) if not p["bound"] else p["D"] * 0.3,
-                uplims=p["bound"],
+                d,
+                0 if p["bound"] else (p.get("err") or 0) / f,
                 fmt=s["marker"],
                 color=s["color"],
                 mfc="white" if p["bound"] else s["color"],
                 ms=8,
                 zorder=3,
             )
-            if s["res"] == "cg":
-                ax.annotate(
-                    "",
-                    xy=(p["t_c"] + 5, p["D"] / CG_TIME_FACTOR),
-                    xytext=(p["t_c"], p["D"]),
-                    arrowprops={"arrowstyle": "->", "color": s["color"], "lw": 1, "alpha": 0.6},
-                )
-                ax.plot(
-                    p["t_c"] + 5,
-                    p["D"] / CG_TIME_FACTOR,
-                    marker=s["marker"],
-                    ms=7,
-                    color=s["color"],
-                    alpha=0.45,
-                    mfc="white" if p["bound"] else s["color"],
-                )
     if not shown:
         no_data(ax, "no long holds yet", pending=True)
-        return
+        return []
     e = EXPERIMENT["pe"]["D_com"]
-    ax.errorbar(
-        e["t_c"], e["value"], e["value"] * e["rel_err"], fmt="x", ms=10, mew=2, capsize=4, **EXP_KW
-    )
-    ax.text(e["t_c"] + 4, e["value"] * 0.7, "PE expt.\n(Pearson 1987)", fontsize=9, va="top")
+    ax.errorbar(e["t_c"], e["value"], e["value"] * e["rel_err"], fmt=POLY_MARKER["pe"], **EXP_PT)
+    ax.text(e["t_c"] + 5, e["value"], "PE expt.\n(Pearson 1987)", fontsize=9, va="center")
     ax.set_yscale("log")
     ax.set_xlabel("T (°C)")
-    ax.set_ylabel(r"D$_{COM}$ (cm$^2$ s$^{-1}$)")
+    ax.set_ylabel(r"D$_{COM}$ (cm$^2$ s$^{-1}$; CG ÷ 4.07 ≈ real, UA model)")
     ax.set_xticks([25, 90, 130, 160, T500_C], ["25", "90", "130", "160", "500 K"])
     ax.set_xlim(10, 245)
     lo, hi = ax.get_ylim()
-    ax.set_ylim(lo / 2, hi * 6)
-    h = _legend_handles(shown, ls=False) + [
-        Line2D([], [], color="0.3", marker="o", ls="", label="diffusive (≥ 2⟨R$_g^2$⟩)"),
-        Line2D([], [], color="0.3", marker="o", mfc="white", ls="", label="MSD/6t, upper bound"),
-        Line2D([], [], color="0.3", marker="o", alpha=0.45, ls="", label="CG ÷ 4.07 (real time)"),
-    ]
-    ax.legend(handles=h, loc="upper left", fontsize=8.5, ncols=2, columnspacing=0.8)
+    ax.set_ylim(lo / 1.5, hi * 1.5)
+    return shown
 
 
 def _p2_rows(data: dict, s: dict) -> list[tuple]:
@@ -3261,8 +3135,8 @@ def _inv_t(t_c) -> np.ndarray:
 
 
 def _f6_p2(ax, data, series, info) -> None:
-    panel_label(ax, "d", "Bond reorientation time τ$_{P2}$")
-    info["d"] = {}
+    panel_label(ax, "c", "Bond reorientation time τ$_{P2}$")
+    info["c"] = {}
     any_cg = False
     shown = []
     for s in series:
@@ -3271,10 +3145,11 @@ def _f6_p2(ax, data, series, info) -> None:
             continue
         shown.append(s)
         any_cg |= s["res"] == "cg"
+        f = tfac(s)
         main = sorted((r for r in rows if r[2] != "long"), key=lambda r: r[0])
         ax.plot(
             _inv_t([r[0] for r in main]),
-            [r[1] / 1000 for r in main],
+            [r[1] / 1000 * f for r in main],
             color=s["color"],
             marker=s["marker"],
             mfc=s["mfc"],
@@ -3284,15 +3159,14 @@ def _f6_p2(ax, data, series, info) -> None:
         if lh:
             ax.plot(
                 _inv_t([r[0] for r in lh]),
-                [r[1] / 1000 for r in lh],
+                [r[1] / 1000 * f for r in lh],
                 color=s["color"],
                 marker=s["marker"],
                 ls="",
                 **LONG_KW,
             )
-        info["d"][s["label"] + " bulk"] = rows
-    pores = find_series(data, "pore", "pore")
-    for p in pores:
+        info["c"][s["label"] + " bulk"] = rows
+    for p in find_series(data, "pore", "pore"):
         hs = [
             h for h in p["results"]["pore"].get("holds") or [] if g(h, "traj", "layers", "surface")
         ]
@@ -3304,35 +3178,35 @@ def _f6_p2(ax, data, series, info) -> None:
             y = [g(h, "traj", "layers", layer, "p2_t_1e_ps") for h in hs]
             ax.plot(
                 t,
-                np.array(y, float) / 1000,
+                np.array(y, float) / 1000 * tfac(p),
                 color=p["color"],
                 ls=ls,
                 marker="v",
                 mfc=p["mfc"],
                 ms=6,
             )
-            info["d"][f"{p['label']} pore {layer}"] = list(
+            info["c"][f"{pore_label(p)} {layer}"] = list(
                 zip([h["t_c"] for h in hs], y, strict=True)
             )
-    if not info["d"]:
+    if not info["c"]:
         no_data(ax, "no P2 times stored", pending=True)
         return
     arrhenius_axes(ax, any_cg)
-    ax.set_ylabel("τ$_{P2}$ (ns, model time)")
+    ax.set_ylabel(f"τ$_{{P2}}$ (ns; {TIME_LABEL})")
     lo, hi = ax.get_ylim()
     ax.set_ylim(lo / 1.5, hi * 4)
-    h = _legend_handles(shown, ls=False) + [
-        Line2D([], [], color="0.3", ls="-", label="bulk"),
+    h = [
+        Line2D([], [], color="0.3", ls="-", marker="o", label="bulk"),
         Line2D([], [], color="0.3", ls="--", marker="v", label="pore surface layer"),
         Line2D([], [], color="0.3", ls=":", marker="v", label="pore interior"),
+        Line2D([], [], color="0.3", marker="v", mfc="white", ls="", label="open: 320-chain pore"),
     ]
-    if any(r[2] == "long" for k, v in info["d"].items() if k.endswith(" bulk") for r in v):
-        h.append(Line2D([], [], color="0.3", marker="o", ls="", label="long hold", **LONG_KW))
     ax.legend(handles=h, loc="upper left", fontsize=8.5, ncols=2, columnspacing=0.8)
 
 
 def _relax_rows(data: dict, s: dict) -> list[dict]:
-    """tau_ee and tau_1 (Rouse p = 1) per T: reached 1/e times, or extrapolated fits."""
+    """tau_ee and tau_1 (Rouse p = 1) per T in model ns: reached 1/e times, or
+    extrapolated fits."""
 
     def one(tr, t_c, src):
         ree = g(tr, "relaxation", "ree") or {}
@@ -3360,61 +3234,54 @@ def _relax_rows(data: dict, s: dict) -> list[dict]:
     return rows
 
 
-def _f6_tau(ax, data, series, info) -> None:
-    panel_label(ax, "e", "Chain relaxation: τ$_{ee}$ and Rouse τ$_1$")
-    info["e"] = {}
+def _f6_tau(ax, data, series, info) -> list[dict]:
+    panel_label(ax, "b", "Chain relaxation: τ$_{ee}$ and Rouse τ$_1$")
+    info["b"] = {}
     shown = []
     for s in series:
         rows = _relax_rows(data, s)
         if not any("ee" in r or "r1" in r for r in rows):
             continue
         shown.append(s)
-        info["e"][s["label"]] = rows
+        info["b"][s["label"]] = rows
+        f = tfac(s)
         for key, ls, dx in (("ee", "-", 0.0), ("r1", "--", 0.012)):
             pts = sorted((r for r in rows if key in r), key=lambda r: r["t_c"])
             x = _inv_t([r["t_c"] for r in pts]) + dx
             main = [r["src"] != "long" for r in pts]
             ax.plot(
                 x[main],
-                [r[key][0] for r, m in zip(pts, main, strict=True) if m],
+                [r[key][0] * f for r, m in zip(pts, main, strict=True) if m],
                 color=s["color"],
                 ls=ls,
                 lw=1.2,
                 alpha=0.7,
             )
             for xi, r in zip(x, pts, strict=True):
-                ex = r[key][1]
                 ax.plot(
                     xi,
-                    r[key][0],
+                    r[key][0] * f,
                     marker=s["marker"] if key == "ee" else "^",
                     color=s["color"],
-                    mfc="white" if ex else s["color"],
+                    mfc="white" if r[key][1] else s["color"],
                     ms=8 if r["src"] == "long" else 6.5,
                     mec="black" if r["src"] == "long" else s["color"],
                     ls="",
                 )
     if not shown:
         no_data(ax, "no relaxation times stored", pending=True)
-        return
+        return []
     arrhenius_axes(ax, any(s["res"] == "cg" for s in shown))
-    ax.set_ylabel("relaxation time (ns, model time)")
+    ax.set_ylabel(f"relaxation time (ns; {TIME_LABEL})")
     lo, hi = ax.get_ylim()
-    ax.set_ylim(lo / 1.5, hi * 6)
-    h = _legend_handles(shown, ls=False) + [
-        Line2D([], [], color="0.3", marker="o", ls="-", label="τ$_{ee}$ (1/e)"),
-        Line2D([], [], color="0.3", marker="^", ls="--", label="τ$_1$ (p = 1)"),
-        Line2D([], [], color="0.3", marker="o", mfc="white", ls="", label="extrapolated (fit)"),
-        Line2D([], [], color="0.3", marker="o", mec="black", ms=8, ls="", label="long hold"),
-    ]
-    ax.legend(handles=h, loc="upper left", fontsize=8.5, ncols=2, columnspacing=0.8)
+    ax.set_ylim(lo / 1.5, hi * 2)
+    return shown
 
 
 def _f6_rouse(ax, data, series, info) -> None:
-    panel_label(ax, "f", "Rouse mode spectrum τ$_p$")
-    info["f"] = {}
+    panel_label(ax, "d", "Rouse mode spectrum τ$_p$")
+    info["d"] = {}
     handles: list = []
-    res_seen, ts = set(), set()
     for s in series:
         cands = [(r["t_c"], g(r, "res", "traj")) for r in long_holds(data, s["sid"])]
         h5 = hold500(s["sid"], data)
@@ -3434,7 +3301,7 @@ def _f6_rouse(ax, data, series, info) -> None:
             if len(pts) < 2:
                 continue
             p = np.array([x[0] for x in pts], float)
-            tau = np.array([x[1] for x in pts], float) / 1000
+            tau = np.array([x[1] for x in pts], float) / 1000 * tfac(s)
             reached = np.array([bool(x[2]) for x in pts])
             col = t_color(t_c)
             line = ax.plot(p, tau, color=col, ls=s["rls"], lw=1.6)[0]
@@ -3448,11 +3315,7 @@ def _f6_rouse(ax, data, series, info) -> None:
                 else None
             )
             key = f"{s['label']} {t_label(t_c)}"
-            info["f"][key] = {
-                "tau_ns": tau.tolist(),
-                "slope": fit,
-                "reached": reached.tolist(),
-            }
+            info["d"][key] = {"tau_ns": tau.tolist(), "slope": fit, "reached": reached.tolist()}
             handles.append(
                 Line2D(
                     [],
@@ -3463,9 +3326,7 @@ def _f6_rouse(ax, data, series, info) -> None:
                     label=key + (f": p$^{{{fit:.2f}}}$" if fit is not None else ""),
                 )
             )
-            res_seen.add(s["res"])
-            ts.add(t_c)
-    if not info["f"]:
+    if not info["d"]:
         no_data(ax, "no Rouse modes stored (long holds / 500 K)", pending=True)
         return
     ax.set_xscale("log")
@@ -3473,15 +3334,14 @@ def _f6_rouse(ax, data, series, info) -> None:
     ax.set_xticks([1, 2, 3, 4, 5], ["1", "2", "3", "4", "5"])
     ax.minorticks_off()
     ax.set_xlabel("Rouse mode p")
-    ax.set_ylabel("τ$_p$ (ns, model time)")
+    ax.set_ylabel(f"τ$_p$ (ns; {TIME_LABEL})")
     lo, hi = ax.get_ylim()
-    tmin = min(v["tau_ns"][0] for v in info["f"].values())
-    _guide(ax, 1.15, tmin * 0.3, 4.0, -2.0, "p$^{-2}$ (Rouse)")
-    ax.set_ylim(lo / 4, hi * 2)
-    ax.legend(
-        handles=handles
-        + [Line2D([], [], color="0.3", marker="o", mfc="white", ls="", label="extrapolated")],
-        loc="upper right",
+    tmin = min(min(v["tau_ns"]) for v in info["d"].values())  # guide below every curve
+    _guide(ax, 1.1, tmin * 4.0, 1.9, -2.0, "p$^{-2}$\n(Rouse)")
+    ax.set_ylim(lo / 400, hi * 1.5)  # room for the key below the curves
+    ax.legend(  # one curve per hold: in-panel key with the fitted exponents
+        handles=handles,
+        loc="lower right",
         fontsize=8.5,
         title="fit over reached modes",
         title_fontsize=8.5,
@@ -3489,17 +3349,70 @@ def _f6_rouse(ax, data, series, info) -> None:
 
 
 def fig6_dynamics(data: dict, out: Path) -> tuple[list[Path], dict]:
-    fig, axes = plt.subplots(2, 3, figsize=FIG23, layout="constrained")
+    fig, axes = plt.subplots(1, 2, figsize=(11.0, 5.6), layout="constrained")
     info: dict = {}
     series = [s for s in bulk_systems(data) if s["primary"]]
-    _f6_seg_msd(axes[0, 0], data, series, info)
-    _f6_com(axes[0, 1], data, series, info)
-    _f6_dcom(axes[0, 2], data, series, info)
-    _f6_p2(axes[1, 0], data, series, info)
-    _f6_tau(axes[1, 1], data, series, info)
-    _f6_rouse(axes[1, 2], data, series, info)
+    shown = _f6_dcom(axes[0], data, series, info)
+    shown += [s for s in _f6_tau(axes[1], data, series, info) if s not in shown]
+    shown.sort(key=lambda s: _order(s["sid"]))
+    if shown:
+        fig_legend(
+            fig,
+            legend_rows(
+                _legend_handles(shown, ls=False)
+                + [
+                    _key("filled: diffusive (COM MSD ≥ 2⟨R$_g^2$⟩)", "o"),
+                    _key("open in (a): upper bound MSD/6Δt", "o", mfc="white"),
+                    Line2D(
+                        [], [], color="black", marker="o", ls="", label="black: experiment (PE)"
+                    ),
+                    _key("τ$_{ee}$ (1/e), solid", "o", "-"),
+                    _key("Rouse τ$_1$, dashed", "^", "--"),
+                    _key("open in (b): extrapolated fit", "^", mfc="white"),
+                    _key("black edge: long hold", "o", ms=8, mec="black"),
+                ],
+                4,
+            ),
+        )
     info["sids"] = [s["sid"] for s in series]
-    return save(fig, out, "fig6_dynamics"), info
+    paths = save(fig, out, "fig6_dynamics")
+    # appendix Fig. 6.1: segment MSD, long-hold COM MSD, tau_P2, Rouse spectrum
+    fig, axes = plt.subplots(2, 2, figsize=FIG22L, layout="constrained")
+    app: dict = {}
+    _f6_seg_msd(axes[0, 0], data, series, app)
+    _f6_com(axes[0, 1], data, series, app)
+    _f6_p2(axes[1, 0], data, series, app)
+    _f6_rouse(axes[1, 1], data, series, app)
+    ts = sorted(set(app.pop("a_ts", [])) | {r[0] for v in app.get("b", {}).values() for r in v})
+    res = app.pop("a_res", set()) | {s["res"] for s in series if s["label"] in app.get("b", {})}
+    pshown = [s for s in series if s["label"] + " bulk" in app.get("c", {})]
+    fig_legend(
+        fig,
+        legend_rows(
+            [Line2D([], [], color=t_color(t), lw=2.4, label=t_label(t)) for t in ts]
+            + _res_ls_handles(res)
+            + _legend_handles(pshown, ls=False)
+            + [
+                Line2D([], [], color="0.4", lw=2.4, label="(b) thick: long hold"),
+                Line2D([], [], color="0.4", lw=1, alpha=0.5, label="(b) thin: 25 ns sweep hold"),
+                _key("open (d): extrapolated", "o", mfc="white"),
+            ]
+            + (
+                [_key("half-filled (c): long hold", "o", **LONG_KW)]
+                if any(
+                    r[2] == "long"
+                    for k, v in app.get("c", {}).items()
+                    if k.endswith(" bulk")
+                    for r in v
+                )
+                else []
+            ),
+            5,
+        ),
+    )
+    info["appendix"] = {"fig6_1_dynamics_curves": app}
+    paths += save(fig, out / APPENDIX, "fig6_1_dynamics_curves")
+    return paths, info
 
 
 # ================================================================== figure 7: mechanics
@@ -4394,89 +4307,129 @@ def caption_fig4_1(info: dict, data: dict) -> str:
 
 def caption_fig5(info: dict, data: dict) -> str:
     a = info.get("a") or {}
-    c = info.get("c") or {}
+    b = info.get("b") or {}
     gam = _join(
         f"{k}: dγ/dT = {_fmt(v.get('dgdT'), '.3f')} ± {_fmt(v.get('dgdT_err'), '.3f')} mN m⁻¹ K⁻¹"
-        for k, v in c.items()
+        for k, v in b.items()
     )
-    e_exp = info.get("i_exp")
+    gl = EXPERIMENT["pe"]["gamma_line"]
+    shallow = [
+        100 * (1 - v["dgdT"] / gl["b"])
+        for v in b.values()
+        if v.get("dgdT") is not None and v.get("polymer") == "pe" and v.get("res") == "cg"
+    ]
+    slope = (
+        f"CG dγ/dT is {min(shallow):.0f}–{max(shallow):.0f} % shallower than the Moreira slope"
+        f" {gl['b']:g} mN m⁻¹ K⁻¹"
+        if shallow
+        else "no CG fit"
+    )
+    ua = [k for k, v in b.items() if v.get("res") != "cg"]
     ratios = [
         a_ / b_
-        for v in (info.get("f") or {}).values()
+        for v in (info.get("c") or {}).values()
         for a_, b_ in zip(v.get("surface_xy") or [], v.get("interior_xy") or [], strict=False)
         if a_ and b_
     ]
     mob = f"{min(ratios):.1f}–{max(ratios):.1f}" if ratios else "n/a"
     return (
-        "**Figure 5. Dry 5 nm slit pore** (CG PE, 40 chains = solid/filled; 2×2×2 = 320"
-        " chains = dashed/open; colour = T in profile panels). "
-        f"(a) PyMOL side view along x of {a.get('label', 'the pore')} from"
+        "**Figure 5. Dry 5 nm slit pores** (colour = model, marker = polymer; solid / filled"
+        " = 40 chains, dashed / open = 320 chains (2×2×2); colour = T in (d); one shared"
+        f" legend). (a) PyMOL side view along x of {a.get('label', 'the pore')} from"
         f" ``{a.get('source', 'n/a')}``: gap centred and shaded blue, the cell outlined in"
         " black with its chains coloured, periodic images (3 × 3 in y, z) in grey so the film"
-        " reads as a continuous sheet. (b) Symmetrised ρ(z) about the film centre per hold"
-        " with the bulk density at the same T (dotted): the film interior matches bulk within"
-        " ≈0.2 %. (c) γ per surface from the 25 ns holds ± SEM and the sweep fits"
-        f" ({gam}). Experiment: LLDPE melt γ = 39.05 − 0.0725·t (Moreira et al. 2003) and the"
-        " Wu compilation (crosses, unverified). γ uses a plain 15 Å LJ cutoff without tail"
-        " correction (cutoff-dependent); the 1–3 % agreement partly reflects SDK being fitted"
-        " to γ; dγ/dT is ≈20 % shallower than experiment. (d) Film thickness between the"
-        " Gibbs dividing surfaces over the whole sweep (solid) and the gap width at the holds"
-        " (dashed). (e) 10–90 % interfacial width from the profile (solid) and from the tanh"
-        " fit (dotted): the interface broadens with T and is wider in the larger film. (f)"
-        " Segment MSD per dimension at a 1 ns lag by layer (surface = within 15 Å of a Gibbs"
-        f" surface): surface in-plane mobility is {mob} × the interior; motion normal"
-        " to the surface is suppressed. CG model times. (g) ⟨P2(cos θ<sub>z</sub>)⟩ of the"
-        " bonds vs distance from the Gibbs surface: bonds lie parallel to the surface"
-        " (negative) within ≈1.5 nm of it. (h) Chain shape: R<sub>g,z</sub>²/(R<sub>g,xy</sub>²/2)"
-        " of surface and interior chains (1 = isotropic): surface chains are flattened"
-        " (≈0.2); the 40-chain film is thin enough that its interior chains are also"
-        " compressed. (i) Surface excess energy e<sub>s</sub> (classical; NVT film vs NPT bulk,"
-        " noisy) and γ − T dγ/dT from the γ fits vs the experimental"
-        f" γ − T dγ/dT ≈ {_fmt(e_exp, '.1f')} mJ/m² [D from the linear Moreira fit]. The slit"
-        " models a local patch of an amorphous wall; real separator pores are 30–100 nm,"
+        " reads as a continuous sheet. (b) γ per surface from the 25 ns holds ± SEM and the"
+        f" SEM-weighted sweep fits ({gam}). Experiment (black line): LLDPE melt γ = 39.05 −"
+        " 0.0725·t (Moreira et al. 2003). γ uses a plain 15 Å LJ cutoff without tail"
+        " correction (cutoff-dependent); the 1–3 % agreement of γ partly reflects SDK being"
+        f" fitted to γ; {slope}."
+        + (
+            f" UA pores: {', '.join(ua)}."
+            if ua
+            else " The UA PE and UA iPP 5 nm pores are not analysed yet and will appear when"
+            " their results.json exist."
+        )
+        + " (c) Segment MSD per dimension at Δt = 1 ns by layer (surface = within 15 Å of a"
+        " Gibbs surface; line style = layer in this panel): surface in-plane mobility is"
+        f" {mob} × the interior; motion normal to the surface is suppressed. {DT_DEF} CG"
+        " model times. (d) ⟨P2(cos θ<sub>z</sub>)⟩ of the bonds vs distance from the Gibbs"
+        " surface: bonds lie parallel to the surface (negative) within ≈1.5 nm of it. The"
+        " density profiles, chain shape and interfacial width are in appendix Fig. 5.1. The"
+        " slit models a local patch of an amorphous wall; real separator pores are 30–100 nm,"
         " curved and semicrystalline."
         + validity_text(data, info.get("sids") or [], ["gamma", "film", "chainT", "segdyn"])
     )
 
 
-def caption_fig6(info: dict, data: dict) -> str:
-    c = info.get("c") or {}
-    dl = []
-    for k, pts in c.items():
-        for p in pts:
-            if not p["bound"]:
-                txt = f"{k} {t_label(p['t_c'])}: D = {p['D']:.2g} cm²/s"
-                if k.startswith("CG"):
-                    txt += f" (÷4.07 → {p['D'] / CG_TIME_FACTOR:.2g})"
-                dl.append(txt)
-    f = info.get("f") or {}
-    sl = _join(f"{k} p^{v['slope']:.2f}" for k, v in f.items() if v.get("slope") is not None)
+def caption_fig5_1(info: dict, data: dict) -> str:
     return (
-        "**Figure 6. Dynamics** (model time throughout; CG ≈ 4.07× faster than real PE,"
-        " Hall, Sirk, Klein, Shinoda, J. Chem. Phys. 150, 244901, 2019; the factor depends on"
-        " T and is to be recalibrated against UA/AA; UA also runs fast without H friction)."
-        " (a) Backbone-site MSD in the 25 ns sweep holds (colour = T; line style = resolution;"
-        " grey = 500 K extension) with a t<sup>1/2</sup> (Rouse) guide. (b) Chain COM MSD /"
-        " ⟨R<sub>g</sub>²⟩ in the long holds (D53; 180–280 ns of the planned 300 ns; thick)"
-        " and the sweep holds (thin): only the long holds reach the diffusive t¹ regime"
-        " beyond 2⟨R<sub>g</sub>²⟩. (c) D<sub>COM</sub>: filled where the COM MSD is"
-        " diffusive and ≥ 2⟨R<sub>g</sub>²⟩ (D55 criterion; "
-        + _join(dl)
-        + "), open with a down arrow = MSD/(6t) at the longest lag (an upper bound while"
-        " the MSD is still sub-diffusive); faded = CG ÷ 4.07. Experiment: short PE melt"
-        " ≈1.8 × 10⁻⁷ cm²/s at 175 °C (Pearson et al. 1987, read from a graph, ±30 %)."
-        " (d) Bond P2 1/e time vs 1000/T (top: °C; right: CG × 4.07): bulk sweep holds (solid),"
-        " the 500 K UA extension, and the pore surface layer (dashed) and interior (dotted):"
-        " surface bonds reorient ≈2× faster. CG bead–bead vector, UA C–C bond (not the ¹³C"
-        " NMR C–H vector). Long-hold P2 times are omitted: their 100 ps frames do not resolve"
-        " the 1/e time (no D46 bursts). (e) τ<sub>ee</sub> (end-to-end 1/e, circles/solid) and"
-        " Rouse τ<sub>1</sub> (triangles/dashed): sweep holds give exponential-fit"
-        " extrapolations (open; order of magnitude, typically low), long holds (black edge)"
-        " and the 500 K extension reach 1/e. (f) Rouse mode times τ<sub>p</sub> (p = 1–5) of"
-        f" the long holds and the UA 500 K extension vs the Rouse p⁻² line; fitted exponents"
-        f" over the reached modes: {sl} (real melts: p<sup>−2.2…−2.4</sup>; C240 is near the"
-        " entanglement length)."
+        "**Figure 5.1 (appendix). Slit-pore checks** (symbols and line styles as in Fig. 5)."
+        " (a) Symmetrised ρ(z) per hold vs the distance from each film's own Gibbs dividing"
+        " surface, so the 40- and 320-chain films overlay (colour = T); dotted = the bulk"
+        " density at the same T: the film interior matches bulk within ≈0.2 %. (b) Chain"
+        " shape R<sub>g,z</sub>²/(R<sub>g,xy</sub>²/2) of surface and interior chains (1 ="
+        " isotropic): surface chains are flattened (≈0.2); the 40-chain film is thin enough"
+        " that its interior chains are also compressed. (c) 10–90 % interfacial width from"
+        " the profile (solid) and from the tanh fit (dotted): the interface broadens with T"
+        " and is wider in the larger film."
+    )
+
+
+def caption_fig6(info: dict, data: dict) -> str:
+    a = info.get("a") or {}
+    dl = _join(
+        f"{k} {t_label(p['t_c'])}: {p['D_shown']:.2g} cm²/s"
+        + (f" (model {p['D']:.2g})" if p["factor"] != 1 else "")
+        for k, pts in a.items()
+        for p in pts
+        if not p["bound"]
+    )
+    return (
+        "**Figure 6. Chain dynamics** (colour = model, marker = polymer; one shared legend)."
+        " **Time convention (this figure and appendix Fig. 6.1):** CG times are multiplied by"
+        " 4.07 (and D divided by 4.07) to approximate real PE time (SDK PE dynamics ≈ 4.07×"
+        " faster; Hall, Sirk, Klein, Shinoda, J. Chem. Phys. 150, 244901, 2019; one constant"
+        " for every T and quantity, an approximation to be recalibrated against UA/AA); UA"
+        " times are shown as simulated (no mapping yet; UA also runs fast without H"
+        " friction); right axes give CG model time. (a) D<sub>COM</sub> vs T: filled where"
+        " the COM MSD is diffusive and ≥ 2⟨R<sub>g</sub>²⟩ (D55 criterion; "
+        + dl
+        + "); open = MSD/(6Δt) at the longest Δt, an upper bound while the MSD is still"
+        " sub-diffusive (each marker is one hold). Experiment (black circle): short PE melt ≈1.8"
+        " × 10⁻⁷ cm²/s at 175 °C (Pearson et al. 1987, read from a graph, ±30 %). (b)"
+        " τ<sub>ee</sub> (end-to-end 1/e, circles, solid) and Rouse τ<sub>1</sub> (triangles,"
+        " dashed) vs 1000/T: the 25 ns sweep holds give exponential-fit extrapolations (open;"
+        " not reached, order of magnitude, typically low); the long holds (black edge) and the"
+        " 500 K extension reach 1/e. Segment MSD, the long-hold COM MSD, bond P2 times and the"
+        " Rouse spectrum are in appendix Fig. 6.1."
         + validity_text(data, info.get("sids") or [], ["segdyn", "chaindyn"])
+    )
+
+
+def caption_fig6_1(info: dict, data: dict) -> str:
+    b = info.get("b") or {}
+    lh = _join(
+        f"{k} {t_label(t)} {_fmt(ns, '.0f')} ns (MSD/⟨R<sub>g</sub>²⟩ {_fmt(m, '.2f')} at the"
+        f" longest Δt{', diffusive' if dif else ''})"
+        for k, rows in b.items()
+        for t, ns, m, dif in rows
+    )
+    d = info.get("d") or {}
+    sl = _join(f"{k} p^{v['slope']:.2f}" for k, v in d.items() if v.get("slope") is not None)
+    return (
+        "**Figure 6.1 (appendix). Dynamics curves** (time convention as in Fig. 6: CG × 4.07"
+        f" ≈ real, UA as simulated; colour = T, line style = model). {DT_DEF} (a)"
+        " Backbone-site MSD vs Δt in the 25 ns sweep holds (grey = 500 K extension) with a"
+        " t<sup>1/2</sup> (Rouse) guide. (b) Chain COM MSD / ⟨R<sub>g</sub>²⟩ vs Δt in the"
+        f" long holds (D53; thick: {lh}) and the sweep holds (thin): only the long holds reach"
+        " the diffusive t¹ regime beyond 2⟨R<sub>g</sub>²⟩. (c) Bond P2 1/e time vs 1000/T"
+        " (top: °C; right: CG model time): bulk sweep holds (solid), the 500 K UA extension,"
+        " and the pore surface layer (dashed) and interior (dotted): surface bonds reorient"
+        " ≈2× faster. CG bead–bead vector, UA C–C bond (not the ¹³C NMR C–H vector). Long-hold"
+        " P2 times are omitted: their 100 ps frames do not resolve the 1/e time (no D46"
+        " bursts). (d) Rouse mode times τ<sub>p</sub> (p = 1–5) of the long holds and the UA"
+        f" 500 K extension vs the Rouse p⁻² line; fitted exponents over the reached modes: {sl}"
+        " (real melts: p<sup>−2.2…−2.4</sup>; C240 is near the entanglement length)."
     )
 
 
@@ -4569,6 +4522,8 @@ APPENDIX_CAPTIONS = {
     "fig3_1_cp_chain_length": ("fig3_thermo", caption_fig3_1),
     "fig3_2_convergence": ("fig3_thermo", caption_fig3_2),
     "fig4_1_ree_length": ("fig4_chains", caption_fig4_1),
+    "fig5_1_pore_checks": ("fig5_pore", caption_fig5_1),
+    "fig6_1_dynamics_curves": ("fig6_dynamics", caption_fig6_1),
 }
 
 

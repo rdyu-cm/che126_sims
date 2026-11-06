@@ -182,9 +182,16 @@ def test_real_data_smoke(pf, tmp_path):
     assert infos["fig7_mechanics"]["rates"] == [1e8, 1e9]
     assert any(r["t_1e_ns"] > 0 for r in infos["fig2_equilibration"]["a"])
     assert "CG PE C240" in infos["fig4_chains"]["a"]
-    assert infos["fig5_pore"]["c"]["CG PE C240"]["dgdT"] < 0
-    d = infos["fig6_dynamics"]["c"]["CG PE C240"]
-    assert any(not p["bound"] for p in d)  # the diffusive 160 C long hold
+    gam = infos["fig5_pore"]["b"]
+    assert gam["CG PE C240 5 nm pore (40 chains)"]["dgdT"] < 0
+    assert gam["CG PE C240 5 nm pore (320 chains)"]["dgdT"] < 0
+    cap5 = pf.caption_fig5(infos["fig5_pore"], data)
+    assert "Wu" not in cap5 and "% shallower than the Moreira slope" in cap5
+    d = infos["fig6_dynamics"]["a"]["CG PE C240"]
+    assert any(not p["bound"] for p in d)  # the diffusive 130/160 C long holds
+    assert all(p["D_shown"] == pytest.approx(p["D"] / pf.CG_TIME_FACTOR) for p in d)
+    longs = infos["fig6_dynamics"]["appendix"]["fig6_1_dynamics_curves"]["b"]["CG PE C240"]
+    assert {t for t, *_ in longs} == {25.0, 90.0, 130.0, 160.0}
     # local alpha_V: one point per window of 5 consecutive sweep temperatures, CG ~7e-4/K
     loc = infos["fig3_thermo"]["b"]["CG PE C240"]["local"]
     assert len(loc) == 11 and all(6.0 < a < 8.0 for _, a, _ in loc)
