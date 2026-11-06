@@ -12,6 +12,12 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 SCRIPTS = REPO / "scripts"
+APPENDIX_FIGS = (
+    "fig2_1_cn_sem",
+    "fig3_1_cp_chain_length",
+    "fig3_2_convergence",
+    "fig4_1_ree_length",
+)
 ALL_FIGS = (
     "fig1_models",
     "fig2_equilibration",
@@ -54,8 +60,15 @@ def test_series_by_id(pf):
     assert not long["primary"] and long["label"] == "CG PE C1500" and long["mfc"] == "white"
     pore = pf.series_info("pe_cg_pore_w5nm_n320_c240_s1_rep222")
     assert pore["kind"] == "pore" and pore["width_nm"] == 5.0 and not pore["primary"]
+    assert pore["label"] == "CG PE C240 (320 chains)"
+    assert pf.pore_label(pore) == "CG PE C240 5 nm pore (320 chains)"
+    small = pf.series_info("pe_cg_pore_w5nm_n40_c240_s1")
+    assert small["label"] == "CG PE C240" and small["chains_label"] == "CG PE C240 (40 chains)"
+    assert pf.pore_label(small) == "CG PE C240 5 nm pore (40 chains)"
+    assert pf.series_info("pe_cg_amorph_n640_c240_s1_rep441")["label"] == "CG PE C240 (640 chains)"
     assert pf.series_info("pe_cg_pore500k_w10nm_n40_c240_s1")["kind"] == "wide_pore"
     assert pf.series_info("pe_cg_hole_r3nm_160C_n320_c240_s1_rep222")["kind"] == "hole"
+    assert pf.series_info("pe_cg_amorph_n40_c240_s1")["label"] == "CG PE C240"
     assert pf.series_info("not_an_id") is None
     assert pf.t_color(226.85) == pf.GREY_500K and pf.t_label(226.85) == "500 K"
 
@@ -66,8 +79,10 @@ def test_empty_inputs_write_placeholders(pf, tmp_path):
     names = {p.name for p in out["written"]}
     for fig in ALL_FIGS:
         assert {f"{fig}.png", f"{fig}.pdf", f"{fig}.svg"} <= names
+    for fig in APPENDIX_FIGS:
+        assert (tmp_path / "out" / "appendix" / f"{fig}.png").is_file()
     text = out["readme"].read_text()
-    for fig in ALL_FIGS:
+    for fig in ALL_FIGS + APPENDIX_FIGS:
         assert f"## {fig}" in text
     assert out["infos"]["fig8_holes"]["pending"] and out["infos"]["fig8_holes"]["a"]["pending"]
 
@@ -163,15 +178,21 @@ def test_real_data_smoke(pf, tmp_path):
     )
     assert (tmp_path / "fig3_thermo.png").stat().st_size > 10_000
     infos = out["infos"]
-    assert "CG PE" in infos["fig3_thermo"]["a"]["series"]
+    assert "CG PE C240" in infos["fig3_thermo"]["a"]["series"]
     assert infos["fig7_mechanics"]["rates"] == [1e8, 1e9]
     assert any(r["t_1e_ns"] > 0 for r in infos["fig2_equilibration"]["a"])
-    assert "CG PE" in infos["fig4_chains"]["a"]
-    assert infos["fig5_pore"]["c"]["CG PE"]["dgdT"] < 0
-    d = infos["fig6_dynamics"]["c"]["CG PE"]
+    assert "CG PE C240" in infos["fig4_chains"]["a"]
+    assert infos["fig5_pore"]["c"]["CG PE C240"]["dgdT"] < 0
+    d = infos["fig6_dynamics"]["c"]["CG PE C240"]
     assert any(not p["bound"] for p in d)  # the diffusive 160 C long hold
+    # local alpha_V: one point per window of 5 consecutive sweep temperatures, CG ~7e-4/K
+    loc = infos["fig3_thermo"]["b"]["CG PE C240"]["local"]
+    assert len(loc) == 11 and all(6.0 < a < 8.0 for _, a, _ in loc)
     for name, info in infos.items():
         assert pf.CAPTIONS[name](info, data).startswith("**Figure")
+    for name, (parent, fn) in pf.APPENDIX_CAPTIONS.items():
+        assert (tmp_path / "appendix" / f"{name}.png").is_file()
+        assert fn(infos[parent]["appendix"][name], data).startswith("**Figure")
 
 
 def test_summary_links_presentation(tmp_path):

@@ -4,15 +4,19 @@
         [--runs DIR ...] [--out DIR] [--only fig1 ...] [--no-render] [--hole-preview DIR]
 
 Writes ``<out>/<name>.png`` (300 dpi), ``.pdf`` and ``.svg`` plus ``<out>/README.md`` (one
-caption per figure) into ``results/presentation/`` by default:
+caption per figure) into ``results/presentation/`` by default (appendix figures in
+``<out>/appendix/``):
 
 - ``fig1_models``: PyMOL renders of one PE segment at AA / UA / CG resolution and of a CG
   bulk box, the simulation workflow, and the system-size table;
-- ``fig2_equilibration``: 500 K chain relaxation (end-to-end ACF, COM MSD / Rg^2, C_n
-  plateau), the sweep density trace, block SEM vs block length, pore gamma running means;
-- ``fig3_thermo``: rho(T), alpha_V, kappa_T, classical Cp, cooling-vs-heating hysteresis,
-  chain-length and box-size effects, against experiment;
-- ``fig4_chains``: Rg, R_ee, C_n vs T, C_n(n), ordered-site fraction, C240 vs C1500;
+- ``fig2_equilibration``: 500 K chain relaxation (end-to-end ACF, COM MSD / Rg^2), the
+  sweep density trace, pore gamma running means; appendix ``fig2_1_cn_sem`` (C_n plateau
+  block means, block SEM vs block length);
+- ``fig3_thermo``: rho(T), local alpha_V(T), kappa_T, cooling-vs-heating hysteresis, against
+  experiment; appendix ``fig3_1_cp_chain_length`` (classical Cp, C1500 vs C240) and
+  ``fig3_2_convergence`` (hold running-mean density and kappa_T vs time);
+- ``fig4_chains``: Rg, C_n vs T, C_n(n), ordered-site fraction; appendix
+  ``fig4_1_ree_length`` (R_ee vs T, C240 vs C1500 <R_ee^2>/M);
 - ``fig5_pore``: slit-pore render, rho(z), gamma(T), film/gap/interface, surface vs
   interior mobility, bond orientation, chain flattening, surface excess energy;
 - ``fig6_dynamics``: segment and chain COM MSD, D_COM, P2 times, tau_ee / tau_1, Rouse
@@ -56,6 +60,8 @@ import pymol_render as pr
 import summarize_systems as ss
 import validity
 
+from sepsim.analysis.stats import timeseries_mean
+from sepsim.analysis.thermo import isothermal_compressibility, thermal_expansion
 from sepsim.build.datafile import read_data_file
 
 ROOT = ss.ROOT
@@ -64,6 +70,9 @@ DPI = 300
 FIG23 = (13.0, 7.8)  # 2 x 3 panels
 FIG33 = (13.0, 11.6)  # 3 x 3 panels
 FIG22 = (11.0, 8.0)  # 2 x 2 panels
+FIG22L = (11.0, 8.9)  # 2 x 2 panels below a shared legend row
+FIG12 = (11.0, 4.6)  # 1 x 2 appendix panels
+APPENDIX = "appendix"  # appendix figures: <out>/appendix/fig<N>_<k>_<name>.*
 CG_TIME_FACTOR = 4.07  # SDK PE dynamics are ~4.07x faster than real PE (Hall et al. 2019)
 INV_E = float(np.exp(-1.0))
 HOLD_TS = (25.0, 90.0, 130.0, 160.0)
@@ -207,16 +216,23 @@ def series_info(sid: str) -> dict | None:
     variant = []
     if p["c"] != 240:
         variant.append(f"C{p['c']}")
-    if rep or p["n"] != 40:
-        variant.append(f"{p['n']} chains")
-    primary = not variant
-    label = f"{RES_NAME[p['res']]} {POLY_NAME.get(p['polymer'], p['polymer'])}"
+    cg_c240 = p["res"] == "cg" and p["c"] == 240  # named "CG PE C240" next to C1500
+    other_box = rep or p["n"] != 40
+    primary = not variant and not other_box
+    base = f"{RES_NAME[p['res']]} {POLY_NAME.get(p['polymer'], p['polymer'])}"
+    if cg_c240:
+        base += " C240"
     if variant:
-        label += " " + ", ".join(variant)
+        base += " " + ", ".join(variant)
+    chains = f"({p['n']} chains)"
+    # box size only in the label of the non-40-chain boxes; chains_label always has it
+    label = f"{base} {chains}" if other_box else base
     color = RES_COLOR.get(p["res"], "0.4")
     return p | {
         "sid": sid,
         "label": label,
+        "base": base,
+        "chains_label": f"{base} {chains}",
         "primary": primary,
         "color": color,
         "marker": POLY_MARKER.get(p["polymer"], "D"),
@@ -224,6 +240,13 @@ def series_info(sid: str) -> dict | None:
         "ls": "-" if primary else "--",
         "rls": RES_LS.get(p["res"], "-"),
     }
+
+
+def pore_label(s: dict, suffix: str = "") -> str:
+    """Pore series label with width and chain count, e.g. "CG PE C240 5 nm pore (40
+    chains)" (``suffix`` goes after "pore", e.g. " film")."""
+    w = f" {s['width_nm']:g} nm" if s.get("width_nm") else ""
+    return f"{s['base']}{w} pore{suffix} ({s['n']} chains)"
 
 
 def _order(sid: str) -> tuple:
@@ -369,6 +392,34 @@ def _res_ls_handles(resolutions) -> list:
         for r in ("cg", "ua", "aa")
         if r in resolutions
     ]
+
+
+def fig_legend(fig, rows: list[list], **kw) -> None:
+    """One shared legend above the panels, one row per list of handles (e.g. series, then
+    the style keys); short rows are padded with blank entries."""
+    rows = [r for r in rows if r]
+    if not rows:
+        return
+    ncols = max(len(r) for r in rows)
+    blank = Line2D([], [], ls="", label=" ")
+    grid = [r + [blank] * (ncols - len(r)) for r in rows]
+    handles = [grid[i][c] for c in range(ncols) for i in range(len(grid))]  # column-major
+    fig.legend(
+        handles=handles,
+        loc="outside upper center",
+        ncols=ncols,
+        fontsize=9.5,
+        columnspacing=1.2,
+        handletextpad=0.5,
+        **kw,
+    )
+
+
+def _key(label: str, marker: str = "", ls: str = "", mfc: str = "0.3", **kw) -> Line2D:
+    """Grey style-key handle (marker fill, line style) for a shared legend."""
+    return Line2D(
+        [], [], color="0.3", marker=marker or None, ls=ls or "", mfc=mfc, label=label, **kw
+    )
 
 
 def _fmt(x, spec=".3g") -> str:
@@ -1138,17 +1189,9 @@ def _f2_acf(ax, series, info) -> None:
     ax.set_xscale("log")
     ax.set_xlim(0.01, None)
     ax.set_ylim(-0.05, 1.05)
-    ax.set_xlabel("lag (ns, model time)")
+    ax.set_xlabel("time interval Δt (ns, model time)")
     ax.set_ylabel(
-        r"$\langle\mathbf{R}_{ee}(0)\cdot\mathbf{R}_{ee}(t)\rangle/\langle R_{ee}^2\rangle$"
-    )
-    ax.legend(
-        handles=_legend_handles(shown, ls=True)
-        + [Line2D([], [], color="0.4", marker="o", ms=8, mec="black", ls="", label="1/e time")],
-        loc="lower left",
-        fontsize=8.5,
-        ncols=2,
-        columnspacing=0.8,
+        r"$\langle\mathbf{R}_{ee}(t)\cdot\mathbf{R}_{ee}(t+\Delta t)\rangle/\langle R_{ee}^2\rangle$"
     )
     info["a"] = [
         {
@@ -1193,83 +1236,90 @@ def _f2_msd(ax, series, info) -> None:
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xlim(0.01, None)
-    ax.set_xlabel("lag (ns, model time)")
+    ax.set_xlabel("time interval Δt (ns, model time)")
     ax.set_ylabel(r"COM MSD / $\langle R_g^2\rangle$")
-    ax.legend(
-        handles=_legend_handles(shown)
-        + [
-            Line2D(
-                [], [], color="0.4", marker="o", ms=8, mec="black", ls="", label="at half the hold"
-            )
-        ],
-        loc="upper left",
-        bbox_to_anchor=(0.0, 0.9),
-        fontsize=8.5,
-        ncols=2,
-        columnspacing=0.8,
-    )
+
+
+CN_BLOCKS = 8  # block means of the 500 K C_n plateau series (appendix Fig. 2.1 a)
 
 
 def _f2_cn(ax, series, info) -> None:
-    panel_label(ax, "c", "500 K: C$_n$ plateau (n ≥ 100) vs time")
-    shown = [s for s in series if len(s["h500"].get("plateau_t", [])) > 1]
+    panel_label(ax, "a", "500 K: C$_n$ plateau (n ≥ 100), block means")
+    shown = [s for s in series if len(s["h500"].get("plateau_t", [])) >= 2 * CN_BLOCKS]
     if not shown:
         no_data(ax, "no C_n plateau series")
         return
     pols = []
+    info["a"] = []
     for s in shown:
         r = s["h500"]
-        ax.plot(r["plateau_t_ns"], r["plateau_t"], color=s["color"], ls=s["ls"], lw=1.4)
+        t, y = r["plateau_t_ns"], r["plateau_t"]
+        edges = np.linspace(t[0], t[-1], CN_BLOCKS + 1)
+        rows = []
+        for b0, b1 in itertools.pairwise(edges):
+            sel = (t >= b0) & (t <= b1) if b1 == edges[-1] else (t >= b0) & (t < b1)
+            if sel.sum() < 3:
+                continue
+            m = timeseries_mean(y[sel])
+            rows.append((0.5 * (b0 + b1), m.mean, m.sem))
+        x, m, e = (np.array(v) for v in zip(*rows, strict=True))
+        ax.errorbar(x, m, e, fmt=s["marker"], color=s["color"], mfc=s["mfc"], ls=s["ls"], lw=1.4)
         for b in r.get("boundaries_ns") or []:
             ax.axvline(b, color=s["color"], ls=":", lw=1.0, alpha=0.7)
         if s["polymer"] not in pols:
             pols.append(s["polymer"])
-    for k, pol in enumerate(pols):
+        info["a"].append(
+            {
+                "label": s["label"],
+                "plateau": r.get("cn_plateau"),
+                "ref": r.get("cn_ref"),
+                "blocks": rows,
+                "block_ns": float(edges[1] - edges[0]),
+            }
+        )
+    refs = []
+    for pol in pols:
         ref = EXPERIMENT.get(pol, {}).get("c_melt_500k")
         if ref:
             ax.axhspan(0.9 * ref, 1.1 * ref, color="0.5", alpha=0.13, lw=0)
             ax.axhline(ref, color="black", lw=1.4, ls="--")
-            ax.text(
-                0.01,
-                ref,
-                f" {POLY_NAME[pol]} melt C$_\\infty$ {ref:g} ± 10 %",
-                transform=ax.get_yaxis_transform(),
-                ha="left",
-                va="bottom" if k == 0 else "top",
-                fontsize=9.5,
-            )
-    ax.set_xlabel("time at 500 K (ns, model time)")
-    ax.set_ylabel("C$_n$ plateau")
+            refs.append(f"{POLY_NAME[pol]} {ref:g}")
+    ax.set_xlabel("time at 500 K, block centre (ns, model time)")
+    ax.set_ylabel("C$_n$ plateau, block mean ± SEM")
     ax.set_xscale("log")
-    ax.set_xlim(0.3, None)
     lo, hi = ax.get_ylim()
     ax.set_ylim(lo, hi + 0.35 * (hi - lo))
     ax.legend(
         handles=_legend_handles(shown)
-        + [Line2D([], [], color="0.4", ls=":", lw=1, label="prep | extension")],
+        + [Line2D([], [], color="0.4", ls=":", lw=1, label="prep | extension")]
+        + (
+            [
+                Line2D(
+                    [],
+                    [],
+                    color="black",
+                    ls="--",
+                    label=f"melt C$_\\infty$ ± 10 % ({', '.join(refs)})",
+                )
+            ]
+            if refs
+            else []
+        ),
         loc="upper left",
         fontsize=8.5,
         ncols=3,
         columnspacing=0.8,
     )
-    info["c"] = [
-        {
-            "label": s["label"],
-            "plateau": s["h500"].get("cn_plateau"),
-            "ref": s["h500"].get("cn_ref"),
-        }
-        for s in shown
-    ]
 
 
 def _f2_sweep(ax, rep, info) -> None:
-    panel_label(ax, "d", "Sweep density trace (25 → 160 °C)")
+    panel_label(ax, "c", "Sweep density trace (25 → 160 °C)")
     if rep is None:
         no_data(ax, "no bulk sweep results.json")
         return
     res = rep["results"]["sweep"]
     conv = res.get("convergence") or []
-    info["d"] = {"sid": rep["sid"], "label": rep["label"]}
+    info["c"] = {"sid": rep["sid"], "label": rep["label"]}
     for c in conv:
         q = g(c, "quantities", "density")
         if not q:
@@ -1322,11 +1372,11 @@ def _f2_sweep(ax, rep, info) -> None:
         fontsize=9,
     )
     n_steps = sum(c["kind"] == "step" for c in conv)
-    info["d"].update(n_steps=n_steps, n_holds=len(conv) - n_steps)
+    info["c"].update(n_steps=n_steps, n_holds=len(conv) - n_steps)
 
 
 def _f2_sem(ax, rep, info) -> None:
-    panel_label(ax, "e", "Hold SEM vs block length (D55)")
+    panel_label(ax, "b", f"Hold SEM vs block length (D55), {rep['label'] if rep else ''}")
     if rep is None:
         no_data(ax, "no bulk sweep results.json")
         return
@@ -1365,11 +1415,11 @@ def _f2_sem(ax, rep, info) -> None:
         loc="lower right",
         fontsize=9,
     )
-    info["e"] = {"ts": ts, "label": rep["label"]}
+    info["b"] = {"ts": ts, "label": rep["label"]}
 
 
 def _f2_gamma(ax, data, info) -> None:
-    panel_label(ax, "f", "Slit pore: γ running mean per hold")
+    panel_label(ax, "d", "Slit pore: γ running mean per hold")
     pores = find_series(data, "pore", "pore")
     if not pores:
         no_data(ax, "no pore results.json", pending=True)
@@ -1407,33 +1457,52 @@ def _f2_gamma(ax, data, info) -> None:
     ax.set_ylim(lo - 3.5, hi + 4.0)
     _t_legend(ax, sorted(ts), loc="upper center", title=None, ncols=4, fontsize=9)
     ax.legend(
-        handles=[
-            Line2D([], [], color="0.3", ls=s["ls"], label=f"{s['label']} {s['width_nm']:g} nm pore")
-            for s in pores
-        ],
+        handles=[Line2D([], [], color="0.3", ls=s["ls"], label=pore_label(s)) for s in pores],
         loc="lower right",
         fontsize=9,
     )
-    info["f"] = {
-        "pores": [s["label"] for s in pores],
+    info["d"] = {
+        "pores": [pore_label(s) for s in pores],
         "sids": [s["sid"] for s in pores],
         "rows": rows,
     }
 
 
 def fig2_equilibration(data: dict, out: Path) -> tuple[list[Path], dict]:
-    fig, axes = plt.subplots(2, 3, figsize=FIG23, layout="constrained")
+    fig, axes = plt.subplots(2, 2, figsize=FIG22L, layout="constrained")
     info: dict = {}
     series = chain_series_500k(data)
     _f2_acf(axes[0, 0], series, info)
     _f2_msd(axes[0, 1], series, info)
-    _f2_cn(axes[0, 2], series, info)
     rep = main_bulk(data)
     _f2_sweep(axes[1, 0], rep, info)
-    _f2_sem(axes[1, 1], rep, info)
-    _f2_gamma(axes[1, 2], data, info)
+    _f2_gamma(axes[1, 1], data, info)
+    shared = [
+        s
+        for s in series
+        if s["h500"].get("msd_rg2") is not None or len(s["h500"].get("acf", [])) > 1
+    ]
+    fig_legend(
+        fig,
+        [
+            _legend_handles(shared),
+            [
+                _key("solid / filled: 40 × C240 box", "o", "-"),
+                _key("dashed / open: CG PE C1500", "o", "--", mfc="white"),
+                _key("black edge: 1/e time (a), half the hold (b)", "o", ms=8, mec="black"),
+            ],
+        ],
+    )
     info["sids"] = [s["sid"] for s in series]
-    return save(fig, out, "fig2_equilibration"), info
+    paths = save(fig, out, "fig2_equilibration")
+    # appendix Fig. 2.1: C_n plateau block means, hold SEM vs block length
+    fig, axes = plt.subplots(1, 2, figsize=FIG12, layout="constrained")
+    app: dict = {}
+    _f2_cn(axes[0], series, app)
+    _f2_sem(axes[1], rep, app)
+    info["appendix"] = {"fig2_1_cn_sem": app}
+    paths += save(fig, out / APPENDIX, "fig2_1_cn_sem")
+    return paths, info
 
 
 # ================================================================== figure 3: thermo
@@ -1469,26 +1538,13 @@ def _f3_density(ax, sweeps, info) -> None:
             mfc=s["mfc"],
             zorder=3,
         )
-    extra = []
     for pol in _exp_polymers(sweeps):
         e = EXPERIMENT.get(pol, {})
-        if "density_athas" in e:
-            (t1, r1), (t2, r2) = e["density_athas"]
-            tk = np.linspace(298.15, 433.15, 50)  # linear in specific volume between the two
-            v = 1 / r1 + (1 / r2 - 1 / r1) * (tk - t1) / (t2 - t1)
-            ax.plot(tk - 273.15, 1 / v, color="black", lw=1.2, ls=":", zorder=1)
-            extra.append(
-                Line2D([], [], color="black", ls=":", label=f"{POLY_NAME[pol]} ATHAS amorphous")
-            )
         if "density" in e:
             p = np.array(e["density"]["points"])
             ax.errorbar(p[:, 0], p[:, 1], p[:, 2], fmt="x", ms=8, mew=1.8, **EXP_KW)
-            extra.append(
-                Line2D([], [], color="black", marker="x", ls="", label=f"{POLY_NAME[pol]} expt.")
-            )
     ax.set_xlabel("T (°C)")
     ax.set_ylabel(r"$\rho$ (g cm$^{-3}$)")
-    ax.legend(handles=_legend_handles(sweeps, extra), loc="upper right", fontsize=9)
     info["a"] = {
         "series": [s["label"] for s in sweeps],
         "holds": {
@@ -1533,35 +1589,86 @@ def _window_bars(ax, sweeps, key, val, scale, info_key, info) -> None:
             info[info_key].setdefault(s["label"], []).append((w0, w1, a, e, f.get("chi2_red")))
 
 
+ALPHA_WINDOW = 5  # consecutive sweep temperatures per local alpha_V fit (~40 K)
+
+
+def local_alpha(res: dict, n: int = ALPHA_WINDOW) -> list[tuple]:
+    """Local alpha_V (1/K) from sliding windows of ``n`` consecutive sweep temperatures:
+    V(T) per T from the segment volume mean / SEM (the hold where a T has a step and a
+    hold), SEM-weighted linear fit per window (unscaled covariance error), alpha_V =
+    slope / mean V. Rows (window centre = mean T in °C, alpha_V, err, T_lo, T_hi)."""
+    pts: dict[float, dict] = {}
+    kinds: dict[float, str] = {}
+    for x in res.get("segments") or []:
+        v = g(x, "stats", "volume")
+        tc = round(float(x["t_set_c"]), 3)
+        if not v or v.get("mean") is None or kinds.get(tc) == "hold":
+            continue
+        pts[tc], kinds[tc] = v, x.get("kind")
+    ts = sorted(pts)
+    if len(ts) < n:
+        return []
+    v = np.array([pts[t]["mean"] for t in ts], float)
+    e = np.array([pts[t].get("sem") or 0.0 for t in ts], float)
+    e = np.where(e > 0, e, e[e > 0].min() if (e > 0).any() else 1.0)
+    tk = np.array(ts) + 273.15
+    out = []
+    for k in range(len(ts) - n + 1):
+        sl = slice(k, k + n)
+        te = thermal_expansion(tk[sl], v[sl], e[sl])
+        out.append((float(np.mean(ts[sl])), te.alpha_V, te.alpha_V_err, ts[k], ts[k + n - 1]))
+    return out
+
+
+def _full_alpha(s: dict) -> dict | None:
+    """The 25-160 °C alpha_V fit of a sweep (results.json ``fits.alpha_V``)."""
+    for f in g(s, "results", "sweep", "fits", "alpha_V") or []:
+        if list(f.get("window_c") or []) == [25.0, 160.0]:
+            return f
+    return None
+
+
 def _f3_alpha(ax, sweeps, info) -> None:
-    panel_label(ax, "b", r"Thermal expansion $\alpha_V$ by fit window")
+    panel_label(ax, "b", r"Local thermal expansion $\alpha_V$ (40 K windows)")
     if not sweeps:
         no_data(ax, "no bulk sweeps", pending=True)
         return
-    _window_bars(ax, sweeps, "alpha_V", "alpha_V_per_K", 1e4, "b", info)
+    info["b"] = {}
+    n = len(sweeps)
+    for i, s in enumerate(sweeps):
+        rows = local_alpha(s["results"]["sweep"])
+        if not rows:
+            continue
+        off = (i - (n - 1) / 2) * 1.2
+        x, a, e = (np.array([r[k] for r in rows]) for k in range(3))
+        ax.errorbar(
+            x + off,
+            a * 1e4,
+            e * 1e4,
+            fmt=s["marker"],
+            color=s["color"],
+            mfc=s["mfc"],
+            ls=s["ls"],
+            lw=1.4,
+            ms=5.5,
+        )
+        full = _full_alpha(s)
+        info["b"][s["label"]] = {
+            "local": [(r[0], r[1] * 1e4, r[2] * 1e4) for r in rows],
+            "full": (full["alpha_V_per_K"] * 1e4, (full.get("err") or 0) * 1e4) if full else None,
+        }
     for pol in _exp_polymers(sweeps):
         e = EXPERIMENT.get(pol, {})
         if "alpha_V" in e:
             lo, hi = e["alpha_V"]["band"]
             w0, w1 = e["alpha_V"]["window"]
             ax.fill_between([w0, w1], lo, hi, color="0.2", alpha=0.15, lw=0, zorder=0)
-            ax.text(w0 + 2, hi + 0.03, f"{POLY_NAME[pol]} expt.", va="bottom", fontsize=9.5)
+            ax.text(
+                w1 - 2, hi + 0.05, f"{POLY_NAME[pol]} expt.", ha="right", va="bottom", fontsize=9.5
+            )
     ax.set_ylabel(r"$\alpha_V$ ($10^{-4}$ K$^{-1}$)")
-    ax.set_xlabel("fit window T (°C)")
-    ymin, ymax = ax.get_ylim()
-    ax.set_ylim(min(ymin, 6.4), max(ymax, 7.9))
+    ax.set_xlabel("window centre T (°C)")
     ax.set_xlim(15, 170)
-    ax.legend(
-        handles=_legend_handles(sweeps, ls=False)
-        + [
-            Line2D([], [], color="0.3", lw=3.5, label="25–90 / 90–160 °C fit"),
-            Line2D([], [], color="0.3", lw=1.3, alpha=0.6, label="25–160 °C fit"),
-            Patch(fc="0.2", alpha=0.15, label="experiment"),
-        ],
-        loc="lower right",
-        fontsize=9,
-        ncols=2,
-    )
 
 
 def _f3_kappa(ax, data, sweeps, info) -> None:
@@ -1571,7 +1678,6 @@ def _f3_kappa(ax, data, sweeps, info) -> None:
         return
     info["c"] = {}
     n = len(sweeps)
-    has_long = False
     for i, s in enumerate(sweeps):
         off = (i - (n - 1) / 2) * 3.0
         hs = [h for h in g(s, "results", "sweep", "holds") or [] if h.get("kappa")]
@@ -1588,7 +1694,7 @@ def _f3_kappa(ax, data, sweeps, info) -> None:
         info["c"][s["label"]] = [(h["t_c"], h["kappa"]["kappa_T_GPa"]) for h in hs]
         lh = [r for r in long_holds(data, s["sid"]) if g(r, "res", "kappa", "kappa_T_GPa")]
         if lh:
-            has_long = True
+            info["c_long"] = True
             ax.errorbar(
                 [r["t_c"] + off + 4 for r in lh],
                 [r["res"]["kappa"]["kappa_T_GPa"] for r in lh],
@@ -1601,24 +1707,14 @@ def _f3_kappa(ax, data, sweeps, info) -> None:
             info["c"][s["label"] + " long"] = [
                 (r["t_c"], r["res"]["kappa"]["kappa_T_GPa"]) for r in lh
             ]
-    extra = []
     for pol in _exp_polymers(sweeps):
         e = EXPERIMENT.get(pol, {})
         if "kappa_T" in e:
             p = np.array(e["kappa_T"]["points"])
             ax.plot(p[:, 0], p[:, 1], "x", ms=9, mew=1.8, **EXP_KW)
-            extra.append(
-                Line2D([], [], color="black", marker="x", ls="", label=f"{POLY_NAME[pol]} expt.")
-            )
-    if has_long:
-        extra.append(
-            Line2D([], [], color="0.3", marker="o", ls="", label="long hold (D53)", **LONG_KW)
-        )
     ax.set_ylabel(r"$\kappa_T$ (GPa$^{-1}$)")
     ax.set_xlabel("T (°C)")
     ax.set_xlim(15, 175)
-    ax.set_ylim(0.7, None)
-    ax.legend(handles=_legend_handles(sweeps, extra), loc="upper left", fontsize=9)
 
 
 def cp_athas(pol: str, t_c: np.ndarray) -> np.ndarray | None:
@@ -1629,11 +1725,11 @@ def cp_athas(pol: str, t_c: np.ndarray) -> np.ndarray | None:
 
 
 def _f3_cp(ax, sweeps, info) -> None:
-    panel_label(ax, "d", r"Heat capacity $C_p$ (classical)")
+    panel_label(ax, "a", r"Heat capacity $C_p$ (classical)")
     if not sweeps:
         no_data(ax, "no bulk sweeps", pending=True)
         return
-    _window_bars(ax, sweeps, "cp", "cp_J_gK", 1.0, "d", info)
+    _window_bars(ax, sweeps, "cp", "cp_J_gK", 1.0, "a", info)
     # quantum (VDOS) corrected Cp of AA, when an analysis provides it
     extra = []
     for s in sweeps:
@@ -1645,34 +1741,50 @@ def _f3_cp(ax, sweeps, info) -> None:
                     continue
                 w0, w1 = f.get("window_c") or (25.0, 160.0)
                 ax.plot([w0, w1], [f["cp_J_gK"]] * 2, color=s["color"], lw=3.5, ls=":")
-                info.setdefault("d_vdos", []).append((s["label"], w0, w1, f["cp_J_gK"]))
-    if info.get("d_vdos"):
+                info.setdefault("a_vdos", []).append((s["label"], w0, w1, f["cp_J_gK"]))
+    if info.get("a_vdos"):
         extra.append(Line2D([], [], color="0.3", lw=3, ls=":", label="AA, VDOS-corrected"))
     tt = np.linspace(25, 160, 50)
     for pol in _exp_polymers(sweeps):
         y = cp_athas(pol, tt)
         if y is not None:
-            ax.plot(tt, y, color="black", lw=1.8)
-            extra.append(Line2D([], [], color="black", label=f"{POLY_NAME[pol]} expt. (ATHAS)"))
-    ax.set_ylim(0, 3.2)
+            ax.plot(tt, y, color="black", lw=1.8, ls="-" if pol == "pe" else "--")
+            extra.append(
+                Line2D(
+                    [],
+                    [],
+                    color="black",
+                    ls="-" if pol == "pe" else "--",
+                    label=f"{POLY_NAME[pol]} expt. (ATHAS)",
+                )
+            )
+    extra += [
+        Line2D([], [], color="0.3", lw=3.5, label="25–90 / 90–160 °C fit"),
+        Line2D([], [], color="0.3", lw=1.3, alpha=0.6, label="25–160 °C fit"),
+    ]
+    ax.set_ylim(0, 3.6)
     ax.set_xlim(15, 170)
     ax.set_xlabel("fit window T (°C)")
     ax.set_ylabel(r"$C_p$ (J g$^{-1}$ K$^{-1}$)")
     ax.text(
         0.03,
-        0.5,
+        0.47,
         "CG/UA: removed degrees of freedom,\nnot comparable (validity: no)",
         transform=ax.transAxes,
         fontsize=9.5,
         color="0.3",
     )
     ax.legend(
-        handles=_legend_handles(sweeps, extra, ls=False), loc="lower right", fontsize=9, ncols=2
+        handles=_legend_handles(sweeps, ls=False) + extra,
+        loc="upper left",
+        fontsize=8.5,
+        ncols=3,
+        columnspacing=0.8,
     )
 
 
-def _f3_hysteresis(ax, data, info) -> None:
-    panel_label(ax, "e", "Step-cool vs heating sweep: Δρ")
+def _f3_hysteresis(ax, data, info) -> list[dict]:
+    panel_label(ax, "d", "Step-cool vs heating sweep: Δρ")
     shown = []
     for s in bulk_systems(data, rep=True):
         run = ss.latest(runs_of(data, s["sid"]), "sweep")
@@ -1684,21 +1796,21 @@ def _f3_hysteresis(ax, data, info) -> None:
         e = np.array([100 * (r.get("rho_cool_sem") or 0) / (r.get("rho_sweep") or 1) for r in rows])
         ax.errorbar(t, d, e, fmt=s["marker"], color=s["color"], mfc=s["mfc"], ls=s["ls"], lw=1.5)
         shown.append(s)
-        info.setdefault("e", {})[s["label"]] = list(zip(t.tolist(), d.tolist(), strict=True))
+        info.setdefault("d", {})[s["label"]] = list(zip(t.tolist(), d.tolist(), strict=True))
     if not shown:
         no_data(ax, "no hysteresis rows (sweep progress.json)", pending=True)
-        return
+        return []
     ax.axhline(0, color="0.5", lw=0.9)
     ax.set_xlabel("T (°C)")
     ax.set_ylabel(r"$(\rho_{cool} - \rho_{heat})/\rho_{heat}$ (%)")
-    lim = max(0.2, 1.3 * max(abs(v) for vals in info["e"].values() for _, v in vals))
+    lim = max(0.2, 1.3 * max(abs(v) for vals in info["d"].values() for _, v in vals))
     ax.set_ylim(-lim, lim)
     ax.set_xlim(15, 165)
-    ax.legend(handles=_legend_handles(shown), loc="upper right", fontsize=9)
+    return shown
 
 
 def _f3_size(ax, data, info) -> None:
-    panel_label(ax, "f", "Chain length and box size: Δρ vs CG C240")
+    panel_label(ax, "b", "Chain length: ρ vs CG PE C240")
     cg = [s for s in bulk_systems(data, rep=True, derived=False) if s["res"] == "cg"]
     ref = next((s for s in cg if s["primary"]), None)
     if ref is None:
@@ -1720,7 +1832,7 @@ def _f3_size(ax, data, info) -> None:
 
     r0 = rho_by_t(ref)
     shown = []
-    info["f"] = {}
+    info["b"], info["b_box"] = {}, {}
     for s in cg:
         if s is ref:
             continue
@@ -1729,6 +1841,9 @@ def _f3_size(ax, data, info) -> None:
         if not ts:
             continue
         d = np.array([100 * (r1[t][0] / r0[t][0] - 1) for t in ts])
+        if s["c"] == ref["c"]:  # same chains, larger box: box size, noted in the caption
+            info["b_box"][s["label"]] = list(zip(ts, d.tolist(), strict=True))
+            continue
         e = np.array([100 * np.hypot(r1[t][1] or 0, r0[t][1] or 0) / r0[t][0] for t in ts], float)
         x = np.array(ts)
         sweep_pts = x < 200
@@ -1754,43 +1869,165 @@ def _f3_size(ax, data, info) -> None:
                 ms=8,
             )
         shown.append(s)
-        info["f"][s["label"]] = list(zip(x.tolist(), d.tolist(), strict=True))
+        info["b"][s["label"]] = list(zip(x.tolist(), d.tolist(), strict=True))
     if not shown:
-        no_data(ax, "only one CG box has densities", pending=True)
+        no_data(ax, "only one CG chain length has densities", pending=True)
         return
     ax.axhline(0, color=ref["color"], lw=1.2)
     ax.text(20, 0.02, ref["label"] + " (reference)", color=ref["color"], fontsize=9.5, va="bottom")
     ax.set_xlabel("T (°C)")
-    ax.set_ylabel(r"$\rho/\rho_{\rm C240} - 1$ (%)")
+    ax.set_ylabel(r"$\rho_{\rm C1500}/\rho_{\rm C240} - 1$ (%)")
     ax.set_xticks([25, 90, 130, 160, T500_C], ["25", "90", "130", "160", "500 K"])
     ax.legend(
         handles=_legend_handles(shown)
-        + [Line2D([], [], color="0.3", marker="D", ls="", label="500 K melt hold")],
+        + [Line2D([], [], color="0.3", marker="D", mfc="white", ls="", label="500 K melt hold")],
         loc="center right",
         fontsize=9,
     )
-    al = {
+    info["b_alpha"] = {
         s["label"]: [
             (f["window_c"], f["alpha_V_per_K"] * 1e4)
             for f in g(data["analysis"], s["sid"], "sweep", "fits", "alpha_V") or []
         ]
         for s in [ref, *shown]
     }
-    info["f_alpha"] = al
+
+
+CONV_LS = ("-", "--", "-.", ":")  # appendix Fig. 3.2: line style = model (sweep order)
+CONV_MIN_NS = 0.5  # running estimates drawn from 0.5 ns into the analysis window
+
+
+def hold_convergence(s: dict) -> list[dict]:
+    """Per sweep hold: running mean density and growing-window kappa_T vs time in the
+    hold, from the thinned ``convergence`` series of the sweep results.json (analysis
+    window only, i.e. after the hold's first 10 %)."""
+    out = []
+    holds = {float(h["t_c"]): h for h in g(s, "results", "sweep", "holds") or []}
+    for c in g(s, "results", "sweep", "convergence") or []:
+        rho, vol = g(c, "quantities", "density"), g(c, "quantities", "volume")
+        if c.get("kind") != "hold" or not rho or not vol:
+            continue
+        tc = _tc_of(c["name"])
+        t = (np.asarray(rho["t_ps"], float) - c["t_start_ps"]) / 1000.0
+        w = np.asarray(rho["t_ps"], float) >= c["window"][0]
+        r, v, t = np.asarray(rho["value"], float)[w], np.asarray(vol["value"], float)[w], t[w]
+        run = np.cumsum(r) / np.arange(1, len(r) + 1)
+        n0 = max(10, int(np.searchsorted(t, t[0] + CONV_MIN_NS)))
+        idx = np.unique(np.linspace(n0, len(v), 40).astype(int))
+        kap = np.array([isothermal_compressibility(v[:k], tc + 273.15).kappa_T for k in idx])
+        out.append(
+            {
+                "t_c": tc,
+                "t_ns": t,
+                "rho_run": run,
+                "k_t_ns": t[idx - 1],
+                "kappa": kap,
+                "kappa_stored": g(holds.get(tc), "kappa", "kappa_T_GPa"),
+                "n": len(v),
+                "dt_ps": float(np.median(np.diff(rho["t_ps"]))),
+            }
+        )
+    return out
+
+
+def fig3_2_convergence(sweeps: list[dict], out: Path) -> tuple[list[Path], dict]:
+    fig, axes = plt.subplots(1, 2, figsize=(11.0, 5.0), layout="constrained")
+    info: dict = {"series": {}}
+    prim = [s for s in sweeps if s["primary"]]
+    shown, ts = [], set()
+    for k, s in enumerate(prim):
+        rows = hold_convergence(s)
+        if not rows:
+            continue
+        ls = CONV_LS[k % len(CONV_LS)]
+        shown.append((s, ls))
+        for r in rows:
+            ts.add(r["t_c"])
+            sel = r["t_ns"] >= r["t_ns"][0] + CONV_MIN_NS
+            axes[0].plot(
+                r["t_ns"][sel],
+                100 * (r["rho_run"][sel] / r["rho_run"][-1] - 1),
+                color=t_color(r["t_c"]),
+                ls=ls,
+                lw=1.6,
+            )
+            axes[1].plot(r["k_t_ns"], r["kappa"], color=t_color(r["t_c"]), ls=ls, lw=1.6)
+        info["series"][s["label"]] = [
+            {
+                "t_c": r["t_c"],
+                "hold_ns": float(r["t_ns"][-1]),
+                "window_start_ns": float(r["t_ns"][0]),
+                "kappa_end": float(r["kappa"][-1]),
+                "kappa_stored": r["kappa_stored"],
+                "n": r["n"],
+                "dt_ps": r["dt_ps"],
+                "rho_dev_half": float(
+                    100 * (r["rho_run"][len(r["rho_run"]) // 2] / r["rho_run"][-1] - 1)
+                ),
+            }
+            for r in rows
+        ]
+    panel_label(axes[0], "a", "Running mean density per hold")
+    panel_label(axes[1], "b", r"$\kappa_T$ from a growing window")
+    if not shown:
+        for ax in axes:
+            no_data(ax, "no sweep hold convergence series", pending=True)
+    else:
+        axes[0].axhline(0, color="0.5", lw=0.9)
+        axes[0].set_ylabel(r"$\bar\rho(t)/\bar\rho_{\rm hold} - 1$ (%)")
+        axes[1].set_ylabel(r"$\kappa_T$ (GPa$^{-1}$)")
+        for ax in axes:
+            ax.set_xlabel("time in hold (ns, model time)")
+            ax.set_xlim(0, None)
+        fig_legend(
+            fig,
+            [
+                [Line2D([], [], color=t_color(t), lw=2.4, label=t_label(t)) for t in sorted(ts)]
+                + [Line2D([], [], color="0.3", ls=ls, lw=1.6, label=s["label"]) for s, ls in shown]
+            ],
+            handlelength=3.2,
+        )
+    info["skipped"] = [s["label"] for s in prim if s["label"] not in info["series"]]
+    return save(fig, out / APPENDIX, "fig3_2_convergence"), info
 
 
 def fig3_thermo(data: dict, out: Path) -> tuple[list[Path], dict]:
-    fig, axes = plt.subplots(2, 3, figsize=FIG23, layout="constrained")
+    fig, axes = plt.subplots(2, 2, figsize=FIG22L, layout="constrained")
     info: dict = {}
     sweeps = find_series(data, "bulk", "sweep")
     _f3_density(axes[0, 0], sweeps, info)
     _f3_alpha(axes[0, 1], sweeps, info)
-    _f3_kappa(axes[0, 2], data, sweeps, info)
-    _f3_cp(axes[1, 0], sweeps, info)
-    _f3_hysteresis(axes[1, 1], data, info)
-    _f3_size(axes[1, 2], data, info)
+    _f3_kappa(axes[1, 0], data, sweeps, info)
+    hyst = _f3_hysteresis(axes[1, 1], data, info)
+    legend = list({s["sid"]: s for s in [*sweeps, *hyst]}.values())
+    legend.sort(key=lambda s: _order(s["sid"]))
+    extra = [
+        _key("solid / filled: 40 × C240 box", "o", "-"),
+        _key("dashed / open: CG PE C1500", "o", "--", mfc="white"),
+    ]
+    if info.get("c_long"):
+        extra.append(_key("half-filled: long hold (D53), κ$_T$", "o", **LONG_KW))
+    for pol in _exp_polymers(sweeps):
+        e = EXPERIMENT.get(pol, {})
+        if "density" in e or "kappa_T" in e:
+            extra.append(
+                Line2D([], [], color="black", marker="x", ls="", label=f"{POLY_NAME[pol]} expt.")
+            )
+        if "alpha_V" in e:
+            extra.append(Patch(fc="0.2", alpha=0.15, label=f"{POLY_NAME[pol]} expt. α$_V$"))
+    if sweeps or hyst:
+        fig_legend(fig, [_legend_handles(legend), extra])
     info["sids"] = [s["sid"] for s in sweeps]
-    return save(fig, out, "fig3_thermo"), info
+    paths = save(fig, out, "fig3_thermo")
+    # appendix Fig. 3.1: classical Cp, chain length; Fig. 3.2: hold convergence
+    fig, axes = plt.subplots(1, 2, figsize=FIG12, layout="constrained")
+    app: dict = {}
+    _f3_cp(axes[0], sweeps, app)
+    _f3_size(axes[1], data, app)
+    paths += save(fig, out / APPENDIX, "fig3_1_cp_chain_length")
+    p2, conv = fig3_2_convergence(sweeps, out)
+    info["appendix"] = {"fig3_1_cp_chain_length": app, "fig3_2_convergence": conv}
+    return paths + p2, info
 
 
 # ================================================================== figure 4: chains
@@ -1848,6 +2085,9 @@ def chain_points(data: dict, s: dict) -> list[dict]:
     return pts
 
 
+LONG_DX = 4.0  # x offset (°C) of the long-hold points next to the sweep holds
+
+
 def _chain_panel(ax, data, series, key, ylabel, letter, title, info, exp=None) -> None:
     panel_label(ax, letter, title)
     shown = []
@@ -1859,31 +2099,17 @@ def _chain_panel(ax, data, series, key, ylabel, letter, title, info, exp=None) -
         shown.append(s)
         sw = sorted((p for p in pts if p["src"] in ("sweep", "500K")), key=lambda p: p["t_c"])
         ax.plot([p["t_c"] for p in sw], [p[key] for p in sw], color=s["color"], ls=s["ls"], lw=1.2)
-        for p in pts:
-            kw = dict(LONG_KW) if p["src"] == "long" else {"ms": 7}
-            dx = 5.0 if p["src"] == "long" else 0.0
-            mfc = s["color"] if p["relaxed"] else "white"
-            if p["src"] == "long":
-                kw["mfc"] = mfc
-                kw["fillstyle"] = "top" if p["relaxed"] else "none"
-            else:
-                kw["mfc"] = mfc
+        for p in pts:  # long holds (D53): ordinary points, offset +4 °C
             ax.errorbar(
-                p["t_c"] + dx,
+                p["t_c"] + (LONG_DX if p["src"] == "long" else 0.0),
                 p[key],
                 p.get(key + "_sem") or 0,
                 fmt="D" if p["src"] == "500K" else s["marker"],
                 color=s["color"],
+                mfc=s["color"] if p["relaxed"] else "white",
+                ms=7,
                 zorder=3,
-                **kw,
             )
-            if key == "cn" and p["src"] == "long" and p.get("cn_first") and p.get("cn_last"):
-                ax.annotate(
-                    "",
-                    xy=(p["t_c"] + dx + 6, p["cn_last"]),
-                    xytext=(p["t_c"] + dx + 6, p["cn_first"]),
-                    arrowprops={"arrowstyle": "->", "color": s["color"], "lw": 1.4},
-                )
         info[letter][s["label"]] = [(p["t_c"], p["src"], p[key], p["relaxed"]) for p in pts]
     if not shown:
         no_data(ax, "no chain-size data", pending=True)
@@ -1898,16 +2124,18 @@ def _chain_panel(ax, data, series, key, ylabel, letter, title, info, exp=None) -
     return shown, extra
 
 
-def _chain_legend(ax, shown, extra, cn=False) -> None:
-    h = _legend_handles(shown, ls=False) + [
-        Line2D([], [], color="0.3", marker="o", ls="", mfc="0.3", label="re-equilibrated at T"),
-        Line2D([], [], color="0.3", marker="o", ls="", mfc="white", label="inherited from 500 K"),
-        Line2D([], [], color="0.3", marker="o", ls="", label="long hold (D53)", **LONG_KW),
-        Line2D([], [], color="0.3", marker="D", ls="", label="500 K melt"),
+def _point_keys() -> list:
+    """Fig. 4 point-style keys (fill = re-equilibrated or inherited, diamond = 500 K)."""
+    return [
+        _key("filled: re-equilibrated at T", "o"),
+        _key("open: inherited from 500 K", "o", mfc="white"),
+        _key("500 K melt", "D"),
     ]
-    if cn:
-        h.append(Line2D([], [], color="0.3", marker="", ls="-", label="↑ long hold: first→last"))
-    ax.legend(handles=h + extra, loc="upper left", fontsize=8.5, ncols=2, columnspacing=0.8)
+
+
+def _chain_legend_handles(series: list[dict], extra: list) -> list:
+    """Model colour x polymer marker, then the point-style keys (in-panel legends)."""
+    return _legend_handles(series, ls=False) + _point_keys() + extra
 
 
 def _exp_rg(ax):
@@ -1936,14 +2164,17 @@ def _exp_cn(ax):
     pts = np.array(EXPERIMENT["pe"]["c_inf"])
     ax.plot(pts[:, 0], pts[:, 1], "x", ms=9, mew=1.8, **EXP_KW)
     ax.plot(T500_C, EXPERIMENT["pe"]["c_melt_500k"], "x", ms=9, mew=1.8, **EXP_KW)
-    return [Line2D([], [], color="black", marker="x", ls="", label="PE C$_\\infty$ expt.")]
+    ipp = EXPERIMENT["ipp"].get("c_melt_500k")
+    if ipp:  # the only sourced iPP value: the D37 melt reference at 500 K
+        ax.plot(T500_C + 7, ipp, "+", ms=11, mew=2.2, **EXP_KW)
+    return []
 
 
 def _f4_cn_n(ax, data, series, info) -> None:
-    panel_label(ax, "d", "C$_n$(n): internal distances")
+    panel_label(ax, "c", "C$_n$(n): internal distances")
     rep = next((s for s in series if s["res"] == "cg"), series[0] if series else None)
     shown_t, res_seen = set(), set()
-    info["d"] = {}
+    info["c"] = {}
     for s in series:
         for h in sweep_holds(s, data) if s is rep else []:
             c = g(h, "traj", "curves")
@@ -1957,7 +2188,7 @@ def _f4_cn_n(ax, data, series, info) -> None:
             ax.plot(h5["cn_n"], h5["cn"], color=GREY_500K, ls=s["rls"], lw=2.2)
             shown_t.add(T500_C)
             res_seen.add(s["res"])
-            info["d"][s["label"]] = h5.get("cn_plateau")
+            info["c"][s["label"]] = h5.get("cn_plateau")
     if not shown_t:
         no_data(ax, "no C_n(n) curves stored", pending=True)
         return
@@ -1994,8 +2225,8 @@ def _f4_cn_n(ax, data, series, info) -> None:
 
 
 def _f4_cryst(ax, data, series, info) -> None:
-    panel_label(ax, "e", "Ordered-site fraction vs T")
-    info["e"] = {}
+    panel_label(ax, "d", "Ordered-site fraction vs T")
+    info["d"] = {}
     shown = []
     for s in series:
         pts = [p for p in s["pts"] if p.get("cryst")]
@@ -2003,40 +2234,32 @@ def _f4_cryst(ax, data, series, info) -> None:
             continue
         shown.append(s)
         sw = sorted((p for p in pts if p["src"] != "long"), key=lambda p: p["t_c"])
-        ax.errorbar(
+        ax.plot(
             [p["t_c"] for p in sw],
             [p["cryst"]["fraction"]["mean"] for p in sw],
-            [p["cryst"]["fraction"].get("sd") or 0 for p in sw],
-            fmt=s["marker"],
             color=s["color"],
-            mfc=s["mfc"],
             ls=s["ls"],
-            lw=1.3,
+            lw=1.2,
         )
-        for p in pts:
-            if p["src"] != "long":
-                continue
-            c = p["cryst"]
+        for p in pts:  # long holds (D53): ordinary points, offset +4 °C
             ax.errorbar(
-                p["t_c"] + 5,
-                c["fraction"]["mean"],
-                c["fraction"].get("sd") or 0,
-                fmt=s["marker"],
+                p["t_c"] + (LONG_DX if p["src"] == "long" else 0.0),
+                p["cryst"]["fraction"]["mean"],
+                p["cryst"]["fraction"].get("sd") or 0,
+                fmt="D" if p["src"] == "500K" else s["marker"],
                 color=s["color"],
-                **LONG_KW,
+                mfc=s["color"] if p["relaxed"] else "white",
+                ms=7,
+                zorder=3,
             )
-            ax.annotate(
-                "",
-                xy=(p["t_c"] + 11, c["fraction_last"]),
-                xytext=(p["t_c"] + 11, c["fraction_first"]),
-                arrowprops={"arrowstyle": "->", "color": s["color"], "lw": 1.4},
-            )
-        info["e"][s["label"]] = [
+        info["d"][s["label"]] = [
             (
                 p["t_c"],
                 p["src"],
                 p["cryst"]["fraction"]["mean"],
                 p["cryst"]["largest_cluster"]["max"],
+                p["cryst"].get("fraction_first"),
+                p["cryst"].get("fraction_last"),
             )
             for p in pts
         ]
@@ -2060,7 +2283,7 @@ def _f4_cryst(ax, data, series, info) -> None:
             ls=":",
             lw=1.2,
         )
-        info["e"][s["label"] + " film"] = [
+        info["d"][s["label"] + " film"] = [
             (h["t_c"], h["film"]["crystallinity"]["fraction"]["mean"]) for h in hs
         ]
     if not shown and not films:
@@ -2071,33 +2294,23 @@ def _f4_cryst(ax, data, series, info) -> None:
     ax.set_xticks([25, 90, 130, 160, T500_C], ["25", "90", "130", "160", "500 K"])
     ax.set_xlim(10, 245)
     ax.set_ylim(0, None)
-    h = (
-        _legend_handles(shown, ls=False)
-        + [
-            Line2D(
-                [],
-                [],
-                color=s["color"],
-                marker="v",
-                mfc=s["mfc"],
-                ls=":",
-                label=f"{s['label']} pore film",
-            )
-            for s in films
-        ]
-        + [
-            Line2D(
-                [],
-                [],
-                color="0.3",
-                marker="o",
-                ls="",
-                label="long hold: mean, first→last",
-                **LONG_KW,
-            )
-        ]
-    )
-    ax.legend(handles=h, loc="upper right", fontsize=8.5)
+    if films:  # pore films are unique to this panel: small in-panel key
+        ax.legend(
+            handles=[
+                Line2D(
+                    [],
+                    [],
+                    color=s["color"],
+                    marker="v",
+                    mfc=s["mfc"],
+                    ls=":",
+                    label=pore_label(s, " film"),
+                )
+                for s in films
+            ],
+            loc="upper right",
+            fontsize=8.5,
+        )
     ax.text(
         0.02,
         0.03,
@@ -2109,8 +2322,8 @@ def _f4_cryst(ax, data, series, info) -> None:
 
 
 def _f4_length(ax, data, info) -> None:
-    panel_label(ax, "f", "C240 vs C1500: ⟨R$_{ee}^2$⟩/M")
-    info["f"] = {}
+    panel_label(ax, "b", "C240 vs C1500: ⟨R$_{ee}^2$⟩/M")
+    info["b"] = {}
     shown = []
     for s in bulk_systems(data, derived=False):
         if s["res"] != "cg":
@@ -2129,19 +2342,16 @@ def _f4_length(ax, data, info) -> None:
             lw=1.2,
         )
         for p in pts:
-            kw = dict(LONG_KW) if p["src"] == "long" else {"ms": 7}
-            kw["mfc"] = s["color"] if p["relaxed"] else "white"
-            if p["src"] == "long" and not p["relaxed"]:
-                kw["fillstyle"] = "none"
             ax.errorbar(
-                p["t_c"] + (5 if p["src"] == "long" else 0),
+                p["t_c"] + (LONG_DX if p["src"] == "long" else 0),
                 p["ree2"] / m,
                 (p.get("ree2_sem") or 0) / m,
                 fmt="D" if p["src"] == "500K" else s["marker"],
                 color=s["color"],
-                **kw,
+                mfc=s["color"] if p["relaxed"] else "white",
+                ms=7,
             )
-        info["f"][s["label"]] = [(p["t_c"], p["src"], p["ree2"] / m) for p in pts]
+        info["b"][s["label"]] = [(p["t_c"], p["src"], p["ree2"] / m) for p in pts]
     if not shown:
         no_data(ax, "no CG chain sizes", pending=True)
         return
@@ -2153,41 +2363,91 @@ def _f4_length(ax, data, info) -> None:
     ax.set_xticks([25, 90, 130, 160, T500_C], ["25", "90", "130", "160", "500 K"])
     ax.set_xlim(10, 245)
     ax.set_ylim(0, None)
-    ax.legend(handles=_legend_handles(shown), loc="lower right", fontsize=9)
+    ax.legend(
+        handles=[
+            Line2D([], [], color=s["color"], ls=s["ls"], label=f"{s['label']} (line)")
+            for s in shown
+        ]
+        + [
+            _key("filled: re-equilibrated at T", "o"),
+            _key("open: inherited from 500 K", "o", mfc="white"),
+            _key("500 K melt", "D"),
+        ],
+        loc="lower right",
+        fontsize=8.5,
+        ncols=2,
+    )
 
 
 def fig4_chains(data: dict, out: Path) -> tuple[list[Path], dict]:
-    fig, axes = plt.subplots(2, 3, figsize=FIG23, layout="constrained")
+    fig, axes = plt.subplots(2, 2, figsize=FIG22L, layout="constrained")
     info: dict = {}
     series = [s | {"pts": chain_points(data, s)} for s in bulk_systems(data) if s["primary"]]
     series = [s for s in series if s["pts"]]
+    shown = {}
     for ax, key, lab, letter, title, exp in (
         (axes[0, 0], "rg", r"R$_g$ (Å)", "a", "Radius of gyration", _exp_rg),
-        (
-            axes[0, 1],
-            "ree",
-            r"R$_{ee}$ = ⟨R$_{ee}^2$⟩$^{1/2}$ (Å)",
-            "b",
-            "End-to-end distance",
-            _exp_ree,
-        ),
-        (axes[0, 2], "cn", r"C$_n$ plateau (n ≥ 100)", "c", "Characteristic ratio", _exp_cn),
+        (axes[0, 1], "cn", r"C$_n$ plateau (n ≥ 100)", "b", "Characteristic ratio", _exp_cn),
     ):
         r = _chain_panel(ax, data, series, key, lab, letter, title, info, exp)
         if r:
-            lo, hi = ax.get_ylim()
-            ax.set_ylim(lo, hi + 0.6 * (hi - lo))
-            _chain_legend(ax, r[0], r[1], cn=key == "cn")
+            shown |= {s["sid"]: s for s in r[0]}
     _f4_cn_n(axes[1, 0], data, series, info)
     _f4_cryst(axes[1, 1], data, series, info)
-    _f4_length(axes[1, 2], data, info)
+    if series:
+        extra = [Line2D([], [], color="black", marker="x", ls="", label="PE expt.")]
+        if EXPERIMENT["ipp"].get("c_melt_500k"):
+            extra.append(
+                Line2D(
+                    [],
+                    [],
+                    color="black",
+                    marker="+",
+                    ms=10,
+                    mew=2,
+                    ls="",
+                    label="iPP melt C$_\\infty$ (500 K)",
+                )
+            )
+        extra.append(_key("line: joins sweep holds", ls="-", lw=1.2))
+        fig_legend(
+            fig, [_legend_handles(list(shown.values()) or series, ls=False), _point_keys() + extra]
+        )
     info["long_drift"] = {
         s["label"]: [p for p in s["pts"] if p["src"] == "long" and p.get("cn_first")]
         for s in series
         if any(p["src"] == "long" for p in s["pts"])
     }
     info["sids"] = [s["sid"] for s in series]
-    return save(fig, out, "fig4_chains"), info
+    paths = save(fig, out, "fig4_chains")
+    # appendix Fig. 4.1: R_ee vs T, C240 vs C1500 <R_ee^2>/M
+    fig, axes = plt.subplots(1, 2, figsize=FIG12, layout="constrained")
+    app: dict = {}
+    r = _chain_panel(
+        axes[0],
+        data,
+        series,
+        "ree",
+        r"R$_{ee}$ = ⟨R$_{ee}^2$⟩$^{1/2}$ (Å)",
+        "a",
+        "End-to-end distance",
+        app,
+        _exp_ree,
+    )
+    if r:
+        lo, hi = axes[0].get_ylim()
+        axes[0].set_ylim(lo, hi + 0.45 * (hi - lo))
+        axes[0].legend(
+            handles=_chain_legend_handles(r[0], r[1]),
+            loc="upper left",
+            fontsize=8.5,
+            ncols=3,
+            columnspacing=0.8,
+        )
+    _f4_length(axes[1], data, app)
+    info["appendix"] = {"fig4_1_ree_length": app}
+    paths += save(fig, out / APPENDIX, "fig4_1_ree_length")
+    return paths, info
 
 
 # ================================================================== figure 5: pore
@@ -3758,6 +4018,12 @@ def caption_fig1(info: dict, data: dict) -> str:
     )
 
 
+DT_DEF = (
+    "Δt is the time interval between the two compared frames, averaged over all time"
+    " origins in the hold."
+)
+
+
 def caption_fig2(info: dict, data: dict) -> str:
     a = info.get("a") or []
     acf = _join(
@@ -3765,33 +4031,54 @@ def caption_fig2(info: dict, data: dict) -> str:
         f" {_fmt(r['hold_ns'], '.4g')} ns"
         for r in a
     )
-    c = info.get("c") or []
-    cn = _join(f"{r['label']} {_fmt(r['plateau'], '.3g')}" for r in c)
+    c = info.get("c") or {}
     d = info.get("d") or {}
-    f = info.get("f") or {}
     return (
-        "**Figure 2. Equilibration evidence.** (a–c) 500 K melt hold (prep + extension"
-        " combined) per bulk system (colour = resolution, marker = polymer; dashed = C1500):"
-        f" (a) end-to-end vector ACF with its 1/e time (markers; {acf}; 'nan' = not reached:"
-        " C1500 and the 5 ns AA preps); (b) chain COM MSD / ⟨R<sub>g</sub>²⟩ with the D47"
-        " threshold 2 and the value at half the hold (markers); (c) C<sub>n</sub> plateau"
-        " (n ≥ 100 carbons) vs time (log axis) against the melt C∞ ± 10 % (PE 6.7, iPP 6.15;"
-        f" final plateaus {cn}); dotted verticals = prep | extension boundary. CG and UA times"
-        " are model times (CG ≈ 4.07× faster than real PE; UA needs its own mapping). The AA"
+        "**Figure 2. Equilibration evidence.** (a, b) 500 K melt hold (prep + extension"
+        " combined) per bulk system (colour = model, marker = polymer; dashed / open = CG PE"
+        " C1500): (a) end-to-end vector autocorrelation"
+        " ⟨**R**<sub>ee</sub>(t)·**R**<sub>ee</sub>(t+Δt)⟩/⟨R<sub>ee</sub>²⟩ with its 1/e"
+        f" time (black-edged markers; {acf}; 'nan' = not reached: C1500 and the 5 ns AA"
+        " preps); (b) chain COM MSD / ⟨R<sub>g</sub>²⟩ vs Δt with the D47 threshold 2 and"
+        f" the value at half the hold (black-edged markers). {DT_DEF} CG and UA times are"
+        " model times (CG ≈ 4.07× faster than real PE; UA needs its own mapping). The AA"
         " curves are the short ua2aa preps (AA conformations come from UA; validity: trend)."
-        f" (d) {d.get('label', 'CG PE')} heating sweep: thinned density trace, holds shaded"
-        " by T (dark band = analysis window: holds without their first 10 %, steps their"
-        " second half; grey = step windows), black = block means ± SEM. (e) SEM of each hold's"
-        " mean density from block means vs block length (D55 check) against the reported SEM"
-        " (dotted): the block SEM levels off only at 1–3 ns blocks (slow barostat/volume tail);"
-        " D55 computes SEMs from 100 ps block means. (f) Slit-pore γ per surface: running"
-        " mean over each hold's analysis window (drawn from 4 ns into it), colour = T, solid ="
-        f" 40-chain, dashed = 320-chain (2×2×2) pore ({', '.join(f.get('pores') or [])})."
-        " Sources: results/analysis/*/{sweep,extend,pore}/results.json and the extend/prep"
+        f" (c) {c.get('label', 'CG PE C240')} heating sweep: thinned density trace, holds"
+        " shaded by T (dark band = analysis window: holds without their first 10 %, steps"
+        " their second half; grey = step windows), black = block means ± SEM. (d) Slit-pore"
+        " γ per surface: running mean over each hold's analysis window (drawn from 4 ns into"
+        " it), colour = T, line style = box size (solid = 40 chains, dashed = 320 chains,"
+        f" 2×2×2): {' and '.join(d.get('pores') or ['none'])}. The C<sub>n</sub> plateau vs"
+        " time and the"
+        " hold SEM vs block length are in appendix Fig. 2.1. Sources:"
+        " results/analysis/*/{sweep,extend,pore}/results.json and the extend/prep"
         " progress.json ``hold`` curves."
         + validity_text(
-            data, (info.get("sids") or []) + (f.get("sids") or []), ["chain500", "gamma"]
+            data, (info.get("sids") or []) + (d.get("sids") or []), ["chain500", "gamma"]
         )
+    )
+
+
+def caption_fig2_1(info: dict, data: dict) -> str:
+    a = info.get("a") or []
+    cn = _join(
+        f"{r['label']} {_fmt(r['plateau'], '.3g')} ({_fmt(r['block_ns'], '.2g')} ns blocks)"
+        for r in a
+    )
+    b = info.get("b") or {}
+    return (
+        "**Figure 2.1 (appendix). Chain-shape and density-error convergence.** (a) 500 K"
+        " melt hold: C<sub>n</sub> plateau (mean C<sub>n</sub> over n ≥ 100 carbons) as"
+        f" block means, each series cut into {CN_BLOCKS} equal-time blocks, ± the SEM of"
+        " each block from the statistical inefficiency of its samples (D26), drawn at the"
+        " block centre (log axis); dotted verticals = prep | extension boundary; dashed ="
+        " melt C∞ ± 10 % (PE 6.7, iPP 6.15; D37). Whole-hold plateaus and block lengths:"
+        f" {cn}. (b) {b.get('label', 'CG PE C240')} sweep holds: SEM of the hold mean"
+        " density from block means vs block length (D55 check) against the reported SEM"
+        " (dotted): the block SEM levels off only at 1–3 ns blocks (slow barostat/volume"
+        " tail); D55 computes SEMs from 100 ps block means. At 130 and 160 °C the block SEM"
+        " is still rising at the longest blocks, so the reported SEMs of those holds may be"
+        " underestimated by 20–40 %."
     )
 
 
@@ -3800,101 +4087,211 @@ def caption_fig3(info: dict, data: dict) -> str:
     holds = a.get("holds") or {}
     dens = _join(f"{k}: " + " / ".join(f"{r:.4f}" for _, r in v) for k, v in holds.items())
     b = info.get("b") or {}
-    alpha = _join(
-        f"{k}: " + ", ".join(f"{w0:g}–{w1:g} °C {a_:.2f} ± {e:.2f}" for w0, w1, a_, e, _ in v)
-        for k, v in b.items()
+    full = _join(
+        f"{k} {v['full'][0]:.2f} ± {v['full'][1]:.2f}" for k, v in b.items() if v.get("full")
     )
-    fa = info.get("f_alpha") or {}
+    rng = _join(
+        f"{k} {min(x[1] for x in v['local']):.1f}–{max(x[1] for x in v['local']):.1f}"
+        for k, v in b.items()
+        if v.get("local")
+    )
+    ipp = next((v["local"] for k, v in b.items() if "iPP" in k and v.get("local")), None)
+    glass = ""
+    if ipp:
+        lo = [x for x in ipp if x[0] < 70]
+        hi = [x for x in ipp if x[0] > 90]
+        if lo and hi:
+            glass = (
+                f" UA iPP rises from {min(x[1] for x in lo):.1f}–{max(x[1] for x in lo):.1f}"
+                f" below 70 °C to {min(x[1] for x in hi):.1f}–{max(x[1] for x in hi):.1f} above"
+                " 90 °C: an apparent glass transition of the UA iPP model on this heating"
+                " sweep (rate- and history-dependent), so its single 25–160 °C value is an"
+                " average over two regimes."
+            )
+    kap = info.get("c") or {}
+    kua = _join(
+        f"{k} " + " / ".join(f"{v:.2f}" for _, v in rows)
+        for k, rows in kap.items()
+        if k.startswith("UA")
+    )
     return (
-        "**Figure 3. Thermodynamics vs experiment** (colour = resolution, marker = polymer;"
-        " open/dashed = C1500; black = experiment). "
-        f"(a) Density along the heating sweep, holds ± SEM as symbols ({dens} g/cm³ at"
-        " 25/90/130/160 °C). Experiment: amorphous PE 0.852 / ≈0.814 / ≈0.790 / ≈0.774–0.781"
-        " g/cm³ (ATHAS amorphous line, Gaur & Wunderlich 1981; SANS densities; Tait fit,"
-        " Padilha Júnior et al. 2015) and the ATHAS two-point line (dotted). CG PE is ≈2 % low"
-        " (C1500 1–2 %): a force-field offset. No iPP reference values are tabulated in"
-        " docs/experiment_comparison.md yet, so iPP appears without an experimental curve. "
-        f"(b) α<sub>V</sub> from linear V(T) fits (10⁻⁴ K⁻¹; {alpha}); thick bars = 25–90 and"
-        " 90–160 °C windows, thin = 25–160 °C (V(T) is curved, χ²<sub>red</sub> ≈ 21, so"
-        " quote the windows). Grey band: experiment 7.0–7.5 [derived from SANS densities /"
-        " Tait]. (c) κ<sub>T</sub> from the hold volume fluctuations ± SEM; half-filled ="
-        " the 180–280 ns long holds (D53), which agree with the 25 ns holds; experiment 0.94 /"
-        " 1.08 GPa⁻¹ at 130 / 160 °C (Tait fit of Sato PVT data [D]); CG is 50–60 % too"
-        " compressible. (d) Classical C<sub>p</sub> = dH/dT per fit window vs the ATHAS melt"
-        " line (PE: 0.04325·T + 17.919 J mol⁻¹ K⁻¹ per CH₂; Gaur & Wunderlich 1981): CG and UA"
-        " remove degrees of freedom, so their classical C<sub>p</sub> is not comparable"
-        " (validity: no); AA with the VDOS quantum correction (D12c) will be drawn dotted when"
-        " its results.json provides it. (e) Cooling-branch minus heating-branch density at"
-        " the same T (step-cool vs sweep, from the sweep progress.json ``hysteresis``; error"
-        " = cooling-step SEM; UA rows are partial while its sweep runs). "
-        " (f) Chain-length / box-size effect: density of the other CG boxes relative to CG PE"
-        " C240 at the same set T (sweep segments; diamond = 500 K melt hold): "
+        "**Figure 3. Bulk thermodynamics vs experiment** (colour = model, marker = polymer;"
+        " solid / filled = 40 × C240 boxes, dashed / open = CG PE C1500; black = experiment;"
+        " one shared legend). "
+        f"(a) Density along the heating sweep at 1 atm, holds ± SEM as symbols ({dens} g/cm³"
+        " at 25/90/130/160 °C). PE expt. (×): amorphous PE 0.852 / ≈0.814 / ≈0.790 /"
+        " ≈0.774–0.781 g/cm³ at 25/90/130/160 °C, from the ATHAS data bank amorphous line"
+        " (Gaur & Wunderlich 1981; the 25 °C point), SANS densities and a Tait fit (Padilha"
+        " Júnior et al. 2015). CG PE is ≈2 % low (C1500 1–2 %): a force-field offset. No iPP"
+        " density, κ<sub>T</sub> or α<sub>V</sub> reference is tabulated in"
+        " docs/experiment_comparison.md yet, so UA iPP is shown without an experimental"
+        " reference in (a–c). (b) Local α<sub>V</sub> (10⁻⁴ K⁻¹): for each window of"
+        f" {ALPHA_WINDOW} consecutive sweep temperatures (≈40 K; 35 K where the window"
+        " contains 90 °C, as the grid is 25, 35, …, 85, 90, 100, …, 160 °C) a linear V(T)"
+        " fit weighted by 1/SEM² of the per-segment volume means (the hold where a T has"
+        " both a step and a hold), α<sub>V</sub> = slope / mean V, error bar = 1σ from the"
+        " unscaled fit covariance, drawn at the window's mean T (small x offsets per model)."
+        f" Local ranges: {rng}.{glass} Full 25–160 °C fits (results.json fits.alpha_V,"
+        f" Birge-scaled errors): {full}. Grey band: PE experiment 7.0–7.5 over 25–160 °C"
+        " [derived from SANS densities / Tait]. (c) κ<sub>T</sub> from the hold volume"
+        " fluctuations ± SEM; half-filled = the 180–280 ns CG long holds (D53), which agree"
+        " with the 25 ns holds; experiment 0.94 / 1.08 GPa⁻¹ at 130 / 160 °C (Tait fit of"
+        " Sato PVT data [D]); CG is 50–60 % too compressible, UA closer"
+        f" ({kua} GPa⁻¹ at 25/90/130/160 °C). The CG 90 and 130 °C values may be slight"
+        " underestimates (κ<sub>T</sub> still rising at the end of the hold; appendix"
+        " Fig. 3.2). (d) Cooling-branch minus heating-branch"
+        " density at the same T. Protocol: 500 K melt → cooled to 25 °C in 8 steps of 5 ns"
+        " (≈25 K each) → heating sweep 25 → 160 °C in 10 °C steps with long holds at"
+        " 25/90/130/160 °C; the comparison is at the cooling-step temperatures (25, 50, 76,"
+        " 101, 126, 151 °C), the heating-branch density interpolated in T (sweep"
+        " progress.json ``hysteresis``; error = cooling-step SEM). Classical C<sub>p</sub>"
+        " and the chain-length effect are in appendix Fig. 3.1, convergence of the hold"
+        " density and κ<sub>T</sub> in appendix Fig. 3.2."
+        + validity_text(data, info.get("sids") or [], ["rho", "alpha", "kappa"])
+    )
+
+
+def caption_fig3_1(info: dict, data: dict) -> str:
+    box = _join(
+        f"{k} {d:+.3f} % at {t_label(t)} vs CG PE C240 (40 chains)"
+        for k, rows in (info.get("b_box") or {}).items()
+        for t, d in rows
+    )
+    return (
+        "**Figure 3.1 (appendix). Heat capacity and chain length.** (a) Classical"
+        " C<sub>p</sub> = dH/dT per fit window (thick: 25–90 / 90–160 °C, thin: 25–160 °C)"
+        " vs the ATHAS melt lines (PE: 0.04325·T + 17.919 J mol⁻¹ K⁻¹ per CH₂; iPP:"
+        " 0.151291·T + 42.956 per C₃H₆; Gaur & Wunderlich 1981): CG and UA remove degrees of"
+        " freedom, so their classical C<sub>p</sub> is not comparable (validity: no); AA with"
+        " the VDOS quantum correction (D12c) will be drawn dotted when its results.json"
+        " provides it. (b) Chain-length effect: CG PE C1500 density relative to CG PE C240"
+        " at the same set T (sweep segments ± combined SEM; diamond = 500 K melt hold): "
         + _join(
             f"{k} {min(v for _, v in rows):+.2f} to {max(v for _, v in rows):+.2f} %"
-            for k, rows in (info.get("f") or {}).items()
+            for k, rows in (info.get("b") or {}).items()
             if rows
         )
         + " (longer chains: fewer chain ends, denser). α<sub>V</sub> per window: "
         + _join(
             f"{k} " + ", ".join(f"{w[0]:g}–{w[1]:g} °C {v:.2f}" for w, v in vv)
-            for k, vv in fa.items()
+            for k, vv in (info.get("b_alpha") or {}).items()
         )
-        + ". The 2×2×2 (320-chain) box has no sweep (only its 500 K extension, whose density"
-        " is not stored in the progress copy), so the box-size check is the pore comparison"
-        " of Fig. 5." + validity_text(data, info.get("sids") or [], ["rho", "alpha", "kappa", "cp"])
+        + f". Box size (not drawn): {box}; the 2×2×2 (320-chain) box has no sweep, so the"
+        " box-size check along T is the pore comparison of Fig. 5."
+        + validity_text(data, info.get("sids") or [], ["cp"])
+    )
+
+
+def caption_fig3_2(info: dict, data: dict) -> str:
+    rows = info.get("series") or {}
+    dev = _join(f"{k} {max(abs(r['rho_dev_half']) for r in v):.2f} %" for k, v in rows.items() if v)
+    kd = [
+        100 * (r["kappa_end"] / r["kappa_stored"] - 1)
+        for v in rows.values()
+        for r in v
+        if r.get("kappa_stored")
+    ]
+    kdev = f"{min(kd):+.0f} to {max(kd):+.0f} %" if kd else "n/a"
+    samp = _join(
+        f"{k} every {v[0]['dt_ps']:g} ps over {v[0]['hold_ns']:.0f} ns holds"
+        for k, v in rows.items()
+        if v
+    )
+    skipped = info.get("skipped") or []
+    return (
+        "**Figure 3.2 (appendix). Bulk sweep holds: properties vs simulation time.** Holds at"
+        " 25/90/130/160 °C (colour = T; line style = model: "
+        + ", ".join(
+            f"{k} {n}"
+            for k, n in zip(rows, ("solid", "dashed", "dash-dot", "dotted"), strict=False)
+        )
+        + "), from the thinned per-hold time series stored in the sweep results.json"
+        f" ``convergence`` ({samp}), over the analysis window (after the hold's first 10 %),"
+        " drawn from 0.5 ns into it. (a) Running (cumulative) mean density relative to the"
+        " whole-window mean: at half the hold the running mean is within " + dev + " of the"
+        " final value. (b) κ<sub>T</sub> = ⟨δV²⟩/(k<sub>B</sub>T⟨V⟩) from the volume"
+        " fluctuations of a window growing from the analysis-window start to time t. In (b)"
+        " the CG κ<sub>T</sub> at 90 and 130 °C is still rising at the end of the 25 ns"
+        " holds (about 1.25 → 1.4–1.5 GPa⁻¹), while 25 and 160 °C level off. The volume"
+        " fluctuates slowly enough that a 25 ns hold may not sample it fully, so those"
+        " κ<sub>T</sub> values may be slight underestimates. These curves use the thinned"
+        " series stored in results.json, whose final κ<sub>T</sub> differs from the"
+        f" full-resolution value by up to ±13 % (here {kdev}), so read them for the trend,"
+        " not the value. AA sweeps are not finished"
+        + (f"; no convergence series for {', '.join(skipped)}" if skipped else "")
+        + ". The run logs are not needed (results.json only)."
     )
 
 
 def caption_fig4(info: dict, data: dict) -> str:
-    e = info.get("e") or {}
+    d = info.get("d") or {}
     drift = [
         f"{k} {p['t_c']:g} °C: C<sub>n</sub> {p['cn_first']:.1f} → {p['cn_last']:.1f},"
         f" R<sub>g</sub> {p['rg_first']:.1f} → {p['rg_last']:.1f} Å"
         for k, pts in (info.get("long_drift") or {}).items()
         for p in pts
     ]
-    excess = []
-    for k, rows in (info.get("f") or {}).items():
-        v = [100 * (x / EXPERIMENT["pe"]["r2_over_m"]["value"] - 1) for _, _, x in rows]
-        if v:
-            excess.append(f"{k} {min(v):+.0f} to {max(v):+.0f} %")
+    fdrift = _join(
+        f"{k} {t:g} °C {f0:.3f} → {f1:.3f}"
+        for k, rows in d.items()
+        if not k.endswith("film")
+        for t, src, _, _, f0, f1 in rows
+        if src == "long" and f0 is not None and f1 is not None
+    )
     cryst = _join(
         f"{k}: "
         + ", ".join(
             f"{t_label(t)}{' long' if src == 'long' else ''} {v:.3f}" for t, src, v, *_ in rows
         )
-        for k, rows in e.items()
+        for k, rows in d.items()
         if not k.endswith("film")
     )
     return (
-        "**Figure 4. Chain dimensions and order** (primary 40 × C240 boxes; colour ="
-        " resolution, marker = polymer, diamond = 500 K melt). (a) R<sub>g</sub>, (b)"
-        " R<sub>ee</sub> = ⟨R<sub>ee</sub>²⟩<sup>1/2</sup>, (c) C<sub>n</sub> plateau (n ≥"
-        " 100) ± SEM vs T: sweep holds (25 ns CG), long holds (D53, half-filled, offset +5 °C)"
+        "**Figure 4. Chain dimensions and order** (primary 40 × C240 boxes; colour = model,"
+        " marker = polymer, diamond = 500 K melt, × = experiment; one shared legend). (a)"
+        " R<sub>g</sub> and (b) C<sub>n</sub> plateau (n ≥ 100) ± SEM vs T: sweep holds (25"
+        " ns CG, 10 ns UA), the CG long holds (D53, 180–280 ns; plain points drawn at +4 °C)"
         " and the 500 K melt. Filled = the chains moved at least their own size in that hold"
-        " (COM MSD ≥ ⟨R<sub>g</sub>²⟩); open = inherited from the 500 K melt (the T dependence"
-        " is not resolved; validity: trend). In (c) the arrows at the long holds run from the"
-        " first to the last 10 % of the hold ("
+        " (COM MSD ≥ ⟨R<sub>g</sub>²⟩); open = inherited from the 500 K melt (the T"
+        " dependence is not resolved; validity: trend). Long-hold drift from the first to the"
+        " last 10 % of the hold: "
         + _join(drift)
-        + "): a rise at 25 °C goes with the box starting to order (see e). iPP chains are"
+        + "; the rise at 25 °C goes with the box starting to order (see d). iPP chains are"
         " shorter in backbone (80 monomers, 160 backbone carbons), hence the smaller sizes."
-        " Experiment (black): C240 PE R<sub>g</sub> 25–26.5 Å and R<sub>ee</sub> ≈ 65 Å at"
-        " 140 °C [D from ⟨R²⟩/M = 1.25 Å² mol/g], C∞ 8.26 (25 °C) and 7.38 (140 °C) (Fetters,"
-        " Lohse, Colby 2007) and the 500 K melt value 6.7 used by D37. CG chains are ≈20 %"
-        " too large (C<sub>n</sub> +25–45 %), a force-field property. (d) C<sub>n</sub>(n)"
-        " internal-distance curves: CG PE sweep holds (colour = T) and every system's 500 K"
-        " melt (grey; line style = resolution; iPP curves end at 160 backbone carbons)."
-        " (e) Ordered-site fraction (D26 local alignment, p2 ≥ 0.4, uncalibrated: a melt"
-        " baseline, not a crystallinity) ± sd over frames: bulk sweep holds, pore films"
-        " (triangles), long holds (half-filled; arrow = first → last frame) and UA PE at"
-        f" 500 K ({cryst}). The 25 °C CG long hold's largest ordered cluster grows to 672 of"
-        " 3,200 beads (vs ≤ 492 in the sweep hold); a time series of the fraction is not"
-        " stored (only first/last/max/mean), so ordering vs time is shown by these arrows and"
-        " the C<sub>n</sub> drift in (c). (f) ⟨R<sub>ee</sub>²⟩/M for CG C240 and C1500 vs"
-        " the PE melt value 1.25 Å² mol/g (Fetters, 140 °C; "
+        " Experiment: C240 PE R<sub>g</sub> 25–26.5 Å at 140 °C [D from ⟨R²⟩/M = 1.25 Å²"
+        " mol/g], PE C∞ 8.26 (25 °C) and 7.38 (140 °C) (Fetters, Lohse, Colby 2007) and the"
+        " 500 K melt value 6.7 used by D37 (×); iPP: only the 500 K melt C∞ = 6.15 (D37) is"
+        " sourced (+, drawn just right of 500 K). CG PE C<sub>n</sub> of 10–14 vs the"
+        " experimental 7.4 is a known CG over-stiffening (CG chains ≈20 % too large, a"
+        " force-field property). (c) C<sub>n</sub>(n) internal-distance curves: CG PE C240"
+        " sweep holds (colour = T) and every system's 500 K melt (grey; line style = model;"
+        " iPP curves end at 160 backbone carbons). (d) Ordered-site fraction (D26 local"
+        " alignment, p2 ≥ 0.4, uncalibrated: a melt baseline, not a crystallinity) ± sd over"
+        f" frames: bulk sweep holds, long holds and the 500 K melt ({cryst}) and the pore"
+        f" films (triangles, −4 °C). Long-hold first → last frame: {fdrift}. The 25 °C CG"
+        " long hold's largest ordered cluster grows to 672 of 3,200 beads (vs ≤ 492 in the"
+        " sweep hold). R<sub>ee</sub> and the C240 vs C1500 ⟨R<sub>ee</sub>²⟩/M are in"
+        " appendix Fig. 4.1." + validity_text(data, info.get("sids") or [], ["chain500", "chainT"])
+    )
+
+
+def caption_fig4_1(info: dict, data: dict) -> str:
+    excess = []
+    for k, rows in (info.get("b") or {}).items():
+        v = [100 * (x / EXPERIMENT["pe"]["r2_over_m"]["value"] - 1) for _, _, x in rows]
+        if v:
+            excess.append(f"{k} {min(v):+.0f} to {max(v):+.0f} %")
+    return (
+        "**Figure 4.1 (appendix). End-to-end distance and chain length.** Symbols as in"
+        " Fig. 4 (filled = re-equilibrated at T, open = inherited from 500 K, diamond = 500 K"
+        " melt; long holds at +4 °C). (a) R<sub>ee</sub> = ⟨R<sub>ee</sub>²⟩<sup>1/2</sup> ±"
+        " SEM vs T for the primary boxes; experiment: C240 PE R<sub>ee</sub> ≈ 65 Å at"
+        " 140 °C [D from ⟨R²⟩/M = 1.25 Å² mol/g, Fetters, Lohse, Colby 2007]. (b)"
+        " ⟨R<sub>ee</sub>²⟩/M for CG PE C240 and C1500 vs the PE melt value 1.25 Å² mol/g"
+        " (140 °C; "
         + _join(excess)
         + "); the C1500 values are all inherited (D47 not reachable for C1500, validity:"
-        " trend)." + validity_text(data, info.get("sids") or [], ["chain500", "chainT"])
+        " trend)."
     )
 
 
@@ -4068,6 +4465,14 @@ CAPTIONS = {
     "fig7_mechanics": caption_fig7,
     "fig8_holes": caption_fig8,
 }
+# appendix figures (``<out>/appendix/``): name -> (parent figure, caption); their info is
+# ``infos[parent]["appendix"][name]``
+APPENDIX_CAPTIONS = {
+    "fig2_1_cn_sem": ("fig2_equilibration", caption_fig2_1),
+    "fig3_1_cp_chain_length": ("fig3_thermo", caption_fig3_1),
+    "fig3_2_convergence": ("fig3_thermo", caption_fig3_2),
+    "fig4_1_ree_length": ("fig4_chains", caption_fig4_1),
+}
 
 
 def write_readme(out: Path, infos: dict, data: dict) -> Path:
@@ -4093,8 +4498,13 @@ def write_readme(out: Path, infos: dict, data: dict) -> Path:
             " (PE circle, iPP square), open/dashed = C1500 or a replicated (320-chain) box,"
             " black = experiment; in temperature-resolved panels colour = T (25 °C dark violet"
             " → 160 °C orange, 500 K grey) and line style = resolution (CG solid, UA dashed,"
-            " AA dotted); half-filled symbols = long holds (D53). Error bars are SEM unless"
-            " stated. CG dynamics are model time (≈4.07× faster than real PE)."
+            " AA dotted); half-filled symbols = long holds (D53) where marked. Figures 2–4 use"
+            " one shared legend row above the panels (series, then the line-style and"
+            " marker-fill keys); a panel keeps an in-panel key only for what is unique to it."
+            " MSD / ACF axes use the time interval Δt between the two compared frames,"
+            " averaged over all time origins. Error bars are SEM unless stated. CG dynamics"
+            " are model time (≈4.07× faster than real PE). Appendix figures (supporting"
+            " panels) are in [appendix/](appendix/), captions at the end."
         ),
         "",
     ]
@@ -4106,6 +4516,18 @@ def write_readme(out: Path, infos: dict, data: dict) -> Path:
             f"Files: [{name}.png]({name}.png), [{name}.pdf]({name}.pdf), [{name}.svg]({name}.svg)",
             "",
         ]
+    app = [
+        (name, parent, fn)
+        for name, (parent, fn) in APPENDIX_CAPTIONS.items()
+        if name in (infos.get(parent) or {}).get("appendix", {})
+    ]
+    if app:
+        lines += ["## Appendix", ""]
+    for name, parent, fn in app:
+        f = f"{APPENDIX}/{name}"
+        lines += [f"### {name}", "", f"![{name}]({f}.png)", ""]
+        lines += [fn(infos[parent]["appendix"][name], data), ""]
+        lines += [f"Files: [{name}.png]({f}.png), [{name}.pdf]({f}.pdf), [{name}.svg]({f}.svg)", ""]
     p = out / "README.md"
     p.write_text("\n".join(lines).rstrip() + "\n")
     return p
@@ -4162,7 +4584,10 @@ def build(data: dict, out: Path, only: list[str] | None = None, log=print) -> di
         paths, info = fn(data, out)
         infos[name] = info
         written += paths
-        log(f"wrote {paths[0]} (+ {', '.join(p.suffix for p in paths[1:])})")
+        for stem in dict.fromkeys(p.with_suffix("") for p in paths):
+            log(
+                f"wrote {stem}.{{{','.join(p.suffix[1:] for p in paths if p.with_suffix('') == stem)}}}"
+            )
     readme = write_readme(out, infos, data) if not only else None
     if readme:
         log(f"wrote {readme}")
