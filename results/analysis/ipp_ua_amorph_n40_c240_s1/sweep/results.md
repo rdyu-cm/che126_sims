@@ -1,7 +1,7 @@
 # Sweep analysis: ipp_ua_amorph_n40_c240_s1 / sweep
 
 - system: `ipp_ua_amorph_n40_c240_s1` (ua); source run directory `/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/sweep` (status finished, node rdyu-rog, run code commit eb03f2965b)
-- analysis: `sepsim analyze sweep` (D49), code commit 81fd6be319 (dirty), 2026-11-03 21:40 on rdyu-rog
+- analysis: `sepsim analyze sweep` (D49), code commit 798e36106d (dirty), 2026-11-07 03:47 on rdyu-server
 - windows: steps second half (50% of rows dropped); holds without the first 10% of rows; SEM from the statistical inefficiency (D26)
 - system mass 134739.8 g/mol (from Density × Volume)
 
@@ -30,14 +30,35 @@
 
 ## Isothermal compressibility (holds)
 
-κ_T = (⟨V²⟩ − ⟨V⟩²)/(k_B T ⟨V⟩) over the hold window (NPT iso Nosé–Hoover), T the set point; SEM = statistical-inefficiency SEM of (V − ⟨V⟩)² (g given).
+κ_T = (⟨V²⟩ − ⟨V⟩²)/(k_B T ⟨V⟩) over the hold window (NPT iso Nosé–Hoover), T the set point; SEM = statistical-inefficiency SEM of (V − ⟨V⟩)² on 100 ps block means, as for the other thermo SEMs (D55; g given in raw samples).
 
 | T (°C) | κ_T (GPa⁻¹) | σ_V (Å³) | ⟨V⟩ (Å³) | g | samples |
 |---|---|---|---|---|---|
-| 25 | 0.582 ± 0.012 | 789.1 | 260077 | 1.9 | 9001 |
-| 90 | 0.803 ± 0.027 | 1038.1 | 267684 | 4.8 | 9001 |
-| 130 | 1.122 ± 0.053 | 1310.0 | 274684 | 10.3 | 9001 |
+| 25 | 0.582 ± 0.025 | 789.1 | 260077 | 8.3 | 9001 |
+| 90 | 0.803 ± 0.026 | 1038.1 | 267684 | 4.7 | 9001 |
+| 130 | 1.122 ± 0.063 | 1310.0 | 274684 | 14.3 | 9001 |
 | 160 | 1.190 ± 0.034 | 1412.2 | 280189 | 3.6 | 9001 |
+
+## Sweep steps: κ_T and chain size
+
+Per step, over its second half (as its thermo stats): κ_T as for the holds and the static chain properties from the step DCD (no MSD / relaxation). The steps are short, so κ_T is noisier and the chain shape is largely inherited from the segment before.
+
+| T (°C) | κ_T (GPa⁻¹) | frames | R_g (Å) | R_ee (Å) | C_n plateau | ordered fraction |
+|---|---|---|---|---|---|---|
+| 35 | 0.629 ± 0.057 | 11 | 19.47 ± 0.01 | 49.8 ± 0.1 | 6.43 ± 0.01 | 0.146 |
+| 45 | 0.549 ± 0.027 | 11 | 19.49 ± 0.01 | 50.3 ± 0.1 | 6.46 ± 0.01 | 0.140 |
+| 55 | 0.544 ± 0.025 | 11 | 19.51 ± 0.01 | 49.7 ± 0.1 | 6.44 ± 0.01 | 0.138 |
+| 65 | 0.628 ± 0.029 | 11 | 19.59 ± 0.02 | 49.9 ± 0.1 | 6.49 ± 0.01 | 0.129 |
+| 75 | 0.731 ± 0.075 | 11 | 19.67 ± 0.03 | 50.1 ± 0.2 | 6.55 ± 0.02 | 0.138 |
+| 85 | 0.708 ± 0.035 | 11 | 19.63 ± 0.01 | 50.0 ± 0.1 | 6.54 ± 0.01 | 0.141 |
+| 90 | 0.728 ± 0.041 | 11 | 19.72 ± 0.02 | 50.7 ± 0.1 | 6.65 ± 0.01 | 0.140 |
+| 100 | 0.784 ± 0.057 | 11 | 19.73 ± 0.02 | 50.0 ± 0.3 | 6.52 ± 0.04 | 0.142 |
+| 110 | 1.000 ± 0.107 | 11 | 19.71 ± 0.04 | 51.8 ± 0.2 | 6.62 ± 0.02 | 0.158 |
+| 120 | 1.028 ± 0.071 | 11 | 19.52 ± 0.02 | 50.6 ± 0.3 | 6.44 ± 0.03 | 0.161 |
+| 130 | 1.085 ± 0.102 | 11 | 19.76 ± 0.02 | 50.2 ± 0.2 | 6.52 ± 0.01 | 0.143 |
+| 140 | 0.912 ± 0.051 | 11 | 19.83 ± 0.02 | 50.6 ± 0.3 | 6.58 ± 0.02 | 0.133 |
+| 150 | 1.093 ± 0.074 | 11 | 19.67 ± 0.09 | 48.9 ± 0.6 | 6.34 ± 0.08 | 0.139 |
+| 160 | 1.243 ± 0.104 | 11 | 20.08 ± 0.08 | 51.9 ± 0.5 | 6.79 ± 0.07 | 0.131 |
 
 ## Thermal expansion and classical Cp (fits over the sweep)
 

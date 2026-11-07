@@ -1,7 +1,7 @@
 # Sweep analysis: pe_cg_amorph_n40_c1500_s1 / sweep
 
 - system: `pe_cg_amorph_n40_c1500_s1` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c1500_s1/sweep` (status finished, node rdyu-rog, run code commit db8754358e)
-- analysis: `sepsim analyze sweep` (D49), code commit 496d05cea3 (dirty), 2026-11-02 06:00 on rdyu-rog
+- analysis: `sepsim analyze sweep` (D49), code commit 798e36106d (dirty), 2026-11-07 03:50 on rdyu-server
 - windows: steps second half (50% of rows dropped); holds without the first 10% of rows; SEM from the statistical inefficiency (D26)
 - system mass 841688.6 g/mol (from Density × Volume)
 
@@ -30,14 +30,35 @@
 
 ## Isothermal compressibility (holds)
 
-κ_T = (⟨V²⟩ − ⟨V⟩²)/(k_B T ⟨V⟩) over the hold window (NPT iso Nosé–Hoover), T the set point; SEM = statistical-inefficiency SEM of (V − ⟨V⟩)² (g given).
+κ_T = (⟨V²⟩ − ⟨V⟩²)/(k_B T ⟨V⟩) over the hold window (NPT iso Nosé–Hoover), T the set point; SEM = statistical-inefficiency SEM of (V − ⟨V⟩)² on 100 ps block means, as for the other thermo SEMs (D55; g given in raw samples).
 
 | T (°C) | κ_T (GPa⁻¹) | σ_V (Å³) | ⟨V⟩ (Å³) | g | samples |
 |---|---|---|---|---|---|
-| 25 | 0.995 ± 0.015 | 2613.4 | 1667512 | 2.6 | 22501 |
-| 90 | 1.265 ± 0.022 | 3325.9 | 1743720 | 3.2 | 22501 |
-| 130 | 1.435 ± 0.026 | 3782.8 | 1791449 | 3.7 | 22501 |
-| 160 | 1.572 ± 0.029 | 4146.1 | 1828349 | 4.0 | 22501 |
+| 25 | 0.995 ± 0.014 | 2613.4 | 1667512 | 2.3 | 22501 |
+| 90 | 1.265 ± 0.020 | 3325.9 | 1743720 | 2.9 | 22501 |
+| 130 | 1.435 ± 0.024 | 3782.8 | 1791449 | 3.1 | 22501 |
+| 160 | 1.572 ± 0.026 | 4146.1 | 1828349 | 3.1 | 22501 |
+
+## Sweep steps: κ_T and chain size
+
+Per step, over its second half (as its thermo stats): κ_T as for the holds and the static chain properties from the step DCD (no MSD / relaxation). The steps are short, so κ_T is noisier and the chain shape is largely inherited from the segment before.
+
+| T (°C) | κ_T (GPa⁻¹) | frames | R_g (Å) | R_ee (Å) | C_n plateau | ordered fraction |
+|---|---|---|---|---|---|---|
+| 35 | 0.922 ± 0.034 | 26 | 68.62 ± 0.12 | 180.1 ± 0.4 | 8.10 ± 0.03 | 0.179 |
+| 45 | 1.047 ± 0.042 | 26 | 68.66 ± 0.09 | 174.9 ± 0.9 | 8.10 ± 0.02 | 0.155 |
+| 55 | 1.134 ± 0.052 | 26 | 69.20 ± 0.06 | 181.1 ± 0.5 | 8.23 ± 0.01 | 0.144 |
+| 65 | 1.096 ± 0.048 | 26 | 69.38 ± 0.04 | 177.4 ± 1.3 | 8.27 ± 0.01 | 0.132 |
+| 75 | 1.168 ± 0.048 | 26 | 69.93 ± 0.07 | 175.0 ± 1.3 | 8.38 ± 0.02 | 0.122 |
+| 85 | 1.313 ± 0.050 | 26 | 70.10 ± 0.07 | 178.7 ± 1.1 | 8.45 ± 0.02 | 0.115 |
+| 90 | 1.275 ± 0.055 | 26 | 70.69 ± 0.06 | 178.4 ± 0.4 | 8.56 ± 0.01 | 0.111 |
+| 100 | 1.271 ± 0.070 | 26 | 70.26 ± 0.03 | 181.0 ± 0.3 | 8.46 ± 0.01 | 0.103 |
+| 110 | 1.393 ± 0.072 | 26 | 69.97 ± 0.06 | 179.4 ± 0.7 | 8.39 ± 0.01 | 0.103 |
+| 120 | 1.412 ± 0.067 | 26 | 70.67 ± 0.05 | 184.4 ± 0.4 | 8.58 ± 0.01 | 0.097 |
+| 130 | 1.453 ± 0.078 | 26 | 70.32 ± 0.08 | 178.7 ± 1.0 | 8.47 ± 0.02 | 0.094 |
+| 140 | 1.499 ± 0.075 | 26 | 69.30 ± 0.08 | 175.0 ± 0.8 | 8.21 ± 0.02 | 0.093 |
+| 150 | 1.654 ± 0.069 | 26 | 69.06 ± 0.04 | 175.7 ± 0.6 | 8.14 ± 0.01 | 0.090 |
+| 160 | 1.550 ± 0.092 | 26 | 69.40 ± 0.09 | 176.4 ± 0.6 | 8.22 ± 0.02 | 0.086 |
 
 ## Thermal expansion and classical Cp (fits over the sweep)
 
@@ -71,7 +92,7 @@ End-to-end vector ACF ⟨R(t)·R(0)⟩/⟨R²⟩ and Rouse mode ACFs ⟨X_p(t)·
 | 130 | not reached (C 0.91 at max lag) | n/a (extrap.) | not reached (C 0.99 at max lag) | not reached (C 0.97 at max lag) | not reached (C 0.95 at max lag) | n/a | 1.17 / 1.16 / 1.30 / 1.10 | 0.095 (max 0.105; cluster ≤ 121) |
 | 160 | not reached (C 0.90 at max lag) | n/a (extrap.) | not reached (C 0.99 at max lag) | not reached (C 0.97 at max lag) | not reached (C 0.95 at max lag) | n/a | 1.09 / 1.23 / 1.25 / 0.97 | 0.088 (max 0.096; cluster ≤ 135) |
 
-CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07 before comparing with experiment.
+CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 ## Equilibration
 
@@ -112,7 +133,7 @@ Chain-scale quantities (Rg, R_ee, C_n, chain COM motion) relax on the end-to-end
 - Chains may not be relaxed: the D47 criteria fail on the prep hold + extension (extend/progress.json: end-to-end ACF 0.68 at 250.0 ns, needs < 1/e; COM MSD/<Rg²> 0.12, needs >= 2).
 - D37 chain check FAIL on the prep hold + extension: C_n plateau 7.43 vs melt 6.7 ±10%.
 - α_V and Cp are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²_red, and a large χ²_red over 25–160 °C means α_V or Cp depends on T (compare the two half windows).
-- CG time is not real time: SDK beads move faster than the atoms they represent, so MSD, D_COM and P2 times are model times (not rescaled).
+- CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 ## Plots
 

@@ -1,24 +1,25 @@
 {
  "caveats": [
   "Relaxation times use lags up to half the analysed hold (138.8 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.",
-  "CG time is not real time: SDK beads move \u2248 4.07\u00d7 faster than real PE, so MSD, D_COM and relaxation times are model times (docs/experiment_comparison.md)."
+  "CG time is not real time: SDK PE chains diffuse \u2248 4.07\u00d7 faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment."
  ],
  "code_git": {
   "branch": "main",
-  "commit": "91e1157fbeaeafb6191f5eaa79318d54a9801bdb",
+  "commit": "798e36106d185005013c64313c98688c409b3894",
   "dirty": true
  },
  "combined_with": [],
  "complete": false,
- "generated": "2026-11-02T06:13:18-08:00",
- "generated_on": "rdyu-rog",
+ "generated": "2026-11-07T03:41:21+00:00",
+ "generated_on": "rdyu-server",
  "kappa": {
   "V_mean_A3": 267879.1916240887,
   "V_std_A3": 1055.8022813675273,
-  "g": 2.5417351142054248,
+  "g": 2.921369538067404,
   "kappa_T_GPa": 1.0108998127742628,
   "samples": 249777,
-  "sem": 0.004546051379262115
+  "sem": 0.004873740970985281,
+  "sem_lower_bound": false
  },
  "method": {
   "hold_window": "without the first 10% of rows",
@@ -52,7 +53,7 @@
   "dirty": true
  },
  "run_node": "rdyu-rog",
- "run_status": "started",
+ "run_status": "interrupted",
  "segment": "Stage 1: NPT hold 300000 ps at 298.15 K",
  "stage": "diffuse_25C",
  "stats": {

@@ -1,7 +1,7 @@
 # Hold analysis: pe_cg_amorph_n40_c240_s1 / diffuse_160C
 
-- system: `pe_cg_amorph_n40_c240_s1` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/diffuse_160C` (diffuse, status started, node rdyu-rog, run code commit 8942598e98)
-- analysis: `sepsim analyze hold` (D56), code commit 91e1157fbe (dirty), 2026-11-02 06:13 on rdyu-rog
+- system: `pe_cg_amorph_n40_c240_s1` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/diffuse_160C` (diffuse, status interrupted, node rdyu-rog, run code commit 8942598e98)
+- analysis: `sepsim analyze hold` (D56), code commit 798e36106d (dirty), 2026-11-07 03:42 on rdyu-server
 - segment: Stage 1: NPT hold 300000 ps at 433.15 K (300 ns planned, not complete); thermo window without the first 10% of rows, SEM from 100 ps block means (D55)
 - note: hold not complete: thermo and trajectory over the part run
 
@@ -9,7 +9,7 @@
 
 | window (ns) | T (°C) | density (g/cm³) | H (kcal/mol) | V (Å³) | κ_T (GPa⁻¹) |
 |---|---|---|---|---|---|
-| 230.06 | 159.99 ± 0.01 | 0.75957 ± 0.00005 | -1197.2 ± 2.4 | 294569 ± 19 | 1.638 ± 0.010 |
+| 230.06 | 159.99 ± 0.01 | 0.75957 ± 0.00005 | -1197.2 ± 2.4 | 294569 ± 19 | 1.638 ± 0.008 |
 
 ## Trajectory: mobility and chain size
 
@@ -29,12 +29,12 @@ End-to-end vector ACF ⟨R(t)·R(0)⟩/⟨R²⟩ and Rouse mode ACFs ⟨X_p(t)·
 |---|---|---|---|---|---|---|---|---|
 | 160 | 16.8 | 22.7 | 23.3 | 6.1 | 2.48 | 3.82 | 1.01 / 0.98 / 0.89 / 0.82 | 0.093 (max 0.120; cluster ≤ 66) |
 
-CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07 before comparing with experiment.
+CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 ## Caveats
 
 - Relaxation times use lags up to half the analysed hold (127.8 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
-- CG time is not real time: SDK beads move ≈ 4.07× faster than real PE, so MSD, D_COM and relaxation times are model times (docs/experiment_comparison.md).
+- CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 ## Plots
 
