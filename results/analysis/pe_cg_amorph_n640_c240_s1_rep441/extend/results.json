@@ -1,24 +1,25 @@
 {
  "caveats": [
   "Relaxation times use lags up to half the analysed hold (40 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.",
-  "CG time is not real time: SDK beads move \u2248 4.07\u00d7 faster than real PE, so MSD, D_COM and relaxation times are model times (docs/experiment_comparison.md)."
+  "CG time is not real time: SDK PE chains diffuse \u2248 4.07\u00d7 faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment."
  ],
  "code_git": {
   "branch": "main",
-  "commit": "da2b3473142ef18555e4f67f1ddc0c3d5aea3ed2",
+  "commit": "2a4fbe7b2faa415c2a6740f6b880c1bf7a130671",
   "dirty": true
  },
  "combined_with": [],
  "complete": true,
- "generated": "2026-11-06T02:08:13-08:00",
- "generated_on": "rdyu-rog",
+ "generated": "2026-11-07T06:28:06+00:00",
+ "generated_on": "rdyu-server",
  "kappa": {
   "V_mean_A3": 4946950.116195608,
   "V_std_A3": 8504.581143279438,
-  "g": 3.6903317551402552,
+  "g": 3.979241550941065,
   "kappa_T_GPa": 2.117946766970892,
   "samples": 72001,
-  "sem": 0.021442865574679205
+  "sem": 0.02226641346669202,
+  "sem_lower_bound": false
  },
  "method": {
   "hold_window": "without the first 10% of rows",
@@ -26,6 +27,7 @@
   "sem": "100 ps block means (D55)"
  },
  "notes": [
+  "log block 2 (Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm, run 2/8) has 100000 steps, the deck plans 1000000: thermo may be assigned to the wrong segment",
   "../prep/hold.dcd not found: chain checks use the extension alone"
  ],
  "planned_ns": 80.0,

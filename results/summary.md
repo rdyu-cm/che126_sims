@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-11-07 04:13 UTC
-- Git commit: 798e361 (dirty)
-- Inputs: runs `/home/rdyu/projects/che126_sims/results/runs`, `/home/rdyu/projects/che126_sims/results/progress/rdyu-rog`, `/home/rdyu/projects/che126_sims/results/run_sidecars`; analysis `/home/rdyu/projects/worktrees/reanalysis-results/results/analysis`; systems `/home/rdyu/projects/worktrees/reanalysis-results/systems`
+- Generated: 2026-11-07 06:31 UTC
+- Git commit: 2a4fbe7 (dirty)
+- Inputs: runs `/home/rdyu/projects/che126_sims/results/runs`, `/home/rdyu/projects/che126_sims/results/progress/rdyu-rog`, `/home/rdyu/projects/che126_sims/results/run_sidecars`; analysis `/home/rdyu/projects/worktrees/hole25-rep441-results/results/analysis`; systems `/home/rdyu/projects/worktrees/hole25-rep441-results/systems`
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -33,19 +33,19 @@
 | `pe_cg_hole_r2nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 2 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
 | `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 130 °C) | 320 × C240 | 25,600 beads | `hole_scaf_rel0_failed_20261102` | failed, 0.0% | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
-| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 25 °C) | 320 × C240 | 25,600 beads | `hole_ramp_rel130_col` | running, 7.3% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 11:57 UTC | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
+| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 25 °C) | 320 × C240 | 25,600 beads | `hole_ramp_rel130_col` | running, 8.6% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:22 UTC | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
 | `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 90 °C) | 320 × C240 | 25,600 beads | `hole_free_failed_20261102` | failed, 0.0% | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 4 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | CG | PE | pore (narrow, 5 nm) | 320 × C240 | 25,600 beads | done | finished: pore | from `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | pore |
 | `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` | CG | PE | pore (wide, 12 nm) | 640 × C240 | 51,200 beads | done | finished: `pore_relax` | from `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_pore_w5nm_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | pore | running, 19.8% (4/17 segments, Stage 3 cool 3/8 (424.3 K)); ETA 2026-11-09 10:50 UTC | from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
+| `pe_cg_pore_w5nm_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | pore | running, 23.2% (5/17 segments, Stage 3 cool 4/8 (399.1 K)); ETA 2026-11-09 11:19 UTC | from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | done | finished: prep, extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | extend, sweep |
 | `pe_ua_pore500k_w10nm_n40_c240_s1` | UA | PE | pore (wide, 10 nm) | 40 × C240 | 9,600 | done | finished: `pore_relax` | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `pe_ua_pore_w5nm_n40_c240_s1` | UA | PE | pore (narrow, 5 nm) | 40 × C240 | 9,600 | pore | running, 34.7% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 22:33 UTC | from `pe_ua_pore500k_w10nm_n40_c240_s1` ← `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | sweep | running, 33.7% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:23 UTC | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `pe_ua_pore_w5nm_n40_c240_s1` | UA | PE | pore (narrow, 5 nm) | 40 × C240 | 9,600 | pore | running, 36.0% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 21:04 UTC | from `pe_ua_pore500k_w10nm_n40_c240_s1` ← `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | sweep | running, 35.1% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:18 UTC | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
 | `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | done | finished: prep (cancelled/killed?, 60.8%), extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | sweep |
 | `ipp_ua_pore500k_w10nm_n40_c240_s1` | UA | iPP | pore (wide, 10 nm) | 40 × C240 | 12,760 | done | finished: `pore_relax` | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
-| `ipp_ua_pore_w5nm_n40_c240_s1` | UA | iPP | pore (narrow, 5 nm) | 40 × C240 | 12,760 | pore | running, 66.5% (21/28 segments, seg 12 step 120 C); ETA 2026-11-08 16:15 UTC | from `ipp_ua_pore500k_w10nm_n40_c240_s1` ← `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
+| `ipp_ua_pore_w5nm_n40_c240_s1` | UA | iPP | pore (narrow, 5 nm) | 40 × C240 | 12,760 | pore | running, 68.7% (22/28 segments, seg 13 step 130 C); ETA 2026-11-08 16:12 UTC | from `ipp_ua_pore500k_w10nm_n40_c240_s1` ← `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 | `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | `sweep_failed_20261102` | failed, 0.0% | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 
 **Abbreviations:**
@@ -81,7 +81,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 | `pe_cg_hole_r2nm_160C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend |
 | `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
 | `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend |
-| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
+| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend |
 | `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
 | `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo |
@@ -177,9 +177,9 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
 - `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` running 95%, `hole_free_failed_20261102` failed 0%, `hole_ramp_held` failed 0%, `hole_ramp_held_failed_20261102` failed 0%, `hole_ramp_rel130` failed 0%, `hole_ramp_rel130_col` running 7%, `hole_ramp_rel130_d4` running 7%, `hole_ramp_rel130_failed_20261102` failed 0%
 - `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
@@ -200,7 +200,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: hole closure (then trend): no hole run (D52)
 - `pe_cg_pore_w5nm_n640_c240_s1_rep441`
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
-  - not yet computed: γ, dγ/dT (then comparable): no γ from the hold segments (pore running 20%)
+  - not yet computed: γ, dγ/dT (then comparable): no γ from the hold segments (pore running 23%)
   - not yet computed: hole closure (then trend): no hole run (D52)
 - `pe_ua_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
@@ -219,8 +219,8 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - **comparable**: γ, dγ/dT
 - `pe_aa_amorph_n40_c240_s1_from_ua`
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K: **trend**: ua2aa box: the chain conformations were equilibrated with the UA force field (D32/D47) and only relaxed locally in AA; compare the UA row; C<sub>n</sub> 8.19 is outside the melt band (6.7 ±10%): a property of the UA (source box) force field, not of the equilibration
-  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep running 34%, `sweep_crashed_20261102` cancelled/killed? 0%)
-  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep running 34%, `sweep_crashed_20261102` cancelled/killed? 0%); needs a long D53 diffuse hold
+  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep running 35%, `sweep_crashed_20261102` cancelled/killed? 0%)
+  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep running 35%, `sweep_crashed_20261102` cancelled/killed? 0%); needs a long D53 diffuse hold
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
 - `ipp_ua_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
@@ -248,12 +248,12 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 ## Pending and known items
 
 - `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222`: `hole_scaf_rel0_failed_20261102`: failed, 0.0%
-- `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`: `hole_ramp_rel130_col`: running, 7.3% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 11:57 UTC
+- `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`: `hole_ramp_rel130_col`: running, 8.6% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:22 UTC
 - `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`: `hole_free_failed_20261102`: failed, 0.0%
-- `pe_cg_pore_w5nm_n640_c240_s1_rep441`: pore: running, 19.8% (4/17 segments, Stage 3 cool 3/8 (424.3 K)); ETA 2026-11-09 10:50 UTC
-- `pe_ua_pore_w5nm_n40_c240_s1`: pore: running, 34.7% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 22:33 UTC
-- `pe_aa_amorph_n40_c240_s1_from_ua`: sweep: running, 33.7% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:23 UTC
-- `ipp_ua_pore_w5nm_n40_c240_s1`: pore: running, 66.5% (21/28 segments, seg 12 step 120 C); ETA 2026-11-08 16:15 UTC
+- `pe_cg_pore_w5nm_n640_c240_s1_rep441`: pore: running, 23.2% (5/17 segments, Stage 3 cool 4/8 (399.1 K)); ETA 2026-11-09 11:19 UTC
+- `pe_ua_pore_w5nm_n40_c240_s1`: pore: running, 36.0% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 21:04 UTC
+- `pe_aa_amorph_n40_c240_s1_from_ua`: sweep: running, 35.1% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:18 UTC
+- `ipp_ua_pore_w5nm_n40_c240_s1`: pore: running, 68.7% (22/28 segments, seg 13 step 130 C); ETA 2026-11-08 16:12 UTC
 - `ipp_aa_amorph_n40_c240_s1_from_ua`: `sweep_failed_20261102`: failed, 0.0%
 
 ## Superseded (kept, not used)
@@ -766,7 +766,7 @@ PE CG, bulk amorphous box, replicated 4×4×1, 640 chains × C240, 51,200 beads;
 |---|---|---|---|---|---|---|---|
 | 500 K equilibration (D47) | — | — | — | — | D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | — | `extend` progress |
 | ρ (g/cm³) | — | — | — | — | 500 K: 0.72364 ± 0.00002 | todo | `extend` |
-| κ<sub>T</sub> (GPa⁻¹) | — | — | — | — | 500 K: 2.118 ± 0.021 | todo | `extend` |
+| κ<sub>T</sub> (GPa⁻¹) | — | — | — | — | 500 K: 2.118 ± 0.022 | todo | `extend` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 8.93 (melt 6.7) | comp | `extend` progress |
 | R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 28.53 ± 0.05 | comp | `extend` |
 | R<sub>ee</sub> (Å), 500 K hold | — | — | — | — | 500 K: 71.3 ± 0.2 | comp | `extend` |
@@ -800,10 +800,11 @@ PE CG, bulk amorphous box, replicated 4×4×1, 640 chains × C240, 51,200 beads;
 
 **`extend` analysis**
 
-`sepsim analyze hold`, generated 2026-11-06 10:08 UTC on rdyu-rog, run finished; segment Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm; 80 ns analysed of 80 ns planned (complete).
+`sepsim analyze hold`, generated 2026-11-07 06:28 UTC on rdyu-server, run finished; segment Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm; 80 ns analysed of 80 ns planned (complete).
 
 - Note: Relaxation times use lags up to half the analysed hold (40 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
-- Note: CG time is not real time: SDK beads move ≈ 4.07× faster than real PE, so MSD, D<sub>COM</sub> and relaxation times are model times (`docs/experiment_comparison.md`).
+- Note: CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; `docs/experiment_comparison.md`), so MSD, D<sub>COM</sub>, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
+- Note: log block 2 (Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm, run 2/8) has 100000 steps, the deck plans 1000000: thermo may be assigned to the wrong segment
 - Note: ../prep/hold.dcd not found: chain checks use the extension alone
 - Note: no burst DCDs (deck without D46 bursts): lags from the hold DCD only
 
@@ -3535,9 +3536,9 @@ Per segment:
 
 ### `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_25C.data`). Stage now: `hole_ramp_rel130_col` (running, 7.3% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 11:57 UTC).
+PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_25C.data`). Stage now: `hole_ramp_rel130_col` (running, 8.6% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:22 UTC).
 
-No analysed properties yet; pending: `hole_ramp_rel130_col`: running, 7.3% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 11:57 UTC. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+No analysed properties yet; pending: `hole_ramp_rel130_col`: running, 8.6% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:22 UTC. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -3560,15 +3561,1216 @@ No analysed properties yet; pending: `hole_ramp_rel130_col`: running, 7.3% (0/20
 - **`hole_ramp_held`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_ramp_held_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_free`** (rdyu-server): running, 95.4% (2/3 segments, Stage 3: hold at 25 C); ETA 2026-11-07 07:30 UTC; started 2026-11-02 20:16 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_rel130_d4`** (rdyu-server): running, 7.4% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:58 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_rel130_col`** (rdyu-server): running, 7.3% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 11:57 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_free`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-07 06:28 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_rel130_d4`** (rdyu-server): running, 8.6% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:42 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_rel130_col`** (rdyu-server): running, 8.6% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:22 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | `hole_ramp_rel130_col`: running, 7.3% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 11:57 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | `hole_ramp_rel130_col`: running, 8.6% (0/20 segments, Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0); ETA 2026-11-14 06:22 UTC | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
+
+**`hole_free` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 129.4
+- `free_shell.areal_density_ratio`: 0.8879
+- `free_shell.msd.1 ns`: 386.4
+- `free_shell.msd.10 ns`: 1036
+- `free_shell.msd.end`: 1383
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: none
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- T (°C): 25
+- `t_close_ns`: 0.195
+- `thickness_final`: 129.7
+- `thickness_t0`: 162.6
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 129.8 | — |
+| 129.6 | — |
+| 130.2 | — |
+| 130 | — |
+| 130.2 | — |
+| 129.5 | — |
+| 129.8 | — |
+| 129.5 | — |
+| 129.8 | — |
+| 129.7 | — |
+| 130.1 | — |
+| 129.7 | — |
+| 129.4 | — |
+| 130.1 | — |
+| 130.3 | — |
+| 129.4 | — |
+| 129.9 | — |
+| 128.9 | — |
+| 129.6 | — |
+| 129.2 | — |
+| 129.6 | — |
+| 129.3 | — |
+| 129.8 | — |
+| 129.8 | — |
+| 130.2 | — |
+| 130 | — |
+| 129.5 | — |
+| 129.7 | — |
+| 129.6 | — |
+| 129.8 | — |
+| 129.5 | — |
+| 129.7 | — |
+| 129.7 | — |
+| 130 | — |
+| 130.5 | — |
+| 130.1 | — |
+| 130.6 | — |
+| 130.2 | — |
+| 130.7 | — |
+| 130.5 | — |
+| 131.3 | — |
+| 131.2 | — |
+| 130.9 | — |
+| 130.7 | — |
+| 130.9 | — |
+| 131.5 | — |
+| 131.3 | — |
+| 131.5 | — |
+| 131.6 | — |
+| 132.2 | — |
+| 131.5 | — |
+| 131.7 | — |
+| 132 | — |
+| 131.7 | — |
+| 132 | — |
+| 132.1 | — |
+| 132.6 | — |
+| 132.6 | — |
+| 132.1 | — |
+| 132.4 | — |
+| 132 | — |
+| 132.5 | — |
+| 132.2 | — |
+| 132.4 | — |
+| 132.2 | — |
+| 132.7 | — |
+| 132.6 | — |
+| 133.6 | — |
+| 133.2 | — |
+| 133.3 | — |
+| 133 | — |
+| 133.4 | — |
+| 133.1 | — |
+| 133.4 | — |
+| 133.3 | — |
+| 133.4 | — |
+| 134.1 | — |
+| 133.9 | — |
+| 134.2 | — |
+| 134.7 | — |
+| 134.5 | — |
+| 134.4 | — |
+| 135.1 | — |
+| 135.3 | — |
+| 134.9 | — |
+| 135.8 | — |
+| 135.7 | — |
+| 134.8 | — |
+| 135.3 | — |
+| 135.7 | — |
+| 134.9 | — |
+| 135.4 | — |
+| 135.7 | — |
+| 136 | — |
+| 136.9 | — |
+| 137 | — |
+| 137.1 | — |
+| 136.9 | — |
+| 137.4 | — |
+| 137.8 | — |
+| 137.2 | — |
+| 137.3 | — |
+| 137.4 | — |
+| 137.4 | — |
+| 137.9 | — |
+| 137.9 | — |
+| 138.2 | — |
+| 139 | — |
+| 139.1 | — |
+| 138.6 | — |
+| 139.1 | — |
+| 139.4 | — |
+| 139.8 | — |
+| 139.4 | — |
+| 140.8 | — |
+| 140.3 | — |
+| 139.3 | — |
+| 140.2 | — |
+| 139.8 | — |
+| 140.9 | — |
+| 140.5 | — |
+| 140.7 | — |
+| 140.9 | — |
+| 141 | — |
+| 141.2 | — |
+| 141.4 | — |
+| 141.9 | — |
+| 141.7 | — |
+| 142 | — |
+| 142.4 | — |
+| 142.5 | — |
+| 142.3 | — |
+| 142.5 | — |
+| 142.9 | — |
+| 143 | — |
+| 142.9 | — |
+| 144.2 | — |
+| 143.8 | — |
+| 144.4 | — |
+| 144.4 | — |
+| 144.3 | — |
+| 145.2 | — |
+| 145 | — |
+| 144.7 | — |
+| 145.5 | — |
+| 145.4 | — |
+| 145.6 | — |
+| 146.1 | — |
+| 146.6 | — |
+| 147.3 | — |
+| 147.2 | — |
+| 147.6 | — |
+| 146.7 | — |
+| 147.3 | — |
+| 147.3 | — |
+| 147.4 | — |
+| 147.9 | — |
+| 148 | — |
+| 148.3 | — |
+| 148.7 | — |
+| 148 | — |
+| 148.8 | — |
+| 149.2 | — |
+| 149.4 | — |
+| 150.1 | — |
+| 149.2 | — |
+| 149.4 | — |
+| 150.7 | — |
+| 151 | — |
+| 151.2 | — |
+| 150.4 | — |
+| 150.9 | — |
+| 151.9 | — |
+| 152.1 | — |
+| 153.4 | — |
+| 153 | — |
+| 153.5 | — |
+| 153.1 | — |
+| 153.7 | — |
+| 153.6 | — |
+| 154.8 | — |
+| 154.9 | — |
+| 154.3 | — |
+| 155.4 | — |
+| 155 | — |
+| 156.3 | — |
+| 156.2 | — |
+| 156.5 | — |
+| 156.8 | — |
+| 157.2 | — |
+| 158.6 | — |
+| 158.8 | — |
+| 158.2 | — |
+| 157.7 | — |
+| 158.6 | — |
+| 160.4 | — |
+| 160.2 | — |
+| 160.7 | — |
+| 161 | — |
+| 160.6 | — |
+| 160.5 | — |
+| 161.5 | — |
+| 161.8 | — |
+| 161.8 | — |
+| 161.2 | — |
+| 161.6 | — |
+| 159.8 | — |
+| 161 | — |
+| 161.6 | — |
+| 160.5 | — |
+| 162 | — |
+| 161.4 | — |
+| 161.4 | — |
+| 161.3 | — |
+| 161.1 | — |
+| 160.3 | — |
+| 160.7 | — |
+| 160.9 | — |
+| 161.1 | — |
+| 161.1 | — |
+| 161.6 | — |
+| 161.7 | — |
+| 161.4 | — |
+| 160.9 | — |
+| 160.8 | — |
+| 161.1 | — |
+| 160.5 | — |
+| 161.3 | — |
+| 161.8 | — |
+| 160.3 | — |
+| 160.7 | — |
+| 161.2 | — |
+| 159.5 | — |
+| 159.9 | — |
+| 160.1 | — |
+| 162.1 | — |
+| 161.7 | — |
+| 162 | — |
+| 161.1 | — |
+| 161.6 | — |
+| 161.9 | — |
+| 161.5 | — |
+| 163 | — |
+| 162 | — |
+| 161.1 | — |
+| 161.2 | — |
+| 162.2 | — |
+| 163.1 | — |
+| 162 | — |
+| 162.8 | — |
+| 161.3 | — |
+| 162.1 | — |
+| 162.9 | — |
+| 162.4 | — |
+| 160.5 | — |
+| 162 | — |
+| 162.9 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 161.5 | — |
+| 162.2 | — |
+| 162 | — |
+| 160.8 | — |
+| 161 | — |
+| 160.8 | — |
+| 161.7 | — |
+| 161.1 | — |
+| 163.1 | — |
+| 161.6 | — |
+| 161.4 | — |
+| 160.6 | — |
+| 161.6 | — |
+| 160.8 | — |
+| 160.9 | — |
+| 160.6 | — |
+| 160.3 | — |
+| 161.7 | — |
+| 161 | — |
+| 161.8 | — |
+| 162.3 | — |
+| 161.2 | — |
+| 160.6 | — |
+| 161.5 | — |
+| 161.6 | — |
+| 161 | — |
+| 160.9 | — |
+| 161.3 | — |
+| 161.6 | — |
+| 161.6 | — |
+| 160.9 | — |
+| 161.9 | — |
+| 162.1 | — |
+| 161.9 | — |
+| 161.4 | — |
+| 162.6 | — |
+| 162.7 | — |
+| 162 | — |
+| 161.5 | — |
+| 161.7 | — |
+| 161.2 | — |
+| 162.9 | — |
+| 162.1 | — |
+| 161.7 | — |
+| 162.3 | — |
+| 162 | — |
+| 161.5 | — |
+| 162.5 | — |
+| 162.4 | — |
+| 161.6 | — |
+| 163.6 | — |
+| 162.3 | — |
+| 161.8 | — |
+| 161.3 | — |
+| 161.7 | — |
+| 161.6 | — |
+| 161.1 | — |
+| 162 | — |
+| 163.1 | — |
+| 161.9 | — |
+| 161.9 | — |
+| 161.9 | — |
+| 161.6 | — |
+| 161.6 | — |
+| 161.9 | — |
+| 161 | — |
+| 161.2 | — |
+| 161.1 | — |
+| 161.1 | — |
+| 162.3 | — |
+| 161.5 | — |
+| 161.3 | — |
+| 162.5 | — |
+| 162 | — |
+| 161.8 | — |
+| 161.3 | — |
+| 161.5 | — |
+| 161.4 | — |
+| 162.8 | — |
+| 162.8 | — |
+| 162.7 | — |
+| 162 | — |
+| 161.8 | — |
+| 162.2 | — |
+| 162.4 | — |
+| 161.3 | — |
+| 161.5 | — |
+| 162.7 | — |
+| 163 | — |
+| 162.9 | — |
+| 162.2 | — |
+| 161.3 | — |
+| 163.5 | — |
+| 162.1 | — |
+| 162.3 | — |
+| 161.4 | — |
+| 160.4 | — |
+| 162.7 | — |
+| 161.2 | — |
+| 161.8 | — |
+| 161.2 | — |
+| 162.5 | — |
+| 160.9 | — |
+| 162.4 | — |
+| 162.8 | — |
+| 161.1 | — |
+| 163.2 | — |
+| 162.4 | — |
+| 163.6 | — |
+| 161.7 | — |
+| 161.4 | — |
+| 161.9 | — |
+| 162 | — |
+| 160.5 | — |
+| 161.5 | — |
+| 162.9 | — |
+| 162.3 | — |
+| 161.8 | — |
+| 162.5 | — |
+| 161.3 | — |
+| 163.1 | — |
+| 162.7 | — |
+| 161.8 | — |
+| 161.5 | — |
+| 162.2 | — |
+| 160.5 | — |
+| 160.4 | — |
+| 161.2 | — |
+| 162 | — |
+| 162.5 | — |
+| 159.9 | — |
+| 160.8 | — |
+| 160.4 | — |
+| 160.9 | — |
+| 161.6 | — |
+| 161.1 | — |
+| 160.8 | — |
+| 160.1 | — |
+| 161.6 | — |
+| 161.8 | — |
+| 161.1 | — |
+| 162.6 | 0 |
+| 161.7 | 9.174 |
+| 160.1 | 14.54 |
+| 159 | 21 |
+| 157.4 | 27.68 |
+| 155.2 | 31.56 |
+| 155.4 | 34.28 |
+| 155.6 | 37.72 |
+| 154.8 | 41.42 |
+| 153.3 | 45.65 |
+| 153.8 | 50 |
+| 153.1 | 55.57 |
+| 152.6 | 60.26 |
+| 152.7 | 64.22 |
+| 151.4 | 66.9 |
+| 152.1 | 70.42 |
+| 151.4 | 73.47 |
+| 150.6 | 77.16 |
+| 150 | 80.89 |
+| 149.1 | 85.4 |
+| 148.8 | 91.09 |
+| 148.7 | 94.48 |
+| 147.8 | 98.32 |
+| 148.2 | 102 |
+| 147.6 | 105.7 |
+| 146.6 | 110.8 |
+| 146.3 | 114.2 |
+| 145 | 118.6 |
+| 145 | 123.3 |
+| 145.3 | 127.8 |
+| 144.8 | 134.3 |
+| 143.6 | 141.1 |
+| 142.6 | 147.2 |
+| 142 | 152.3 |
+| 141.4 | 157 |
+| 141.3 | 161.8 |
+| 140.9 | 167.9 |
+| 140.4 | 171.8 |
+| 139.9 | 178 |
+| 139.5 | 186 |
+| 139.1 | 193.2 |
+| 138.1 | 200.7 |
+| 137.9 | 202.6 |
+| 136.9 | 205.5 |
+| 136.9 | 211.3 |
+| 137.6 | 215.1 |
+| 137.2 | 217.2 |
+| 136.5 | 226.8 |
+| 135.6 | 229.1 |
+| 135.3 | 228.8 |
+| 135.5 | 229.3 |
+| 135.1 | 230.5 |
+| 135.3 | 232.5 |
+| 135.2 | 234 |
+| 134.8 | 234.8 |
+| 134.9 | 236.7 |
+| 135.4 | 239.1 |
+| 135.9 | 240.7 |
+| 134.3 | 239.9 |
+| 134.7 | 246.9 |
+| 134.6 | 249.1 |
+| 133.9 | 252.7 |
+| 134.4 | 251.4 |
+| 133.3 | 253.5 |
+| 134 | 255.3 |
+| 134.1 | 254.5 |
+| 134.1 | 259.3 |
+| 133.7 | 259.3 |
+| 134.2 | 259.6 |
+| 133.7 | 260.3 |
+| 134.4 | 259.5 |
+| 133.9 | 262 |
+| 133.7 | 263.9 |
+| 133.9 | 263.1 |
+| 133.8 | 264.5 |
+| 133.5 | 267.9 |
+| 132.9 | 268.4 |
+| 133.1 | 271.4 |
+| 133.5 | 271.7 |
+| 133.7 | 271.1 |
+| 133.3 | 275.5 |
+| 133 | 276.7 |
+| 132.9 | 278.3 |
+| 133.2 | 279 |
+| 133.5 | 281.1 |
+| 133.3 | 283.9 |
+| 132.9 | 283.6 |
+| 133.7 | 286.9 |
+| 133.7 | 287.1 |
+| 133.1 | 290 |
+| 133.3 | 291.9 |
+| 133.3 | 295.4 |
+| 133 | 296.9 |
+| 133.6 | 296.5 |
+| 133.4 | 299.3 |
+| 133 | 301.5 |
+| 133.2 | 302.9 |
+| 133.2 | 306.1 |
+| 133 | 310.3 |
+| 132.4 | 311.4 |
+| 132.3 | 312.7 |
+| 132.7 | 312.2 |
+| 132.2 | 314.1 |
+| 132.6 | 317.2 |
+| 132.5 | 315.1 |
+| 132.9 | 310.2 |
+| 132.8 | 315.6 |
+| 132.3 | 316.4 |
+| 132.4 | 318.1 |
+| 131.9 | 319.3 |
+| 132.5 | 319 |
+| 131.5 | 323.1 |
+| 132.3 | 321.4 |
+| 132.5 | 320.9 |
+| 132.2 | 323.3 |
+| 132.4 | 327.6 |
+| 132.2 | 327 |
+| 132 | 325.6 |
+| 132 | 324 |
+| 132.1 | 329.3 |
+| 132.3 | 331.3 |
+| 131.8 | 333.5 |
+| 132.1 | 334.8 |
+| 132.4 | 338.2 |
+| 131.7 | 337.2 |
+| 132.4 | 339.1 |
+| 132 | 338.5 |
+| 131 | 342 |
+| 130.9 | 341.4 |
+| 131.4 | 340.9 |
+| 131 | 341.4 |
+| 131.3 | 342.2 |
+| 131.1 | 342.6 |
+| 131.3 | 344.1 |
+| 131.2 | 343.6 |
+| 131.2 | 344.6 |
+| 131.5 | 346.7 |
+| 130.7 | 346.4 |
+| 131.7 | 347.6 |
+| 131.3 | 349.1 |
+| 131.2 | 350.5 |
+| 130.6 | 352.3 |
+| 131.1 | 354.7 |
+| 130.9 | 359 |
+| 131 | 360.7 |
+| 130.8 | 356.5 |
+| 132.1 | 355.3 |
+| 131.7 | 355.8 |
+| 131.7 | 360.5 |
+| 131 | 366.3 |
+| 131.5 | 362.7 |
+| 132.1 | 362.4 |
+| 131.7 | 365.9 |
+| 131.3 | 366.8 |
+| 131.9 | 365.7 |
+| 131.9 | 361.8 |
+| 131.9 | 361.5 |
+| 131.8 | 363.4 |
+| 132.2 | 366.2 |
+| 131.3 | 366.7 |
+| 131.2 | 369.3 |
+| 132.3 | 367.8 |
+| 132.8 | 367.3 |
+| 131.9 | 366.7 |
+| 132.4 | 366.1 |
+| 132.2 | 365.2 |
+| 131.3 | 366.4 |
+| 131.6 | 368.3 |
+| 131.4 | 370.9 |
+| 132.4 | 368.5 |
+| 132.3 | 372 |
+| 132 | 374.6 |
+| 131.6 | 372.8 |
+| 131.5 | 371.8 |
+| 131.7 | 370.4 |
+| 131.7 | 375.9 |
+| 131.7 | 376.7 |
+| 131.7 | 376.7 |
+| 132.3 | 377.3 |
+| 132.5 | 375.9 |
+| 131.7 | 375.7 |
+| 131.1 | 375.4 |
+| 131.2 | 375 |
+| 131.3 | 375.9 |
+| 131.2 | 377.9 |
+| 131.6 | 380.5 |
+| 131.9 | 381.4 |
+| 131.9 | 383.1 |
+| 131.4 | 383.2 |
+| 131.3 | 384.3 |
+| 131.4 | 387 |
+| 132.3 | 386.3 |
+| 132 | 387 |
+| 131.9 | 386.6 |
+| 131.6 | 387.8 |
+| 131.9 | 387.9 |
+| 131.9 | 384.3 |
+| 131.6 | 384.7 |
+| 132.1 | 386.3 |
+| 131.8 | 387.3 |
+| 131.5 | 386.4 |
+| 131.6 | 391.8 |
+| 131.4 | 390.6 |
+| 131 | 394.2 |
+| 131 | 392.7 |
+| 131.5 | 394.8 |
+| 132 | 395.9 |
+| 131.7 | 398.9 |
+| 131.3 | 400.9 |
+| 131.3 | 403.9 |
+| 131.7 | 403.3 |
+| 131.7 | 400 |
+| 131.6 | 400.1 |
+| 132 | 399.6 |
+| 132.1 | 398.1 |
+| 132 | 402.2 |
+| 131.9 | 405.9 |
+| 131.4 | 409 |
+| 131.7 | 410.2 |
+| 131.4 | 409.1 |
+| 131.9 | 407.7 |
+| 131.4 | 405.7 |
+| 131.6 | 405.4 |
+| 131.6 | 406.3 |
+| 132 | 408 |
+| 131.9 | 409.2 |
+| 131.7 | 410.8 |
+| 131.8 | 412.6 |
+| 131.4 | 413 |
+| 131.8 | 412.4 |
+| 131.4 | 415.3 |
+| 131.6 | 417 |
+| 132.2 | 416 |
+| 131.9 | 417.8 |
+| 131.6 | 419.1 |
+| 130.8 | 422.3 |
+| 131.5 | 422.6 |
+| 131.8 | 422.5 |
+| 131.5 | 420.1 |
+| 131.7 | 420.1 |
+| 131.4 | 422.7 |
+| 132.1 | 420.5 |
+| 131.6 | 422.2 |
+| 131.5 | 423.8 |
+| 131.5 | 425.4 |
+| 131.2 | 425.2 |
+| 131.2 | 422.2 |
+| 131.9 | 421.5 |
+| 131.3 | 418.6 |
+| 131.7 | 425.4 |
+| 130.5 | 428 |
+| 131.6 | 429.3 |
+| 131.8 | 429 |
+| 131.6 | 430.3 |
+| 131.6 | 434.2 |
+| 130.7 | 437.3 |
+| 131.8 | 437.3 |
+| 131.5 | 437.3 |
+| 130.7 | 438.2 |
+| 130.6 | 440.1 |
+| 131.4 | 435.4 |
+| 131.2 | 437 |
+| 131.8 | 439.8 |
+| 131.1 | 440.3 |
+| 131.8 | 439.9 |
+| 131.2 | 437.8 |
+| 132.1 | 437.5 |
+| 132 | 437.7 |
+| 131.9 | 439.1 |
+| 131.5 | 442.3 |
+| 131.6 | 438.8 |
+| 131.1 | 442.1 |
+| 131.1 | 441.4 |
+| 131 | 444.4 |
+| 130.8 | 447.7 |
+| 131.2 | 451 |
+| 130.6 | 452.3 |
+| 131.8 | 451.3 |
+| 132.2 | 451.3 |
+| 131.1 | 454 |
+| 130.8 | 453.5 |
+| 132.2 | 450.9 |
+| 131.1 | 450.3 |
+| 131.2 | 453.4 |
+| 131 | 455.3 |
+| 132.2 | 456.9 |
+| 131.7 | 457.6 |
+| 130.4 | 458.3 |
+| 130.3 | 460.9 |
+| 130.7 | 459.8 |
+| 131.5 | 460 |
+| 130.9 | 462.7 |
+| 130.7 | 464.3 |
+| 130.6 | 460.5 |
+| 131.9 | 457.7 |
+| 131.7 | 458.7 |
+| 130.7 | 463.8 |
+| 130.6 | 460.3 |
+| 130.3 | 462.6 |
+| 131.1 | 464 |
+| 130.9 | 466.7 |
+| 130.1 | 466.4 |
+| 130.8 | 464.9 |
+| 130.9 | 462.5 |
+| 131 | 463.5 |
+| 129.8 | 464.8 |
+| 130.1 | 467.8 |
+| 130.9 | 463.2 |
+| 130.4 | 464.1 |
+| 130.1 | 465.7 |
+| 130.5 | 462.6 |
+| 130.5 | 461.4 |
+| 130 | 462 |
+| 130.3 | 463.4 |
+| 130.3 | 464.6 |
+| 130.2 | 468.2 |
+| 131.3 | 465.4 |
+| 130.9 | 467.8 |
+| 130.7 | 470.2 |
+| 130.6 | 470.4 |
+| 130.6 | 469.3 |
+| 131.5 | 471.8 |
+| 130.9 | 473.8 |
+| 131 | 477.9 |
+| 130.6 | 484.5 |
+| 130.3 | 487 |
+| 130.4 | 487.2 |
+| 130.5 | 487.8 |
+| 130.7 | 483.5 |
+| 131.9 | 487.4 |
+| 130.8 | 488.1 |
+| 130.7 | 489.7 |
+| 130.4 | 489.7 |
+| 130.6 | 490 |
+| 130.4 | 493.4 |
+| 130.6 | 494.7 |
+| 130.2 | 493.6 |
+| 130.6 | 491.7 |
+| 130.6 | 492.1 |
+| 130.2 | 494.2 |
+| 130.5 | 495 |
+| 130.6 | 495 |
+| 130.3 | 494.6 |
+| 130.4 | 492.3 |
+| 130.4 | 493.3 |
+| 129.9 | 494.9 |
+| 129.7 | 496.8 |
+| 129.8 | 494.9 |
+| 129.9 | 494.6 |
+| 130 | 491.7 |
+| 130.5 | 490.5 |
+| 130.8 | 490 |
+| 131.2 | 490.3 |
+| 130.3 | 490.4 |
+| 130.3 | 490.6 |
+| 130.1 | 492.1 |
+| 130.1 | 492.4 |
+| 129.8 | 491.3 |
+| 130.3 | 487.8 |
+| 130.6 | 490.4 |
+| 130.5 | 491.8 |
+| 130.4 | 491.2 |
+| 130.2 | 488.1 |
+| 130.7 | 492 |
+| 130.2 | 492.8 |
+| 130.8 | 490.2 |
+| 130.1 | 490.7 |
+| 130.8 | 491.7 |
+| 129.9 | 495.4 |
+| 130 | 498.9 |
+| 129.7 | 500.9 |
+| 131.2 | 498.8 |
+| 130.8 | 497.3 |
+| 130.9 | 498.1 |
+| 130.3 | 501 |
+| 130.8 | 501.4 |
+| 130.9 | 504.8 |
+| 131 | 501.6 |
+| 131.1 | 503.2 |
+| 130.6 | 503.6 |
+| 130.3 | 504 |
+| 130.3 | 504.9 |
+| 130.3 | 505.2 |
+| 130.6 | 505.4 |
+| 131 | 506.1 |
+| 130.2 | 510.1 |
+| 129.9 | 510.3 |
+| 129.9 | 508.2 |
+| 130.6 | 508.9 |
+| 130.5 | 508.4 |
+| 130.4 | 504.8 |
+| 130.4 | 505 |
+| 130.4 | 505.7 |
+| 130.4 | 508.2 |
+| 130.3 | 510 |
+| 130.5 | 506.5 |
+| 130 | 505.8 |
+| 130.5 | 504.5 |
+| 130.5 | 505.6 |
+| 129.9 | 511.2 |
+| 130.2 | 514.6 |
+| 130.5 | 516.6 |
+| 130.2 | 515.2 |
+| 130.4 | 520.3 |
+| 130.1 | 531.2 |
+| 130.9 | 533.7 |
+| 130.8 | 538.9 |
+| 130.1 | 545.9 |
+| 130.7 | 561.6 |
+| 130.4 | 557.2 |
+| 130.5 | 553.1 |
+| 131.1 | 563 |
+| 131.2 | 566.3 |
+| 130.1 | 578.9 |
+| 130.2 | 574.4 |
+| 130 | 578.1 |
+| 130.3 | 600 |
+| 129.8 | 604 |
+| 130.2 | 610.7 |
+| 130.3 | 606.9 |
+| 130.4 | 614.9 |
+| 129.9 | 613 |
+| 130.1 | 614.9 |
+| 130.2 | 631.7 |
+| 130.2 | 642.4 |
+| 130 | 644.6 |
+| 130.7 | 636.8 |
+| 130.4 | 642 |
+| 129.9 | 646.4 |
+| 129.8 | 657.2 |
+| 130.5 | 655.7 |
+| 129.9 | 657.8 |
+| 130.5 | 661.1 |
+| 130.1 | 675.2 |
+| 129.4 | 670.6 |
+| 130 | 674 |
+| 130.2 | 676.4 |
+| 129.6 | 678 |
+| 129.8 | 684.7 |
+| 129.7 | 693.4 |
+| 130.1 | 690.4 |
+| 130.2 | 696.4 |
+| 130.1 | 702.6 |
+| 129.8 | 700.3 |
+| 129.6 | 716.2 |
+| 130.2 | 717.4 |
+| 130.2 | 701.3 |
+| 129.3 | 713.9 |
+| 130.3 | 704 |
+| 130.3 | 717.3 |
+| 129.7 | 720.3 |
+| 130.1 | 717.4 |
+| 129.8 | 726.5 |
+| 129.9 | 728.1 |
+| 130 | 712.7 |
+| 130.1 | 727.7 |
+| 129.8 | 721.2 |
+| 129.9 | 737 |
+| 129.3 | 739.8 |
+| 129.5 | 736.9 |
+| 129.7 | 742 |
+| 130.2 | 744.3 |
+| 131 | 747.2 |
+| 129.9 | 756.3 |
+| 129.6 | 752.6 |
+| 130 | 746.4 |
+| 129.8 | 760.2 |
+| 129.9 | 750.5 |
+| 129.9 | 767.1 |
+| 130.4 | 774.3 |
+| 130 | 775.5 |
+| 130.1 | 791 |
+| 129.7 | 801.7 |
+| 129.9 | 793.3 |
+| 129.6 | 797.5 |
+| 130 | 798.3 |
+| 130 | 805.5 |
+| 129.3 | 811.4 |
+| 129.6 | 810.1 |
+| 130 | 818 |
+| 130 | 828.9 |
+| 130 | 838.3 |
+| 130.1 | 844.3 |
+| 129.8 | 840 |
+| 130 | 836.7 |
+| 130.1 | 845.8 |
+| 130 | 838 |
+| 130 | 838.7 |
+| 129.4 | 836.2 |
+| 130.2 | 833.3 |
+| 129.8 | 825.5 |
+| 129.5 | 828 |
+| 129.7 | 852.6 |
+| 129.7 | 849.9 |
+| 129.8 | 848.4 |
+| 129.4 | 857.9 |
+| 129.3 | 860.9 |
+| 129.3 | 868.7 |
+| 129.7 | 878.6 |
+| 129.6 | 865.5 |
+| 129.6 | 873.3 |
+| 129.5 | 875.7 |
+| 129.2 | 872.8 |
+| 129.6 | 883.9 |
+| 129.5 | 880.1 |
+| 129.5 | 880.8 |
+| 129.5 | 888.4 |
+| 129.6 | 894.1 |
+| 129.5 | 889.7 |
+| 129.7 | 895.8 |
+| 129.1 | 903.9 |
+| 129.6 | 915.6 |
+| 130.3 | 907.3 |
+| 129.1 | 905.9 |
+| 129.2 | 906.5 |
+| 129.1 | 903.1 |
+| 129.7 | 898.2 |
+| 129.7 | 905.5 |
+| 129.1 | 903.7 |
+| 130.1 | 914.6 |
+| 129.3 | 918 |
+| 129.4 | 929.3 |
+| 129.7 | 929.6 |
+| 129.8 | 927.1 |
+| 129.2 | 939.5 |
+| 129.6 | 938.7 |
+| 129.3 | 941.4 |
+| 129.4 | 940.1 |
+| 129.2 | 928.8 |
+| 129.4 | 937 |
+| 128.8 | 928.6 |
+| 129.9 | 928.5 |
+| 129.8 | 946 |
+| 129.5 | 952.1 |
+| 129.9 | 934.1 |
+| 129.5 | 940.7 |
+| 129.6 | 941.7 |
+| 129.3 | 942.5 |
+| 129 | 964.8 |
+| 129.1 | 968 |
+| 129.3 | 962.8 |
+| 129.9 | 976.6 |
+| 129.8 | 974.4 |
+| 129.3 | 985.9 |
+| 129.8 | 986.5 |
+| 129.5 | 992.2 |
+| 129.4 | 1003 |
+| 129.8 | 983.5 |
+| 129.9 | 1000 |
+| 129.6 | 999 |
+| 129.7 | 985.9 |
+| 129.4 | 1001 |
+| 129.9 | 1004 |
+| 129.8 | 1006 |
+| 129.6 | 1014 |
+| 129.5 | 1014 |
+| 129.4 | 1012 |
+| 129 | 1023 |
+| 129.7 | 1027 |
+| 130 | 1040 |
+| 129.5 | 1036 |
+| 129.7 | 1039 |
+| 129.4 | 1056 |
+| 129.9 | 1039 |
+| 129.7 | 1048 |
+| 129.7 | 1036 |
+| 130.1 | 1044 |
+| 130 | 1047 |
+| 129.6 | 1047 |
+| 129.9 | 1051 |
+| 130 | 1058 |
+| 130.3 | 1050 |
+| 130.2 | 1035 |
+| 129.9 | 1048 |
+| 130.7 | 1058 |
+| 130.1 | 1058 |
+| 129.8 | 1055 |
+| 129.9 | 1065 |
+| 130 | 1048 |
+| 129.6 | 1053 |
+| 129.4 | 1070 |
+| 129.5 | 1071 |
+| 129.6 | 1074 |
+| 129.4 | 1080 |
+| 130 | 1073 |
+| 129.4 | 1078 |
+| 129.7 | 1072 |
+| 129.7 | 1079 |
+| 129.7 | 1078 |
+| 129.7 | 1078 |
+| 129.4 | 1091 |
+| 129.8 | 1092 |
+| 129.6 | 1108 |
+| 129.4 | 1098 |
+| 129.8 | 1100 |
+| 129.8 | 1101 |
+| 130 | 1114 |
+| 129.4 | 1108 |
+| 129.4 | 1096 |
+| 129.7 | 1097 |
+| 129.4 | 1090 |
+| 129.6 | 1089 |
+| 129.6 | 1105 |
+| 129.6 | 1095 |
+| 129.4 | 1112 |
+| 129.1 | 1115 |
+| 129.2 | 1123 |
+| 129.6 | 1105 |
+| 129.4 | 1099 |
+| 129.8 | 1095 |
+| 129.7 | 1108 |
+| 129.5 | 1106 |
+| 129.6 | 1109 |
+| 129.7 | 1119 |
+| 130.3 | 1107 |
+| 130.1 | 1125 |
+| 129.3 | 1128 |
+| 129.9 | 1124 |
+| 129.6 | 1114 |
+| 129.6 | 1112 |
+| 130.1 | 1128 |
+| 129.8 | 1119 |
+| 130.3 | 1109 |
+| 129.5 | 1101 |
+| 130 | 1108 |
+| 129.8 | 1104 |
+| 129.6 | 1101 |
+| 129.4 | 1097 |
+| 130 | 1097 |
+| 129.9 | 1095 |
+| 129.3 | 1097 |
+| 130 | 1101 |
+| 130.2 | 1117 |
+| 129.7 | 1121 |
+| 130.2 | 1123 |
+| 129.8 | 1121 |
+| 128.7 | 1109 |
+| 129.9 | 1108 |
+| 129.5 | 1126 |
+| 128.9 | 1130 |
+| 129.5 | 1134 |
+| 129.4 | 1146 |
+| 130 | 1147 |
+| 129.5 | 1153 |
+| 129.8 | 1147 |
+| 129.9 | 1150 |
+| 130 | 1162 |
+| 129.8 | 1172 |
+| 129.9 | 1173 |
+| 129.9 | 1183 |
+| 129.9 | 1176 |
+| 129.6 | 1177 |
+| 130.1 | 1182 |
+| 129.8 | 1181 |
+| 129.8 | 1182 |
+| 129.7 | 1169 |
+| 130 | 1170 |
+| 130.2 | 1165 |
+| 129.9 | 1171 |
+| 129.8 | 1166 |
+| 130.1 | 1161 |
+| 129.7 | 1156 |
+| 129.9 | 1161 |
+| 129.4 | 1160 |
+| 129.6 | 1165 |
+| 129.4 | 1177 |
+| 129.6 | 1184 |
+| 129.9 | 1196 |
+| 129.8 | 1197 |
+| 130.2 | 1192 |
+| 129.5 | 1198 |
+| 130 | 1197 |
+| 129.6 | 1197 |
+| 129.7 | 1206 |
+| 129.5 | 1203 |
+| 129.5 | 1203 |
+| 129.8 | 1198 |
+| 129.3 | 1188 |
+| 129.9 | 1192 |
+| 129.6 | 1191 |
+| 129.7 | 1186 |
+| 129.7 | 1195 |
+| 129.7 | 1204 |
+| 129.7 | 1199 |
+| 129.6 | 1209 |
+| 129.6 | 1204 |
+| 129.6 | 1200 |
+| 129.3 | 1210 |
+| 129.4 | 1207 |
+| 129.7 | 1205 |
+| 129.5 | 1216 |
+| 129.4 | 1216 |
+| 129.7 | 1217 |
+| 129.8 | 1222 |
+| 129.6 | 1214 |
+| 129.7 | 1220 |
+| 129.6 | 1228 |
+| 130.1 | 1230 |
+| 130 | 1240 |
+| 130 | 1236 |
+| 130.1 | 1243 |
+| 129.2 | 1253 |
+| 130.4 | 1244 |
+| 130 | 1266 |
+| 130.2 | 1260 |
+| 130.2 | 1271 |
+| 129.6 | 1264 |
+| 129.6 | 1267 |
+| 130.2 | 1276 |
+| 130 | 1268 |
+| 130.6 | 1279 |
+| 130 | 1295 |
+| 130 | 1288 |
+| 130.4 | 1288 |
+| 129.9 | 1304 |
+| 130 | 1295 |
+| 129.7 | 1292 |
+| 130.4 | 1288 |
+| 129.8 | 1298 |
+| 129.7 | 1302 |
+| 129.6 | 1303 |
+| 130 | 1300 |
+| 130.2 | 1303 |
+| 129.7 | 1303 |
+| 130.1 | 1304 |
+| 129.5 | 1301 |
+| 129.9 | 1301 |
+| 130.4 | 1296 |
+| 129.5 | 1295 |
+| 129.6 | 1303 |
+| 129.8 | 1295 |
+| 129.3 | 1310 |
+| 129.6 | 1304 |
+| 129.2 | 1327 |
+| 129.5 | 1318 |
+| 129.8 | 1329 |
+| 129.3 | 1334 |
+| 129.6 | 1340 |
+| 129.5 | 1337 |
+| 129.5 | 1324 |
+| 130.1 | 1318 |
+| 130.3 | 1317 |
+| 129.9 | 1325 |
+| 129.7 | 1334 |
+| 129.4 | 1343 |
+| 129.8 | 1343 |
+| 129.9 | 1350 |
+| 129.6 | 1355 |
+| 130 | 1355 |
+| 129.9 | 1359 |
+| 129.9 | 1358 |
+| 129.3 | 1351 |
+| 130 | 1356 |
+| 130 | 1371 |
+| 129.5 | 1368 |
+| 129.2 | 1366 |
+| 129.8 | 1368 |
+| 129.6 | 1370 |
+| 129.6 | 1373 |
+| 129.9 | 1380 |
+| 129.7 | 1383 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 25 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 25 |
+
 
 </details>
 
@@ -5026,9 +6228,9 @@ No analysed properties yet. Equilibration: from `pe_cg_amorph_n640_c240_s1_rep44
 
 ### `pe_cg_pore_w5nm_n640_c240_s1_rep441`
 
-PE CG, 5 nm dry slit pore, 640 chains × C240, 51,200 beads; built from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`). Stage now: pore (running, 19.8% (4/17 segments, Stage 3 cool 3/8 (424.3 K)); ETA 2026-11-09 10:50 UTC).
+PE CG, 5 nm dry slit pore, 640 chains × C240, 51,200 beads; built from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`). Stage now: pore (running, 23.2% (5/17 segments, Stage 3 cool 4/8 (399.1 K)); ETA 2026-11-09 11:19 UTC).
 
-No analysed properties yet; pending: pore: running, 19.8% (4/17 segments, Stage 3 cool 3/8 (424.3 K)); ETA 2026-11-09 10:50 UTC. Equilibration: from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet; pending: pore: running, 23.2% (5/17 segments, Stage 3 cool 4/8 (399.1 K)); ETA 2026-11-09 11:19 UTC. Equilibration: from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -5046,11 +6248,11 @@ No analysed properties yet; pending: pore: running, 19.8% (4/17 segments, Stage 
 
 **Stages**
 
-- **pore** (rdyu-rog): running, 19.8% (4/17 segments, Stage 3 cool 3/8 (424.3 K)); ETA 2026-11-09 10:50 UTC; started 2026-11-06 14:43 UTC
+- **pore** (rdyu-rog): running, 23.2% (5/17 segments, Stage 3 cool 4/8 (399.1 K)); ETA 2026-11-09 11:19 UTC; started 2026-11-06 14:43 UTC
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | pore: running, 19.8% (4/17 segments, Stage 3 cool 3/8 (424.3 K)); ETA 2026-11-09 10:50 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | pore: running, 23.2% (5/17 segments, Stage 3 cool 4/8 (399.1 K)); ETA 2026-11-09 11:19 UTC | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -5172,7 +6374,7 @@ No analysed properties yet. Equilibration: from `pe_ua_amorph_n40_c240_s1`: D47 
 
 ### `pe_ua_pore_w5nm_n40_c240_s1`
 
-PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Stage now: pore (running, 34.7% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 22:33 UTC).
+PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Stage now: pore (running, 36.0% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 21:04 UTC).
 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
@@ -5195,12 +6397,12 @@ PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe
 
 **Stages**
 
-- **pore** (rdyu-server): running, 34.7% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 22:33 UTC; started 2026-11-04 22:15 UTC; reads `systems/pe_ua_pore_w5nm_n40_c240_s1/data.lmp`
+- **pore** (rdyu-server): running, 36.0% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 21:04 UTC; started 2026-11-04 22:15 UTC; reads `systems/pe_ua_pore_w5nm_n40_c240_s1/data.lmp`
   - γ per hold (monitor, second half of each segment, mN/m): 25 °C 33.0 ± 2.8
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.68 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | 25 °C 33.0 ± 2.8 | pore: running, 34.7% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 22:33 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.68 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | 25 °C 33.0 ± 2.8 | pore: running, 36.0% (12/28 segments, seg 03 step 45 C); ETA 2026-11-11 21:04 UTC | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -5208,9 +6410,9 @@ PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe
 
 ### `pe_aa_amorph_n40_c240_s1_from_ua`
 
-PE AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `pe_ua_amorph_n40_c240_s1` (`hold_ext_70ns.data`). Stage now: sweep (running, 33.7% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:23 UTC).
+PE AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `pe_ua_amorph_n40_c240_s1` (`hold_ext_70ns.data`). Stage now: sweep (running, 35.1% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:18 UTC).
 
-No analysed properties yet; pending: sweep: running, 33.7% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:23 UTC. Equilibration: from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted.
+No analysed properties yet; pending: sweep: running, 35.1% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:18 UTC. Equilibration: from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -5232,7 +6434,7 @@ No analysed properties yet; pending: sweep: running, 33.7% (8/22 segments, seg 0
   - 500 K hold 5.0 ns: D47 criteria on this hold FAIL (R<sub>ee</sub> ACF 0.82 at 2.5 ns, 1/e not reached; COM MSD/⟨R<sub>g</sub>²⟩ 0.08); C<sub>n</sub> 8.57 vs 6.7 (outside band, info); drift (Δ -0.65 ± 0.14)
   - monitor flags: R<sub>ee</sub> not decorrelated (0.82 at 2.5 ns); MSD/R<sub>g</sub>² 0.08; drift seg 7,9; hyst max 0.44%
 - **`sweep_crashed_20261102`** (rdyu-rog): cancelled/killed?, 0.1%; started 2026-11-02 18:52 UTC; reads `../prep/cooled.data`
-- **sweep** (rdyu-rog): running, 33.7% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:23 UTC; started 2026-11-03 01:01 UTC; reads `../prep/cooled.data`
+- **sweep** (rdyu-rog): running, 35.1% (8/22 segments, seg 08 step 90 C); ETA 2026-11-11 14:18 UTC; started 2026-11-03 01:01 UTC; reads `../prep/cooled.data`
   - monitor flags: drift seg 4; hyst max 0.44%
 
 - Sweep analysis: not analysed yet.
@@ -5345,7 +6547,7 @@ No analysed properties yet. Equilibration: from `ipp_ua_amorph_n40_c240_s1`: D47
 
 ### `ipp_ua_pore_w5nm_n40_c240_s1`
 
-iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `ipp_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Stage now: pore (running, 66.5% (21/28 segments, seg 12 step 120 C); ETA 2026-11-08 16:15 UTC).
+iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `ipp_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Stage now: pore (running, 68.7% (22/28 segments, seg 13 step 130 C); ETA 2026-11-08 16:12 UTC).
 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
@@ -5368,12 +6570,12 @@ iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `
 
 **Stages**
 
-- **pore** (rdyu-rog): running, 66.5% (21/28 segments, seg 12 step 120 C); ETA 2026-11-08 16:15 UTC; started 2026-11-04 10:09 UTC
+- **pore** (rdyu-rog): running, 68.7% (22/28 segments, seg 13 step 130 C); ETA 2026-11-08 16:12 UTC; started 2026-11-04 10:09 UTC
   - γ per hold (monitor, second half of each segment, mN/m): 25 °C 20.1 ± 3.2; 90 °C 22.3 ± 3.5
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.74 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | 25 °C 20.1 ± 3.2; 90 °C 22.3 ± 3.5 | pore: running, 66.5% (21/28 segments, seg 12 step 120 C); ETA 2026-11-08 16:15 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.74 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | 25 °C 20.1 ± 3.2; 90 °C 22.3 ± 3.5 | pore: running, 68.7% (22/28 segments, seg 13 step 130 C); ETA 2026-11-08 16:12 UTC | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
