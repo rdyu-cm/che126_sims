@@ -32,36 +32,56 @@ Pore decks (``in.pore``) are rejected with a pointer to `sepsim analyze pore` (D
 
 from __future__ import annotations
 
-import datetime as dt
-import json
-import os
-import platform
 import warnings
+from functools import cached_property
 from pathlib import Path
 
 import numpy as np
 
+from sepsim.analysis.chain import CG_CC_BOND_A, CN_N_MIN
 from sepsim.analysis.lammps_log import read_log
-from sepsim.analysis.stats import linear_fit
-from sepsim.analysis.units import A3_CM3, AVOGADRO
+from sepsim.analysis.stats import DegenerateSeries, timeseries_mean
+from sepsim.analysis.units import A2_PS_TO_CM2_S, A3_CM3, AVOGADRO
 from sepsim.progress import (
     JSON_NAME as PROGRESS_JSON,
 )
 from sepsim.progress import (
     LOG_NAME,
+    MIN_DRIFT_ROWS,
+    MIN_HOLD_FRAMES,
+    MIN_STAT_ROWS,
+    SEM_RESOLVE_BLOCKS,
+    T_MATCH_TOL,
     _block_rows,
     _concat_thermo,
     _enthalpy_mean_sem,
     _input_stage,
     _mean_sem,
+    _ms_of,
     _round,
     d47_criteria,
     deck_system,
     find_deck,
     load_json,
     parse_deck,
+    runs_by_segment,
 )
-from sepsim.run import CODE_DIR, MANIFEST_NAME, git_info
+from sepsim.reporting import (
+    CG_TIME_NOTE,
+    _f,
+    _json,
+    _pm,
+    dump_json,
+    header_markdown,
+    load_system_arrays,
+    plots_markdown,
+    report_header,
+    trajectory_or_note,
+    write_atomic,
+)
+from sepsim.run import MANIFEST_NAME
+
+__all__ = ["A2_PS_TO_CM2_S", "_f", "_json", "_pm"]  # re-exported (sepsim.reporting, units)
 
 VERSION = 1
 MD_NAME, JSON_NAME = "results.md", "results.json"
@@ -71,7 +91,6 @@ MAX_FRAMES = 500  # hold frames (evenly spaced) for the C_n plateau
 FIT_WINDOWS_C = ((25.0, 160.0), (25.0, 90.0), (90.0, 160.0))
 D_MIN_SLOPE = 0.9  # diffusive regime: local d ln MSD / d ln t >= this ...
 D_MIN_SPAN = 2.0  # ... from t_start to the longest lag, with t_end / t_start >= this
-A2_PS_TO_CM2_S = 1e-16 / 1e-12  # Angstrom^2/ps -> cm^2/s
 
 
 class AnalyzeError(ValueError):
@@ -88,22 +107,77 @@ def out_dir_for(run_dir: Path, system: str, out: str | Path | None) -> Path:
 # --------------------------------------------------------------------------- thermo
 
 
-def segment_thermo(segments, log) -> list[dict | None]:
+def segment_thermo(segments, log, notes: list[str] | None = None) -> list[dict | None]:
     """Thermo of every segment (its chunk blocks concatenated) once all its runs are
-    complete, else None; blocks are assigned in deck order as in `sepsim progress`."""
-    runs = log.runs if log else []
-    out, start = [], 0
-    for seg in segments:
-        mine = runs[start : start + len(seg.run_steps)]
-        start += len(seg.run_steps)
+    complete, else None; blocks are assigned in deck order as in `sepsim progress`
+    (:func:`sepsim.progress.runs_by_segment`, whose plan-mismatch notes go to ``notes``)."""
+    per_seg, mismatch = runs_by_segment(segments, log)
+    if notes is not None:
+        notes += mismatch
+    out = []
+    for seg, mine in zip(segments, per_seg, strict=True):
         done = len(mine) == len(seg.run_steps) and all(r.complete for r in mine)
         out.append(_concat_thermo(mine) if done and seg.command == "run" else None)
     return out
 
 
-def window_stats(thermo: dict, skip: float) -> dict:
+class Window:
+    """A series' analysis window ``w`` (rows after the first ``skip`` fraction) with its
+    :func:`timeseries_mean` (``tm``) and halves drift test (``halves``), D55 block means
+    of ``block`` rows, each computed at most once; callers test ``len(w)`` and ``ptp``
+    (the window's range) before using them."""
+
+    def __init__(self, x, skip: float, block: int | None):
+        x = np.asarray(x, dtype=float)
+        self.w, self.block = x[int(np.floor(skip * len(x))) :], block
+        self.ptp = np.ptp(self.w) if len(self.w) else 0.0
+
+    @cached_property
+    def tm(self):
+        return timeseries_mean(self.w, block=self.block)
+
+    @cached_property
+    def halves(self) -> tuple | None:
+        """:func:`sepsim.analysis.chain.drift_check` (mean_1, mean_2, delta, delta_sem,
+        drift), None for a degenerate (zero-variance) half."""
+        from sepsim.analysis.chain import drift_check
+
+        try:
+            return drift_check(self.w, block=self.block)
+        except DegenerateSeries:
+            return None
+
+    def mean_sem(self) -> dict | None:
+        """The window's mean +- SEM dict as :func:`sepsim.progress._mean_sem` gives it."""
+        if len(self.w) < 3:
+            return None
+        if self.ptp == 0.0:  # NVT/NVE density: constant, no statistical inefficiency
+            return {"mean": float(self.w[0]), "sem": 0.0}
+        return _ms_of(self.tm, len(self.w), self.block)
+
+
+class SegmentWindows:
+    """The :class:`Window` of each series of one segment (same ``skip`` and ``block``),
+    keyed by the series array, so the segment stats, drift flags, block check and
+    convergence record share one mean +- SEM and halves test per series."""
+
+    def __init__(self, skip: float, block: int | None):
+        self.skip, self.block = skip, block
+        self._by_id: dict[int, tuple] = {}
+
+    def __call__(self, x) -> Window:
+        hit = self._by_id.get(id(x))
+        if hit is None or hit[0] is not x:
+            hit = (x, Window(x, self.skip, self.block))  # holds x: its id stays unique
+            self._by_id[id(x)] = hit
+        return hit[1]
+
+
+def window_stats(thermo: dict, skip: float, windows: SegmentWindows | None = None) -> dict:
     """Mean +- SEM of T (C), density, enthalpy and volume over the rows after the first
-    ``skip`` fraction; also the window's row count and length (ps, from Time)."""
+    ``skip`` fraction; also the window's row count and length (ps, from Time).
+    ``windows``: the segment's shared windows (default: new ones, D55 block means)."""
+    windows = windows or SegmentWindows(skip, _block_rows(thermo))
     n = len(thermo.get("Step", ()))
     k = int(np.floor(skip * n))
     out: dict = {"rows": n, "rows_used": n - k}
@@ -116,17 +190,19 @@ def window_stats(thermo: dict, skip: float) -> dict:
         ("volume", "Volume", 0.0),
     ):
         if col in thermo:
-            ms = _mean_sem(thermo[col][k:], _block_rows(thermo))  # D55 block means
+            ms = windows(thermo[col]).mean_sem()  # D55 block means
             if ms is not None:
                 ms["mean"] += shift
             out[key] = ms
     if out.get("enthalpy"):  # D55: SEM from E + p_ext V
-        out["enthalpy"] = _enthalpy_mean_sem(thermo, slice(k, None))
+        out["enthalpy"] = _enthalpy_mean_sem(thermo, slice(k, None), out["enthalpy"])
     return out
 
 
 def kappa_t(thermo: dict, t_k: float, skip: float) -> dict | None:
-    """Isothermal compressibility (1/GPa) from the Volume column after ``skip``."""
+    """Isothermal compressibility (1/GPa) from the Volume column after ``skip``, its SEM
+    from 100 ps block means of (V - <V>)^2 (D55, as the other thermo SEMs) with
+    ``sem_lower_bound`` as :func:`sepsim.progress._mean_sem` sets it."""
     from sepsim.analysis.thermo import isothermal_compressibility
 
     v = thermo.get("Volume")
@@ -135,10 +211,12 @@ def kappa_t(thermo: dict, t_k: float, skip: float) -> dict | None:
     v = v[int(np.floor(skip * len(v))) :]
     if len(v) < 3 or np.ptp(v) == 0:
         return None
-    c = isothermal_compressibility(v, t_k)
+    block = _block_rows(thermo)
+    c = isothermal_compressibility(v, t_k, block=block)
     return {
         "kappa_T_GPa": c.kappa_T,
         "sem": c.kappa_T_sem,
+        "sem_lower_bound": bool(c.lower_bound or len(v) < SEM_RESOLVE_BLOCKS * block),
         "V_mean_A3": c.V_mean,
         "V_std_A3": c.V_std,
         "g": c.g,
@@ -171,27 +249,25 @@ def sweep_fits(points: list[dict], mass_gmol: float) -> dict:
     v_err, h_err = _floor_err(v_err), _floor_err(h_err)
     out = {"alpha_V": [], "cp": [], "notes": []}
     for lo, hi in FIT_WINDOWS_C:
-        win = (lo + 273.15 - 1e-6, hi + 273.15 + 1e-6)
+        win = fit_window_k(lo, hi)
         sel = (t >= win[0]) & (t <= win[1])
         if sel.sum() < 3:
             out["notes"].append(f"{lo:g}-{hi:g} C: fewer than 3 temperatures, no fit")
             continue
         te = thermal_expansion(t, v, v_err, T_window=win)
         cp = heat_capacity_classical(t, h, mass_gmol, h_err, T_window=win)
-        vs, vi, _, _ = linear_fit(t[sel], v[sel], v_err[sel])
-        hs, hi_, _, _ = linear_fit(t[sel], h[sel], h_err[sel])
-        chi_v = _chi2_red(t[sel], v[sel], v_err[sel], vs, vi)
-        chi_h = _chi2_red(t[sel], h[sel], h_err[sel], hs, hi_)
+        chi_v, scale_v = fit_quality(t[sel], v[sel], v_err[sel], te.line)
+        chi_h, scale_h = fit_quality(t[sel], h[sel], h_err[sel], cp.line)
         out["alpha_V"].append(
             {
                 "window_c": [lo, hi],
                 "alpha_V_per_K": te.alpha_V,
-                "err": te.alpha_V_err * _birge(chi_v),
+                "err": te.alpha_V_err * scale_v,
                 "err_unscaled": te.alpha_V_err,
                 "alpha_L_per_K": te.alpha_L,
                 "V_mean_A3": te.V_mean,
                 "n": te.n_points,
-                "line": [vs, vi],
+                "line": list(te.line),
                 "chi2_red": chi_v,
             }
         )
@@ -199,15 +275,28 @@ def sweep_fits(points: list[dict], mass_gmol: float) -> dict:
             {
                 "window_c": [lo, hi],
                 "cp_J_gK": cp.cp_JgK,
-                "err": cp.cp_JgK_err * _birge(chi_h),
+                "err": cp.cp_JgK_err * scale_h,
                 "err_unscaled": cp.cp_JgK_err,
                 "cp_kcal_molK": cp.cp_kcalmolK,
                 "n": cp.n_points,
-                "line": [hs, hi_],
+                "line": list(cp.line),
                 "chi2_red": chi_h,
             }
         )
     return out
+
+
+def fit_window_k(lo_c: float, hi_c: float) -> tuple[float, float]:
+    """A FIT_WINDOWS_C window in K, widened by T_MATCH_TOL (its set points included)."""
+    return (lo_c + 273.15 - T_MATCH_TOL, hi_c + 273.15 + T_MATCH_TOL)
+
+
+def fit_quality(x, y, s, line) -> tuple[float | None, float]:
+    """Reduced chi^2 of a SEM-weighted line fit (slope, intercept) to y +- s and the
+    error scale :func:`_birge` of it; the one fit-quality step of the sweep, gamma and
+    pore thermal fits."""
+    chi = _chi2_red(x, y, s, *line)
+    return chi, _birge(chi)
 
 
 def _floor_err(err: np.ndarray) -> np.ndarray:
@@ -235,21 +324,19 @@ EQ_POINTS = 500  # points per series and segment kept in results.json "convergen
 CONV_BLOCKS = (32, 16, 8)  # block counts of the block-average SEM check
 
 
-def drift_flags(series: dict, skip: float, block: int | None = None) -> dict:
+def drift_flags(
+    series: dict, skip: float, block: int | None = None, windows: SegmentWindows | None = None
+) -> dict:
     """Halves of the analysis window (rows after ``skip``) compared per named series:
-    :func:`sepsim.analysis.chain.drift_check` (mean difference > 2 combined SEM)."""
-    from sepsim.analysis.chain import drift_check
-
+    :func:`sepsim.analysis.chain.drift_check` (mean difference > 2 combined SEM).
+    ``windows``: the segment's shared windows (default: new ones with ``block``)."""
+    windows = windows or SegmentWindows(skip, block)
     out = {}
     for name, x in series.items():
-        x = np.asarray(x, dtype=float)
-        w = x[int(np.floor(skip * len(x))) :]
-        if len(w) < 12 or np.ptp(w) == 0:
+        win = windows(x)
+        if len(win.w) < MIN_DRIFT_ROWS or win.ptp == 0 or win.halves is None:
             continue
-        try:
-            a, b, delta, sem, drift = drift_check(w, block=block)
-        except ValueError:  # a zero-variance half
-            continue
+        a, b, delta, sem, drift = win.halves
         out[name] = {"first": a, "second": b, "delta": delta, "sem": sem, "drift": drift}
     return out
 
@@ -266,21 +353,25 @@ def block_averages(t, x, n_blocks: int = EQ_BLOCKS) -> list[dict]:
     return out
 
 
-def block_convergence(x, skip: float, block: int | None = None) -> dict | None:
+def block_mean_sem(w, n_blocks: int) -> float:
+    """SEM of the mean of ``w`` from the means of ``n_blocks`` equal blocks (the
+    block-average check, :func:`block_convergence` and :func:`sem_vs_block`)."""
+    means = np.array([b.mean() for b in np.array_split(w, n_blocks)])
+    return float(means.std(ddof=1) / np.sqrt(n_blocks))
+
+
+def block_convergence(
+    x, skip: float, block: int | None = None, windows: SegmentWindows | None = None
+) -> dict | None:
     """Block-average check of the window's SEM: the SEM from the statistical inefficiency
     (D26) vs the SEM of the means of ``CONV_BLOCKS`` blocks; once blocks are longer than
     the correlation time the block SEM plateaus at the statistical-inefficiency value.
     ``converged``: the 8-block SEM is within a factor 2 of it."""
-    x = np.asarray(x, dtype=float)
-    w = x[int(np.floor(skip * len(x))) :]
-    ms = _mean_sem(w, block)
+    win = (windows or SegmentWindows(skip, block))(x)
+    w, ms = win.w, win.mean_sem()
     if ms is None or not ms["sem"]:
         return None
-    blocks = {}
-    for nb in CONV_BLOCKS:
-        if len(w) >= 3 * nb:
-            means = np.array([b.mean() for b in np.array_split(w, nb)])
-            blocks[str(nb)] = float(means.std(ddof=1) / np.sqrt(nb))
+    blocks = {str(nb): block_mean_sem(w, nb) for nb in CONV_BLOCKS if len(w) >= 3 * nb}
     last = blocks.get(str(CONV_BLOCKS[-1]))
     return {
         "sem": ms["sem"],
@@ -289,20 +380,21 @@ def block_convergence(x, skip: float, block: int | None = None) -> dict | None:
     }
 
 
-def quantity_convergence(t_ps, x, skip: float, block: int | None = None) -> dict:
+def quantity_convergence(
+    t_ps, x, skip: float, block: int | None = None, windows: SegmentWindows | None = None
+) -> dict:
     """Convergence record of one series over a segment (``results.json`` ``convergence``):
     the series thinned to <= ``EQ_POINTS`` points (t_ps, value), ``EQ_BLOCKS`` block
     averages over the whole segment, and over the analysis window (after ``skip``) the
     mean +- SEM, statistical inefficiency g, and the halves test (second - first half,
-    combined SEM, their ratio z, drift if |z| > 2)."""
-    from sepsim.analysis.chain import drift_check
-    from sepsim.analysis.stats import timeseries_mean
-
-    t, x = np.asarray(t_ps, dtype=float), np.asarray(x, dtype=float)
+    combined SEM, their ratio z, drift if |z| > 2). ``windows``: the segment's shared
+    windows, used when their skip and block match."""
+    t = np.asarray(t_ps, dtype=float)
     if block is None and len(t) >= 2:  # D55: 100 ps block means for thermo series
         block = _block_rows({"Time": t * 1000.0})
-    k = int(np.floor(skip * len(x)))
-    w = x[k:]
+    same = windows is not None and (windows.skip, windows.block) == (skip, block)
+    win = windows(x) if same else Window(x, skip, block)
+    x, w = np.asarray(x, dtype=float), win.w
     step = max(1, -(-len(x) // EQ_POINTS))
     out: dict = {
         "t_ps": _round(t[::step]),
@@ -314,18 +406,14 @@ def quantity_convergence(t_ps, x, skip: float, block: int | None = None) -> dict
         "halves": None,
         "drift": None,
     }
-    if len(w) >= 3 and np.ptp(w) > 0:
-        tm = timeseries_mean(w, block=block)
-        out.update(sem=tm.sem, g=tm.g)
-        if len(w) >= 12:
-            try:
-                _, _, delta, sem, drift = drift_check(w, block=block)
-                out.update(
-                    halves={"delta": delta, "sem": sem, "z": delta / sem if sem else None},
-                    drift=drift,
-                )
-            except ValueError:
-                pass
+    if len(w) >= 3 and win.ptp > 0:
+        out.update(sem=win.tm.sem, g=win.tm.g)
+        if len(w) >= MIN_DRIFT_ROWS and win.halves is not None:
+            _, _, delta, sem, drift = win.halves
+            out.update(
+                halves={"delta": delta, "sem": sem, "z": delta / sem if sem else None},
+                drift=drift,
+            )
     elif len(w):
         out.update(sem=0.0, g=1.0)
     return out
@@ -342,24 +430,25 @@ def sem_vs_block(t_ps, x, skip: float) -> list[dict]:
     k = int(np.floor(skip * len(x)))
     w, tw = x[k:], t[k:]
     dt = float(np.median(np.diff(tw))) if len(tw) > 1 else 0.0
-    out = []
-    for nb in SEM_BLOCKS:
-        if len(w) >= 3 * nb:
-            means = np.array([b.mean() for b in np.array_split(w, nb)])
-            out.append(
-                {
-                    "n_blocks": nb,
-                    "block_ps": len(w) // nb * dt,
-                    "sem": float(means.std(ddof=1) / np.sqrt(nb)),
-                }
-            )
-    return out
+    return [
+        {"n_blocks": nb, "block_ps": len(w) // nb * dt, "sem": block_mean_sem(w, nb)}
+        for nb in SEM_BLOCKS
+        if len(w) >= 3 * nb
+    ]
 
 
-def segment_convergence(name: str, kind: str, thermo: dict, skip: float, cols: dict) -> dict:
+def segment_convergence(
+    name: str,
+    kind: str,
+    thermo: dict,
+    skip: float,
+    cols: dict,
+    windows: SegmentWindows | None = None,
+) -> dict:
     """``results.json`` ``convergence`` entry of one segment: name, kind, start/end time
     and analysis window (ps), :func:`quantity_convergence` per series in ``cols``, and for
-    holds the :func:`sem_vs_block` curve per series."""
+    holds the :func:`sem_vs_block` curve per series. ``windows``: the segment's shared
+    windows."""
     t = np.asarray(thermo["Time"], dtype=float) / 1000.0  # fs -> ps
     k = int(np.floor(skip * len(t)))
     out = {
@@ -369,7 +458,9 @@ def segment_convergence(name: str, kind: str, thermo: dict, skip: float, cols: d
         "t_end_ps": float(t[-1]),
         "window": [float(t[k]), float(t[-1])],
         "skip": skip,
-        "quantities": {q: quantity_convergence(t, x, skip) for q, x in cols.items()},
+        "quantities": {
+            q: quantity_convergence(t, x, skip, windows=windows) for q, x in cols.items()
+        },
     }
     if kind == "hold":
         out["sem_vs_block"] = {q: sem_vs_block(t, x, skip) for q, x in cols.items()}
@@ -463,35 +554,6 @@ def equilibration_markdown(r: dict, local: str, chain_scale: str) -> list[str]:
 # --------------------------------------------------------------------------- trajectories
 
 
-def _system_arrays(system_dir: Path) -> dict:
-    """Backbone rows, molecule index and masses of the id-sorted atoms of a system."""
-    import yaml
-
-    from sepsim.analysis.chain import backbone_chains
-    from sepsim.build.datafile import read_data_file
-
-    man = yaml.safe_load((system_dir / "manifest.yaml").read_text())
-    chains = backbone_chains(system_dir / "data.lmp", man)
-    df = read_data_file(system_dir / "data.lmp")
-    atoms = df.sorted_atoms()
-    mass_of = {int(r[0]): float(r[1]) for r in df.sections["Masses"]}
-    masses = np.array([mass_of[int(t)] for t in atoms[:, 2]])
-    _, molecule = np.unique(atoms[:, 1].astype(np.int64), return_inverse=True)
-    local, k = [], 0
-    for c in chains:
-        local.append(np.arange(k, k + len(c)))
-        k += len(c)
-    return {
-        "manifest": man,
-        "n_atoms": len(atoms),
-        "bb_rows": np.concatenate(chains),
-        "chains": local,  # backbone sites per chain, as indices into bb_rows
-        "molecule": molecule,
-        "masses": masses,
-        "mol_mass": np.bincount(molecule, weights=masses),
-    }
-
-
 def read_frames(path: Path, sys_arr: dict) -> dict:
     """Backbone positions (float32), chain COMs and Rg^2 of every frame of a DCD, with
     the system's mass centre removed per frame (box drift does not count)."""
@@ -535,10 +597,12 @@ def concat_frames(parts: list[dict]) -> tuple[dict, list[int]]:
     one trajectory; a part's first frame is dropped when it repeats the previous part's
     last frame (a run continued from a write_data of its last step), as in
     :func:`sepsim.progress.hold_chain_checks`. Returns (frames, frames taken per part)."""
+    from sepsim.analysis.chain import repeats_frame
+
     keep, taken = [], []
     for k, p in enumerate(parts):
         start = 0
-        if k and np.allclose(p["bb"][0], parts[k - 1]["bb"][-1], atol=1e-2):
+        if k and repeats_frame(p["bb"][0], parts[k - 1]["bb"][-1]):
             start = 1
         keep.append(start)
         taken.append(len(p["bb"]) - start)
@@ -550,13 +614,16 @@ def concat_frames(parts: list[dict]) -> tuple[dict, list[int]]:
 
 
 def _bond_vectors(bb: np.ndarray, chains: list[np.ndarray]) -> np.ndarray:
-    a = np.concatenate([c[:-1] for c in chains])
-    b = np.concatenate([c[1:] for c in chains])
+    """Backbone bond vectors (n_frames, n_bonds, 3) of every chain's consecutive sites."""
+    from sepsim.analysis.chain import bond_pairs
+
+    a, b = bond_pairs(chains)
     return bb[:, b] - bb[:, a]
 
 
-def _mean_sd(x) -> dict:
-    """Mean +- SEM (statistical inefficiency) of a per-frame series."""
+def _frame_mean_sem(x) -> dict:
+    """Mean +- SEM (plain statistical inefficiency, no block means) of a per-frame
+    series; SEM None for fewer than 3 frames."""
     ms = _mean_sem(x)
     if ms is None:
         x = np.asarray(x, dtype=float)
@@ -577,20 +644,6 @@ def hold_trajectory(
     :class:`sepsim.progress.Segment`) from its DCD and burst DCDs. ``before``: DCDs of
     the same continuous run read ahead of the hold DCD as one trajectory (an extension
     after the prep hold, D47/D56), all with the hold's frame interval."""
-    from sepsim.analysis.chain import (
-        CARBONS_PER_SITE,
-        characteristic_ratio,
-        decorrelation_time,
-    )
-    from sepsim.analysis.mobility import (
-        average_curves,
-        diffusion_coefficient,
-        mean_over_batches,
-        msd,
-        p2_autocorrelation,
-        stitch_curves,
-    )
-
     names = list(zip(seg.dcd, seg.dump_every, strict=True))
     hold = [(f, n) for f, n in names if "_burst" not in f]
     bursts = [(f, n) for f, n in names if "_burst" in f]
@@ -601,24 +654,65 @@ def hold_trajectory(
         return out
     dcd, every = hold[0]
     frame_ps = every * seg.dt_fs / 1000.0
-    tr = read_frames(run_dir / dcd, sys_arr)
+    tr = _hold_frames(run_dir / dcd, sys_arr, before, frame_ps, out)
+    nf = len(tr["bb"])
+    if nf < MIN_HOLD_FRAMES:
+        out["notes"].append(f"trajectory not available ({dcd}: only {nf} frames)")
+        return out
+    out.update(
+        available=True, dcd=dcd, frames=nf, frame_ps=frame_ps, hold_ns=(nf - 1) * frame_ps / 1000
+    )
+    curves, used = _mobility_curves(run_dir, tr, bursts, seg.dt_fs, sys_arr, frame_ps, out["notes"])
+    out["bursts"] = {"listed": len(bursts), "used": used}
+    cg = sys_arr["manifest"]["resolution"] == "cg"
+    out.update(_mobility_results(curves, float(tr["rg2"].mean()), cg))
+    size, size_curves = _hold_chain_size(tr, sys_arr, frame_ps, max_frames)
+    out.update(size)
+    (lm, vm, sm), (lc, vc, _), (lp, vp, _) = curves["msd"], curves["com"], curves["p2"]
+    out["curves"] = {
+        "msd_lag_ps": _round(_log_thin(lm)),
+        "msd_A2": _round(vm[_log_idx(lm)]),
+        "msd_src": sm[_log_idx(lm)].tolist(),
+        "com_lag_ps": _round(_log_thin(lc)),
+        "com_A2": _round(vc[_log_idx(lc)]),
+        "p2_lag_ps": _round(_log_thin(lp)),
+        "p2": _round(vp[_log_idx(lp)]),
+        **size_curves,
+    }
+    return out
+
+
+def _hold_frames(path: Path, sys_arr: dict, before, frame_ps: float, out: dict) -> dict:
+    """:func:`read_frames` of the hold DCD ``path``, with the ``before`` DCDs read ahead
+    of it as one trajectory (:func:`concat_frames`; their parts and boundaries go to
+    ``out``)."""
+    tr = read_frames(path, sys_arr)
     if before:
-        names_all = [Path(b) for b in before] + [run_dir / dcd]
+        names_all = [Path(b) for b in before] + [path]
         tr, taken = concat_frames([read_frames(Path(b), sys_arr) for b in before] + [tr])
         starts = np.cumsum(taken)[:-1]
         out["parts"] = [
             {"file": str(f), "frames": n} for f, n in zip(names_all, taken, strict=True)
         ]
         out["boundaries_ps"] = [float((k - 0.5) * frame_ps) for k in starts]
-    nf = len(tr["bb"])
-    if nf < 6:
-        out["notes"].append(f"trajectory not available ({dcd}: only {nf} frames)")
-        return out
-    out.update(
-        available=True, dcd=dcd, frames=nf, frame_ps=frame_ps, hold_ns=(nf - 1) * frame_ps / 1000
+    return tr
+
+
+def _mobility_curves(run_dir: Path, tr: dict, bursts, dt_fs: float, sys_arr, frame_ps, notes):
+    """Backbone-site MSD, chain COM MSD and bond P2 ACF of a hold: the hold frames for
+    lags up to half the hold, stitched with the D46 burst DCDs (0.1 ps frames over 10 ps)
+    below the hold frame interval. Returns ({"msd", "com", "p2"}: (lags, values, source)
+    each, bursts used); burst problems go to ``notes``."""
+    from sepsim.analysis.mobility import (
+        average_curves,
+        mean_over_batches,
+        msd,
+        p2_autocorrelation,
+        stitch_curves,
     )
+
     chains = sys_arr["chains"]
-    lag_max = nf // 2
+    lag_max = len(tr["bb"]) // 2
     lags_h, msd_h = mean_over_batches(msd, tr["bb"], frame_ps, lag_max)
     _, com_h = msd(tr["com"], frame_ps, lag_max)
     vec = _bond_vectors(tr["bb"], chains)
@@ -634,12 +728,12 @@ def hold_trajectory(
         try:
             b = read_frames(path, sys_arr)
         except (OSError, ValueError) as exc:
-            out["notes"].append(f"{f} skipped: {exc}")
+            notes.append(f"{f} skipped: {exc}")
             continue
         m = len(b["bb"])
         if m < 3:
             continue
-        b_ps = n * seg.dt_fs / 1000.0
+        b_ps = n * dt_fs / 1000.0
         lb, mb = mean_over_batches(msd, b["bb"], b_ps, m - 1)
         b_msd.append((lb, mb, m))
         b_com.append((*msd(b["com"], b_ps, m - 1), m))
@@ -647,10 +741,9 @@ def hold_trajectory(
         b_p2.append((lb, pb, m))
         used.append(f)
     if bursts and not used:
-        out["notes"].append(f"burst DCDs not found ({len(bursts)} listed in the deck)")
+        notes.append(f"burst DCDs not found ({len(bursts)} listed in the deck)")
     elif not bursts:
-        out["notes"].append("no burst DCDs (deck without D46 bursts): lags from the hold DCD only")
-    out["bursts"] = {"listed": len(bursts), "used": len(used)}
+        notes.append("no burst DCDs (deck without D46 bursts): lags from the hold DCD only")
 
     def combine(burst_curves, lags, vals):
         if not burst_curves:
@@ -658,11 +751,22 @@ def hold_trajectory(
         bl, bv = average_curves(burst_curves)
         return stitch_curves(bl, bv, lags, vals)
 
-    lm, vm, sm = combine(b_msd, lags_h, msd_h)
-    lc, vc, _sc = combine(b_com, lags_h, com_h)
-    lp, vp, _sp = combine(b_p2, lags_h, p2_h)
+    curves = {
+        "msd": combine(b_msd, lags_h, msd_h),
+        "com": combine(b_com, lags_h, com_h),
+        "p2": combine(b_p2, lags_h, p2_h),
+    }
+    return curves, len(used)
 
-    fit = diffusion_coefficient(lc, vc, D_MIN_SLOPE, D_MIN_SPAN, rg2=float(tr["rg2"].mean()))
+
+def _mobility_results(curves: dict, rg2_mean: float, cg: bool) -> dict:
+    """The ``segment_msd``, ``com_msd`` (D_COM by the D49/D55 criterion) and ``p2``
+    entries of a hold from its :func:`_mobility_curves`."""
+    from sepsim.analysis.chain import decorrelation_time
+    from sepsim.analysis.mobility import diffusion_coefficient
+
+    (lm, vm, _), (lc, vc, _), (lp, vp, _) = curves["msd"], curves["com"], curves["p2"]
+    fit = diffusion_coefficient(lc, vc, D_MIN_SLOPE, D_MIN_SPAN, rg2=rg2_mean)
     com = {
         "lag_max_ps": float(lc[-1]),
         "msd_at_max_A2": float(vc[-1]),
@@ -679,81 +783,88 @@ def hold_trajectory(
             t_start_ps=fit.t_start,
             t_end_ps=fit.t_end,
         )
-    t_1e = decorrelation_time(lp, vp)
     seg_msd = {"lag_max_ps": float(lm[-1]), "msd_at_max_A2": float(vm[-1])}
     for lag in (1.0, 10.0, 1000.0):
         k = np.flatnonzero(np.isclose(lm, lag, rtol=1e-6))
         if len(k):
             seg_msd[f"msd_{lag:g}ps_A2"] = float(vm[k[0]])
+    p2 = {
+        "t_1e_ps": decorrelation_time(lp, vp),
+        "lag_max_ps": float(lp[-1]),
+        "at_max": float(vp[-1]),
+        "vectors": "bead-bead bonds" if cg else "backbone C-C bonds",
+    }
+    return {"segment_msd": seg_msd, "com_msd": com, "p2": p2}
 
-    # chain size over the hold
-    rg2 = _mean_sd(tr["rg2"].mean(axis=1))
-    first = np.array([c[0] for c in chains])
-    last = np.array([c[-1] for c in chains])
-    ree = tr["bb"][:, last].astype(float) - tr["bb"][:, first]
+
+def _hold_chain_size(tr: dict, sys_arr: dict, frame_ps: float, max_frames: int):
+    """Chain size over a hold (``rg``, ``ree``, ``c_n`` with block series), the D56
+    ``relaxation`` and the ``crystallinity`` monitor; also their plot curves."""
+    chains, man = sys_arr["chains"], sys_arr["manifest"]
+    nf = len(tr["bb"])
+    rg2 = _frame_mean_sem(tr["rg2"].mean(axis=1))
+    ree = _end_to_end(tr["bb"], chains)
     ree2_t = np.sum(ree**2, axis=2).mean(axis=1)
-    ree2 = _mean_sd(ree2_t)
+    ree2 = _frame_mean_sem(ree2_t)
     t_ps = np.arange(nf) * frame_ps
-    relax, relax_curves = chain_relaxation(ree, tr["bb"], chains, frame_ps, lag_max)
+    relax, relax_curves = chain_relaxation(ree, tr["bb"], chains, frame_ps, nf // 2)
     pick = np.unique(np.linspace(0, nf - 1, min(nf, max_frames)).round().astype(int))
-    res = sys_arr["manifest"]["resolution"]
-    cg = res == "cg"
-    nc, cn = characteristic_ratio(
-        tr["bb"][pick].astype(float),
-        chains,
-        carbons_per_site=CARBONS_PER_SITE[res],
-        bond_length=1.54 if cg else None,
-        per_frame=True,
-    )
-    sel = nc >= 100
-    cn_t = cn[:, sel].mean(axis=1) if sel.any() else None
-    cn_plateau = _mean_sd(cn_t) if sel.any() else None
-    try:
-        cryst = crystallinity_monitor(tr, chains, sys_arr["manifest"])
-    except (ValueError, KeyError, OSError) as exc:
-        cryst = {"available": False, "note": f"crystallinity not computed: {exc}"}
-    out.update(
-        segment_msd=seg_msd,
-        com_msd=com,
-        p2={
-            "t_1e_ps": t_1e,
-            "lag_max_ps": float(lp[-1]),
-            "at_max": float(vp[-1]),
-            "vectors": "bead-bead bonds" if cg else "backbone C-C bonds",
-        },
-        rg={
+    nc, cn, cn_t = _cn_frames(tr["bb"][pick], chains, man)
+    block = {
+        "rg": {
             "rg2_A2": rg2,
             "rg_A": _root(rg2),
             "series": block_series(t_ps, tr["rg2"].mean(axis=1), "rg2_A2"),
         },
-        ree={
+        "ree": {
             "ree2_A2": ree2,
             "ree_A": _root(ree2),
             "series": block_series(t_ps, ree2_t, "ree2_A2"),
         },
-        c_n={
-            "plateau": cn_plateau,
+        "c_n": {
+            "plateau": None if cn_t is None else _frame_mean_sem(cn_t),
             "frames": len(pick),
-            "n_min": 100,
-            "bond_length": 1.54 if cg else None,
+            "n_min": CN_N_MIN,
+            "bond_length": CG_CC_BOND_A if man["resolution"] == "cg" else None,
             "series": None if cn_t is None else block_series(t_ps[pick], cn_t, "plateau"),
         },
-        relaxation=relax,
-        crystallinity=cryst,
-        curves={
-            "msd_lag_ps": _round(_log_thin(lm)),
-            "msd_A2": _round(vm[_log_idx(lm)]),
-            "msd_src": sm[_log_idx(lm)].tolist(),
-            "com_lag_ps": _round(_log_thin(lc)),
-            "com_A2": _round(vc[_log_idx(lc)]),
-            "p2_lag_ps": _round(_log_thin(lp)),
-            "p2": _round(vp[_log_idx(lp)]),
-            "cn_n": nc.tolist(),
-            "cn": _round(cn.mean(axis=0)),
-            **relax_curves,
-        },
+        "relaxation": relax,
+        "crystallinity": _crystallinity(tr, chains, man),
+    }
+    curves = {"cn_n": nc.tolist(), "cn": _round(cn.mean(axis=0)), **relax_curves}
+    return block, curves
+
+
+def _end_to_end(bb: np.ndarray, chains) -> np.ndarray:
+    """End-to-end vectors (n_frames, n_chains, 3; last minus first backbone site)."""
+    first = np.array([c[0] for c in chains])
+    last = np.array([c[-1] for c in chains])
+    return bb[:, last].astype(float) - bb[:, first]
+
+
+def _cn_frames(bb: np.ndarray, chains, manifest: dict):
+    """Per-frame C_n of backbone frames ``bb`` (CG: carbon-equivalent n and the C-C bond,
+    D37): (carbons n, C_n per frame, plateau over n >= CN_N_MIN per frame or None)."""
+    from sepsim.analysis.chain import CARBONS_PER_SITE, characteristic_ratio
+
+    res = manifest["resolution"]
+    nc, cn = characteristic_ratio(
+        bb.astype(float),
+        chains,
+        carbons_per_site=CARBONS_PER_SITE[res],
+        bond_length=CG_CC_BOND_A if res == "cg" else None,
+        per_frame=True,
     )
-    return out
+    sel = nc >= CN_N_MIN
+    return nc, cn, (cn[:, sel].mean(axis=1) if sel.any() else None)
+
+
+def _crystallinity(tr: dict, chains, manifest: dict) -> dict:
+    """:func:`crystallinity_monitor`, or a note when it cannot be computed."""
+    try:
+        return crystallinity_monitor(tr, chains, manifest)
+    except (ValueError, KeyError, OSError) as exc:
+        return {"available": False, "note": f"crystallinity not computed: {exc}"}
 
 
 def step_static(run_dir: Path, seg, sys_arr: dict, skip: float = STEP_SKIP) -> dict:
@@ -762,8 +873,6 @@ def step_static(run_dir: Path, seg, sys_arr: dict, skip: float = STEP_SKIP) -> d
     its thermo stats): <Rg^2>^1/2, <R_ee^2>^1/2 and the C_n plateau (n >= 100 carbons) with
     SEMs from the statistical inefficiency of the per-frame values, and the crystallinity
     monitor. No MSD / ACF / relaxation: a 5 ns step is too short for them."""
-    from sepsim.analysis.chain import CARBONS_PER_SITE, characteristic_ratio
-
     files = [f for f in seg.dcd if "_burst" not in f]
     out: dict = {"available": False, "notes": []}
     if not files or not (run_dir / files[0]).is_file():
@@ -781,26 +890,11 @@ def step_static(run_dir: Path, seg, sys_arr: dict, skip: float = STEP_SKIP) -> d
     if nf < 3:
         out["notes"].append(f"trajectory not available ({dcd}: only {nf} frames in the window)")
         return out
-    chains = sys_arr["chains"]
-    first = np.array([c[0] for c in chains])
-    last = np.array([c[-1] for c in chains])
-    ree = tr["bb"][:, last].astype(float) - tr["bb"][:, first]
-    rg2 = _mean_sd(tr["rg2"].mean(axis=1))
-    ree2 = _mean_sd(np.sum(ree**2, axis=2).mean(axis=1))
-    res = sys_arr["manifest"]["resolution"]
-    cg = res == "cg"
-    nc, cn = characteristic_ratio(
-        tr["bb"].astype(float),
-        chains,
-        carbons_per_site=CARBONS_PER_SITE[res],
-        bond_length=1.54 if cg else None,
-        per_frame=True,
-    )
-    sel = nc >= 100
-    try:
-        cryst = crystallinity_monitor(tr, chains, sys_arr["manifest"])
-    except (ValueError, KeyError, OSError) as exc:
-        cryst = {"available": False, "note": f"crystallinity not computed: {exc}"}
+    chains, man = sys_arr["chains"], sys_arr["manifest"]
+    ree = _end_to_end(tr["bb"], chains)
+    rg2 = _frame_mean_sem(tr["rg2"].mean(axis=1))
+    ree2 = _frame_mean_sem(np.sum(ree**2, axis=2).mean(axis=1))
+    _, _, cn_t = _cn_frames(tr["bb"], chains, man)
     out.update(
         available=True,
         dcd=dcd,
@@ -811,12 +905,12 @@ def step_static(run_dir: Path, seg, sys_arr: dict, skip: float = STEP_SKIP) -> d
         rg={"rg2_A2": rg2, "rg_A": _root(rg2)},
         ree={"ree2_A2": ree2, "ree_A": _root(ree2)},
         c_n={
-            "plateau": _mean_sd(cn[:, sel].mean(axis=1)) if sel.any() else None,
+            "plateau": None if cn_t is None else _frame_mean_sem(cn_t),
             "frames": nf,
-            "n_min": 100,
-            "bond_length": 1.54 if cg else None,
+            "n_min": CN_N_MIN,
+            "bond_length": CG_CC_BOND_A if man["resolution"] == "cg" else None,
         },
-        crystallinity=cryst,
+        crystallinity=_crystallinity(tr, chains, man),
     )
     return out
 
@@ -1067,31 +1161,75 @@ def analyze_sweep(
     out_dir = out_dir_for(run_dir, system, out)
     segments = parse_deck(deck)
     log = read_log(run_dir / LOG_NAME)
-    thermo = segment_thermo(segments, log)
-    now = dt.datetime.now().astimezone()
-    report: dict = {
-        "version": VERSION,
-        "generated": now.isoformat(timespec="seconds"),
-        "generated_on": platform.node(),
-        "system": system,
-        "resolution": resolution,
-        "stage": run_dir.resolve().name,
-        "run_dir": str(run_dir.resolve()),
-        "run_status": (manifest or {}).get("status"),
-        "run_node": (manifest or {}).get("hostname"),
-        "run_git": (manifest or {}).get("git"),
-        "code_git": git_info(CODE_DIR),
-        "method": {
-            "step_window": f"second half ({STEP_SKIP:.0%} of rows dropped)",
-            "hold_window": f"without the first {HOLD_SKIP:.0%} of rows",
-            "sem": "statistical inefficiency (D26)",
-            "max_frames": max_frames,
-            "d_criterion": {"min_log_slope": D_MIN_SLOPE, "min_span": D_MIN_SPAN},
-        },
-        "notes": [],
+    report = report_header(VERSION, run_dir, manifest, system, resolution)
+    report["method"] = {
+        "step_window": f"second half ({STEP_SKIP:.0%} of rows dropped)",
+        "hold_window": f"without the first {HOLD_SKIP:.0%} of rows",
+        "sem": "statistical inefficiency (D26)",
+        "max_frames": max_frames,
+        "d_criterion": {"min_log_slope": D_MIN_SLOPE, "min_span": D_MIN_SPAN},
     }
-    rows, mass, eq = [], None, []
-    step_kappa: dict = {}  # sweep index -> kappa_T of a step (second half, as its stats)
+    report["notes"] = []
+    thermo = segment_thermo(segments, log, report["notes"])
+    rows, eq, step_kappa, mass = sweep_rows(segments, thermo)
+    report["segments"] = rows
+    report["mass_gmol"] = mass
+    missing = [r["name"] for r in rows if not r["done"]]
+    if missing:
+        report["notes"].append(f"{len(missing)} segment(s) not complete: {', '.join(missing)}")
+    pts = fit_points([r for r in rows if r["done"]])
+    report["fit_points_c"] = [p["t_set_c"] for p in pts]
+    report["fits"] = sweep_fits(pts, mass) if mass and len(pts) >= 3 else None
+
+    sys_arr = load_system_arrays(Path(systems) / system, report["notes"]) if traj else None
+    hold_seg = {s.sweep_index: s for s in segments if s.sweep_kind == "hold" and not s.vdos}
+    report["holds"] = [
+        {
+            "index": r["index"],
+            "t_c": r["t_set_c"],
+            "kappa": r.get("kappa"),
+            "traj": trajectory_or_note(
+                traj,
+                sys_arr,
+                r["done"],
+                "hold",
+                lambda r=r: hold_trajectory(run_dir, hold_seg[r["index"]], sys_arr, max_frames),
+            ),
+        }
+        for r in rows
+        if r["kind"] == "hold"
+    ]
+    # per-step kappa_T and static chain properties (steps: second half, as their stats)
+    step_seg = {s.sweep_index: s for s in segments if s.sweep_kind == "step" and not s.vdos}
+    report["steps"] = [
+        {
+            "index": r["index"],
+            "t_c": r["t_set_c"],
+            "kappa": step_kappa.get(r["index"]),
+            "traj": trajectory_or_note(
+                traj,
+                sys_arr,
+                r["done"],
+                "step",
+                lambda r=r: step_static(run_dir, step_seg[r["index"]], sys_arr),
+            ),
+        }
+        for r in rows
+        if r["kind"] == "step"
+    ]
+    report["caveats"] = sweep_caveats(report, run_dir, traj)
+    report["convergence"] = eq
+    if plots:
+        report["plots"] = make_plots(report, out_dir, eq)
+    return report, out_dir
+
+
+def sweep_rows(segments, thermo) -> tuple[list[dict], list[dict], dict, float | None]:
+    """The sweep's MD segments (steps and holds, VDOS runs skipped) as report rows: window
+    stats, drift flags, the holds' block-average check and kappa_T; their convergence
+    records; kappa_T per step (sweep index -> its second half); and the system mass
+    (from the first Density x Volume row)."""
+    rows, eq, step_kappa, mass = [], [], {}, None
     for seg, th in zip(segments, thermo, strict=True):
         if seg.sweep_index is None or seg.vdos:
             continue
@@ -1104,16 +1242,18 @@ def analyze_sweep(
             "t_k": seg.t_target_k,
             "done": th is not None,
         }
-        if th is not None and len(th.get("Step", ())) >= 6:
+        if th is not None and len(th.get("Step", ())) >= MIN_STAT_ROWS:
             skip = HOLD_SKIP if seg.sweep_kind == "hold" else STEP_SKIP
-            row["stats"] = window_stats(th, skip)
+            windows = SegmentWindows(skip, _block_rows(th))  # D55 block means
+            row["stats"] = window_stats(th, skip, windows)
             main = {
                 k: th[c] for k, c in (("density", "Density"), ("enthalpy", "Enthalpy")) if c in th
             }
-            blk = _block_rows(th)
-            row["drift"] = drift_flags(main, skip, blk)
+            row["drift"] = drift_flags(main, skip, windows=windows)
             if seg.sweep_kind == "hold":
-                row["convergence"] = {k: block_convergence(x, skip, blk) for k, x in main.items()}
+                row["convergence"] = {
+                    k: block_convergence(x, skip, windows=windows) for k, x in main.items()
+                }
             cols = {
                 k: th[c]
                 for k, c in (
@@ -1125,7 +1265,7 @@ def analyze_sweep(
                 if c in th
             }
             if "Time" in th:
-                eq.append(segment_convergence(row["name"], seg.sweep_kind, th, skip, cols))
+                eq.append(segment_convergence(row["name"], seg.sweep_kind, th, skip, cols, windows))
             if mass is None and "Density" in th and "Volume" in th:
                 mass = float(th["Density"][0] * th["Volume"][0] * AVOGADRO * A3_CM3)
             if seg.sweep_kind == "hold":
@@ -1133,61 +1273,13 @@ def analyze_sweep(
             elif seg.sweep_kind == "step":
                 step_kappa[seg.sweep_index] = kappa_t(th, seg.t_target_k, STEP_SKIP)
         rows.append(row)
-    report["segments"] = rows
-    report["mass_gmol"] = mass
-    missing = [r["name"] for r in rows if not r["done"]]
-    if missing:
-        report["notes"].append(f"{len(missing)} segment(s) not complete: {', '.join(missing)}")
-    pts = fit_points([r for r in rows if r["done"]])
-    report["fit_points_c"] = [p["t_set_c"] for p in pts]
-    report["fits"] = sweep_fits(pts, mass) if mass and len(pts) >= 3 else None
+    return rows, eq, step_kappa, mass
 
-    holds = []
-    seg_by_index = {s.sweep_index: s for s in segments if s.sweep_kind == "hold" and not s.vdos}
-    sys_arr = None
-    system_dir = Path(systems) / system
-    if traj:
-        try:
-            sys_arr = _system_arrays(system_dir)
-        except (OSError, ValueError, KeyError) as exc:
-            report["notes"].append(f"system {system_dir} not usable: {exc}")
-    for r in rows:
-        if r["kind"] != "hold":
-            continue
-        h = {"index": r["index"], "t_c": r["t_set_c"], "kappa": r.get("kappa")}
-        if not traj:
-            h["traj"] = {"available": False, "notes": ["trajectory analysis skipped (--no-traj)"]}
-        elif sys_arr is None:
-            h["traj"] = {"available": False, "notes": ["trajectory not available (no system)"]}
-        elif not r["done"]:
-            h["traj"] = {"available": False, "notes": ["hold not complete"]}
-        else:
-            try:
-                h["traj"] = hold_trajectory(run_dir, seg_by_index[r["index"]], sys_arr, max_frames)
-            except (OSError, ValueError) as exc:
-                h["traj"] = {"available": False, "notes": [f"trajectory failed: {exc}"]}
-        holds.append(h)
-    report["holds"] = holds
-    # per-step kappa_T and static chain properties (steps: second half, as their stats)
-    steps = []
-    seg_steps = {s.sweep_index: s for s in segments if s.sweep_kind == "step" and not s.vdos}
-    for r in rows:
-        if r["kind"] != "step":
-            continue
-        st = {"index": r["index"], "t_c": r["t_set_c"], "kappa": step_kappa.get(r["index"])}
-        if not traj:
-            st["traj"] = {"available": False, "notes": ["trajectory analysis skipped (--no-traj)"]}
-        elif sys_arr is None:
-            st["traj"] = {"available": False, "notes": ["trajectory not available (no system)"]}
-        elif not r["done"]:
-            st["traj"] = {"available": False, "notes": ["step not complete"]}
-        else:
-            try:
-                st["traj"] = step_static(run_dir, seg_steps[r["index"]], sys_arr)
-            except (OSError, ValueError) as exc:
-                st["traj"] = {"available": False, "notes": [f"trajectory failed: {exc}"]}
-        steps.append(st)
-    report["steps"] = steps
+
+def sweep_caveats(report: dict, run_dir: Path, traj: bool) -> list[str]:
+    """The sweep report's caveats: Cp, unrelaxed chains (D47/D37), the fits, holds
+    without trajectory results and CG time."""
+    resolution = report["resolution"]
     caveats = [_cp_caveat(resolution)]
     caveats += chain_relaxation_caveat(run_dir)
     caveats.append(
@@ -1196,19 +1288,12 @@ def analyze_sweep(
         " by √χ²_red, and a large χ²_red over 25–160 °C means α_V or Cp depends on T"
         " (compare the two half windows)."
     )
-    no_traj = [f"{h['t_c']:g} C" for h in holds if not h["traj"]["available"]]
+    no_traj = [f"{h['t_c']:g} C" for h in report["holds"] if not h["traj"]["available"]]
     if no_traj and traj:
         caveats.append(f"No trajectory results for the hold(s) at {', '.join(no_traj)}.")
     if resolution == "cg":
-        caveats.append(
-            "CG time is not real time: SDK beads move faster than the atoms they"
-            " represent, so MSD, D_COM and P2 times are model times (not rescaled)."
-        )
-    report["caveats"] = caveats
-    report["convergence"] = eq
-    if plots:
-        report["plots"] = make_plots(report, out_dir, eq)
-    return report, out_dir
+        caveats.append(CG_TIME_NOTE)
+    return caveats
 
 
 SWEEP_EQ_PANELS = (
@@ -1309,38 +1394,31 @@ def draw_plots(jobs, report: dict, out_dir: Path) -> dict:
 # --------------------------------------------------------------------------- markdown
 
 
-def _pm(ms: dict | None, fmt: str) -> str:
-    if not ms:
-        return ""
-    if ms.get("sem") is None:
-        return f"{ms['mean']:{fmt}}"
-    return f"{ms['mean']:{fmt}} ± {ms['sem']:{fmt}}"
-
-
 def render_markdown(r: dict) -> str:
     """results.md for one sweep analysis."""
-    cg, rg = r.get("code_git") or {}, r.get("run_git") or {}
-    lines = [
-        f"# Sweep analysis: {r['system']} / {r['stage']}",
-        "",
-        (
-            f"- system: `{r['system']}` ({r.get('resolution')}); source run directory"
-            f" `{r['run_dir']}` (status {r.get('run_status')}, node {r.get('run_node')}, run"
-            f" code commit {(rg.get('commit') or 'n/a')[:10]})"
-        ),
-        f"- analysis: `sepsim analyze sweep` (D49), code commit {(cg.get('commit') or 'n/a')[:10]}"
-        + (" (dirty)" if cg.get("dirty") else "")
-        + f", {r['generated'][:16].replace('T', ' ')} on {r['generated_on']}",
-        (
-            f"- windows: steps {r['method']['step_window']}; holds {r['method']['hold_window']};"
-            f" SEM from the {r['method']['sem']}"
-        ),
-    ]
+    lines = header_markdown(r, "Sweep analysis", "sweep", "D49")
+    lines.append(
+        f"- windows: steps {r['method']['step_window']}; holds {r['method']['hold_window']};"
+        f" SEM from the {r['method']['sem']}"
+    )
     if r.get("mass_gmol"):
         lines.append(f"- system mass {r['mass_gmol']:.1f} g/mol (from Density × Volume)")
     for n in r.get("notes", []):
         lines.append(f"- note: {n}")
-    lines += [
+    lines += _segments_markdown(r)
+    lines += _kappa_markdown(r)
+    lines += _steps_markdown(r)
+    lines += _fits_markdown(r)
+    lines += _holds_markdown(r)
+    lines += relaxation_markdown([(h["t_c"], h["traj"]) for h in r["holds"]], r.get("resolution"))
+    lines += equilibration_markdown(r, LOCAL_NOTE, CHAIN_NOTE)
+    lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
+    lines += plots_markdown(r.get("plots"))
+    return "\n".join(lines) + "\n"
+
+
+def _segments_markdown(r: dict) -> list[str]:
+    lines = [
         "",
         "## Segments",
         "",
@@ -1361,13 +1439,18 @@ def render_markdown(r: dict) -> str:
             if st
             else f"| {s['index']} | {s['kind']} | {s['t_set_c']:g} | not complete | | | | | |"
         )
-    lines += [
+    return lines
+
+
+def _kappa_markdown(r: dict) -> list[str]:
+    lines = [
         "",
         "## Isothermal compressibility (holds)",
         "",
         (
             "κ_T = (⟨V²⟩ − ⟨V⟩²)/(k_B T ⟨V⟩) over the hold window (NPT iso Nosé–Hoover), T the set"
-            " point; SEM = statistical-inefficiency SEM of (V − ⟨V⟩)² (g given)."
+            " point; SEM = statistical-inefficiency SEM of (V − ⟨V⟩)² on 100 ps block means, as"
+            " for the other thermo SEMs (D55; g given in raw samples)."
         ),
         "",
         "| T (°C) | κ_T (GPa⁻¹) | σ_V (Å³) | ⟨V⟩ (Å³) | g | samples |",
@@ -1381,61 +1464,73 @@ def render_markdown(r: dict) -> str:
             if k
             else f"| {h['t_c']:g} | n/a | | | | |"
         )
+    return lines
+
+
+def _steps_markdown(r: dict) -> list[str]:
     steps = r.get("steps") or []
-    if steps:
-        lines += [
-            "",
-            "## Sweep steps: κ_T and chain size",
-            "",
-            (
-                "Per step, over its second half (as its thermo stats): κ_T as for the holds and"
-                " the static chain properties from the step DCD (no MSD / relaxation). The"
-                " steps are short, so κ_T is noisier and the chain shape is largely inherited"
-                " from the segment before."
-            ),
-            "",
-            "| T (°C) | κ_T (GPa⁻¹) | frames | R_g (Å) | R_ee (Å) | C_n plateau | ordered fraction |",
-            "|---|---|---|---|---|---|---|",
-        ]
-        for st in steps:
-            k, t = st.get("kappa"), st.get("traj") or {}
-            kap = f"{k['kappa_T_GPa']:.3f} ± {k['sem']:.3f}" if k else "n/a"
-            if t.get("available"):
-                cr = t.get("crystallinity") or {}
-                frac = f"{cr['fraction']['mean']:.3f}" if cr.get("available") else "n/a"
-                lines.append(
-                    f"| {st['t_c']:g} | {kap} | {t['frames']} | {_pm(t['rg']['rg_A'], '.2f')} |"
-                    f" {_pm(t['ree']['ree_A'], '.1f')} | {_pm(t['c_n']['plateau'], '.2f')} |"
-                    f" {frac} |"
-                )
-            else:
-                note = "; ".join(t.get("notes") or []) or "no trajectory"
-                lines.append(f"| {st['t_c']:g} | {kap} | {note} | | | | |")
-    f = r.get("fits")
-    lines += ["", "## Thermal expansion and classical Cp (fits over the sweep)", ""]
-    if not f:
-        lines.append("Not enough completed segments for a fit.")
-    else:
-        lines += [
-            (
-                "Linear fits in T over each window, SEM-weighted, one point per temperature"
-                f" (hold where there is one): {', '.join(f'{t:g}' for t in r['fit_points_c'])} °C."
-                " α_V = (1/⟨V⟩) dV/dT; Cp = dH/dT per gram; errors 1σ from the fit, scaled by"
-                " √χ²_red when χ²_red > 1."
-            ),
-            "",
-            "| window (°C) | points | α_V (10⁻⁴ K⁻¹) | χ²_red (V) | Cp (J g⁻¹ K⁻¹) | χ²_red (H) |",
-            "|---|---|---|---|---|---|",
-        ]
-        for a, c in zip(f["alpha_V"], f["cp"], strict=True):
+    if not steps:
+        return []
+    lines = [
+        "",
+        "## Sweep steps: κ_T and chain size",
+        "",
+        (
+            "Per step, over its second half (as its thermo stats): κ_T as for the holds and"
+            " the static chain properties from the step DCD (no MSD / relaxation). The"
+            " steps are short, so κ_T is noisier and the chain shape is largely inherited"
+            " from the segment before."
+        ),
+        "",
+        "| T (°C) | κ_T (GPa⁻¹) | frames | R_g (Å) | R_ee (Å) | C_n plateau | ordered fraction |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for st in steps:
+        k, t = st.get("kappa"), st.get("traj") or {}
+        kap = f"{k['kappa_T_GPa']:.3f} ± {k['sem']:.3f}" if k else "n/a"
+        if t.get("available"):
+            cr = t.get("crystallinity") or {}
+            frac = f"{cr['fraction']['mean']:.3f}" if cr.get("available") else "n/a"
             lines.append(
-                f"| {a['window_c'][0]:g}–{a['window_c'][1]:g} | {a['n']} |"
-                f" {a['alpha_V_per_K'] * 1e4:.3f} ± {a['err'] * 1e4:.3f} | {_f(a['chi2_red'])} |"
-                f" {c['cp_J_gK']:.3f} ± {c['err']:.3f} | {_f(c['chi2_red'])} |"
+                f"| {st['t_c']:g} | {kap} | {t['frames']} | {_pm(t['rg']['rg_A'], '.2f')} |"
+                f" {_pm(t['ree']['ree_A'], '.1f')} | {_pm(t['c_n']['plateau'], '.2f')} |"
+                f" {frac} |"
             )
-        for n in f.get("notes", []):
-            lines.append(f"- {n}")
+        else:
+            note = "; ".join(t.get("notes") or []) or "no trajectory"
+            lines.append(f"| {st['t_c']:g} | {kap} | {note} | | | | |")
+    return lines
+
+
+def _fits_markdown(r: dict) -> list[str]:
+    f = r.get("fits")
+    lines = ["", "## Thermal expansion and classical Cp (fits over the sweep)", ""]
+    if not f:
+        return lines + ["Not enough completed segments for a fit."]
     lines += [
+        (
+            "Linear fits in T over each window, SEM-weighted, one point per temperature"
+            f" (hold where there is one): {', '.join(f'{t:g}' for t in r['fit_points_c'])} °C."
+            " α_V = (1/⟨V⟩) dV/dT; Cp = dH/dT per gram; errors 1σ from the fit, scaled by"
+            " √χ²_red when χ²_red > 1."
+        ),
+        "",
+        "| window (°C) | points | α_V (10⁻⁴ K⁻¹) | χ²_red (V) | Cp (J g⁻¹ K⁻¹) | χ²_red (H) |",
+        "|---|---|---|---|---|---|",
+    ]
+    for a, c in zip(f["alpha_V"], f["cp"], strict=True):
+        lines.append(
+            f"| {a['window_c'][0]:g}–{a['window_c'][1]:g} | {a['n']} |"
+            f" {a['alpha_V_per_K'] * 1e4:.3f} ± {a['err'] * 1e4:.3f} | {_f(a['chi2_red'])} |"
+            f" {c['cp_J_gK']:.3f} ± {c['err']:.3f} | {_f(c['chi2_red'])} |"
+        )
+    for n in f.get("notes", []):
+        lines.append(f"- {n}")
+    return lines
+
+
+def _holds_markdown(r: dict) -> list[str]:
+    lines = [
         "",
         "## Hold trajectories: mobility and chain size",
         "",
@@ -1483,15 +1578,7 @@ def render_markdown(r: dict) -> str:
             f" {cm['msd_at_max_A2']:.0f} | {d} | {p2t} | {_pm(t['rg']['rg_A'], '.2f')} |"
             f" {_pm(t['ree']['ree_A'], '.1f')} | {_pm(t['c_n']['plateau'], '.3f')} |"
         )
-    lines += [""] + notes if notes else []
-    lines += relaxation_markdown([(h["t_c"], h["traj"]) for h in r["holds"]], r.get("resolution"))
-    lines += equilibration_markdown(r, LOCAL_NOTE, CHAIN_NOTE)
-    lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
-    if r.get("plots"):
-        lines += ["", "## Plots", ""]
-        for p in r["plots"].values():
-            lines += [f"**{p['title']}**", "", f"![{p['title']}]({p['file']})", ""]
-    return "\n".join(lines) + "\n"
+    return lines + ([""] + notes if notes else [])
 
 
 def _ns(ps: float | None) -> str:
@@ -1577,14 +1664,7 @@ def relaxation_markdown(items, resolution: str | None, what: str = "hold") -> li
             *est,
         ]
     if resolution == "cg":
-        lines += [
-            "",
-            (
-                "CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE"
-                " (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07"
-                " before comparing with experiment."
-            ),
-        ]
+        lines += ["", CG_TIME_NOTE]
     return lines
 
 
@@ -1602,26 +1682,9 @@ CHAIN_NOTE = (
 )
 
 
-def _f(x, fmt: str = ".2f") -> str:
-    return "n/a" if x is None else f"{x:{fmt}}"
-
-
 def write_results(report: dict, out_dir: Path, render=None) -> None:
     """Write results.json and results.md (``render``, default the sweep report's
     :func:`render_markdown`) atomically into ``out_dir``."""
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for name, text in (
-        (JSON_NAME, json.dumps(report, indent=1, sort_keys=True, default=_json) + "\n"),
-        (MD_NAME, (render or render_markdown)(report)),
-    ):
-        tmp = out_dir / (name + ".tmp")
-        tmp.write_text(text)
-        os.replace(tmp, out_dir / name)
-
-
-def _json(x):
-    if isinstance(x, np.generic):
-        return x.item()
-    if isinstance(x, np.ndarray):
-        return x.tolist()
-    raise TypeError(f"not JSON serializable: {type(x).__name__}")
+    write_atomic(
+        out_dir, ((JSON_NAME, dump_json(report)), (MD_NAME, (render or render_markdown)(report)))
+    )

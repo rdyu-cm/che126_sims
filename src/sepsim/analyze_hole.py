@@ -31,7 +31,6 @@ from __future__ import annotations
 import datetime as dt
 import json
 import math
-import os
 import re
 import warnings
 from pathlib import Path
@@ -40,14 +39,15 @@ import numpy as np
 import yaml
 
 from sepsim.analysis import hole as H
+from sepsim.progress import deck_params as deck_header
 from sepsim.progress import deck_system
+from sepsim.reporting import CG_TIME_NOTE, _f, dump_json, write_atomic
 
 VERSION = 1
 MD_NAME, JSON_NAME = "results.md", "results.json"
 FIT_NS = 5.0  # initial dR/dt window
 PLATEAU_FRAC = 0.25  # last quarter of production for the plateau radius
 MAP_FRAMES = 6
-_PARAM = re.compile(r"^#\s{3}(\w+) = (.*)$")
 _GROUP = re.compile(r"^\s*(\d+) atoms in group scaffold")
 
 
@@ -64,13 +64,9 @@ def deck_params(deck: Path, resolution: str = "cg") -> dict:
 
     defaults = HOLE_DEFAULTS[resolution]
     params = dict(defaults)
-    for line in deck.read_text(errors="replace").splitlines():
-        if not line.startswith("#"):
-            break
-        if m := _PARAM.match(line):
-            key, value = m.group(1), m.group(2)
-            if key in defaults:
-                params[key] = _coerce(key, value, defaults[key])
+    for key, value in deck_header(deck).items():
+        if key in defaults:
+            params[key] = _coerce(key, value, defaults[key])
     return params
 
 
@@ -155,7 +151,7 @@ def _min_image_r(xy: np.ndarray, axis, lengths) -> np.ndarray:
     return np.hypot(d[:, 0], d[:, 1])
 
 
-def tethered_mask(pos, lengths, hole: dict, params: dict, box) -> np.ndarray:
+def tethered_mask(pos, hole: dict, params: dict, box) -> np.ndarray:
     """Beads the deck tethers (same geometry as the deck's region)."""
     from sepsim.lammps.render import column_centres
 
@@ -228,18 +224,39 @@ def analyze_hole(
     r0 = 10.0 * float(hole["radius_nm"])
     d_a = 10.0 * params["scaffold_d_nm"]
 
-    frames: list[dict] = []
-    keep: list[dict] = []
-    centre, r_ref = axis.copy(), 0.0
-    shell = shell_x0 = None
-    tether = None
-    tether_min: list[float] = []
-    scaffold = params["scaffold"] != "none"
-    if scaffold and (run_dir / "inflated.data").is_file():
+    tether = pos_inf = l_inf = None
+    if params["scaffold"] != "none" and (run_dir / "inflated.data").is_file():
         pos_inf, l_inf = _data_positions(run_dir / "inflated.data")
-        tether = tethered_mask(pos_inf, l_inf, hole, params, box)
+        tether = tethered_mask(pos_inf, hole, params, box)
+    available, merged = _merged_frames(run_dir, tl)
+    geo = {"axis": axis, "r0": r0, "d_a": d_a, "z_lo": z_lo}
+    frames, keep, shell_x0, tether_min = _analyse_frames(run_dir, merged, tl, geo, tether)
+    if not frames:
+        raise HoleAnalysisError(f"{run_dir}: no inflate.dcd / hole.dcd frames")
+
+    report = summarize(frames, tl, params, hole, run_dir, system, stage)
+    report["dcds"] = available
+    if tether is not None:
+        report["scaffold"] = _scaffold_summary(
+            run_dir, params, tether, _min_image_r(pos_inf, axis, l_inf), tether_min, r0 + d_a
+        )
+    if shell_x0 is not None:
+        report["free_shell"] = {
+            "r_in": r0,
+            "r_out": r0 + d_a,
+            "beads": shell_x0[1],
+            "areal_density_ratio": shell_x0[2],
+            "msd": _msd_points([f for f in frames if f["phase"] == "production"]),
+        }
+    report["_keep"] = keep
+    return report, out_dir
+
+
+def _merged_frames(run_dir: Path, tl: dict) -> tuple[list[dict], list[tuple]]:
+    """The run's DCDs present (file, frames, interval) and their frames merged in time
+    order, one per time (the DCDs overlap at stage ends and in the dense windows: the
+    later phase wins), as (t_ns from production start, phase rank, phase, file, frame)."""
     available, events = [], []
-    readers: dict[str, object] = {}
     rank = {"inflate": 0, "scaffold hold": 1, "production": 2}
     for phase, name, start_ps, every in tl["dcds"]:
         path = run_dir / name
@@ -250,7 +267,6 @@ def analyze_hole(
         for k in range(nf):
             t_ns = (start_ps + k * every - tl["t0_ps"]) / 1000.0
             events.append((round(t_ns, 9), rank[phase], phase, name, k))
-    # one frame per time (DCDs overlap: stage ends, the dense windows), the later phase
     events.sort()
     merged = []
     for ev in events:
@@ -259,6 +275,12 @@ def analyze_hole(
                 merged[-1] = ev
             continue
         merged.append(ev)
+    return available, merged
+
+
+def _map_picks(merged: list[tuple]) -> set[int]:
+    """Frames whose maps are kept for hole_maps.png: the last inflate frame and
+    MAP_FRAMES - 1 evenly spaced production frames."""
     prod_idx = [i for i, ev in enumerate(merged) if ev[2] == "production"]
     pick = set()
     infl = [i for i, ev in enumerate(merged) if ev[2] == "inflate"]
@@ -266,6 +288,23 @@ def analyze_hole(
         pick.add(infl[-1])
     if prod_idx:
         pick |= {prod_idx[round(v)] for v in np.linspace(0, len(prod_idx) - 1, MAP_FRAMES - 1)}
+    return pick
+
+
+def _analyse_frames(run_dir: Path, merged, tl: dict, geo: dict, tether):
+    """Per merged frame: the hole (:func:`sepsim.analysis.hole.analyse_frame` about the
+    tracked centre), centroid drift, thickness and slab radii; with a scaffold the nearest
+    tethered bead to the axis (and its minimum while held); in production the free-shell
+    bead MSD from t0. Returns (frame rows, kept maps, shell at t0 (positions, beads,
+    areal density ratio) or None, nearest tethered radii while held)."""
+    axis, r0, d_a = geo["axis"], geo["r0"], geo["d_a"]
+    frames: list[dict] = []
+    keep: list[dict] = []
+    centre, r_ref = axis.copy(), 0.0
+    shell = shell_x0 = None
+    tether_min: list[float] = []
+    readers: dict[str, object] = {}
+    pick = _map_picks(merged)
     try:
         for i, (t_ns, _, phase, name, k) in enumerate(merged):
             if name not in readers:
@@ -275,7 +314,9 @@ def analyze_hole(
             lengths = np.asarray(ts.dimensions[:3], dtype=float)
             if phase == "inflate" and r_ref == 0.0:
                 centre = axis.copy()
-            f = H.analyse_frame(pos, lengths, centre, max(r_ref, 4.0), z_lo, keep_map=i in pick)
+            f = H.analyse_frame(
+                pos, lengths, centre, max(r_ref, 4.0), geo["z_lo"], keep_map=i in pick
+            )
             centre, r_ref = f.centre, f.r_eff
             drift = H.wrap_about(f.centre[None, :], axis, lengths)[0]
             row = {
@@ -316,40 +357,30 @@ def analyze_hole(
     finally:
         for rd in readers.values():
             rd.close()
-    if not frames:
-        raise HoleAnalysisError(f"{run_dir}: no inflate.dcd / hole.dcd frames")
+    return frames, keep, shell_x0, tether_min
 
-    report = summarize(frames, tl, params, hole, manifest, run_dir, system, stage)
-    report["dcds"] = available
-    if tether is not None:
-        r_inf = _min_image_r(pos_inf, axis, l_inf)
-        n_log = _log_group_count(run_dir)
-        report["scaffold"] = {
-            "mode": params["scaffold"],
-            "d_nm": params["scaffold_d_nm"],
-            "k": params["scaffold_k"],
-            "tethered": int(tether.sum()),
-            "tethered_fraction": float(tether.mean()),
-            "lammps_group_count": n_log,
-            "count_matches_log": None if n_log is None else n_log == int(tether.sum()),
-            "nearest_tethered_r_t0": float(r_inf[tether].min()) if tether.any() else None,
-            "nearest_ok": (
-                bool(r_inf[tether].min() >= r0 + d_a - 1e-6)
-                if params["scaffold"] == "annulus" and tether.any()
-                else None
-            ),
-            "nearest_tethered_r_held_min": min(tether_min) if tether_min else None,
-        }
-    if shell_x0 is not None:
-        report["free_shell"] = {
-            "r_in": r0,
-            "r_out": r0 + d_a,
-            "beads": shell_x0[1],
-            "areal_density_ratio": shell_x0[2],
-            "msd": _msd_points([f for f in frames if f["phase"] == "production"]),
-        }
-    report["_keep"] = keep
-    return report, out_dir
+
+def _scaffold_summary(run_dir: Path, params: dict, tether, r_inf, tether_min, r_out) -> dict:
+    """Scaffold diagnostics: tethered beads (vs the LAMMPS group count in the log), the
+    nearest tethered bead to the axis at t0 (annulus: must be >= R + d = ``r_out``) and
+    its minimum over the held frames; ``r_inf`` the bead radii in inflated.data."""
+    n_log = _log_group_count(run_dir)
+    return {
+        "mode": params["scaffold"],
+        "d_nm": params["scaffold_d_nm"],
+        "k": params["scaffold_k"],
+        "tethered": int(tether.sum()),
+        "tethered_fraction": float(tether.mean()),
+        "lammps_group_count": n_log,
+        "count_matches_log": None if n_log is None else n_log == int(tether.sum()),
+        "nearest_tethered_r_t0": float(r_inf[tether].min()) if tether.any() else None,
+        "nearest_ok": (
+            bool(r_inf[tether].min() >= r_out - 1e-6)
+            if params["scaffold"] == "annulus" and tether.any()
+            else None
+        ),
+        "nearest_tethered_r_held_min": min(tether_min) if tether_min else None,
+    }
 
 
 def _segment_at(segments, t_ns):
@@ -373,7 +404,7 @@ def _msd_points(prod: list[dict]) -> dict:
     return out
 
 
-def summarize(frames, tl, params, hole, manifest, run_dir, system, stage) -> dict:
+def summarize(frames, tl, params, hole, run_dir, system, stage) -> dict:
     t = np.array([f["t_ns"] for f in frames])
     r = np.array([f["r_eff"] for f in frames])
     rmin = np.array([f["r_min"] for f in frames])
@@ -580,10 +611,6 @@ def make_plots(report: dict, out_dir: Path) -> list[str]:
     return files
 
 
-def _f(x, fmt=".2f") -> str:
-    return "n/a" if x is None else f"{x:{fmt}}"
-
-
 def _nm(x) -> str:
     """Angstrom -> nm, 2 decimals (n/a for None)."""
     return "n/a" if x is None else f"{x / 10:.2f}"
@@ -597,10 +624,9 @@ CAVEATS = [
         " shutdown temperature."
     ),
     "The free film is the post-shutdown limit (a hole in an amorphous melt-like film).",
-    (
-        "Times are CG model times (the SDK CG dynamics is faster than real PE by an unknown"
-        " factor); compare runs with each other, not with experiment."
-    ),
+    CG_TIME_NOTE
+    + " The 4.07 factor is for chain diffusion and is not established for hole closure:"
+    " compare hole runs with each other, not with experiment.",
     (
         "All holes here have R < h (R/h <= 0.31), so closure is expected from the energy balance"
         " (R_c proportional to h, prefactor ~0.3-1 depending on rim geometry; Taylor & Michael"
@@ -740,25 +766,11 @@ def compare_table(rows: list[dict]) -> list[str]:
     return out
 
 
-def _json(x):
-    if isinstance(x, np.generic):
-        return x.item()
-    if isinstance(x, np.ndarray):
-        return x.tolist()
-    raise TypeError(f"not JSON serializable: {type(x).__name__}")
-
-
 def write_results(report: dict, out_dir: Path) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     report["figures"] = make_plots(report, out_dir) + report.pop("_extra_figures", [])
     report.pop("_keep", None)
-    for name, text in (
-        (JSON_NAME, json.dumps(report, indent=1, sort_keys=True, default=_json) + "\n"),
-        (MD_NAME, render_markdown(report)),
-    ):
-        tmp = out_dir / (name + ".tmp")
-        tmp.write_text(text)
-        os.replace(tmp, out_dir / name)
+    write_atomic(out_dir, ((JSON_NAME, dump_json(report)), (MD_NAME, render_markdown(report))))
     return out_dir / MD_NAME
 
 

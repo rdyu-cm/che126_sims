@@ -161,3 +161,41 @@ def test_linear_fit_unweighted_and_weighted():
     # analytic WLS slope error: sigma / sqrt(sum (x - xbar)^2)
     _, _, slope_err, _ = linear_fit(x, y, sigma)
     np.testing.assert_allclose(slope_err, 0.5 / np.sqrt(np.sum((x - x.mean()) ** 2)))
+
+
+def test_degenerate_series_is_a_value_error():
+    from sepsim.analysis.stats import DegenerateSeries
+
+    assert issubclass(DegenerateSeries, ValueError)
+    cases = (
+        ([1.0, 2.0], None),  # < 3 samples
+        (np.ones(50), None),  # zero variance
+        (np.ones(500), 10),  # zero variance, block means
+        (np.arange(2.0), 5),  # < 3 blocks
+    )
+    for x, block in cases:
+        with pytest.raises(DegenerateSeries):
+            timeseries_mean(x, block=block)
+
+
+def test_kappa_sem_from_block_means_matches_replica_spread():
+    """kappa_T of a ringing NPT volume series (D55 generator, 20% of the variance in the
+    slow tail): over 200 replicas the 100-sample block SEM of (V - <V>)^2 matches the
+    replica spread of kappa_T, the plain statistical-inefficiency SEM underestimates it;
+    kappa_T itself does not depend on the SEM estimator."""
+    from sepsim.analysis.thermo import isothermal_compressibility
+
+    kap, old, new = [], [], []
+    for seed in range(200):
+        x, _ = _ringing(20_000, seed, slow_frac=0.2)
+        v = 1e5 + 30.0 * x
+        plain = isothermal_compressibility(v, 400.0)
+        blocked = isothermal_compressibility(v, 400.0, block=100)
+        assert blocked.kappa_T == plain.kappa_T and blocked.V_std == plain.V_std
+        assert not blocked.lower_bound  # 200 blocks
+        kap.append(plain.kappa_T)
+        old.append(plain.kappa_T_sem)
+        new.append(blocked.kappa_T_sem)
+    spread = np.std(kap, ddof=1)
+    assert np.mean(new) == pytest.approx(spread, rel=0.15)
+    assert np.mean(old) < 0.8 * spread

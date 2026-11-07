@@ -7,6 +7,10 @@ import numpy as np
 from ._corr import autocorr
 
 
+class DegenerateSeries(ValueError):
+    """A series too short or without variance for a mean and SEM (:func:`timeseries_mean`)."""
+
+
 @dataclass
 class TimeseriesMean:
     """Mean of a correlated time series with its standard error."""
@@ -33,11 +37,11 @@ def statistical_inefficiency(x, mintime: int = 3) -> float:
     x = np.asarray(x, dtype=float)
     n = len(x)
     if n < 3:
-        raise ValueError("need at least 3 samples")
+        raise DegenerateSeries("need at least 3 samples")
     dx = x - x.mean()
     var = float(np.mean(dx**2))
     if var == 0.0:
-        raise ValueError("series has zero variance")
+        raise DegenerateSeries("series has zero variance")
     c = autocorr(dx, n - 2)[1:] / var  # lags t = 1 .. N-2
     t = np.arange(1, n - 1)
     stop = np.flatnonzero((c <= 0.0) & (t > mintime))
@@ -68,6 +72,8 @@ def timeseries_mean(
     ``fallback_blocks`` blocks and ``lower_bound`` is set: the window is too short
     to resolve the slow component. The mean is always that of the full series; g
     and n_eff are reported in raw samples, g = N SEM^2 / sigma^2, floored at 1 (D26).
+    Raises :class:`DegenerateSeries` for fewer than 3 samples (or blocks) or a series
+    without variance.
     """
     x = np.asarray(x, dtype=float)
     n = len(x)
@@ -84,10 +90,10 @@ def timeseries_mean(
     xb = block_means(x, b)
     nb = len(xb)
     if nb < 3:
-        raise ValueError("need at least 3 blocks")
+        raise DegenerateSeries("need at least 3 blocks")
     sd = float(x.std(ddof=1))
     if sd == 0.0:
-        raise ValueError("series has zero variance")
+        raise DegenerateSeries("series has zero variance")
     if np.ptp(xb) == 0.0:
         sem = 0.0
     else:

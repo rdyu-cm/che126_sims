@@ -609,6 +609,69 @@ def test_extend_monitor_without_prep_hold_and_plots(tmp_path):
     assert r["plots"]["hold_cn"]["title"].startswith("500 K hold + extension")
 
 
+def test_analyze_hold_extend_reads_prep_hold_ahead(tmp_path):
+    from sepsim.analyze_hold import analyze_hold, write_results
+
+    ext, _ = _extend_layout(tmp_path, ext_frames=6)
+    _extend_log(ext, done_chunks=2)
+    rep, out = analyze_hold(ext, out=tmp_path / "an", systems=SYSTEMS, plots=False)
+    assert rep["complete"] and rep["protocol"] == "extend"
+    assert rep["combined_with"] == [str(ext.resolve().parent / "prep" / "hold.dcd")]
+    assert rep["stats"]["rows"] == 21 and rep["kappa"] is None  # no Volume column
+    tr = rep["traj"]
+    assert tr["available"] and tr["frames"] == 14  # 8 prep + 6 new (repeat dropped)
+    assert [p["frames"] for p in tr["parts"]] == [8, 6]
+    write_results(rep, out)
+    md = (out / "results.md").read_text()
+    assert md.startswith("# Hold analysis: ") and "## Chain relaxation (holds; D56)" in md
+
+
+def test_runs_by_segment_notes_plan_mismatch(tmp_path):
+    from sepsim.analyze import segment_thermo
+    from sepsim.analyze_hold import hold_thermo
+
+    (tmp_path / "in.sweep").write_text(CHUNK_DECK)
+    segs = pg.parse_deck(tmp_path / "in.sweep")
+    planned = [n for s in segs for n in s.run_steps]
+
+    def log_with(steps):
+        loop = "Loop time of 1 on 1 procs for {} steps with 10 atoms\n"
+        text = "".join(HEAD + "  0  0  298  0.8  -10  5  0.1\n" + loop.format(n) for n in steps)
+        (tmp_path / "log.lammps").write_text(text)
+        return read_log(tmp_path / "log.lammps")
+
+    per_seg, notes = pg.runs_by_segment(segs, log_with(planned))
+    assert notes == [] and [len(m) for m in per_seg] == [len(s.run_steps) for s in segs]
+    assert pg.runs_by_segment(segs, log_with(planned[:2]))[1] == []  # running: no note
+    bad = log_with([10, 20, 15, *planned[3:]])
+    notes, hold_notes = [], []
+    segment_thermo(segs, bad, notes)
+    hold_thermo(segs, bad, segs[0], hold_notes)
+    want = (
+        "log block 3 (seg 01 hold 25 C, run 3/4) has 15 steps, the deck plans 10: thermo may"
+        " be assigned to the wrong segment"
+    )
+    assert notes == hold_notes == [want]
+    _, notes = pg.runs_by_segment(segs, log_with([*planned, 5]))
+    want = (
+        "log has 1 more thermo blocks than the deck has runs: thermo may be assigned to the"
+        " wrong segment"
+    )
+    assert notes == [want]
+
+
+def test_parse_deck_rejects_a_split_sweep_segment(tmp_path):
+    split = CHUNK_DECK.replace(
+        "undump burst\nrun 20\ndump burst",
+        "undump burst\nfix extra all momentum 100 linear 1 1 1\nrun 20\ndump burst",
+        1,
+    )
+    assert split != CHUNK_DECK
+    (tmp_path / "in.sweep").write_text(split)
+    with pytest.raises(ValueError, match="'# ---- Segment 1: hold at 25 C.*gives 2 MD segments"):
+        pg.parse_deck(tmp_path / "in.sweep")
+
+
 def test_d47_criteria():
     def res(acf, ratio):
         return {"ree_acf": {"acf_at_lag": acf, "lag_ns": 50.0}, "com_msd": {"ratio": ratio}}

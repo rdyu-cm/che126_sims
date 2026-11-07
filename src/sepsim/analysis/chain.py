@@ -45,6 +45,10 @@ CARBONS_PER_SITE = {"aa": 1, "ua": 1, "cg": 3}  # backbone carbons per backbone 
 # at 413 K scaled by d ln<R^2>/dT = -1.2e-3 /K (Table 25.7) to 6.7; iPP 6.15 at 463 K,
 # temperature-independent.
 MELT_C_INF_500K = {"pe": (6.7, 6.7), "ipp": (6.15, 6.15)}
+CG_CC_BOND_A = 1.54  # C-C bond (A) that CG C_n uses with carbon-equivalent n (D37)
+CN_N_MIN = 100  # C_n plateau: separations >= this many carbons (D37)
+FRAME_REPEAT_ATOL = 1e-2  # A: a DCD's first frame equal to the previous file's last
+# within this is the same snapshot written again (a run continued from its write_data)
 
 
 @dataclass
@@ -136,7 +140,7 @@ def msid_check(
     positions,
     chains,
     reference: tuple[float, float],
-    n_min: int = 100,
+    n_min: int = CN_N_MIN,
     carbons_per_site: int = 1,
     bond_length: float | None = None,
     tolerance: float = 0.10,
@@ -265,7 +269,7 @@ def chain_com_rg2(positions, molecule, masses):
     return com, rg2
 
 
-def com_msd_over_rg2(com, rg2, dt: float, max_lag: int | None = None):
+def com_msd_over_rg2(com, rg2, dt: float, max_lag: int | None = None, curve: bool = False):
     """Chain centre-of-mass MSD at the longest lag relative to the mean Rg^2.
 
     ``com``: (n_frames, n_chains, 3) unwrapped chain centres of mass (chains of
@@ -274,12 +278,60 @@ def com_msd_over_rg2(com, rg2, dt: float, max_lag: int | None = None):
     uses every time origin, lags 0..max_lag (default n_frames // 2). Returns
     (lag_time, msd_at_lag, rg2_mean, ratio = msd_at_lag / rg2_mean), with
     lag_time in units of ``dt``; ratio >= 1 means the chains moved their own size.
+    With ``curve`` also the MSD curve: (..., ratio, lag_times, msd).
     """
     c = np.asarray(com, dtype=float)
     c = c - c.mean(axis=1, keepdims=True)
     lags, m = msd(c, dt, max_lag)
     rg2_mean = float(np.mean(rg2))
-    return float(lags[-1]), float(m[-1]), rg2_mean, float(m[-1] / rg2_mean)
+    out = (float(lags[-1]), float(m[-1]), rg2_mean, float(m[-1] / rg2_mean))
+    return (*out, lags, m) if curve else out
+
+
+# ---- system arrays and trajectory frames ----
+
+
+def system_arrays(system_dir: Path) -> dict:
+    """Backbone rows, molecule index and masses of the id-sorted atoms of a system.
+
+    From ``system_dir``/manifest.yaml and data.lmp (:func:`backbone_chains`): ``bb_rows``
+    the backbone atom rows of all chains concatenated, ``chains`` each chain's backbone
+    sites as indices into ``bb_rows``, ``molecule`` the 0-based molecule index and
+    ``masses`` the mass of every atom, ``mol_mass`` the mass of every molecule.
+    """
+    man = yaml.safe_load((Path(system_dir) / "manifest.yaml").read_text())
+    chains = backbone_chains(Path(system_dir) / "data.lmp", man)
+    df = read_data_file(Path(system_dir) / "data.lmp")
+    atoms = df.sorted_atoms()
+    mass_of = {int(r[0]): float(r[1]) for r in df.sections["Masses"]}
+    masses = np.array([mass_of[int(t)] for t in atoms[:, 2]])
+    _, molecule = np.unique(atoms[:, 1].astype(np.int64), return_inverse=True)
+    local, k = [], 0
+    for c in chains:
+        local.append(np.arange(k, k + len(c)))
+        k += len(c)
+    return {
+        "manifest": man,
+        "n_atoms": len(atoms),
+        "bb_rows": np.concatenate(chains),
+        "chains": local,  # backbone sites per chain, as indices into bb_rows
+        "molecule": molecule,
+        "masses": masses,
+        "mol_mass": np.bincount(molecule, weights=masses),
+    }
+
+
+def bond_pairs(chains) -> tuple[np.ndarray, np.ndarray]:
+    """Consecutive backbone sites (a -> b) of every chain, as indices into the site axis."""
+    a = np.concatenate([c[:-1] for c in chains])
+    b = np.concatenate([c[1:] for c in chains])
+    return a, b
+
+
+def repeats_frame(first, previous_last) -> bool:
+    """A trajectory file's first frame repeats the previous file's last frame
+    (within ``FRAME_REPEAT_ATOL``): drop it when joining the files."""
+    return bool(np.allclose(first, previous_last, atol=FRAME_REPEAT_ATOL))
 
 
 # ---- chain relaxation: Rouse modes (D56) ----

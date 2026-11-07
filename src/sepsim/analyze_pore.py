@@ -38,10 +38,9 @@ Deck and log parsing, the thermo windows and the hold trajectory machinery are t
 
 from __future__ import annotations
 
-import datetime as dt
-import platform
 import re
 import warnings
+from functools import partial
 from pathlib import Path
 
 import numpy as np
@@ -57,20 +56,18 @@ from sepsim.analyze import (
     MAX_FRAMES,
     STEP_SKIP,
     AnalyzeError,
-    _birge,
-    _chi2_red,
-    _f,
+    SegmentWindows,
     _floor_err,
+    _frame_mean_sem,
     _log_idx,
-    _mean_sd,
-    _pm,
-    _system_arrays,
     block_convergence,
     draw_plots,
     drift_cell,
     drift_flags,
     equilibration_jobs,
     equilibration_markdown,
+    fit_quality,
+    fit_window_k,
     hold_trajectory,
     out_dir_for,
     quantity_convergence,
@@ -80,8 +77,12 @@ from sepsim.analyze import (
     sem_vs_block,
     window_stats,
 )
+from sepsim.analyze import VERSION as SWEEP_VERSION
 from sepsim.progress import (
     ATM_A_TO_MN_M,
+    MIN_HOLD_FRAMES,
+    MIN_STAT_ROWS,
+    T_MATCH_TOL,
     _block_rows,
     _mean_sem,
     _round,
@@ -90,7 +91,17 @@ from sepsim.progress import (
     load_json,
     parse_deck,
 )
-from sepsim.run import CODE_DIR, MANIFEST_NAME, git_info
+from sepsim.reporting import (
+    CG_TIME_NOTE,
+    _f,
+    _pm,
+    header_markdown,
+    load_system_arrays,
+    plots_markdown,
+    report_header,
+    trajectory_or_note,
+)
+from sepsim.run import MANIFEST_NAME
 
 VERSION = 1
 LAYER_A = 15.0  # surface layer depth from each Gibbs surface (film side), Angstrom
@@ -125,11 +136,18 @@ def gamma_series(thermo: dict, factor: float) -> np.ndarray:
     return 0.5 * thermo["Lz"] * (thermo["Pzz"] - p_lat) * factor
 
 
-def pore_window_stats(thermo: dict, skip: float, factor: float) -> dict:
+def pore_window_stats(
+    thermo: dict,
+    skip: float,
+    factor: float,
+    windows: SegmentWindows | None = None,
+    gamma: np.ndarray | None = None,
+) -> dict:
     """:func:`sepsim.analyze.window_stats` plus Lx, Ly, Pxx, Pyy, Pzz, PotEng and TotEng
-    (mean +- SEM) and gamma (mean +- SEM of the instantaneous series) over the same rows."""
-    out = window_stats(thermo, skip)
-    k = int(np.floor(skip * len(thermo.get("Step", ()))))
+    (mean +- SEM) and gamma (mean +- SEM of the instantaneous series) over the same rows.
+    ``windows``: the segment's shared windows; ``gamma``: its :func:`gamma_series`."""
+    windows = windows or SegmentWindows(skip, _block_rows(thermo))
+    out = window_stats(thermo, skip, windows)
     for key, col in (
         ("lx", "Lx"),
         ("ly", "Ly"),
@@ -140,9 +158,10 @@ def pore_window_stats(thermo: dict, skip: float, factor: float) -> dict:
         ("etotal", "TotEng"),
     ):
         if col in thermo:
-            out[key] = _mean_sem(thermo[col][k:], _block_rows(thermo))
+            out[key] = windows(thermo[col]).mean_sem()
     if all(c in thermo for c in ("Pxx", "Pyy", "Pzz", "Lz")):
-        out["gamma"] = _mean_sem(gamma_series(thermo, factor)[k:], _block_rows(thermo))
+        gamma = gamma_series(thermo, factor) if gamma is None else gamma
+        out["gamma"] = windows(gamma).mean_sem()
     return out
 
 
@@ -166,12 +185,12 @@ def gamma_fit(points: list[dict]) -> dict | None:
     g = np.array([p["stats"]["gamma"]["mean"] for p in pts])
     e = _floor_err(np.array([p["stats"]["gamma"]["sem"] for p in pts]))
     slope, icpt, s_err, _ = linear_fit(t, g, e)
-    chi = _chi2_red(t, g, e, slope, icpt)
+    chi, scale = fit_quality(t, g, e, (slope, icpt))
     return {
         "n": len(pts),
         "window_c": [float(t.min() - 273.15), float(t.max() - 273.15)],
         "dgamma_dT_mN_mK": slope,
-        "err": s_err * _birge(chi),
+        "err": s_err * scale,
         "err_unscaled": s_err,
         "gamma_25c_mN_m": slope * 298.15 + icpt,
         "chi2_red": chi,
@@ -214,17 +233,32 @@ def find_bulk_analysis(manifest: dict | None, root: str | Path = "results/analys
     return None
 
 
+def bulk_problem(bulk: dict) -> str | None:
+    """Why a bulk `analyze sweep` results.json cannot be the pore's reference (another
+    report version, or keys :func:`_bulk_at` reads are missing), else None."""
+    if bulk.get("version", SWEEP_VERSION) != SWEEP_VERSION:
+        return f"version {bulk['version']}, expected {SWEEP_VERSION}"
+    try:
+        for s in bulk.get("segments", []):
+            _bulk_at({"segments": [s]}, s["t_set_c"])
+        for h in bulk.get("holds", []):
+            _bulk_at({"holds": [h]}, h["t_c"])
+    except (KeyError, TypeError) as exc:
+        return f"missing key {exc}"
+    return None
+
+
 def _bulk_at(bulk: dict | None, t_c: float) -> dict:
     """Bulk hold (density, per-dimension MSD curve, P2 1/e, Rg) at the set T t_c."""
     if not bulk:
         return {}
     out: dict = {}
     for s in bulk.get("segments", []):  # latest segment at T, so the hold wins
-        if abs(s["t_set_c"] - t_c) < 1e-6 and (s.get("stats") or {}).get("density"):
+        if abs(s["t_set_c"] - t_c) < T_MATCH_TOL and (s.get("stats") or {}).get("density"):
             out["density"] = s["stats"]["density"]
     for h in bulk.get("holds", []):
         tr = h.get("traj") or {}
-        if abs(h["t_c"] - t_c) < 1e-6 and tr.get("available"):
+        if abs(h["t_c"] - t_c) < T_MATCH_TOL and tr.get("available"):
             c = tr["curves"]
             out.update(
                 msd_lag_ps=c["msd_lag_ps"],
@@ -297,10 +331,10 @@ def _labels(z: np.ndarray, centres: np.ndarray, lz: np.ndarray, h: float) -> np.
 
 def _bonds(sys_arr: dict) -> tuple[np.ndarray, np.ndarray]:
     """Backbone bonds as atom rows (a -> b)."""
-    rows, ch = sys_arr["bb_rows"], sys_arr["chains"]
-    a = np.concatenate([rows[c[:-1]] for c in ch])
-    b = np.concatenate([rows[c[1:]] for c in ch])
-    return a, b
+    from sepsim.analysis.chain import bond_pairs
+
+    a, b = bond_pairs(sys_arr["chains"])
+    return sys_arr["bb_rows"][a], sys_arr["bb_rows"][b]
 
 
 def film_profile(x, box, centres, masses, pick, use=None, frame_ps: float = 1.0) -> dict:
@@ -360,8 +394,8 @@ def film_profile(x, box, centres, masses, pick, use=None, frame_ps: float = 1.0)
         "lz_A": lz,
         "area_A2": float(np.mean(box[pick[use], 0] * box[pick[use], 1])),
         "bin_A": float(z[1] - z[0]),
-        "plateau": _mean_sd(rp_f),
-        "film_gibbs_frames": _mean_sd(tg_f),
+        "plateau": _frame_mean_sem(rp_f),
+        "film_gibbs_frames": _frame_mean_sem(tg_f),
         "plateau_region_A": float(np.abs(z[inner]).max()),
         "film_gibbs_A": t_g,
         "gap_gibbs_A": lz - t_g,
@@ -426,14 +460,14 @@ def _orientation_and_size(x, box, centres, sys_arr, pick, h) -> dict:
     }
     for c, name in enumerate(CLASSES):
         v = np.array(p2_cls[c])
-        out["p2z_layer"][name] = _mean_sd(v[~np.isnan(v)]) if np.isfinite(v).any() else None
+        out["p2z_layer"][name] = _frame_mean_sem(v[~np.isnan(v)]) if np.isfinite(v).any() else None
         r = rg[name]
         z, xy = np.array(r["z"]), np.array(r["xy"])
         ok = ~np.isnan(z)
         out["rg"][name] = {
             "chains_mean": float(np.mean(r["n"])),
-            "rg_z2_A2": _mean_sd(z[ok]) if ok.sum() else None,
-            "rg_xy2_half_A2": _mean_sd(xy[ok]) if ok.sum() else None,
+            "rg_z2_A2": _frame_mean_sem(z[ok]) if ok.sum() else None,
+            "rg_xy2_half_A2": _frame_mean_sem(xy[ok]) if ok.sum() else None,
         }
     return out
 
@@ -469,7 +503,6 @@ def _curves(sums, counts, p2_sums=None, p2_counts=None):
 def layer_dynamics(run_dir: Path, seg, sys_arr, x, box, centres, h, frame_ps) -> dict:
     """Layer-split MSD (in-plane per dimension, normal) and bond P2 ACF of the backbone
     sites: hold DCD for lags >= its frame interval, the D46 bursts below it."""
-    from sepsim.analysis.chain import decorrelation_time
     from sepsim.analysis.mobility import msd_by_class, p2_by_class, stitch_curves
 
     rows = sys_arr["bb_rows"]
@@ -486,7 +519,29 @@ def layer_dynamics(run_dir: Path, seg, sys_arr, x, box, centres, h, frame_ps) ->
     del lab, blab
     hold = _curves(hs, hc, ps, pc)
     hold_lags = lags * frame_ps
+    burst, b_lags_ps, used = _burst_layer_curves(run_dir, seg, sys_arr, x.shape[1], bb is x, h)
+    out: dict = {"bursts_used": used, "surface_fraction": frac, "layer_A": LAYER_A}
+    for name in (*CLASSES, "film"):
+        cur = {}
+        for key in ("xy", "z", "p2"):
+            if burst:
+                lg, v, _ = stitch_curves(b_lags_ps, burst[name][key], hold_lags, hold[name][key])
+            else:
+                lg, v = hold_lags, hold[name][key]
+            cur[key] = (np.asarray(lg), np.asarray(v))
+        out[name] = _layer_record(cur, hold_lags[-1])
+    out["lag_max_ps"] = float(hold_lags[-1])
+    out["origins_per_lag"] = {"hold": MAX_ORIGINS, "burst": BURST_ORIGINS}
+    return out
 
+
+def _burst_layer_curves(run_dir: Path, seg, sys_arr, n_atoms: int, all_backbone: bool, h):
+    """Layer-split MSD and P2 sums over the hold's D46 burst DCDs (those with the first
+    burst's lag set), as :func:`_curves`; returns (curves or None, lags in ps, used)."""
+    from sepsim.analysis.mobility import msd_by_class, p2_by_class
+
+    rows = sys_arr["bb_rows"]
+    a, b = _bonds(sys_arr)
     bursts = [(f, n) for f, n in zip(seg.dcd, seg.dump_every, strict=True) if "_burst" in f]
     bs = bc = bps = bpc = b_lags = None
     used, b_ps = 0, None
@@ -495,14 +550,14 @@ def layer_dynamics(run_dir: Path, seg, sys_arr, x, box, centres, h, frame_ps) ->
         if not path.is_file():
             continue
         try:
-            xb, boxb = read_positions(path, x.shape[1], sys_arr["masses"])
+            xb, boxb = read_positions(path, n_atoms, sys_arr["masses"])
         except (OSError, ValueError):
             continue
         if len(xb) < 3:
             continue
         cb = _centres(xb, boxb, sys_arr["masses"])
         bl = np.array([k for k in BURST_LAGS if k < len(xb)])
-        bbb = xb if bb is x else xb[:, rows]
+        bbb = xb if all_backbone else xb[:, rows]
         s1, c1 = msd_by_class(bbb, _labels(bbb[..., 2], cb, boxb[:, 2], h), bl, 2, BURST_ORIGINS)
         mid = 0.5 * (xb[:, a, 2] + xb[:, b, 2])
         s2, c2 = p2_by_class(xb, a, b, _labels(mid, cb, boxb[:, 2], h), bl, 2, BURST_ORIGINS)
@@ -514,46 +569,38 @@ def layer_dynamics(run_dir: Path, seg, sys_arr, x, box, centres, h, frame_ps) ->
             continue
         b_ps = n * seg.dt_fs / 1000.0
         used += 1
-    out: dict = {"bursts_used": used, "surface_fraction": frac, "layer_A": LAYER_A}
-    burst = _curves(bs, bc, bps, bpc) if used else None
-    curves = {}
-    for name in (*CLASSES, "film"):
-        cur = {}
-        for key in ("xy", "z", "p2"):
-            if burst:
-                lg, v, _ = stitch_curves(
-                    b_lags * b_ps, burst[name][key], hold_lags, hold[name][key]
-                )
-            else:
-                lg, v = hold_lags, hold[name][key]
-            cur[key] = (np.asarray(lg), np.asarray(v))
-        curves[name] = cur
-    for name, cur in curves.items():
-        lg, vxy = cur["xy"]
-        _, vz = cur["z"]
-        at = {}
-        for lag in (*REPORT_LAGS_PS, float(hold_lags[-1])):
-            k = np.flatnonzero(np.isclose(lg, lag, rtol=1e-6))
-            if len(k):
-                at[f"{lag:g}"] = {"xy": float(vxy[k[0]]), "z": float(vz[k[0]])}
-        lp, vp = cur["p2"]
-        t_1e = decorrelation_time(np.r_[0.0, lp], np.r_[1.0, vp])
-        idx = _log_idx(lg)
-        out[name] = {
-            "msd_at": at,
-            "p2_t_1e_ps": t_1e,
-            "p2_at_max": float(vp[-1]),
-            "curves": {
-                "lag_ps": _round(lg[idx]),
-                "xy_A2": _round(vxy[idx]),
-                "z_A2": _round(vz[idx]),
-                "p2_lag_ps": _round(lp[_log_idx(lp)]),
-                "p2": _round(vp[_log_idx(lp)]),
-            },
-        }
-    out["lag_max_ps"] = float(hold_lags[-1])
-    out["origins_per_lag"] = {"hold": MAX_ORIGINS, "burst": BURST_ORIGINS}
-    return out
+    if not used:
+        return None, None, 0
+    return _curves(bs, bc, bps, bpc), b_lags * b_ps, used
+
+
+def _layer_record(cur: dict, hold_lag_max: float) -> dict:
+    """One layer's MSD at the report lags, P2 1/e time and thinned curves from its
+    stitched (lags, values) per key xy, z, p2."""
+    from sepsim.analysis.chain import decorrelation_time
+
+    lg, vxy = cur["xy"]
+    _, vz = cur["z"]
+    at = {}
+    for lag in (*REPORT_LAGS_PS, float(hold_lag_max)):
+        k = np.flatnonzero(np.isclose(lg, lag, rtol=1e-6))
+        if len(k):
+            at[f"{lag:g}"] = {"xy": float(vxy[k[0]]), "z": float(vz[k[0]])}
+    lp, vp = cur["p2"]
+    t_1e = decorrelation_time(np.r_[0.0, lp], np.r_[1.0, vp])
+    idx = _log_idx(lg)
+    return {
+        "msd_at": at,
+        "p2_t_1e_ps": t_1e,
+        "p2_at_max": float(vp[-1]),
+        "curves": {
+            "lag_ps": _round(lg[idx]),
+            "xy_A2": _round(vxy[idx]),
+            "z_A2": _round(vz[idx]),
+            "p2_lag_ps": _round(lp[_log_idx(lp)]),
+            "p2": _round(vp[_log_idx(lp)]),
+        },
+    }
 
 
 def _window_frames(nf: int, skip: float, max_frames: int) -> np.ndarray:
@@ -596,7 +643,7 @@ def pore_hold(run_dir: Path, seg, sys_arr: dict, max_frames: int = MAX_FRAMES) -
     masses = sys_arr["masses"]
     x, box = read_positions(run_dir / dcd, sys_arr["n_atoms"], masses)
     nf = len(x)
-    if nf < 6:
+    if nf < MIN_HOLD_FRAMES:
         out["notes"].append(f"trajectory not available ({dcd}: only {nf} frames)")
         return out
     centres = _centres(x, box, masses)
@@ -643,7 +690,12 @@ def bulk_energies(bulk: dict, manifest: dict | None) -> dict[float, dict]:
         raise AnalyzeError(f"{deck}: bulk uses a tail correction, the pore does not (D48)")
     out: dict[float, dict] = {}
     for seg, th in zip(segs, segment_thermo(segs, read_log(run / LOG_NAME)), strict=True):
-        if seg.sweep_index is None or seg.vdos or th is None or len(th.get("Step", ())) < 6:
+        if (
+            seg.sweep_index is None
+            or seg.vdos
+            or th is None
+            or len(th.get("Step", ())) < MIN_STAT_ROWS
+        ):
             continue
         k = int(np.floor((HOLD_SKIP if seg.sweep_kind == "hold" else STEP_SKIP) * len(th["Step"])))
         out[round(seg.t_c, 3)] = {
@@ -723,8 +775,8 @@ def pore_thermal(points, film, bulk, energies, mass, gamma_fits) -> dict:
     }
     bulk_cp = {tuple(a["window_c"]): a for a in ((bulk or {}).get("fits") or {}).get("cp", [])}
     for lo, hi in FIT_WINDOWS_C:
-        win = (lo + 273.15 - 1e-6, hi + 273.15 + 1e-6)
-        sel = [r for r in rows if lo - 1e-6 <= r["t_c"] <= hi + 1e-6]
+        win = fit_window_k(lo, hi)
+        sel = [r for r in rows if lo - T_MATCH_TOL <= r["t_c"] <= hi + T_MATCH_TOL]
         if len(sel) < 3:
             out["notes"].append(f"{lo:g}-{hi:g} C: fewer than 3 temperatures, no fit")
             continue
@@ -743,15 +795,14 @@ def pore_thermal(points, film, bulk, energies, mass, gamma_fits) -> dict:
             h = np.array([r["film_gibbs_A"]["mean"] for r in hs])
             he = _floor_err(np.array([r["film_gibbs_A"]["sem"] or 0.0 for r in hs]))
             te = thermal_expansion(t, h, he, T_window=win)
-            sl, ic, _, _ = linear_fit(t, h, he)
-            chi = _chi2_red(t, h, he, sl, ic)
+            chi, scale = fit_quality(t, h, he, te.line)
             al.update(
                 alpha_z_per_K=te.alpha_V,
-                alpha_z_err=te.alpha_V_err * _birge(chi),
+                alpha_z_err=te.alpha_V_err * scale,
                 alpha_z_err_unscaled=te.alpha_V_err,
                 chi2_red=chi,
                 h_mean_A=te.V_mean,
-                line=[sl, ic],
+                line=list(te.line),
                 alpha_V_film_per_K=te.alpha_V + 2 * a.alpha_L,
             )
         else:
@@ -762,15 +813,14 @@ def pore_thermal(points, film, bulk, energies, mass, gamma_fits) -> dict:
             e = np.array([r["etotal"]["mean"] for r in es])
             ee = _floor_err(np.array([r["etotal"]["sem"] or 0.0 for r in es]))
             cv = heat_capacity_classical(t, e, mass, ee, T_window=win)
-            sl, ic, _, _ = linear_fit(t, e, ee)
-            chi = _chi2_red(t, e, ee, sl, ic)
+            chi, scale = fit_quality(t, e, ee, cv.line)
             bc = bulk_cp.get((lo, hi)) or {}
             out["cv"].append(
                 {
                     "window_c": [lo, hi],
                     "n": len(sel),
                     "cv_J_gK": cv.cp_JgK,
-                    "err": cv.cp_JgK_err * _birge(chi),
+                    "err": cv.cp_JgK_err * scale,
                     "chi2_red": chi,
                     "bulk_cp_J_gK": bc.get("cp_J_gK"),
                     "bulk_cp_err": bc.get("err"),
@@ -816,75 +866,31 @@ def analyze_pore(
     pore = (sys_man or {}).get("pore") or {}
     segments = parse_deck(deck)
     log = read_log(run_dir / LOG_NAME)
-    thermo = segment_thermo(segments, log)
-    now = dt.datetime.now().astimezone()
-    report: dict = {
-        "version": VERSION,
-        "generated": now.isoformat(timespec="seconds"),
-        "generated_on": platform.node(),
-        "system": system,
-        "resolution": resolution,
-        "stage": run_dir.resolve().name,
-        "run_dir": str(run_dir.resolve()),
-        "run_status": (manifest or {}).get("status"),
-        "run_node": (manifest or {}).get("hostname"),
-        "run_git": (manifest or {}).get("git"),
-        "code_git": git_info(CODE_DIR),
-        "units": units,
-        "pore": {
-            k: pore.get(k)
-            for k in (
-                "nominal_width_nm",
-                "wall_thickness_angstrom",
-                "slab_mass_g_mol",
-                "lz_new_angstrom",
-                "replicate_z",
-            )
-        },
-        "method": {
-            "step_window": f"second half ({STEP_SKIP:.0%} of rows dropped)",
-            "hold_window": f"without the first {HOLD_SKIP:.0%} of rows",
-            "sem": "statistical inefficiency (D26)",
-            "max_frames": max_frames,
-            "layer_A": LAYER_A,
-            "profile_bin_A": PROFILE_BIN_A,
-        },
-        "notes": [],
+    report = report_header(VERSION, run_dir, manifest, system, resolution)
+    report["units"] = units
+    report["pore"] = {
+        k: pore.get(k)
+        for k in (
+            "nominal_width_nm",
+            "wall_thickness_angstrom",
+            "slab_mass_g_mol",
+            "lz_new_angstrom",
+            "replicate_z",
+        )
     }
+    report["method"] = {
+        "step_window": f"second half ({STEP_SKIP:.0%} of rows dropped)",
+        "hold_window": f"without the first {HOLD_SKIP:.0%} of rows",
+        "sem": "statistical inefficiency (D26)",
+        "max_frames": max_frames,
+        "layer_A": LAYER_A,
+        "profile_bin_A": PROFILE_BIN_A,
+    }
+    report["notes"] = []
+    thermo = segment_thermo(segments, log, report["notes"])
     if sys_man is None:
         report["notes"].append(f"no {man_path}: nominal width and source chain unknown")
-    rows, eq, conv_by_segment = [], [], {}
-    for seg, th in zip(segments, thermo, strict=True):
-        kind = _kind(seg)
-        if kind is None or seg.t_target_k is None:
-            continue
-        row = {
-            "index": seg.sweep_index,
-            "segment": seg.index,
-            "name": seg.name,
-            "kind": kind,
-            "t_set_c": seg.t_c if seg.t_c is not None else seg.t_target_k - 273.15,
-            "t_k": seg.t_target_k,
-            "done": th is not None,
-        }
-        if th is not None and len(th.get("Step", ())) >= 6:
-            skip = HOLD_SKIP if kind == "hold" else STEP_SKIP
-            row["stats"] = pore_window_stats(th, skip, factor)
-            main = {"pe": th["PotEng"]} if "PotEng" in th else {}
-            if all(c in th for c in ("Pxx", "Pyy", "Pzz", "Lz")):
-                main["gamma"] = gamma_series(th, factor)
-            blk = _block_rows(th)
-            row["drift"] = drift_flags(main, skip, blk)
-            if kind == "hold":
-                row["convergence"] = {k: block_convergence(v, skip, blk) for k, v in main.items()}
-            cols = {"T": th["Temp"]} if "Temp" in th else {}
-            cols |= {k: th[c] for k, c in (("pe", "PotEng"), ("etotal", "TotEng")) if c in th}
-            if "gamma" in main:
-                cols |= {"gamma": main["gamma"], "pzz": th["Pzz"]}
-            if "Time" in th:
-                eq.append(segment_convergence(row["name"], kind, th, skip, cols))
-                conv_by_segment[seg.index] = eq[-1]
-        rows.append(row)
+    rows, eq, conv_by_segment = pore_rows(segments, thermo, factor)
     report["segments"] = rows
     missing = [r["name"] for r in rows if not r["done"]]
     if missing:
@@ -897,17 +903,15 @@ def analyze_pore(
     bulk_path = Path(bulk_analysis) if bulk_analysis else find_bulk_analysis(sys_man)
     bulk = load_json(bulk_path) if bulk_path else None
     report["bulk_analysis"] = str(bulk_path) if bulk_path else None
-    if bulk is None:
+    if bulk is not None and (why := bulk_problem(bulk)):
+        report["notes"].append(f"bulk analysis {bulk_path} not usable ({why}): no bulk comparison")
+        bulk = None
+    elif bulk is None:
         report["notes"].append("bulk analysis results.json not found: no bulk comparison")
     else:
         report["bulk_system"] = bulk.get("system")
 
-    sys_arr = None
-    if traj:
-        try:
-            sys_arr = _system_arrays(system_dir)
-        except (OSError, ValueError, KeyError) as exc:
-            report["notes"].append(f"system {system_dir} not usable: {exc}")
+    sys_arr = load_system_arrays(system_dir, report["notes"]) if traj else None
     seg_by_index = {s.sweep_index: s for s in segments if s.sweep_kind == "hold" and not s.vdos}
     seg_by_step = {s.sweep_index: s for s in segments if s.sweep_kind == "step" and not s.vdos}
     holds = []
@@ -915,20 +919,14 @@ def analyze_pore(
         if r["kind"] != "hold":
             continue
         h = {"index": r["index"], "t_c": r["t_set_c"], "bulk": _bulk_at(bulk, r["t_set_c"])}
-        if not traj:
-            h["traj"] = {"available": False, "notes": ["trajectory analysis skipped (--no-traj)"]}
-        elif sys_arr is None:
-            h["traj"] = {"available": False, "notes": ["trajectory not available (no system)"]}
-        elif not r["done"]:
-            h["traj"] = {"available": False, "notes": ["hold not complete"]}
-        else:
-            seg = seg_by_index[r["index"]]
-            try:
-                h["traj"] = pore_hold(run_dir, seg, sys_arr, max_frames)
-                if h["traj"]["available"]:
-                    h["film"] = hold_trajectory(run_dir, seg, sys_arr, max_frames)
-            except (OSError, ValueError) as exc:
-                h["traj"] = {"available": False, "notes": [f"trajectory failed: {exc}"]}
+        seg = seg_by_index.get(r["index"])
+        h["traj"] = trajectory_or_note(
+            traj,
+            sys_arr,
+            r["done"],
+            "hold",
+            partial(_hold_and_film, h, run_dir, seg, sys_arr, max_frames),
+        )
         holds.append(h)
     report["holds"] = holds
     mass = next(
@@ -951,6 +949,74 @@ def analyze_pore(
         r["profile"] = sp
         if sp["available"]:
             film[r["index"]] = sp
+    _film_convergence(rows, film, conv_by_segment)
+    energies = None
+    if bulk is not None:
+        try:
+            energies = bulk_energies(bulk, sys_man)
+        except (AnalyzeError, OSError, ValueError) as exc:
+            report["notes"].append(f"bulk energies not available: {exc}")
+    report["thermal"] = pore_thermal(sweep_pts, film, bulk, energies, mass, report["fits"])
+    report["caveats"] = pore_caveats(report, traj)
+    report["convergence"] = eq
+    if plots:
+        report["plots"] = make_plots(report, out_dir, eq)
+    return report, out_dir
+
+
+def _hold_and_film(h: dict, run_dir: Path, seg, sys_arr: dict, max_frames: int) -> dict:
+    """:func:`pore_hold` of a hold, and once available its whole-film `analyze sweep`
+    results (:func:`sepsim.analyze.hold_trajectory`) as ``h["film"]``."""
+    tr = pore_hold(run_dir, seg, sys_arr, max_frames)
+    if tr["available"]:
+        h["film"] = hold_trajectory(run_dir, seg, sys_arr, max_frames)
+    return tr
+
+
+def pore_rows(segments, thermo, factor: float) -> tuple[list[dict], list[dict], dict]:
+    """The pore's segments (re-relaxation, cool stages, sweep steps and holds) as report
+    rows: :func:`pore_window_stats`, drift flags (PE, gamma) and the holds' block-average
+    check; their convergence records, also by deck segment index."""
+    rows, eq, conv_by_segment = [], [], {}
+    for seg, th in zip(segments, thermo, strict=True):
+        kind = _kind(seg)
+        if kind is None or seg.t_target_k is None:
+            continue
+        row = {
+            "index": seg.sweep_index,
+            "segment": seg.index,
+            "name": seg.name,
+            "kind": kind,
+            "t_set_c": seg.t_c if seg.t_c is not None else seg.t_target_k - 273.15,
+            "t_k": seg.t_target_k,
+            "done": th is not None,
+        }
+        if th is not None and len(th.get("Step", ())) >= MIN_STAT_ROWS:
+            skip = HOLD_SKIP if kind == "hold" else STEP_SKIP
+            windows = SegmentWindows(skip, _block_rows(th))  # D55 block means
+            main = {"pe": th["PotEng"]} if "PotEng" in th else {}
+            if all(c in th for c in ("Pxx", "Pyy", "Pzz", "Lz")):
+                main["gamma"] = gamma_series(th, factor)
+            row["stats"] = pore_window_stats(th, skip, factor, windows, main.get("gamma"))
+            row["drift"] = drift_flags(main, skip, windows=windows)
+            if kind == "hold":
+                row["convergence"] = {
+                    k: block_convergence(v, skip, windows=windows) for k, v in main.items()
+                }
+            cols = {"T": th["Temp"]} if "Temp" in th else {}
+            cols |= {k: th[c] for k, c in (("pe", "PotEng"), ("etotal", "TotEng")) if c in th}
+            if "gamma" in main:
+                cols |= {"gamma": main["gamma"], "pzz": th["Pzz"]}
+            if "Time" in th:
+                eq.append(segment_convergence(row["name"], kind, th, skip, cols, windows))
+                conv_by_segment[seg.index] = eq[-1]
+        rows.append(row)
+    return rows, eq, conv_by_segment
+
+
+def _film_convergence(rows: list[dict], film: dict, conv_by_segment: dict) -> None:
+    """Add the film quantities per DCD frame (thickness, gap, plateau, closest approach)
+    to the drift flags and convergence records of the sweep steps and holds."""
     for r in rows:
         if r["index"] in film and r["kind"] in ("step", "hold"):
             r.setdefault("drift", {}).update(film[r["index"]].get("drift") or {})
@@ -963,13 +1029,11 @@ def analyze_pore(
                     c["quantities"][q] = quantity_convergence(t, se[q], skip)
                     if r["kind"] == "hold":
                         c["sem_vs_block"][q] = sem_vs_block(t, se[q], skip)
-    energies = None
-    if bulk is not None:
-        try:
-            energies = bulk_energies(bulk, sys_man)
-        except (AnalyzeError, OSError, ValueError) as exc:
-            report["notes"].append(f"bulk energies not available: {exc}")
-    report["thermal"] = pore_thermal(sweep_pts, film, bulk, energies, mass, report["fits"])
+
+
+def pore_caveats(report: dict, traj: bool) -> list[str]:
+    """The pore report's caveats: gamma (cutoff, mechanical), the slit as a pore wall,
+    the layers, Cv and e_s, CG time, holds without trajectory results."""
     caveats = [
         (
             "γ uses a plain LJ cutoff without tail correction (D44/D48: `pair_modify tail no`,"
@@ -993,27 +1057,20 @@ def analyze_pore(
             " layer at long lags, so long-lag layer MSDs mix layers. MSDs are per dimension:"
             " in-plane (⟨Δx²⟩+⟨Δy²⟩)/2, normal ⟨Δz²⟩, bulk MSD/3 (isotropic)."
         ),
+        (
+            "Cv = dE/dT (total energy, NVT, per gram) and the surface excess energy are classical:"
+            " Cv is not comparable to experiment for the same reasons as the bulk Cp (classical"
+            " equipartition; UA/CG drop degrees of freedom). e_s = (E_pore − (M_pore/M_bulk)"
+            " E_bulk(T))/(2A) compares the NVT film with the NPT bulk at 1 atm (PV ≈ 0) at the"
+            " same set T; the film's lateral box follows the bulk density (D48)."
+        ),
     ]
-    caveats.append(
-        "Cv = dE/dT (total energy, NVT, per gram) and the surface excess energy are classical:"
-        " Cv is not comparable to experiment for the same reasons as the bulk Cp (classical"
-        " equipartition; UA/CG drop degrees of freedom). e_s = (E_pore − (M_pore/M_bulk)"
-        " E_bulk(T))/(2A) compares the NVT film with the NPT bulk at 1 atm (PV ≈ 0) at the"
-        " same set T; the film's lateral box follows the bulk density (D48)."
-    )
-    if resolution == "cg":
-        caveats.append(
-            "CG time is not real time: SDK beads move faster than the atoms they"
-            " represent, so MSD and P2 times are model times (not rescaled)."
-        )
-    no_traj = [f"{h['t_c']:g} C" for h in holds if not h["traj"]["available"]]
+    if report["resolution"] == "cg":
+        caveats.append(CG_TIME_NOTE)
+    no_traj = [f"{h['t_c']:g} C" for h in report["holds"] if not h["traj"]["available"]]
     if no_traj and traj:
         caveats.append(f"No trajectory results for the hold(s) at {', '.join(no_traj)}.")
-    report["caveats"] = caveats
-    report["convergence"] = eq
-    if plots:
-        report["plots"] = make_plots(report, out_dir, eq)
-    return report, out_dir
+    return caveats
 
 
 PORE_EQ_PANELS = (
@@ -1084,19 +1141,9 @@ def make_plots(report: dict, out_dir: Path, eq: list[dict] | None = None) -> dic
 
 def render_markdown(r: dict) -> str:
     """results.md for one pore analysis."""
-    cg, rg = r.get("code_git") or {}, r.get("run_git") or {}
     po = r.get("pore") or {}
-    lines = [
-        f"# Pore analysis: {r['system']} / {r['stage']}",
-        "",
-        (
-            f"- system: `{r['system']}` ({r.get('resolution')}); source run directory"
-            f" `{r['run_dir']}` (status {r.get('run_status')}, node {r.get('run_node')}, run"
-            f" code commit {(rg.get('commit') or 'n/a')[:10]})"
-        ),
-        f"- analysis: `sepsim analyze pore` (D51), code commit {(cg.get('commit') or 'n/a')[:10]}"
-        + (" (dirty)" if cg.get("dirty") else "")
-        + f", {r['generated'][:16].replace('T', ' ')} on {r['generated_on']}",
+    lines = header_markdown(r, "Pore analysis", "pore", "D51")
+    lines += [
         (
             f"- pore: nominal width {_f(po.get('nominal_width_nm'), 'g')} nm at 25 °C, wall"
             f" {_f(po.get('wall_thickness_angstrom'), '.1f')} Å at 25 °C, Lz"
@@ -1111,7 +1158,29 @@ def render_markdown(r: dict) -> str:
     ]
     for n in r.get("notes", []):
         lines.append(f"- note: {n}")
-    lines += [
+    lines += _segments_markdown(r)
+    lines += _gamma_markdown(r)
+    lines += _thermal_markdown(r)
+    lines += _profile_markdown(r)
+    lines += _layers_markdown(r)
+    lines += _conformation_markdown(r)
+    lines += _film_vs_bulk_markdown(r)
+    notes = []
+    for h in r["holds"]:
+        for n in h["traj"].get("notes", []) + (h.get("film") or {}).get("notes", []):
+            notes.append(f"- {h['t_c']:g} °C: {n}")
+    lines += [""] + notes if notes else []
+    lines += relaxation_markdown(
+        [(h["t_c"], h.get("film")) for h in r["holds"]], r.get("resolution"), "hold (whole film)"
+    )
+    lines += equilibration_markdown(r, PORE_LOCAL_NOTE, CHAIN_NOTE)
+    lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
+    lines += plots_markdown(r.get("plots"))
+    return "\n".join(lines) + "\n"
+
+
+def _segments_markdown(r: dict) -> list[str]:
+    lines = [
         "",
         "## Segments: box, pressure tensor and surface tension",
         "",
@@ -1143,7 +1212,11 @@ def render_markdown(r: dict) -> str:
             f" {_pm(st.get('pxx'), '.1f')} | {_pm(st.get('pyy'), '.1f')} |"
             f" {_pm(st.get('pzz'), '.1f')} | {_pm(st.get('gamma'), '.2f')} | {drift_cell(s)} |"
         )
-    lines += ["", "## Surface tension vs T", ""]
+    return lines
+
+
+def _gamma_markdown(r: dict) -> list[str]:
+    lines = ["", "## Surface tension vs T", ""]
     f = r.get("fits") or {}
     lines += [
         (
@@ -1164,10 +1237,14 @@ def render_markdown(r: dict) -> str:
             f" {g['dgamma_dT_mN_mK']:.4f} ± {g['err']:.4f} | {g['gamma_25c_mN_m']:.2f} |"
             f" {_f(g['chi2_red'])} |"
         )
-    lines += _thermal_markdown(r)
+    return lines
+
+
+def _profile_markdown(r: dict) -> list[str]:
+    po = r.get("pore") or {}
     holds = r["holds"]
     tr = [h for h in holds if h["traj"].get("available")]
-    lines += [
+    lines = [
         "",
         "## Density profile, film thickness and gap (holds)",
         "",
@@ -1202,7 +1279,7 @@ def render_markdown(r: dict) -> str:
             f" {p['closest_A']['mean']:.1f} / {p['closest_A']['min']:.1f} |"
         )
     if tr and po.get("nominal_width_nm"):
-        t25 = next((h for h in tr if abs(h["t_c"] - 25.0) < 1e-6), None)
+        t25 = next((h for h in tr if abs(h["t_c"] - 25.0) < T_MATCH_TOL), None)
         if t25:
             g = t25["traj"]["profile"]["gap_gibbs_A"]
             lines += [
@@ -1235,7 +1312,12 @@ def render_markdown(r: dict) -> str:
                 else " fit failed | | |"
             )
         )
-    lines += [
+    return lines
+
+
+def _layers_markdown(r: dict) -> list[str]:
+    tr = [h for h in r["holds"] if h["traj"].get("available")]
+    lines = [
         "",
         "## Mobility by layer (holds)",
         "",
@@ -1283,7 +1365,12 @@ def render_markdown(r: dict) -> str:
                 f"| {h['t_c']:g} | bulk | | {' | '.join(cells)} |"
                 f" {_t1e(b.get('p2_t_1e_ps'), None)} |"
             )
-    lines += [
+    return lines
+
+
+def _conformation_markdown(r: dict) -> list[str]:
+    tr = [h for h in r["holds"] if h["traj"].get("available")]
+    lines = [
         "",
         "## Orientation and chain shape by layer (holds)",
         "",
@@ -1310,7 +1397,12 @@ def render_markdown(r: dict) -> str:
                 f"| {h['t_c']:g} | {name} | {_pm(c['p2z_layer'][name], '.3f')} |"
                 f" {rr['chains_mean']:.1f} | {_pm(z, '.0f')} | {_pm(xy, '.0f')} | {ratio} |"
             )
-    lines += [
+    return lines
+
+
+def _film_vs_bulk_markdown(r: dict) -> list[str]:
+    tr = [h for h in r["holds"] if h["traj"].get("available")]
+    lines = [
         "",
         "## Whole film vs bulk (holds; `analyze sweep` method)",
         "",
@@ -1338,21 +1430,7 @@ def render_markdown(r: dict) -> str:
             f" {_pm(fm['ree']['ree_A'], '.1f')} / {_pm(b.get('ree_A'), '.1f') or 'n/a'} |"
             f" {_pm(fm['c_n']['plateau'], '.2f')} / {_pm(b.get('c_n'), '.2f') or 'n/a'} |"
         )
-    notes = []
-    for h in holds:
-        for n in h["traj"].get("notes", []) + (h.get("film") or {}).get("notes", []):
-            notes.append(f"- {h['t_c']:g} °C: {n}")
-    lines += [""] + notes if notes else []
-    lines += relaxation_markdown(
-        [(h["t_c"], h.get("film")) for h in holds], r.get("resolution"), "hold (whole film)"
-    )
-    lines += equilibration_markdown(r, PORE_LOCAL_NOTE, CHAIN_NOTE)
-    lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
-    if r.get("plots"):
-        lines += ["", "## Plots", ""]
-        for p in r["plots"].values():
-            lines += [f"**{p['title']}**", "", f"![{p['title']}]({p['file']})", ""]
-    return "\n".join(lines) + "\n"
+    return lines
 
 
 PORE_LOCAL_NOTE = (

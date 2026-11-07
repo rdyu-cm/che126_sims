@@ -190,3 +190,18 @@ def test_com_msd_over_rg2_ballistic_and_box_drift():
     lag, msd_lag, rg2_mean, ratio = com_msd_over_rg2(com, np.full((n, 4), 2.0), dt)
     assert lag == pytest.approx(5.0) and msd_lag == pytest.approx(25.0)
     assert rg2_mean == 2.0 and ratio == pytest.approx(12.5)
+
+
+def test_com_msd_over_rg2_curve_and_frame_repeat():
+    from sepsim.analysis.chain import FRAME_REPEAT_ATOL, repeats_frame
+    from sepsim.analysis.mobility import msd
+
+    rng = np.random.default_rng(5)
+    com = rng.normal(size=(30, 4, 3)).cumsum(axis=0)
+    rg2 = np.full((30, 4), 2.0)
+    base = com_msd_over_rg2(com, rg2, 0.5)
+    full = com_msd_over_rg2(com, rg2, 0.5, curve=True)
+    lags, m = msd(com - com.mean(axis=1, keepdims=True), 0.5)
+    assert full[:4] == base and np.array_equal(full[4], lags) and np.array_equal(full[5], m)
+    x = rng.normal(size=(10, 3))
+    assert repeats_frame(x + 0.5 * FRAME_REPEAT_ATOL, x) and not repeats_frame(x + 0.1, x)

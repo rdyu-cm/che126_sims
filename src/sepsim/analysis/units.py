@@ -20,3 +20,4 @@ A3_CM3 = 1e-24  # cm^3 per Angstrom^3
 ANGSTROM_PER_FS_M_PER_S = ANGSTROM_M / FS_S  # 1 Angstrom/fs = 1e5 m/s
 THZ_HZ = 1e12  # Hz per THz
 THZ_CM1 = THZ_HZ / (C_M_PER_S * 100.0)  # cm^-1 per THz (~33.356)
+A2_PS_TO_CM2_S = 1e-16 / 1e-12  # diffusion: Angstrom^2/ps -> cm^2/s

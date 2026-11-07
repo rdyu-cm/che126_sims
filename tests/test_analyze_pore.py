@@ -87,6 +87,18 @@ def test_gamma_mean_and_sem_on_correlated_series():
     assert np.mean(sems) == pytest.approx(np.std(means, ddof=1), rel=0.35)
 
 
+def test_bulk_problem_version_and_keys():
+    from sepsim.analyze_pore import bulk_problem
+
+    seg = {"t_set_c": 25.0, "stats": {"density": {"mean": 0.8, "sem": 1e-3}}}
+    good = {"version": 1, "segments": [seg], "holds": []}
+    assert bulk_problem(good) is None and bulk_problem({"segments": [seg]}) is None
+    assert bulk_problem(good | {"version": 2}) == "version 2, expected 1"
+    hold = {"t_c": 25.0, "traj": {"available": True, "curves": {"msd_lag_ps": [1.0]}}}
+    assert bulk_problem(good | {"holds": [hold]}).startswith("missing key 'msd_A2'")
+    assert bulk_problem(good | {"segments": [{"stats": {}}]}) == "missing key 't_set_c'"
+
+
 def test_gamma_fit_slope_and_birge():
     pts = [
         {"t_set_c": t, "stats": {"gamma": {"mean": 35.0 - 0.05 * (t - 25), "sem": 0.3}}}

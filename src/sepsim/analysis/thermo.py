@@ -39,6 +39,7 @@ class ThermalExpansion:
     alpha_L_err: float
     V_mean: float  # mean volume over the window, Angstrom^3
     n_points: int
+    line: tuple[float, float] | None = None  # the fit (slope, intercept) of V vs T
 
 
 def thermal_expansion(T, V, V_err=None, T_window=None) -> ThermalExpansion:
@@ -54,10 +55,10 @@ def thermal_expansion(T, V, V_err=None, T_window=None) -> ThermalExpansion:
     :func:`sepsim.analysis.stats.timeseries_mean`, used as fit weights).
     """
     T, V, V_err = _window(T, V, V_err, T_window=T_window)
-    slope, _, slope_err, _ = linear_fit(T, V, V_err)
+    slope, icpt, slope_err, _ = linear_fit(T, V, V_err)
     v_mean = float(V.mean())
     a, a_err = slope / v_mean, slope_err / v_mean
-    return ThermalExpansion(a, a_err, a / 3.0, a_err / 3.0, v_mean, len(T))
+    return ThermalExpansion(a, a_err, a / 3.0, a_err / 3.0, v_mean, len(T), (slope, icpt))
 
 
 @dataclass
@@ -70,6 +71,7 @@ class InPlaneExpansion:
     alpha_L_err: float
     A_mean: float  # mean box area Lx * Ly over the window, Angstrom^2
     n_points: int
+    line: tuple[float, float] | None = None  # the fit (slope, intercept) of A vs T
 
 
 def thermal_expansion_inplane(T, A, A_err=None, T_window=None) -> InPlaneExpansion:
@@ -83,10 +85,10 @@ def thermal_expansion_inplane(T, A, A_err=None, T_window=None) -> InPlaneExpansi
     Inputs: T in K, A in Angstrom^2 (per-step means; ``A_err`` their SEMs).
     """
     T, A, A_err = _window(T, A, A_err, T_window=T_window)
-    slope, _, slope_err, _ = linear_fit(T, A, A_err)
+    slope, icpt, slope_err, _ = linear_fit(T, A, A_err)
     a_mean = float(A.mean())
     a, a_err = slope / a_mean, slope_err / a_mean
-    return InPlaneExpansion(a, a_err, a / 2.0, a_err / 2.0, a_mean, len(T))
+    return InPlaneExpansion(a, a_err, a / 2.0, a_err / 2.0, a_mean, len(T), (slope, icpt))
 
 
 @dataclass
@@ -98,6 +100,7 @@ class HeatCapacity:
     cp_JgK: float  # specific, J/(g K)
     cp_JgK_err: float
     n_points: int
+    line: tuple[float, float] | None = None  # the fit (slope, intercept) of H vs T
 
 
 def heat_capacity_classical(T, H_kcalmol, mass_gmol, H_err=None, T_window=None) -> HeatCapacity:
@@ -111,9 +114,9 @@ def heat_capacity_classical(T, H_kcalmol, mass_gmol, H_err=None, T_window=None) 
     :func:`sepsim.analysis.vdos.quantum_cv_correction` (D12c).
     """
     T, H, H_err = _window(T, H_kcalmol, H_err, T_window=T_window)
-    slope, _, slope_err, _ = linear_fit(T, H, H_err)
+    slope, icpt, slope_err, _ = linear_fit(T, H, H_err)
     to_jg = KCAL_J / float(mass_gmol)
-    return HeatCapacity(slope, slope_err, slope * to_jg, slope_err * to_jg, len(T))
+    return HeatCapacity(slope, slope_err, slope * to_jg, slope_err * to_jg, len(T), (slope, icpt))
 
 
 @dataclass
@@ -124,11 +127,14 @@ class Compressibility:
     kappa_T_sem: float  # 1/GPa
     V_mean: float  # Angstrom^3
     V_std: float  # Angstrom^3 (population, ddof = 0)
-    g: float  # statistical inefficiency of (V - <V>)^2
+    g: float  # statistical inefficiency of (V - <V>)^2 (in raw samples)
     n_samples: int
+    lower_bound: bool = False  # block SEM from too few blocks (timeseries_mean)
 
 
-def isothermal_compressibility(V_A3, T_K: float, mintime: int = 3) -> Compressibility:
+def isothermal_compressibility(
+    V_A3, T_K: float, mintime: int = 3, block: int | None = None
+) -> Compressibility:
     """kappa_T = (<V^2> - <V>^2) / (k_B T <V>) from an NPT volume series.
 
     The standard isothermal-isobaric fluctuation formula (Allen & Tildesley,
@@ -138,13 +144,16 @@ def isothermal_compressibility(V_A3, T_K: float, mintime: int = 3) -> Compressib
     at equal intervals after equilibration; ``T_K``: the ensemble temperature.
     SEM: the variance is the mean of s = (V - <V>)^2, so its SEM is the
     statistical-inefficiency SEM of s (:func:`sepsim.analysis.stats.timeseries_mean`,
-    D26); the uncertainty of <V> (relative ~1e-4) is neglected. Returns 1/GPa.
+    D26); with ``block`` (samples) on the means of ``block``-sample blocks, as for the
+    other NPT thermo series (D55: barostat ringing makes the ACF cross zero early and
+    the plain estimator drop the slow tail). The uncertainty of <V> (relative ~1e-4) is
+    neglected. kappa_T does not depend on ``block``. Returns 1/GPa.
     """
     v = np.asarray(V_A3, dtype=float)
     if len(v) < 3:
         raise ValueError("need at least 3 volume samples")
     dv2 = (v - v.mean()) ** 2
-    s = timeseries_mean(dv2, mintime)
+    s = timeseries_mean(dv2, mintime, block=block)
     # A^6 / (J * A^3) = 1e-30 m^3 / J = 1e-30 1/Pa; 1/GPa = 1e9 1/Pa
     to_gpa = 1e-30 * 1e9 / (KB_J_PER_K * float(T_K) * float(v.mean()))
     return Compressibility(
@@ -154,4 +163,5 @@ def isothermal_compressibility(V_A3, T_K: float, mintime: int = 3) -> Compressib
         V_std=float(np.sqrt(s.mean)),
         g=s.g,
         n_samples=len(v),
+        lower_bound=s.lower_bound,
     )

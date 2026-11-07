@@ -29,7 +29,7 @@ UA and AA rows will be added when those sweeps are analyzed.
 - **SEMs too small:**
   - The statistical-inefficiency SEM of thermo series is 1.3–3.5× too small for density and volume, 1.7–2.6× for enthalpy and 1.3–2.2× for surface tension (holds). Barostat ringing makes the volume autocorrelation go negative at 3–4 ps, and the estimator stops there, missing a slow tail of ≈1–2 ns.
   - The fix is to compute the inefficiency on 100 ps block means, which matches Flyvbjerg–Petersen blocking.
-  - Mean values, κ_T and its SEM, and the α_V and Cp fit values and their Birge-scaled errors are unaffected.
+  - Mean values, κ_T and its SEM, and the α_V and Cp fit values and their Birge-scaled errors are unaffected. (κ_T's SEM moved to the same block means on 2026-11-06, D55 amendment; κ_T itself unchanged.)
 - **D_COM "diffusive" verdict too loose:** the old criterion (log-slope ≥ 0.9 over a factor 2 in lag) accepts the sub-diffusive Rouse regime. The fix also requires COM MSD ≥ 2⟨Rg²⟩, the D47 criterion.
 
 ## Sources

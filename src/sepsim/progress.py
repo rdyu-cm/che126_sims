@@ -45,7 +45,8 @@ from pathlib import Path
 import numpy as np
 
 from sepsim.analysis.lammps_log import LogRun, read_log
-from sepsim.analysis.stats import timeseries_mean
+from sepsim.analysis.stats import DegenerateSeries, timeseries_mean
+from sepsim.reporting import _pm, dump_json, plots_markdown, write_atomic
 from sepsim.run import MANIFEST_NAME, _deck_commands
 
 REPORT_VERSION = 2  # 2: chunked runs are one segment (D46/D47)
@@ -70,6 +71,10 @@ SEM_RESOLVE_BLOCKS = 100  # D55: windows < 100 blocks (10 ns) cannot resolve the
 P_EXT_ATM = 1.0  # D55: enthalpy SEM from E + p_ext V (all decks: 1 atm barostat target)
 NKTV2P = 68568.4  # LAMMPS real units: atm * A^3 per kcal/mol
 LIVE_HOLDS = ("extend", "diffuse")  # holds checked while running (D47, D53)
+MIN_STAT_ROWS = 6  # thermo rows a segment needs for its window stats
+MIN_DRIFT_ROWS = 12  # window rows for the halves drift test (>= 6 per half)
+MIN_HOLD_FRAMES = 6  # hold DCD frames needed for the chain checks / trajectory analysis
+T_MATCH_TOL = 1e-6  # set temperatures (K or C) closer than this are the same point
 FINAL = {"finished", "failed", "interrupted", "dry-run", "cancelled/killed?"}
 
 _HEADER = re.compile(r"^#\s*----\s*(.+?)\s*$")
@@ -77,6 +82,7 @@ _COOL = re.compile(r"^#\s*cool step (\d+)/(\d+):\s*([-\d.eE+]+)\s*K")
 _VDOS = re.compile(r"^#\s*VDOS\b")
 _SWEEP_SEG = re.compile(r"^Segment (\d+): (\w+) at ([-\d.eE+]+) C")
 _SYSTEM = re.compile(r"^#\s*system\s+(\S+)\s+\((\w+)\)")
+_PARAM = re.compile(r"^#\s{3}(\w+) = (.*)$")
 
 
 # --------------------------------------------------------------------------- deck
@@ -120,8 +126,13 @@ def parse_deck(path: str | Path) -> list[Segment]:
     ``fix``/``unfix``/``timestep`` between them) form one segment: its ``steps`` is
     their sum, ``run_steps`` lists them and ``dcd`` every DCD dumped in any of them
     (e.g. a hold's burst files, D46).
+
+    Raises ValueError if a sweep ``# ---- Segment N`` header does not give exactly one
+    MD segment besides its VDOS run (e.g. a ``fix`` between its chunks would split it).
     """
     segments: list[Segment] = []
+    sweep_headers: list[str] = []  # each "Segment N: ..." header, in order
+    per_header: list[int] = []  # MD (non-VDOS) segments made under it
     major, sub, cool = "", None, None
     dt_fs = 1.0  # LAMMPS default for units real
     fixes: dict[str, list[str]] = {}
@@ -134,6 +145,9 @@ def parse_deck(path: str | Path) -> list[Segment]:
         if s.startswith("#"):
             if m := _HEADER.match(s):
                 major, sub, cool, joinable = m.group(1), None, None, False
+                if _SWEEP_SEG.match(major):
+                    sweep_headers.append(major)
+                    per_header.append(0)
             elif m := _COOL.match(s):
                 cool, joinable = int(m.group(1)), False
                 sub = f"cool {m.group(1)}/{m.group(2)} ({float(m.group(3)):.1f} K)"
@@ -171,6 +185,14 @@ def parse_deck(path: str | Path) -> list[Segment]:
                     _segment(len(segments) + 1, cmd, tokens, dt_fs, fixes, dumps, major, sub, cool)
                 )
                 joinable = cmd == "run"
+                if segments[-1].sweep_index is not None and not segments[-1].vdos:
+                    per_header[-1] += 1
+    for header, n in zip(sweep_headers, per_header, strict=True):
+        if n != 1:
+            raise ValueError(
+                f"{path}: sweep header '# ---- {header}' gives {n} MD segments, expected 1"
+                " (a fix/unfix/timestep between its runs splits it)"
+            )
     # "(run j/n)" for headers with several runs (e.g. the two compression pressures)
     names = [s.name for s in segments]
     for k, s in enumerate(segments):
@@ -217,6 +239,18 @@ def _segment(index, cmd, tokens, dt_fs, fixes, dumps, major, sub, cool) -> Segme
     return seg
 
 
+def deck_params(path: str | Path) -> dict[str, str]:
+    """Resolved parameters from the deck's leading comment block (``#   key = value``
+    lines, values stripped; a later line wins)."""
+    out = {}
+    for line in Path(path).read_text(errors="replace").splitlines():
+        if not line.startswith("#"):
+            break
+        if m := _PARAM.match(line):
+            out[m.group(1)] = m.group(2).strip()
+    return out
+
+
 def deck_system(path: str | Path) -> tuple[str | None, str | None]:
     """(system id, resolution) from the deck header line ``# system <id> (<res>), ...``."""
     for line in Path(path).read_text(errors="replace").splitlines()[:10]:
@@ -240,10 +274,15 @@ def _mean_sem(x, block: int | None = None) -> dict | None:
         return None
     if np.ptp(x) == 0.0:  # NVT/NVE density: constant, no statistical inefficiency
         return {"mean": float(x[0]), "sem": 0.0}
-    r = timeseries_mean(x, block=block)
+    return _ms_of(timeseries_mean(x, block=block), len(x), block)
+
+
+def _ms_of(r, n: int, block: int | None) -> dict:
+    """The :func:`_mean_sem` dict of a :class:`sepsim.analysis.stats.TimeseriesMean` ``r``
+    of ``n`` samples (``sem_lower_bound`` only with ``block``)."""
     if block is None:
         return {"mean": r.mean, "sem": r.sem}
-    low = bool(r.lower_bound or len(x) < SEM_RESOLVE_BLOCKS * block)
+    low = bool(r.lower_bound or n < SEM_RESOLVE_BLOCKS * block)
     return {"mean": r.mean, "sem": r.sem, "sem_lower_bound": low}
 
 
@@ -257,15 +296,17 @@ def _block_rows(thermo: dict) -> int:
     return SEM_BLOCK_ROWS
 
 
-def _enthalpy_mean_sem(thermo: dict, rows: slice) -> dict | None:
+def _enthalpy_mean_sem(thermo: dict, rows: slice, ms: dict | None = None) -> dict | None:
     """Enthalpy mean (the LAMMPS ``enthalpy`` column, E + P_inst V) with its SEM from
     E + p_ext V (TotEng + P_EXT_ATM Volume / NKTV2P, D55): the white instantaneous-
     pressure noise in P_inst V hides the slow correlation from the statistical
-    inefficiency. Falls back to the column's own SEM without TotEng/Volume."""
+    inefficiency. Falls back to the column's own SEM without TotEng/Volume. ``ms``: the
+    column's :func:`_mean_sem` over ``rows`` if already computed (updated in place)."""
     if "Enthalpy" not in thermo:
         return None
     block = _block_rows(thermo)
-    ms = _mean_sem(thermo["Enthalpy"][rows], block)
+    if ms is None:
+        ms = _mean_sem(thermo["Enthalpy"][rows], block)
     if ms is None or not all(c in thermo for c in ("TotEng", "Volume")):
         return ms
     epv = thermo["TotEng"][rows] + P_EXT_ATM * thermo["Volume"][rows] / NKTV2P
@@ -291,7 +332,7 @@ def segment_stats(thermo: dict[str, np.ndarray]) -> dict:
 
     n = len(thermo.get("Step", ()))
     out: dict = {"rows": n}
-    if n < 6:
+    if n < MIN_STAT_ROWS:
         return out
     half = slice(n // 2, None)
     block = _block_rows(thermo)
@@ -312,11 +353,11 @@ def segment_stats(thermo: dict[str, np.ndarray]) -> dict:
         gamma = 0.5 * thermo["Lz"] * (thermo["Pzz"] - p_lat) * ATM_A_TO_MN_M
         out["gamma"] = _mean_sem(gamma[half], block)
     for key, x in (("drift", thermo.get("Density")), ("gamma_drift", gamma)):
-        if x is not None and n - n // 2 >= 12 and np.ptp(x[half]) > 0:
+        if x is not None and n - n // 2 >= MIN_DRIFT_ROWS and np.ptp(x[half]) > 0:
             try:
                 a, b, delta, sem, drift = drift_check(x[half], block=block)
                 out[key] = {"first": a, "second": b, "delta": delta, "sem": sem, "drift": drift}
-            except ValueError:  # a zero-variance quarter
+            except DegenerateSeries:  # a zero-variance quarter
                 pass
     return out
 
@@ -346,37 +387,28 @@ def hold_chain_checks(
     minimizer), which is negligible over many frames. ``parts`` gives the frames taken
     from each file and ``boundaries_ns`` where each later file starts.
     """
-    import yaml
     from MDAnalysis.coordinates.DCD import DCDReader
 
     from sepsim.analysis.chain import (
         CARBONS_PER_SITE,
+        CG_CC_BOND_A,
         MELT_C_INF_500K,
-        backbone_chains,
         chain_com_rg2,
         com_msd_over_rg2,
         decorrelation_time,
         end_to_end_autocorrelation,
         msid_check,
+        repeats_frame,
+        system_arrays,
     )
-    from sepsim.analysis.mobility import msd
-    from sepsim.build.datafile import read_data_file
 
     dcds = [Path(d) for d in (dcd if isinstance(dcd, list | tuple) else [dcd])]
-    man = yaml.safe_load((system_dir / "manifest.yaml").read_text())
-    chains = backbone_chains(system_dir / "data.lmp", man)
-    atoms = read_data_file(system_dir / "data.lmp")
-    sorted_atoms = atoms.sorted_atoms()
-    mass_of = {int(r[0]): float(r[1]) for r in atoms.sections["Masses"]}
-    masses = np.array([mass_of[int(t)] for t in sorted_atoms[:, 2]])
-    _, molecule = np.unique(sorted_atoms[:, 1].astype(np.int64), return_inverse=True)
-    first = np.array([c[0] for c in chains])
-    last = np.array([c[-1] for c in chains])
-    bb_rows = np.concatenate(chains)
-    bb_chains, k = [], 0
-    for c in chains:
-        bb_chains.append(np.arange(k, k + len(c)))
-        k += len(c)
+    sys_arr = system_arrays(system_dir)
+    man, n_atoms = sys_arr["manifest"], sys_arr["n_atoms"]
+    molecule, masses = sys_arr["molecule"], sys_arr["masses"]
+    bb_rows, bb_chains = sys_arr["bb_rows"], sys_arr["chains"]
+    first = bb_rows[[c[0] for c in bb_chains]]
+    last = bb_rows[[c[-1] for c in bb_chains]]
 
     readers = []
     try:
@@ -384,18 +416,18 @@ def hold_chain_checks(
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", DeprecationWarning)
                 readers.append(DCDReader(str(path)))
-            if readers[-1].n_atoms != len(sorted_atoms):
+            if readers[-1].n_atoms != n_atoms:
                 raise ValueError(
-                    f"{path.name}: {readers[-1].n_atoms} atoms, data.lmp has {len(sorted_atoms)}"
+                    f"{path.name}: {readers[-1].n_atoms} atoms, data.lmp has {n_atoms}"
                 )
         n_max = sum(r.n_frames for r in readers)
-        if n_max < 6:
+        if n_max < MIN_HOLD_FRAMES:
             raise ValueError(f"{', '.join(d.name for d in dcds)}: only {n_max} frames")
         # frames for the C_n check, spaced over the frames present (one fewer if a
         # repeated frame is dropped: the last pick may then not exist)
         spaced = np.linspace(0, n_max - 1, min(n_max, max_msid_frames)).round().astype(int)
         pick = set(np.unique(spaced).tolist())
-        ree = np.empty((n_max, len(chains), 3))
+        ree = np.empty((n_max, len(bb_chains), 3))
         com = np.empty((n_max, int(molecule.max()) + 1, 3))
         rg2 = np.empty((n_max, com.shape[1]))
         bb, kept, parts, prev, vols = [], [], [], None, []
@@ -404,7 +436,7 @@ def hold_chain_checks(
             taken = 0
             for j, ts in enumerate(reader):
                 x = ts.positions.astype(float)
-                if j == 0 and prev is not None and np.allclose(x, prev, atol=1e-2):
+                if j == 0 and prev is not None and repeats_frame(x, prev):
                     continue  # the previous file's last frame, written again at step 0
                 ree[n] = x[last] - x[first]
                 if ts.dimensions is not None:
@@ -429,13 +461,14 @@ def hold_chain_checks(
         bb_chains,
         reference=MELT_C_INF_500K[man["polymer"]],
         carbons_per_site=CARBONS_PER_SITE[res],
-        bond_length=1.54 if cg else None,
+        bond_length=CG_CC_BOND_A if cg else None,
     )
     dt_ns = frame_ps / 1000.0
     lags, acf = end_to_end_autocorrelation(ree, dt_ns)
     t_1e = decorrelation_time(lags, acf)
-    lag_ns, msd_a2, rg2_mean, ratio = com_msd_over_rg2(com, rg2, dt_ns)
-    msd_lags, msd_curve = msd(com - com.mean(axis=1, keepdims=True), dt_ns)
+    lag_ns, msd_a2, rg2_mean, ratio, msd_lags, msd_curve = com_msd_over_rg2(
+        com, rg2, dt_ns, curve=True
+    )
     starts = np.cumsum([p["frames"] for p in parts])[:-1]
     return {
         "frames": n,
@@ -455,7 +488,7 @@ def hold_chain_checks(
             "drift": m.drift,
             "passed": m.passed,
             "carbons_per_site": CARBONS_PER_SITE[res],
-            "bond_length": 1.54 if cg else None,
+            "bond_length": CG_CC_BOND_A if cg else None,
         },
         "ree_acf": {
             "lag_ns": float(lags[-1]),
@@ -569,7 +602,7 @@ def hysteresis(prep_segments: list[dict], sweep_segments: list[dict]) -> list[di
             "rho_sweep": None,
             "delta_pct": None,
         }
-        if temps and temps[0] - 1e-6 <= t <= temps[-1] + 1e-6:
+        if temps and temps[0] - T_MATCH_TOL <= t <= temps[-1] + T_MATCH_TOL:
             r = float(np.interp(t, temps, [pts[k] for k in temps]))
             row.update(rho_sweep=r, delta_pct=(rho["mean"] - r) / r * 100.0)
         out.append(row)
@@ -694,6 +727,35 @@ def _concat_thermo(runs: list[LogRun]) -> dict[str, np.ndarray]:
     return {c: np.concatenate([p[c] for p in parts]) for c in cols}
 
 
+def runs_by_segment(segments: list[Segment], log) -> tuple[list[list[LogRun]], list[str]]:
+    """The log's thermo blocks of every segment, assigned in deck order (LAMMPS writes one
+    block per run/minimize command, so ``len(run_steps)`` blocks each), and notes where
+    the log does not match the plan: a completed MD block whose step count (its "Loop
+    time" line) differs from the planned run, or more blocks than the deck has runs.
+    Either means thermo rows may be assigned to the wrong segment."""
+    runs = log.runs if log else []
+    out, notes, start = [], [], 0
+    for seg in segments:
+        mine = runs[start : start + len(seg.run_steps)]
+        start += len(seg.run_steps)
+        out.append(mine)
+        if seg.command != "run":
+            continue
+        for k, (run, n) in enumerate(zip(mine, seg.run_steps, strict=False)):
+            if run.complete and run.n_steps is not None and run.n_steps != n:
+                notes.append(
+                    f"log block {start - len(seg.run_steps) + k + 1} ({seg.name}, run"
+                    f" {k + 1}/{len(seg.run_steps)}) has {run.n_steps} steps, the deck plans"
+                    f" {n}: thermo may be assigned to the wrong segment"
+                )
+    if len(runs) > start:
+        notes.append(
+            f"log has {len(runs) - start} more thermo blocks than the deck has runs: thermo"
+            " may be assigned to the wrong segment"
+        )
+    return out, notes
+
+
 def _segments_with_log(
     segments: list[Segment], log, partial: bool = False
 ) -> tuple[list[dict], dict]:
@@ -708,11 +770,8 @@ def _segments_with_log(
     runs = log.runs if log else []
     planned = sum(len(seg.run_steps) for seg in segments)
     info["extra_runs"] = max(0, len(runs) - planned)
-    start = 0
-    for k, seg in enumerate(segments):
+    for k, (seg, mine) in enumerate(zip(segments, runs_by_segment(segments, log)[0], strict=True)):
         d = asdict(seg)
-        mine = runs[start : start + len(seg.run_steps)]
-        start += len(seg.run_steps)
         for run in mine:
             if run.complete and run.ns_per_day is not None:
                 info["last_perf"] = (run.ns_per_day, run.steps_per_s, k)
@@ -1279,12 +1338,6 @@ def _diffuse_lines(hold: dict) -> list[str]:
     return out
 
 
-def _pm(ms: dict | None, fmt: str) -> str:
-    if not ms:
-        return ""
-    return f"{ms['mean']:{fmt}} ± {ms['sem']:{fmt}}"
-
-
 def _age(s: float | None) -> str:
     if s is None:
         return "n/a"
@@ -1480,10 +1533,7 @@ def render_markdown(r: dict) -> str:
                 if d
                 else f"| {v['t_c']:g} | | | | |"
             )
-    if r.get("plots"):
-        lines += ["", "## Plots", ""]
-        for p in r["plots"].values():
-            lines += [f"**{p['title']}**", "", f"![{p['title']}]({p['file']})", ""]
+    lines += plots_markdown(r.get("plots"))
     return "\n".join(lines) + "\n"
 
 
@@ -1520,14 +1570,10 @@ def summary_markdown(
 
 def write_report(report: dict, out_dir: Path) -> None:
     """Write progress.json and progress.md atomically into ``out_dir``."""
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for name, text in (
-        (JSON_NAME, json.dumps(report, indent=1, sort_keys=True) + "\n"),
-        (MD_NAME, render_markdown(report)),
-    ):
-        tmp = out_dir / (name + ".tmp")
-        tmp.write_text(text)
-        os.replace(tmp, out_dir / name)
+    write_atomic(
+        out_dir,
+        ((JSON_NAME, dump_json(report, default=None)), (MD_NAME, render_markdown(report))),
+    )
 
 
 def collect_reports(dirs) -> list[dict]:

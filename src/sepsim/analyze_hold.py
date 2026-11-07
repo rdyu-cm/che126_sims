@@ -21,8 +21,6 @@ extension alone is analysed, with a note. Thermo is the extension's own log.
 
 from __future__ import annotations
 
-import datetime as dt
-import platform
 from pathlib import Path
 
 from sepsim.analysis.lammps_log import read_log
@@ -30,9 +28,6 @@ from sepsim.analyze import (
     HOLD_SKIP,
     MAX_FRAMES,
     AnalyzeError,
-    _f,
-    _pm,
-    _system_arrays,
     draw_plots,
     hold_trajectory,
     kappa_t,
@@ -43,25 +38,39 @@ from sepsim.analyze import (
 from sepsim.analyze import write_results as _write
 from sepsim.progress import (
     LOG_NAME,
+    MIN_STAT_ROWS,
     _concat_thermo,
     _prep_hold_dcd,
     deck_system,
     find_deck,
     load_json,
     parse_deck,
+    runs_by_segment,
 )
-from sepsim.run import CODE_DIR, MANIFEST_NAME, git_info
+from sepsim.reporting import (
+    CG_TIME_NOTE,
+    _f,
+    _pm,
+    header_markdown,
+    load_system_arrays,
+    plots_markdown,
+    report_header,
+    trajectory_or_note,
+)
+from sepsim.run import MANIFEST_NAME
 
 VERSION = 1
 HOLD_DCD = {"extend": "hold_ext.dcd", "diffuse": "hold.dcd"}
 
 
-def hold_thermo(segments, log, seg) -> tuple[dict | None, bool]:
+def hold_thermo(segments, log, seg, notes: list[str] | None = None) -> tuple[dict | None, bool]:
     """Thermo rows of segment ``seg`` (its chunk runs concatenated; incomplete runs
-    included) and whether all its runs are complete."""
-    runs = log.runs if log else []
-    start = sum(len(s.run_steps) for s in segments if s.index < seg.index)
-    mine = runs[start : start + len(seg.run_steps)]
+    included) and whether all its runs are complete; blocks assigned as in `sepsim
+    progress` (:func:`sepsim.progress.runs_by_segment`, plan-mismatch notes to ``notes``)."""
+    per_seg, mismatch = runs_by_segment(segments, log)
+    if notes is not None:
+        notes += mismatch
+    mine = per_seg[segments.index(seg)]
     if not mine:
         return None, False
     done = len(mine) == len(seg.run_steps) and all(r.complete for r in mine)
@@ -98,35 +107,24 @@ def analyze_hold(
     system = system or run_dir.resolve().parent.name
     out_dir = out_dir_for(run_dir, system, out)
     log = read_log(run_dir / LOG_NAME)
-    th, done = hold_thermo(segments, log, seg)
     t_k = seg.t_target_k
-    now = dt.datetime.now().astimezone()
-    report: dict = {
-        "version": VERSION,
-        "generated": now.isoformat(timespec="seconds"),
-        "generated_on": platform.node(),
-        "system": system,
-        "resolution": resolution,
-        "stage": run_dir.resolve().name,
-        "protocol": protocol,
-        "run_dir": str(run_dir.resolve()),
-        "run_status": (manifest or {}).get("status"),
-        "run_node": (manifest or {}).get("hostname"),
-        "run_git": (manifest or {}).get("git"),
-        "code_git": git_info(CODE_DIR),
-        "segment": seg.name,
-        "t_k": t_k,
-        "t_c": None if t_k is None else t_k - 273.15,
-        "planned_ns": seg.steps * seg.dt_fs / 1e6,
-        "complete": done,
-        "method": {
+    report = report_header(VERSION, run_dir, manifest, system, resolution)
+    report.update(
+        protocol=protocol,
+        segment=seg.name,
+        t_k=t_k,
+        t_c=None if t_k is None else t_k - 273.15,
+        planned_ns=seg.steps * seg.dt_fs / 1e6,
+        method={
             "hold_window": f"without the first {HOLD_SKIP:.0%} of rows",
             "sem": "100 ps block means (D55)",
             "max_frames": max_frames,
         },
-        "notes": [],
-    }
-    if th is None or len(th.get("Step", ())) < 6:
+        notes=[],
+    )
+    th, done = hold_thermo(segments, log, seg, report["notes"])
+    report["complete"] = done
+    if th is None or len(th.get("Step", ())) < MIN_STAT_ROWS:
         report["notes"].append("no thermo rows for the hold yet")
         report["stats"] = report["kappa"] = None
     else:
@@ -136,7 +134,7 @@ def analyze_hold(
         report["kappa"] = kappa_t(th, t_k, HOLD_SKIP) if t_k else None
 
     before = []
-    if protocol == "extend" and name in seg.dcd:
+    if protocol == "extend":  # seg dumps `name` (chosen above)
         frame_ps = seg.dump_every[seg.dcd.index(name)] * seg.dt_fs / 1000.0
         prep, note = _prep_hold_dcd(run_dir, frame_ps)
         if note:
@@ -144,18 +142,22 @@ def analyze_hold(
         if prep is not None:
             before = [prep]
     report["combined_with"] = [str(b) for b in before]
-    try:
-        sys_arr = _system_arrays(Path(systems) / system)
-    except (OSError, ValueError, KeyError) as exc:
-        sys_arr = None
-        report["notes"].append(f"system {Path(systems) / system} not usable: {exc}")
-    if sys_arr is None:
-        report["traj"] = {"available": False, "notes": ["trajectory not available (no system)"]}
-    else:
-        try:
-            report["traj"] = hold_trajectory(run_dir, seg, sys_arr, max_frames, before=before)
-        except (OSError, ValueError) as exc:
-            report["traj"] = {"available": False, "notes": [f"trajectory failed: {exc}"]}
+    sys_arr = load_system_arrays(Path(systems) / system, report["notes"])
+    report["traj"] = trajectory_or_note(
+        True,
+        sys_arr,
+        True,
+        "hold",
+        lambda: hold_trajectory(run_dir, seg, sys_arr, max_frames, before=before),
+    )
+    report["caveats"] = hold_caveats(report, name)
+    if plots:
+        report["plots"] = make_plots(report, out_dir)
+    return report, out_dir
+
+
+def hold_caveats(report: dict, dcd_name: str) -> list[str]:
+    """The hold report's caveats: the relaxation lag window, CG time, no trajectory."""
     caveats = []
     tr = report["traj"]
     if tr.get("available"):
@@ -165,20 +167,14 @@ def analyze_hold(
             " time beyond that is 'not reached' and only the extrapolated exponential fit"
             " is given."
         )
-    if resolution == "cg":
-        caveats.append(
-            "CG time is not real time: SDK beads move ≈ 4.07× faster than real PE, so MSD,"
-            " D_COM and relaxation times are model times (docs/experiment_comparison.md)."
-        )
+    if report["resolution"] == "cg":
+        caveats.append(CG_TIME_NOTE)
     if not tr.get("available"):
         caveats.append(
-            f"No trajectory results: {name} is not in this run directory (a run on another"
+            f"No trajectory results: {dcd_name} is not in this run directory (a run on another"
             " node may keep its DCD there) or could not be read."
         )
-    report["caveats"] = caveats
-    if plots:
-        report["plots"] = make_plots(report, out_dir)
-    return report, out_dir
+    return caveats
 
 
 def make_plots(report: dict, out_dir: Path) -> dict:
@@ -203,24 +199,12 @@ def make_plots(report: dict, out_dir: Path) -> dict:
 
 def render_markdown(r: dict) -> str:
     """results.md for one hold analysis."""
-    cg, rg = r.get("code_git") or {}, r.get("run_git") or {}
-    lines = [
-        f"# Hold analysis: {r['system']} / {r['stage']}",
-        "",
-        (
-            f"- system: `{r['system']}` ({r.get('resolution')}); source run directory"
-            f" `{r['run_dir']}` ({r['protocol']}, status {r.get('run_status')}, node"
-            f" {r.get('run_node')}, run code commit {(rg.get('commit') or 'n/a')[:10]})"
-        ),
-        f"- analysis: `sepsim analyze hold` (D56), code commit {(cg.get('commit') or 'n/a')[:10]}"
-        + (" (dirty)" if cg.get("dirty") else "")
-        + f", {r['generated'][:16].replace('T', ' ')} on {r['generated_on']}",
-        (
-            f"- segment: {r['segment']} ({r['planned_ns']:g} ns planned,"
-            f" {'complete' if r['complete'] else 'not complete'}); thermo window"
-            f" {r['method']['hold_window']}, SEM from {r['method']['sem']}"
-        ),
-    ]
+    lines = header_markdown(r, "Hold analysis", "hold", "D56", f"{r['protocol']}, ")
+    lines.append(
+        f"- segment: {r['segment']} ({r['planned_ns']:g} ns planned,"
+        f" {'complete' if r['complete'] else 'not complete'}); thermo window"
+        f" {r['method']['hold_window']}, SEM from {r['method']['sem']}"
+    )
     if r.get("combined_with"):
         lines.append(
             "- trajectory: "
@@ -284,10 +268,7 @@ def render_markdown(r: dict) -> str:
         lines += [""] + [f"- {n}" for n in t.get("notes", [])] if t.get("notes") else []
     lines += relaxation_markdown([(r["t_c"] or 0.0, t)], r.get("resolution"))
     lines += ["", "## Caveats", ""] + [f"- {c}" for c in r.get("caveats", [])]
-    if r.get("plots"):
-        lines += ["", "## Plots", ""]
-        for p in r["plots"].values():
-            lines += [f"**{p['title']}**", "", f"![{p['title']}]({p['file']})", ""]
+    lines += plots_markdown(r.get("plots"))
     return "\n".join(lines) + "\n"
 
 

@@ -13,18 +13,16 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-import os
-import re
 from pathlib import Path
 
 import numpy as np
 
 from sepsim.analysis.tensile import FLOW_WINDOW, SMOOTH_STRAIN, analyze_axis, mean_sd, read_ave_time
-from sepsim.progress import deck_system, load_json
+from sepsim.progress import deck_params, deck_system, load_json
+from sepsim.reporting import _f, dump_json, plots_markdown, write_atomic
 
 MD_NAME, JSON_NAME = "results.md", "results.json"
 DECK = "in.tensile"
-_PARAM = re.compile(r"^#\s{3}(\w+) = (.*)$")
 SUMMARY_KEYS = ("E_MPa", "nu_fit", "nu_run", "peak_MPa", "peak_strain", "flow_MPa")
 
 CAVEATS = [
@@ -56,17 +54,6 @@ CAVEATS = [
 
 class TensileError(ValueError):
     """A run directory cannot be analysed (no tensile deck, no data)."""
-
-
-def deck_params(deck: Path) -> dict[str, str]:
-    """Resolved parameters from the deck header (``#   key = value``)."""
-    out = {}
-    for line in deck.read_text(errors="replace").splitlines():
-        if not line.startswith("#"):
-            break
-        if m := _PARAM.match(line):
-            out[m.group(1)] = m.group(2).strip()
-    return out
 
 
 def analyze_run(run_dir: Path, fit_max: float) -> dict:
@@ -222,10 +209,6 @@ def make_plots(report: dict, out_dir: Path) -> dict:
     }
 
 
-def _f(x, fmt: str = ".1f") -> str:
-    return "n/a" if x is None else f"{x:{fmt}}"
-
-
 def _ms(ms: dict | None, fmt: str) -> str:
     if not ms:
         return "n/a"
@@ -265,8 +248,8 @@ def render_markdown(r: dict) -> str:
             peak = f"{a['peak_strain']:.3f}" + (" (end)" if a["peak_at_end"] else "")
             lines.append(
                 f"| {a['axis']} | {a['strain_max']:.3f} | {e} | {_f(a['nu_fit'], '.2f')} |"
-                f" {a['nu_run']:.2f} | {a['peak_MPa']:.1f} | {peak} | {_f(a['flow_MPa'])} |"
-                f" {_f(a.get('temp_mean_K'))} |"
+                f" {a['nu_run']:.2f} | {a['peak_MPa']:.1f} | {peak} | {_f(a['flow_MPa'], '.1f')} |"
+                f" {_f(a.get('temp_mean_K'), '.1f')} |"
             )
         s = run["summary"]
         lines.append(
@@ -294,10 +277,7 @@ def render_markdown(r: dict) -> str:
                 f" {_ms(s['flow_MPa'], '.1f')} |"
             )
     lines += ["", "## Caveats", ""] + [f"- {c}" for c in r["caveats"]]
-    if r.get("plots"):
-        lines += ["", "## Plots", ""]
-        for p in r["plots"].values():
-            lines += [f"**{p['title']}**", "", f"![{p['title']}]({p['file']})", ""]
+    lines += plots_markdown(r.get("plots"))
     return "\n".join(lines) + "\n"
 
 
@@ -311,15 +291,11 @@ def _json(x):
 
 def write_results(report: dict, out_dir: Path) -> None:
     """Write results.json (curves thinned to <= 2000 points) and results.md atomically."""
-    out_dir.mkdir(parents=True, exist_ok=True)
     slim = json.loads(json.dumps(report, default=_thin_json))
-    for name, text in (
-        (JSON_NAME, json.dumps(slim, indent=1, sort_keys=True) + "\n"),
-        (MD_NAME, render_markdown(report)),
-    ):
-        tmp = out_dir / (name + ".tmp")
-        tmp.write_text(text)
-        os.replace(tmp, out_dir / name)
+    write_atomic(
+        out_dir,
+        ((JSON_NAME, dump_json(slim, default=None)), (MD_NAME, render_markdown(report))),
+    )
 
 
 def _thin_json(x):

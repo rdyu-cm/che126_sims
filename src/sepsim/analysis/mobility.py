@@ -135,6 +135,8 @@ def local_log_slope(lags, values, factor: float = 1.25):
     t, y = np.asarray(lags, dtype=float), np.asarray(values, dtype=float)
     ok = (t > 0) & (y > 0)
     t, y = t[ok], y[ok]
+    if len(t) < 2:  # the subset below keeps the first and the last lag
+        raise ValueError("need at least 2 positive lags")
     pick, last = [], -np.inf
     for k, tk in enumerate(t):
         if tk >= last * factor:
@@ -143,8 +145,6 @@ def local_log_slope(lags, values, factor: float = 1.25):
     if pick[-1] != len(t) - 1:
         pick.append(len(t) - 1)
     t, y = t[pick], y[pick]
-    if len(t) < 2:
-        raise ValueError("need at least 2 positive lags")
     return t, np.gradient(np.log(y), np.log(t))
 
 

@@ -45,31 +45,10 @@ def read_thermo(path: str | Path) -> list[dict[str, np.ndarray]]:
     "Loop time" or at end of file (truncated run). Only one-line thermo styles
     are supported (not ``thermo_style multi``/``yaml``).
 
-    Returns a list with one dict per block mapping column name -> 1-D float array.
+    Returns a list with one dict per block mapping column name -> 1-D float array
+    (the ``thermo`` of every :func:`read_log` run).
     """
-    blocks: list[dict[str, np.ndarray]] = []
-    header: list[str] | None = None
-    rows: list[list[float]] = []
-
-    def close() -> None:
-        if header is not None:
-            data = np.array(rows, dtype=float).reshape(len(rows), len(header))
-            blocks.append({name: data[:, i] for i, name in enumerate(header)})
-
-    with open(path) as fh:
-        for line in fh:
-            if _is_header(line):
-                close()
-                header, rows = line.split(), []
-            elif header is not None and line.startswith(_TERMINATOR):
-                close()
-                header = None
-            elif header is not None:
-                row = _parse_row(line, len(header))
-                if row is not None:
-                    rows.append(row)
-    close()
-    return blocks
+    return [run.thermo for run in read_log(path).runs]
 
 
 @dataclass

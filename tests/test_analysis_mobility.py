@@ -43,3 +43,13 @@ def test_p2_static_and_random():
     assert c[0] == pytest.approx(1.0)
     assert np.all(np.abs(c[1:]) < 0.02)
     assert len(lag) == 51
+
+
+def test_local_log_slope_needs_two_positive_lags():
+    from sepsim.analysis.mobility import local_log_slope
+
+    t, s = local_log_slope([0.0, 1.0, 2.0], [0.0, 1.0, 2.0])
+    assert list(t) == [1.0, 2.0] and s == pytest.approx([1.0, 1.0])
+    for lags, vals in (([0.0, 1.0], [0.0, 1.0]), ([0.0], [1.0]), ([], [])):
+        with pytest.raises(ValueError, match="at least 2 positive lags"):
+            local_log_slope(lags, vals)

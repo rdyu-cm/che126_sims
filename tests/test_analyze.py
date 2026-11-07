@@ -341,6 +341,40 @@ def test_drift_flags_and_block_convergence():
     assert len(b) == 8 and b[-1]["mean"] > b[0]["mean"]
 
 
+def test_shared_segment_windows_match_separate_computation():
+    from sepsim.analyze import (
+        SegmentWindows,
+        block_convergence,
+        drift_flags,
+        quantity_convergence,
+        window_stats,
+    )
+    from sepsim.progress import _block_rows
+
+    rng = np.random.default_rng(3)
+    n = 3000
+    th = {
+        "Step": np.arange(n) * 100.0,
+        "Time": np.arange(n) * 1000.0,  # 1 ps rows: 100-row blocks
+        "Temp": 298.0 + _ar1(rng, n, 2.0, 0.9),
+        "Density": 0.8 + _ar1(rng, n, 1e-3, 0.95),
+        "Enthalpy": -1e4 + _ar1(rng, n, 20.0, 0.9),
+        "TotEng": -1.1e4 + _ar1(rng, n, 20.0, 0.9),
+        "Volume": 1e5 + _ar1(rng, n, 50.0, 0.95),
+    }
+    blk, skip = _block_rows(th), 0.1
+    w = SegmentWindows(skip, blk)
+    assert window_stats(th, skip, w) == window_stats(th, skip)
+    main = {"density": th["Density"], "enthalpy": th["Enthalpy"]}
+    assert drift_flags(main, skip, windows=w) == drift_flags(main, skip, blk)
+    for x in main.values():
+        assert block_convergence(x, skip, windows=w) == block_convergence(x, skip, blk)
+    t = th["Time"] / 1000.0
+    for x in (th["Temp"], th["Volume"], th["Density"]):
+        assert quantity_convergence(t, x, skip, windows=w) == quantity_convergence(t, x, skip)
+    assert w(th["Density"]) is w(th["Density"])  # one window (and SEM) per series
+
+
 def test_cli_analyze_rejects_pore_and_missing(tmp_path, capsys):
     run = tmp_path / "x" / "pore"
     run.mkdir(parents=True)

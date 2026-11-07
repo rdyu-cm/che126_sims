@@ -445,9 +445,9 @@ def test_tethered_mask_annulus_and_columns(hole_sys):
     hole = man["hole"] | {"radius_nm": 3.0, "axis_angstrom": [65.0, 65.0]}
     box = [[0.0, 130.0], [0.0, 130.0], [0.0, 200.0]]
     p = resolve_params("cg", None, {"scaffold": "annulus"}, "hole")
-    m = tethered_mask(P, L, hole, p, box)
+    m = tethered_mask(P, hole, p, box)
     r = np.hypot(P[:, 0] - 65.0, P[:, 1] - 65.0)
     assert np.array_equal(m, r > 55.0)
     p = resolve_params("cg", None, {"scaffold": "columns"}, "hole")
-    m = tethered_mask(P, L, hole, p, box)
+    m = tethered_mask(P, hole, p, box)
     assert 0 < m.sum() < 0.1 * len(P) and r[m].min() > 55.0 - 1e-9

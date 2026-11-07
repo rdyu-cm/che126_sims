@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 from matplotlib.ticker import NullFormatter
 
-from sepsim.analysis.units import A3_CM3, AVOGADRO
+from sepsim.analysis.units import A2_PS_TO_CM2_S, A3_CM3, AVOGADRO
 from sepsim.progress_plots import _save, plt
 
 _WINDOW_STYLE = {0: "-", 1: "--", 2: ":"}
@@ -126,7 +126,7 @@ def msd_curves(path, holds, title="") -> Path:
         if cm.get("diffusive"):
             lo, hi = cm["fit_ps"]
             x = np.geomspace(lo, hi, 20)
-            d = cm["D_cm2_s"] / 1e-4  # back to A^2/ps
+            d = cm["D_cm2_s"] / A2_PS_TO_CM2_S  # back to A^2/ps
             a2.loglog(x, 6 * d * x, color=c, ls="--", lw=0.8)
     for ax, what in ((a1, "backbone-site MSD"), (a2, "chain COM MSD")):
         ax.set_xlabel("lag (ps)")
