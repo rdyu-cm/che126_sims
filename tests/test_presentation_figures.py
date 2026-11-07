@@ -246,8 +246,14 @@ def test_sweep_steps_drawn_when_present(pf, tmp_path):
     app = f4["appendix"]["fig4_1_ree_length"]
     assert "step" not in {src for _, src, _ in app["b"]["CG PE C240"]}  # 4.1b: no steps
     assert "Small open" in pf.caption_fig4_1(app, data)
-    # without the key (the committed results.json files): no step points or captions
-    data0 = pf.load_data(REPO / "results/analysis", REPO / "systems", [], render=False)
+    # without the key (results.json files from before the per-step analysis): no step
+    # points or captions
+    shutil.copytree(REPO / "results/analysis", tmp_path / "a0")
+    for p in (tmp_path / "a0").glob("*/sweep/results.json"):
+        r = json.loads(p.read_text())
+        r.pop("steps", None)
+        p.write_text(json.dumps(r))
+    data0 = pf.load_data(tmp_path / "a0", REPO / "systems", [], render=False)
     out0 = pf.build(data0, tmp_path / "out0", only=["fig3", "fig4"], log=lambda *_: None)
     assert not out0["infos"]["fig3_thermo"].get("c_steps")
     assert not out0["infos"]["fig4_chains"]["keys"]["steps"]
