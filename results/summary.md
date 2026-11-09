@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-11-09 07:15 UTC
-- Git commit: b839c0b
-- Inputs: runs `/home/rdyu/projects/che126_sims/results/runs`, `/home/rdyu/projects/che126_sims/results/progress/rdyu-rog`, `/home/rdyu/projects/che126_sims/results/run_sidecars`; analysis `/home/rdyu/projects/worktrees/rep441-pore-results/results/analysis`; systems `/home/rdyu/projects/worktrees/rep441-pore-results/systems`
+- Generated: 2026-11-09 20:09 UTC
+- Git commit: 8b31dff (dirty)
+- Inputs: runs `/home/rdyu/projects/che126_sims/results/runs`; analysis `/home/rdyu/projects/che126_sims/results/analysis`; systems `/home/rdyu/projects/che126_sims/systems`
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -24,36 +24,36 @@
 | System | Res | Polymer | Kind | Chains × length | Sites | Stage now | Status | Equilibration (D47) | C<sub>n</sub> plateau (D37) | Analysis |
 |---|---|---|---|---|---|---|---|---|---|---|
 | `pe_cg_amorph_n40_c240_s1` | CG | PE | bulk | 40 × C240 | 3,200 beads | done | finished: prep, extend, cool, sweep, `diffuse_25C` (interrupted, 92.5%), `diffuse_160C` (interrupted, 85.2%), `diffuse_90C` (interrupted, 58.7%), `diffuse_130C`, `tensile_160C_r1e9`, `tensile_90C_r1e9`, `tensile_25C_r1e9`, `tensile_130C_r1e9`, `tensile_25C`, `tensile_160C`, `tensile_90C`, `tensile_130C` | D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C`, extend, sweep, `tensile_130C`, `tensile_130C_r1e9`, `tensile_160C`, `tensile_160C_r1e9`, `tensile_25C`, `tensile_25C_r1e9`, `tensile_90C`, `tensile_90C_r1e9` |
-| `pe_cg_amorph_n40_c1500_s1` | CG | PE | bulk | 40 × C1500 | 20,000 beads | done | finished: prep, extend, cool, sweep | D47 n/a (long CG chain); ACF 0.68 at 250.0 ns, MSD/⟨R<sub>g</sub>²⟩ 0.12; 500.0 ns at 500 K; no C<sub>n</sub> drift: accepted | 7.43 vs 6.7 (outside band, info); no drift (Δ +0.21 ± 0.30) | sweep |
-| `pe_cg_amorph_n320_c240_s1_rep222` | CG | PE | bulk (derived) | 320 × C240 | 25,600 beads | done | finished: extend (stopped after D47 PASS) | D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
+| `pe_cg_amorph_n40_c1500_s1` | CG | PE | bulk | 40 × C1500 | 20,000 beads | done | finished: prep, extend, cool, sweep | D47 n/a (long CG chain); ACF 0.68 at 250.0 ns, MSD/⟨R<sub>g</sub>²⟩ 0.12; 500.0 ns at 500 K; no C<sub>n</sub> drift: accepted | 7.43 vs 6.7 (outside band, info); no drift (Δ +0.21 ± 0.30) | extend, sweep |
+| `pe_cg_amorph_n320_c240_s1_rep222` | CG | PE | bulk (derived) | 320 × C240 | 25,600 beads | done | finished: extend (stopped after D47 PASS) | D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | extend |
 | `pe_cg_amorph_n640_c240_s1_rep441` | CG | PE | bulk (derived) | 640 × C240 | 51,200 beads | done | finished: extend | D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | extend |
 | `pe_cg_pore500k_w10nm_n40_c240_s1` | CG | PE | pore (wide, 10 nm) | 40 × C240 | 3,200 beads | done | finished: `pore_relax` | from `pe_cg_amorph_n40_c240_s1`: D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | no |
 | `pe_cg_pore_w5nm_n40_c240_s1` | CG | PE | pore (narrow, 5 nm) | 40 × C240 | 3,200 beads | done | finished: pore | from `pe_cg_pore500k_w10nm_n40_c240_s1` ← `pe_cg_amorph_n40_c240_s1`: D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | pore |
 | `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` | CG | PE | pore (wide, 10 nm) | 320 × C240 | 25,600 beads | done | finished: `pore_relax` | from `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_hole_r2nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 2 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
 | `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 130 °C) | 320 × C240 | 25,600 beads | `hole_scaf_rel0_failed_20261102` | failed, 0.0% | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
-| `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
-| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 25 °C) | 320 × C240 | 25,600 beads | `hole_ramp_rel130_col` | running, 42.7% (3/20 segments, Stage 4: step at 35 C); ETA 2026-11-11 23:30 UTC | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
+| `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
+| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 25 °C) | 320 × C240 | 25,600 beads | `hole_ramp_rel130_col` | running, 53.7% (9/20 segments, Stage 10: step at 90 C); ETA 2026-11-12 06:36 UTC | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
 | `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 90 °C) | 320 × C240 | 25,600 beads | `hole_free_failed_20261102` | failed, 0.0% | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
-| `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 4 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
+| `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 4 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_gap5nm` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | CG | PE | pore (narrow, 5 nm) | 320 × C240 | 25,600 beads | done | finished: pore | from `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | pore |
 | `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` | CG | PE | pore (wide, 12 nm) | 640 × C240 | 51,200 beads | done | finished: `pore_relax` | from `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 2 nm, 160 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 3 nm, 160 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441` | CG | PE | hole (R 3 nm, 25 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 4 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | started (no progress.json) | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
+| `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 4 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | running, 0.6% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-16 09:15 UTC | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 5 nm, 160 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441` | CG | PE | hole (R 5 nm, 25 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 6 nm, 160 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_pore_w5nm_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | done | finished: pore | from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | pore |
+| `pe_cg_pore_w5nm_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | pore | not started | from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | pore |
 | `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | done | finished: prep, extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | extend, sweep |
 | `pe_ua_pore500k_w10nm_n40_c240_s1` | UA | PE | pore (wide, 10 nm) | 40 × C240 | 9,600 | done | finished: `pore_relax` | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `pe_ua_pore_w5nm_n40_c240_s1` | UA | PE | pore (narrow, 5 nm) | 40 × C240 | 9,600 | pore | running, 68.2% (22/28 segments, seg 13 step 130 C); ETA 2026-11-11 08:38 UTC | from `pe_ua_pore500k_w10nm_n40_c240_s1` ← `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | sweep | running, 65.8% (15/22 segments, seg 14 hold 130 C); ETA 2026-11-11 12:24 UTC | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
-| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | done | finished: prep (cancelled/killed?, 60.8%), extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | sweep |
+| `pe_ua_pore_w5nm_n40_c240_s1` | UA | PE | pore (narrow, 5 nm) | 40 × C240 | 9,600 | pore | running, 75.9% (23/28 segments, seg 14 hold 130 C); ETA 2026-11-11 17:21 UTC | from `pe_ua_pore500k_w10nm_n40_c240_s1` ← `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | sweep | cancelled/killed?, 14.7% | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
+| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | done | finished: prep (cancelled/killed?, 60.8%), extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | extend, sweep |
 | `ipp_ua_pore500k_w10nm_n40_c240_s1` | UA | iPP | pore (wide, 10 nm) | 40 × C240 | 12,760 | done | finished: `pore_relax` | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
-| `ipp_ua_pore_w5nm_n40_c240_s1` | UA | iPP | pore (narrow, 5 nm) | 40 × C240 | 12,760 | done | finished: pore | from `ipp_ua_pore500k_w10nm_n40_c240_s1` ← `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | pore |
-| `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | `sweep_failed_20261102` | failed, 0.0% | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
+| `ipp_ua_pore_w5nm_n40_c240_s1` | UA | iPP | pore (narrow, 5 nm) | 40 × C240 | 12,760 | pore | cancelled/killed?, 12.6% | from `ipp_ua_pore500k_w10nm_n40_c240_s1` ← `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | pore |
+| `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | sweep | failed, 0.0% | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 
 **Abbreviations:**
 
@@ -100,14 +100,14 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 | `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
 | `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
 | `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
-| `pe_cg_pore_w5nm_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo |
+| `pe_cg_pore_w5nm_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | todo | trend | n/a | todo |
 | `pe_ua_amorph_n40_c240_s1` | comp | comp | comp | no | comp | trend | corr | todo | n/a | n/a | todo | n/a |
 | `pe_ua_pore500k_w10nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
 | `pe_ua_pore_w5nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | comp | todo | n/a | todo |
 | `pe_aa_amorph_n40_c240_s1_from_ua` | todo | todo | todo | todo | trend | todo | todo | todo | n/a | n/a | todo | n/a |
 | `ipp_ua_amorph_n40_c240_s1` | comp | comp | comp | no | comp | trend | corr | todo | n/a | n/a | todo | n/a |
 | `ipp_ua_pore500k_w10nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo |
-| `ipp_ua_pore_w5nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo |
+| `ipp_ua_pore_w5nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | todo | trend | n/a | todo |
 | `ipp_aa_amorph_n40_c240_s1_from_ua` | todo | todo | todo | todo | trend | todo | todo | todo | n/a | n/a | todo | n/a |
 
 **Abbreviations:**
@@ -185,7 +185,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 - `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222`
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` failed 0%, `hole_free_failed_20261102` failed 0%, `hole_scaf_rel0` failed 0%, `hole_scaf_rel0_failed_20261102` failed 0%
+  - not yet computed: hole closure (then trend): hole runs `hole_free_failed_20261102` failed 0%, `hole_scaf_rel0_failed_20261102` failed 0%
 - `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222`
   - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
@@ -197,7 +197,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 - `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` failed 0%, `hole_free_failed_20261102` failed 0%
+  - not yet computed: hole closure (then trend): hole runs `hole_free_failed_20261102` failed 0%
 - `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222`
   - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
@@ -227,7 +227,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 - `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` started
+  - not yet computed: hole closure (then trend): hole runs `hole_free` running 1%, `hole_free_gap5nm` stalled? 9%
 - `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441`
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
@@ -244,8 +244,8 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.07–0.24 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); C<sub>n</sub> 8.93 is outside the melt band (6.7 ±10%): a property of the CG force field, not of the equilibration; vs experiment: CG PE chains too stiff: C<sub>n</sub> +25–45% (C240), ≈ +10% (C1500); R<sub>g</sub> ≈ +20% (C240) (`docs/experiment_comparison.md`); no principled correction for the offset (model property): compare our UA/AA values
   - P2, segment MSD: **needs correction**: SDK CG dynamics are faster than real PE (smoothed landscape). Correction: multiply CG times (P2, MSD times) by 4.07, i.e. D<sub>real</sub> ≈ D<sub>CG</sub>/4.07, η<sub>real</sub> ≈ 4.07·η<sub>CG</sub> (Hall, Sirk, Klein, Shinoda, J. Chem. Phys. 150, 244901, 2019); the factor depends on T, so recalibrate per T against our own UA/AA at the same T once available; T trends as is; vs experiment: CG PE dynamics ≈ 4× too fast (P2: a different vector than ¹³C NMR C–H) (`docs/experiment_comparison.md`)
   - film structure: **trend**: no direct experiment: mechanism and within-simulation comparisons
+  - not yet computed: γ, dγ/dT (then comparable): no pore run yet
   - not yet computed: hole closure (then trend): no hole run (D52)
-  - **comparable**: γ, dγ/dT (vs experiment: CG PE γ within 1–3% at 25–160 °C; dγ/dT ≈ 20% shallower (`docs/experiment_comparison.md`))
 - `pe_ua_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.01–0.14 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); C<sub>n</sub> 8.19 is outside the melt band (6.7 ±10%): a property of the UA force field, not of the equilibration; no principled correction for the offset (model property): compare our UA/AA values
@@ -263,8 +263,8 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - **comparable**: γ, dγ/dT
 - `pe_aa_amorph_n40_c240_s1_from_ua`
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K: **trend**: ua2aa box: the chain conformations were equilibrated with the UA force field (D32/D47) and only relaxed locally in AA; compare the UA row; C<sub>n</sub> 8.19 is outside the melt band (6.7 ±10%): a property of the UA (source box) force field, not of the equilibration
-  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep running 66%, `sweep_crashed_20261102` cancelled/killed? 0%)
-  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep running 66%, `sweep_crashed_20261102` cancelled/killed? 0%); needs a long D53 diffuse hold
+  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep cancelled/killed? 15%, `sweep_crashed_20261102` cancelled/killed? 0%)
+  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep cancelled/killed? 15%, `sweep_crashed_20261102` cancelled/killed? 0%); needs a long D53 diffuse hold
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
 - `ipp_ua_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
@@ -281,12 +281,12 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.00–0.41 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); no principled correction for the offset (model property): compare our UA/AA values
   - P2, segment MSD: **needs correction**: UA dynamics are faster than real PE (no hydrogen friction). Correction: a UA→AA time-mapping factor per T from our own AA at the same T (none published for this force field here); T trends as is
   - film structure: **trend**: no direct experiment: mechanism and within-simulation comparisons
+  - not yet computed: γ, dγ/dT (then comparable): no γ from the hold segments (pore cancelled/killed? 13%)
   - not yet computed: hole closure (then trend): no hole run (D52)
-  - **comparable**: γ, dγ/dT
 - `ipp_aa_amorph_n40_c240_s1_from_ua`
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K: **trend**: ua2aa box: the chain conformations were equilibrated with the UA force field (D32/D47) and only relaxed locally in AA; compare the UA row
-  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep failed 0%, `sweep_failed_20261102` failed 0%)
-  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep failed 0%, `sweep_failed_20261102` failed 0%); needs a long D53 diffuse hold
+  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep failed 0%)
+  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep failed 0%); needs a long D53 diffuse hold
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
 
 </details>
@@ -294,18 +294,20 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 ## Pending and known items
 
 - `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222`: `hole_scaf_rel0_failed_20261102`: failed, 0.0%
-- `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`: `hole_ramp_rel130_col`: running, 42.7% (3/20 segments, Stage 4: step at 35 C); ETA 2026-11-11 23:30 UTC
+- `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`: `hole_ramp_rel130_col`: running, 53.7% (9/20 segments, Stage 10: step at 90 C); ETA 2026-11-12 06:36 UTC
 - `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`: `hole_free_failed_20261102`: failed, 0.0%
 - `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441`: hole not started
 - `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441`: hole not started
 - `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441`: hole not started
-- `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`: `hole_free`: started (no progress.json)
+- `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`: `hole_free`: running, 0.6% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-16 09:15 UTC
 - `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441`: hole not started
 - `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441`: hole not started
 - `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441`: hole not started
-- `pe_ua_pore_w5nm_n40_c240_s1`: pore: running, 68.2% (22/28 segments, seg 13 step 130 C); ETA 2026-11-11 08:38 UTC
-- `pe_aa_amorph_n40_c240_s1_from_ua`: sweep: running, 65.8% (15/22 segments, seg 14 hold 130 C); ETA 2026-11-11 12:24 UTC
-- `ipp_aa_amorph_n40_c240_s1_from_ua`: `sweep_failed_20261102`: failed, 0.0%
+- `pe_cg_pore_w5nm_n640_c240_s1_rep441`: pore not started
+- `pe_ua_pore_w5nm_n40_c240_s1`: pore: running, 75.9% (23/28 segments, seg 14 hold 130 C); ETA 2026-11-11 17:21 UTC
+- `pe_aa_amorph_n40_c240_s1_from_ua`: sweep: cancelled/killed?, 14.7%
+- `ipp_ua_pore_w5nm_n40_c240_s1`: pore: cancelled/killed?, 12.6%
+- `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep: failed, 0.0%
 
 ## Superseded (kept, not used)
 
@@ -400,33 +402,36 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 | 500 K equilibration (D47) | — | — | — | — | D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.56; 80.0 ns at 500 K; accepted | — | `extend` progress |
 | ρ (g/cm³) | 0.83453 ± 0.00009 | 0.79783 ± 0.00007 | 0.77580 ± 0.00011 | 0.75938 ± 0.00009 | 500 K: 0.72370 ± 0.00007 | comp | `extend`, `sweep` |
 | ρ (g/cm³), long hold (D53) | 0.83523 ± 0.00010 | 0.79797 ± 0.00009 | 0.77580 ± 0.00004 | 0.75957 ± 0.00005 | — | comp | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| κ<sub>T</sub> (GPa⁻¹) | 1.000 ± 0.015 | 1.292 ± 0.019 | 1.502 ± 0.027 | 1.662 ± 0.026 | 500 K: 2.146 ± 0.025 | comp | `extend`, `sweep` |
+| κ<sub>T</sub> (GPa⁻¹) | 1.000 ± 0.015 | 1.292 ± 0.019 | 1.502 ± 0.027 | 1.662 ± 0.026 | 500 K: 2.146 ± 0.024 | comp | `extend`, `sweep` |
 | κ<sub>T</sub> (GPa⁻¹), long hold (D53) | 1.011 ± 0.005 | 1.271 ± 0.007 | 1.482 ± 0.007 | 1.638 ± 0.008 | — | comp | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
 | α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 6.966 ± 0.041 (χ²<sub>red</sub> 20.9); 25–90 °C: 6.925 ± 0.035 (χ²<sub>red</sub> 3.27); 90–160 °C: 7.047 ± 0.048 (χ²<sub>red</sub> 6.12) | comp | `sweep` |
 | C<sub>p</sub>, classical (J g⁻¹ K⁻¹) | — | — | — | — | 25–160 °C: 0.826 ± 0.003 (χ²<sub>red</sub> 9.87); 25–90 °C: 0.843 ± 0.008 (χ²<sub>red</sub> 7.98); 90–160 °C: 0.818 ± 0.006 (χ²<sub>red</sub> 5.07) | no | `sweep` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 9.11 (melt 6.7) | comp | `extend` progress |
 | R<sub>g</sub> (Å) | 31.24 ± 0.12 | 32.21 ± 0.21 | 30.84 ± 0.34 | 30.80 ± 0.39 | — | trend | `sweep` |
 | R<sub>g</sub> (Å), long hold (D53) | 35.13 ± 0.51 | 32.15 ± 0.42 | 30.94 ± 0.15 | 29.79 ± 0.28 | — | trend | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
+| R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 28.75 ± 0.34 | comp | `extend` |
 | R<sub>ee</sub> (Å) | 77.1 ± 0.5 | 84.2 ± 1.0 | 77.6 ± 2.1 | 78.3 ± 1.4 | — | trend | `sweep` |
 | R<sub>ee</sub> (Å), long hold (D53) | 89.5 ± 1.9 | 80.6 ± 2.0 | 78.3 ± 0.6 | 74.8 ± 1.0 | — | trend | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
+| R<sub>ee</sub> (Å), 500 K hold | — | — | — | — | 500 K: 71.9 ± 1.3 | comp | `extend` |
 | C<sub>n</sub> | 10.27 ± 0.08 | 11.78 ± 0.19 | 10.58 ± 0.36 | 10.70 ± 0.34 | — | trend | `sweep` |
 | C<sub>n</sub>, long hold (D53) | 13.88 ± 0.52 | 11.42 ± 0.43 | 10.63 ± 0.15 | 9.75 ± 0.25 | — | trend | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| P2 1/e time (ps) | 123 | 25.5 | 12.7 | 7.61 | — | corr | `sweep` |
+| C<sub>n</sub>, 500 K hold | — | — | — | — | 500 K: 9.12 ± 0.30 | comp | `extend` |
+| P2 1/e time (ps) | 123 | 25.5 | 12.7 | 7.61 | 500 K: 8.47 | corr | `extend`, `sweep` |
 | P2 1/e time (ps), long hold (D53) | 144 | 82.3 | 75.6 | 72.5 | — | corr | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| segment MSD at 1 ns lag (Å²) | 158.2 | 275.7 | 355.3 | 397.7 | — | corr | `sweep` |
+| segment MSD at 1 ns lag (Å²) | 158.2 | 275.7 | 355.3 | 397.7 | 500 K: 501.2 | corr | `extend`, `sweep` |
 | segment MSD at 1 ns lag (Å²), long hold (D53) | 161.6 | 279.6 | 349.5 | 396.2 | — | corr | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| max chain COM MSD (Å²) at lag | 176.9 at 12.5 ns | 396 at 12.5 ns | 522.8 at 12.5 ns | 572.5 at 12.5 ns | — | corr | `sweep` |
+| max chain COM MSD (Å²) at lag | 176.9 at 12.5 ns | 396 at 12.5 ns | 522.8 at 12.5 ns | 572.5 at 12.5 ns | 500 K: 2120 at 40 ns | corr | `extend`, `sweep` |
 | max chain COM MSD (Å²) at lag, long hold (D53) | 2019 at 138.8 ns | 2069 at 88 ns | 4881 at 150 ns | 4669 at 127.8 ns | — | corr | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.18 | 0.38 | 0.55 | 0.60 | — | corr | `sweep` |
+| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.18 | 0.38 | 0.55 | 0.60 | 500 K: 2.56 | corr | `extend`, `sweep` |
 | chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag, long hold (D53) | 1.64 | 2.00 | 5.10 | 5.26 | — | corr | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.90) | not diffusive (slope 0.98) | not diffusive (slope 0.90) | not diffusive (slope 0.99) | — | corr | `sweep` |
+| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.90) | not diffusive (slope 0.98) | not diffusive (slope 0.90) | not diffusive (slope 0.99) | 500 K: not diffusive (slope 0.91) | corr | `extend`, `sweep` |
 | D<sub>COM</sub> (cm²/s), long hold (D53) | not diffusive (slope 0.95) | not diffusive (slope 1.04) | 5.31e-07 ± 1.8e-08 | 6.08e-07 ± 6.2e-09 | — | corr | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
 | η<sub>Rouse</sub>, Rouse viscosity estimate (Pa·s), long hold (D53) | — | — | 0.025 | 0.021 | — | corr | `diffuse_160C` progress, `diffuse_130C` progress |
-| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached (extrap. 46.5) | not reached (extrap. 30.7) | not reached (extrap. 18.2) | not reached (extrap. 25.5) | — | corr | `sweep` |
+| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached (extrap. 46.5) | not reached (extrap. 30.7) | not reached (extrap. 18.2) | not reached (extrap. 25.5) | 500 K: 11.1 | corr | `extend`, `sweep` |
 | τ<sub>ee</sub>, end-to-end vector 1/e time (ns), long hold (D53) | 94.7 | 37.9 | 26.5 | 16.8 | — | corr | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached (extrap. 103) | not reached (extrap. 46.1) | not reached (extrap. 25) | not reached (extrap. 33.1) | — | corr | `sweep` |
+| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached (extrap. 103) | not reached (extrap. 46.1) | not reached (extrap. 25) | not reached (extrap. 33.1) | 500 K: 14.5 | corr | `extend`, `sweep` |
 | τ<sub>1</sub>, slowest Rouse mode 1/e time (ns), long hold (D53) | 116 | 46.3 | 34.1 | 23.3 | — | corr | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
-| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.168 | 0.112 | 0.103 | 0.094 | — | — | `sweep` |
+| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.168 | 0.112 | 0.103 | 0.094 | 500 K: 0.093 | — | `extend`, `sweep` |
 | ordered-site fraction (crystallinity monitor, uncalibrated), long hold (D53) | 0.192 | 0.116 | 0.103 | 0.093 | — | — | `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C` |
 | E<sub>app</sub> (MPa), 10⁸ s⁻¹, mean ± SD | -54.8 ± 37.2 | 184 ± 81.2 | -23.2 ± 163 | 64.5 ± 38.8 | — | trend | `tensile_130C`, `tensile_160C`, `tensile_25C`, `tensile_90C` |
 | E<sub>app</sub> (MPa), 10⁹ s⁻¹, mean ± SD | 141 ± 133 | 183 ± 261 | -179 ± 450 | 19.1 ± 376 | — | trend | `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_90C_r1e9` |
@@ -527,12 +532,11 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`extend` analysis**
 
-`sepsim analyze hold`, generated 2026-10-30 19:25 UTC on rdyu-server, run finished; segment Stage 1: NPT hold extension 60000 ps at 500 K, 1 atm; — ns analysed of 60 ns planned (complete).
+`sepsim analyze hold`, generated 2026-11-09 18:57 UTC on rdyu-server, run finished; segment Stage 1: NPT hold extension 60000 ps at 500 K, 1 atm; 80 ns analysed of 60 ns planned (complete).
 
-- Note: CG time is not real time: SDK beads move ≈ 4.07× faster than real PE, so MSD, D<sub>COM</sub> and relaxation times are model times (`docs/experiment_comparison.md`).
-- Note: No trajectory results: `hold_ext.dcd` is not in this run directory (a run on another node may keep its DCD there) or could not be read.
-- Note: ../prep/hold.dcd not found: chain checks use the extension alone
-- Note: trajectory not available (`hold_ext.dcd` not found)
+- Note: Relaxation times use lags up to half the analysed hold (40 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
+- Note: CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; `docs/experiment_comparison.md`), so MSD, D<sub>COM</sub>, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
+- Note: no burst DCDs (deck without D46 bursts): lags from the hold DCD only
 
 **`sweep` analysis** (CG PE C240, 80.0 ns at 500 K)
 
@@ -558,7 +562,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_130C` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 17:54 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:58 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 130 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -576,7 +580,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_130C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 00:21 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:58 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 130 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -594,7 +598,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_160C` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 05:55 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:58 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 160 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -612,7 +616,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_160C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 00:21 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:59 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 160 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -630,7 +634,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_25C` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 00:20 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:58 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 25 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -648,7 +652,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_25C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 00:20 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:58 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 25 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -666,7 +670,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_90C` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 11:51 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:58 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 90 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -684,7 +688,7 @@ PE CG, bulk amorphous box, 40 chains × C240, 3,200 beads; grown chains (seed 1)
 
 **`tensile_90C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-10-31 00:21 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-09 18:58 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 90 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -709,22 +713,25 @@ PE CG, bulk amorphous box, 40 chains × C1500, 20,000 beads; grown chains (seed 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
 | 500 K equilibration (D47) | — | — | — | — | D47 n/a (long CG chain); ACF 0.68 at 250.0 ns, MSD/⟨R<sub>g</sub>²⟩ 0.12; 500.0 ns at 500 K; no C<sub>n</sub> drift: accepted | — | `extend` progress |
-| ρ (g/cm³) | 0.83817 ± 0.00004 | 0.80154 ± 0.00006 | 0.78019 ± 0.00004 | 0.76444 ± 0.00003 | — | comp | `sweep` |
-| κ<sub>T</sub> (GPa⁻¹) | 0.995 ± 0.014 | 1.265 ± 0.020 | 1.435 ± 0.024 | 1.572 ± 0.026 | — | comp | `sweep` |
+| ρ (g/cm³) | 0.83817 ± 0.00004 | 0.80154 ± 0.00006 | 0.78019 ± 0.00004 | 0.76444 ± 0.00003 | 500 K: 0.72853 ± 0.00014 | comp | `extend`, `sweep` |
+| κ<sub>T</sub> (GPa⁻¹) | 0.995 ± 0.014 | 1.265 ± 0.020 | 1.435 ± 0.024 | 1.572 ± 0.026 | 500 K: 2.098 ± 0.010 | comp | `extend`, `sweep` |
 | α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 6.809 ± 0.022 (χ²<sub>red</sub> 27.2); 25–90 °C: 6.862 ± 0.018 (χ²<sub>red</sub> 2.29); 90–160 °C: 6.797 ± 0.033 (χ²<sub>red</sub> 11.8) | comp | `sweep` |
 | C<sub>p</sub>, classical (J g⁻¹ K⁻¹) | — | — | — | — | 25–160 °C: 0.812 ± 0.003 (χ²<sub>red</sub> 72.7); 25–90 °C: 0.840 ± 0.005 (χ²<sub>red</sub> 14.9); 90–160 °C: 0.793 ± 0.001 (χ²<sub>red</sub> 2.48) | no | `sweep` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 7.43 (melt 6.7) | trend | `extend` progress |
 | R<sub>g</sub> (Å) | 67.79 ± 0.11 | 70.28 ± 0.13 | 70.04 ± 0.16 | 68.89 ± 0.25 | — | trend | `sweep` |
+| R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 65.75 ± 0.71 | trend | `extend` |
 | R<sub>ee</sub> (Å) | 175.1 ± 1.4 | 179.3 ± 1.0 | 185.2 ± 1.6 | 169.2 ± 1.9 | — | trend | `sweep` |
+| R<sub>ee</sub> (Å), 500 K hold | — | — | — | — | 500 K: 170.0 ± 2.4 | trend | `extend` |
 | C<sub>n</sub> | 7.91 ± 0.02 | 8.46 ± 0.03 | 8.44 ± 0.03 | 8.06 ± 0.07 | — | trend | `sweep` |
-| P2 1/e time (ps) | 128 | 26.9 | 14.3 | 8.78 | — | corr | `sweep` |
-| segment MSD at 1 ns lag (Å²) | 153.6 | 250.2 | 294.9 | 322.3 | — | corr | `sweep` |
-| max chain COM MSD (Å²) at lag | 21.94 at 12.5 ns | 29.7 at 12.5 ns | 37.17 at 12.5 ns | 44.85 at 12.5 ns | — | todo | `sweep` |
-| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.00 | 0.01 | 0.01 | 0.01 | — | todo | `sweep` |
-| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.42) | not diffusive (slope 0.69) | not diffusive (slope 0.48) | not diffusive (slope 0.50) | — | todo | `sweep` |
-| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached | not reached | — | todo | `sweep` |
-| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | — | todo | `sweep` |
-| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.191 | 0.111 | 0.095 | 0.088 | — | — | `sweep` |
+| C<sub>n</sub>, 500 K hold | — | — | — | — | 500 K: 7.43 ± 0.16 | trend | `extend` |
+| P2 1/e time (ps) | 128 | 26.9 | 14.3 | 8.78 | 500 K: 68.7 | corr | `extend`, `sweep` |
+| segment MSD at 1 ns lag (Å²) | 153.6 | 250.2 | 294.9 | 322.3 | 500 K: 415.8 | corr | `extend`, `sweep` |
+| max chain COM MSD (Å²) at lag | 21.94 at 12.5 ns | 29.7 at 12.5 ns | 37.17 at 12.5 ns | 44.85 at 12.5 ns | 500 K: 518.9 at 250 ns | todo | `extend`, `sweep` |
+| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.00 | 0.01 | 0.01 | 0.01 | 500 K: 0.12 | todo | `extend`, `sweep` |
+| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.42) | not diffusive (slope 0.69) | not diffusive (slope 0.48) | not diffusive (slope 0.50) | 500 K: not diffusive (slope 0.99) | todo | `extend`, `sweep` |
+| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached | not reached | 500 K: not reached (extrap. 1.04e+03) | todo | `extend`, `sweep` |
+| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | 500 K: not reached (extrap. 1.63e+03) | todo | `extend`, `sweep` |
+| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.191 | 0.111 | 0.095 | 0.088 | 500 K: 0.089 | — | `extend`, `sweep` |
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -751,6 +758,15 @@ PE CG, bulk amorphous box, 40 chains × C1500, 20,000 beads; grown chains (seed 
 - **sweep** (rdyu-rog): finished; started 2026-10-26 05:01 UTC, ended 2026-10-26 17:56 UTC; reads `../cool/cooled.data`
   - monitor flags: drift seg 1,2,3,6,9,14; step!=hold 130 C; hyst max 0.11%
 - Superseded (not used): `sweep_cancelled_unrelaxed` (cancelled/killed?)
+
+**`extend` analysis**
+
+`sepsim analyze hold`, generated 2026-11-09 19:34 UTC on rdyu-server, run finished; segment Stage 1: NPT hold extension 500000 ps at 500 K, 1 atm; 500 ns analysed of 500 ns planned (complete).
+
+- Note: Relaxation times use lags up to half the analysed hold (250 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
+- Note: CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; `docs/experiment_comparison.md`), so MSD, D<sub>COM</sub>, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
+- Note: ../prep/hold.dcd has frames every 10 ps, the extension 100 ps: chain checks use the extension alone
+- Note: no burst DCDs (deck without D46 bursts): lags from the hold DCD only
 
 **`sweep` analysis** (CG PE C1500, 500.0 ns at 500 K)
 
@@ -784,7 +800,20 @@ PE CG, bulk amorphous box, replicated 2×2×2, 320 chains × C240, 25,600 beads;
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
 | 500 K equilibration (D47) | — | — | — | — | D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | — | `extend` progress |
+| ρ (g/cm³) | — | — | — | — | 500 K: 0.72370 ± 0.00004 | todo | `extend` |
+| κ<sub>T</sub> (GPa⁻¹) | — | — | — | — | 500 K: 2.132 ± 0.021 | todo | `extend` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 9.18 (melt 6.7) | comp | `extend` progress |
+| R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 28.83 ± 0.15 | comp | `extend` |
+| R<sub>ee</sub> (Å), 500 K hold | — | — | — | — | 500 K: 72.2 ± 0.7 | comp | `extend` |
+| C<sub>n</sub>, 500 K hold | — | — | — | — | 500 K: 9.17 ± 0.13 | comp | `extend` |
+| P2 1/e time (ps) | — | — | — | — | 500 K: 8.48 | todo | `extend` |
+| segment MSD at 1 ns lag (Å²) | — | — | — | — | 500 K: 518.2 | todo | `extend` |
+| max chain COM MSD (Å²) at lag | — | — | — | — | 500 K: 2206 at 36.27 ns | todo | `extend` |
+| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | — | — | — | — | 500 K: 2.65 | todo | `extend` |
+| D<sub>COM</sub> (cm²/s) | — | — | — | — | 500 K: not diffusive (slope 0.90) | todo | `extend` |
+| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | — | — | — | — | 500 K: 10.9 | todo | `extend` |
+| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | — | — | — | — | 500 K: 14.5 | todo | `extend` |
+| ordered-site fraction (crystallinity monitor, uncalibrated) | — | — | — | — | 500 K: 0.092 | — | `extend` |
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -804,6 +833,16 @@ PE CG, bulk amorphous box, replicated 2×2×2, 320 chains × C240, 25,600 beads;
 - **extend** (rdyu-rog): stopped after D47 PASS (cancelled/killed?), 90.7%; started 2026-10-29 11:25 UTC; reads `systems/pe_cg_amorph_n320_c240_s1_rep222/data.lmp`
   - 500 K hold 72.5 ns: D47 PASS (R<sub>ee</sub> ACF 0.09 at 36.3 ns, 1/e at 10.88 ns; COM MSD/⟨R<sub>g</sub>²⟩ 2.65); C<sub>n</sub> 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10)
 - Superseded (not used): `extend_cpu_job92_cancelled_48ns` (cancelled/killed?)
+
+**`extend` analysis**
+
+`sepsim analyze hold`, generated 2026-11-09 18:46 UTC on rdyu-server, run started; segment Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm; 72.53 ns analysed of 80 ns planned (not complete).
+
+- Note: Relaxation times use lags up to half the analysed hold (36.27 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
+- Note: CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; `docs/experiment_comparison.md`), so MSD, D<sub>COM</sub>, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
+- Note: hold not complete: thermo and trajectory over the part run
+- Note: ../prep/hold.dcd not found: chain checks use the extension alone
+- Note: no burst DCDs (deck without D46 bursts): lags from the hold DCD only
 
 - Sweep analysis: not analysed yet.
 
@@ -957,7 +996,7 @@ PE CG, 5 nm dry slit pore, 40 chains × C240, 3,200 beads; built from `pe_cg_por
 
 **`pore` analysis**
 
-Pore analysis (`sepsim analyze pore`, generated 2026-10-30 19:29 UTC on rdyu-server):
+Pore analysis (`sepsim analyze pore`, generated 2026-11-09 19:02 UTC on rdyu-server):
 
 - dγ/dT, cooling-branch fit (mN m⁻¹ K⁻¹): -0.04361
 - γ at 25 °C, cooling-branch fit (mN/m): 33.35
@@ -1045,7 +1084,7 @@ Per segment:
 - Note: The slit is a local patch of a pore wall: real separator pores are 30–100 nm and their walls semicrystalline (D50); these walls are amorphous (melt-like or post-shutdown).
 - Note: Layers: surface = within 15 Å of either Gibbs surface on the film side (or outside it), interior = the rest, assigned at each time origin; sites leave their layer at long lags, so long-lag layer MSDs mix layers. MSDs are per dimension: in-plane (⟨Δx²⟩+⟨Δy²⟩)/2, normal ⟨Δz²⟩, bulk MSD/3 (isotropic).
 - Note: C<sub>v</sub> = dE/dT (total energy, NVT, per gram) and the surface excess energy are classical: C<sub>v</sub> is not comparable to experiment for the same reasons as the bulk C<sub>p</sub> (classical equipartition; UA/CG drop degrees of freedom). e<sub>s</sub> = (E<sub>pore</sub> − (M<sub>pore</sub>/M<sub>bulk</sub>) E<sub>bulk</sub>(T))/(2A) compares the NVT film with the NPT bulk at 1 atm (PV ≈ 0) at the same set T; the film's lateral box follows the bulk density (D48).
-- Note: CG time is not real time: SDK beads move faster than the atoms they represent, so MSD and P2 times are model times (not rescaled).
+- Note: CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; `docs/experiment_comparison.md`), so MSD, D<sub>COM</sub>, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 </details>
 
@@ -2324,7 +2363,7 @@ No analysed properties yet; pending: `hole_scaf_rel0_failed_20261102`: failed, 0
 
 **Provenance**
 
-- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.5038 g/cm³ (as built)
+- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.2904 g/cm³ (as built)
 - Replicated 2×2×2 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.37 nm at 500 K, wall 12.94 nm, clear gap 1.70 nm, area 182.3 nm²
 - Built from: `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_130C.data`) ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n320_c240_s1_rep222` (`extend/hold_ext_70ns.data`)
@@ -2336,9 +2375,7 @@ No analysed properties yet; pending: `hole_scaf_rel0_failed_20261102`: failed, 0
 
 **Stages**
 
-- **`hole_free`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_130C_n320_c240_s1_rep222/data.lmp`
-- **`hole_scaf_rel0`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_scaf_rel0_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_130C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
@@ -2351,7 +2388,7 @@ No analysed properties yet; pending: `hole_scaf_rel0_failed_20261102`: failed, 0
 
 ### `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free`.
+PE CG, film with a 3 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm`.
 
 No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
@@ -2359,7 +2396,7 @@ No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_re
 
 **Provenance**
 
-- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.4949 g/cm³ (as built)
+- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.2857 g/cm³ (as built)
 - Replicated 2×2×2 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.37 nm at 500 K, wall 12.94 nm, clear gap 1.70 nm, area 182.3 nm²
 - Built from: `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`) ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n320_c240_s1_rep222` (`extend/hold_ext_70ns.data`)
@@ -2372,13 +2409,12 @@ No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_re
 **Stages**
 
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
-- **`hole_scaf_rel0`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_scaf_rel0_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
-- **`hole_free`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-05 05:32 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
+- **`hole_free_gap5nm`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-05 05:32 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free` | `hole_free` |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm` | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -3587,9 +3623,9 @@ Per segment:
 
 ### `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_25C.data`). Stage now: `hole_ramp_rel130_col` (running, 42.7% (3/20 segments, Stage 4: step at 35 C); ETA 2026-11-11 23:30 UTC).
+PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_25C.data`). Stage now: `hole_ramp_rel130_col` (running, 53.7% (9/20 segments, Stage 10: step at 90 C); ETA 2026-11-12 06:36 UTC).
 
-No analysed properties yet; pending: `hole_ramp_rel130_col`: running, 42.7% (3/20 segments, Stage 4: step at 35 C); ETA 2026-11-11 23:30 UTC. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+No analysed properties yet; pending: `hole_ramp_rel130_col`: running, 53.7% (9/20 segments, Stage 10: step at 90 C); ETA 2026-11-12 06:36 UTC. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -3607,18 +3643,16 @@ No analysed properties yet; pending: `hole_ramp_rel130_col`: running, 42.7% (3/2
 
 **Stages**
 
-- **`hole_ramp_rel130`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_ramp_rel130_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_held`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_ramp_held_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_free`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-07 06:28 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_rel130_d4`** (rdyu-server): running, 42.4% (3/20 segments, Stage 4: step at 35 C); ETA 2026-11-12 00:37 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_rel130_col`** (rdyu-server): running, 42.7% (3/20 segments, Stage 4: step at 35 C); ETA 2026-11-11 23:30 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_rel130_d4`** (rdyu-server): running, 53.2% (9/20 segments, Stage 10: step at 90 C); ETA 2026-11-12 03:20 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_rel130_col`** (rdyu-server): running, 53.7% (9/20 segments, Stage 10: step at 90 C); ETA 2026-11-12 06:36 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | `hole_ramp_rel130_col`: running, 42.7% (3/20 segments, Stage 4: step at 35 C); ETA 2026-11-11 23:30 UTC | `hole_free` |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | `hole_ramp_rel130_col`: running, 53.7% (9/20 segments, Stage 10: step at 90 C); ETA 2026-11-12 06:36 UTC | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -4835,7 +4869,7 @@ No analysed properties yet; pending: `hole_free_failed_20261102`: failed, 0.0%. 
 
 **Provenance**
 
-- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.5160 g/cm³ (as built)
+- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.2968 g/cm³ (as built)
 - Replicated 2×2×2 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.37 nm at 500 K, wall 12.94 nm, clear gap 1.70 nm, area 182.3 nm²
 - Built from: `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_90C.data`) ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n320_c240_s1_rep222` (`extend/hold_ext_70ns.data`)
@@ -4847,7 +4881,6 @@ No analysed properties yet; pending: `hole_free_failed_20261102`: failed, 0.0%. 
 
 **Stages**
 
-- **`hole_free`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_90C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
@@ -4860,7 +4893,7 @@ No analysed properties yet; pending: `hole_free_failed_20261102`: failed, 0.0%. 
 
 ### `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222`
 
-PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free`.
+PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free_gap5nm`.
 
 No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
@@ -4868,7 +4901,7 @@ No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_re
 
 **Provenance**
 
-- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.4577 g/cm³ (as built)
+- PE CG, 320 chains × C240 (C240H482), 25,600 atoms/beads, force field `sdk_cg`, box density 0.2729 g/cm³ (as built)
 - Replicated 2×2×2 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.37 nm at 500 K, wall 12.94 nm, clear gap 1.70 nm, area 182.3 nm²
 - Built from: `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`) ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n320_c240_s1_rep222` (`extend/hold_ext_70ns.data`)
@@ -4880,11 +4913,11 @@ No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_re
 
 **Stages**
 
-- **`hole_free`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-07 03:09 UTC; reads `systems/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/data.lmp`
+- **`hole_free_gap5nm`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-07 03:09 UTC; reads `systems/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free` | `hole_free` |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_gap5nm` | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6153,7 +6186,7 @@ PE CG, 5 nm dry slit pore, 320 chains × C240, 25,600 beads; built from `pe_cg_p
 
 **`pore` analysis**
 
-Pore analysis (`sepsim analyze pore`, generated 2026-10-30 19:35 UTC on rdyu-server):
+Pore analysis (`sepsim analyze pore`, generated 2026-11-09 19:06 UTC on rdyu-server):
 
 - dγ/dT, cooling-branch fit (mN m⁻¹ K⁻¹): -0.04916
 - γ at 25 °C, cooling-branch fit (mN/m): 33.13
@@ -6241,7 +6274,7 @@ Per segment:
 - Note: The slit is a local patch of a pore wall: real separator pores are 30–100 nm and their walls semicrystalline (D50); these walls are amorphous (melt-like or post-shutdown).
 - Note: Layers: surface = within 15 Å of either Gibbs surface on the film side (or outside it), interior = the rest, assigned at each time origin; sites leave their layer at long lags, so long-lag layer MSDs mix layers. MSDs are per dimension: in-plane (⟨Δx²⟩+⟨Δy²⟩)/2, normal ⟨Δz²⟩, bulk MSD/3 (isotropic).
 - Note: C<sub>v</sub> = dE/dT (total energy, NVT, per gram) and the surface excess energy are classical: C<sub>v</sub> is not comparable to experiment for the same reasons as the bulk C<sub>p</sub> (classical equipartition; UA/CG drop degrees of freedom). e<sub>s</sub> = (E<sub>pore</sub> − (M<sub>pore</sub>/M<sub>bulk</sub>) E<sub>bulk</sub>(T))/(2A) compares the NVT film with the NPT bulk at 1 atm (PV ≈ 0) at the same set T; the film's lateral box follows the bulk density (D48).
-- Note: CG time is not real time: SDK beads move faster than the atoms they represent, so MSD and P2 times are model times (not rescaled).
+- Note: CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; `docs/experiment_comparison.md`), so MSD, D<sub>COM</sub>, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 </details>
 
@@ -6287,7 +6320,7 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Provenance**
 
-- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.4295 g/cm³ (as built)
+- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.1889 g/cm³ (as built)
 - Replicated 4×4×1 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.69 nm at 500 K, wall 6.45 nm, clear gap 2.08 nm, area 731.0 nm²
 - Built from: `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`) ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n640_c240_s1_rep441` (`extend/hold_ext_80ns.data`)
@@ -6319,7 +6352,7 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Provenance**
 
-- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.4241 g/cm³ (as built)
+- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.1878 g/cm³ (as built)
 - Replicated 4×4×1 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.69 nm at 500 K, wall 6.45 nm, clear gap 2.08 nm, area 731.0 nm²
 - Built from: `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`) ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n640_c240_s1_rep441` (`extend/hold_ext_80ns.data`)
@@ -6351,7 +6384,7 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Provenance**
 
-- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.4592 g/cm³ (as built)
+- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.2015 g/cm³ (as built)
 - Replicated 4×4×1 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.69 nm at 500 K, wall 6.45 nm, clear gap 2.08 nm, area 731.0 nm²
 - Built from: `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_25C.data`) ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n640_c240_s1_rep441` (`extend/hold_ext_80ns.data`)
@@ -6375,15 +6408,15 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 ### `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`
 
-PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (started (no progress.json)).
+PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (running, 0.6% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-16 09:15 UTC).
 
-No analysed properties yet; pending: `hole_free`: started (no progress.json). Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet; pending: `hole_free`: running, 0.6% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-16 09:15 UTC. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
 **Provenance**
 
-- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.4169 g/cm³ (as built)
+- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.1864 g/cm³ (as built)
 - Replicated 4×4×1 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.69 nm at 500 K, wall 6.45 nm, clear gap 2.08 nm, area 731.0 nm²
 - Built from: `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`) ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n640_c240_s1_rep441` (`extend/hold_ext_80ns.data`)
@@ -6395,11 +6428,12 @@ No analysed properties yet; pending: `hole_free`: started (no progress.json). Eq
 
 **Stages**
 
-- **`hole_free`** (rdyu-server): started (no progress.json); reads `systems/pe_cg_hole_r4nm_160C_n640_c240_s1_rep441/data.lmp`
+- **`hole_free_gap5nm`** (rdyu-server): stalled?, 8.6%; started 2026-11-09 07:12 UTC; reads `systems/pe_cg_hole_r4nm_160C_n640_c240_s1_rep441/data.lmp`
+- **`hole_free`** (rdyu-server): running, 0.6% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-16 09:15 UTC; started 2026-11-09 19:02 UTC; reads `systems/pe_cg_hole_r4nm_160C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: started (no progress.json) | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: running, 0.6% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-16 09:15 UTC | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6415,7 +6449,7 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Provenance**
 
-- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.4080 g/cm³ (as built)
+- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.1846 g/cm³ (as built)
 - Replicated 4×4×1 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.69 nm at 500 K, wall 6.45 nm, clear gap 2.08 nm, area 731.0 nm²
 - Built from: `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`) ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n640_c240_s1_rep441` (`extend/hold_ext_80ns.data`)
@@ -6447,7 +6481,7 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Provenance**
 
-- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.4409 g/cm³ (as built)
+- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.1979 g/cm³ (as built)
 - Replicated 4×4×1 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.69 nm at 500 K, wall 6.45 nm, clear gap 2.08 nm, area 731.0 nm²
 - Built from: `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_25C.data`) ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n640_c240_s1_rep441` (`extend/hold_ext_80ns.data`)
@@ -6479,7 +6513,7 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Provenance**
 
-- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.3975 g/cm³ (as built)
+- PE CG, 640 chains × C240 (C240H482), 51,200 atoms/beads, force field `sdk_cg`, box density 0.1824 g/cm³ (as built)
 - Replicated 4×4×1 from `pe_cg_amorph_n40_c240_s1`
 - Pore: narrow pore, nominal 5 nm, 4.69 nm at 500 K, wall 6.45 nm, clear gap 2.08 nm, area 731.0 nm²
 - Built from: `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`) ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`) ← `pe_cg_amorph_n640_c240_s1_rep441` (`extend/hold_ext_80ns.data`)
@@ -6503,7 +6537,7 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 ### `pe_cg_pore_w5nm_n640_c240_s1_rep441`
 
-PE CG, 5 nm dry slit pore, 640 chains × C240, 51,200 beads; built from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`). Status: finished: pore.
+PE CG, 5 nm dry slit pore, 640 chains × C240, 51,200 beads; built from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` (`pore_relax/relaxed.data`). Stage now: pore (not started).
 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
@@ -6522,10 +6556,9 @@ PE CG, 5 nm dry slit pore, 640 chains × C240, 51,200 beads; built from `pe_cg_p
 | τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached (extrap. 29.7) | not reached (extrap. 15.2) | not reached (extrap. 10.3) | not reached (extrap. 8.41) | — | n/a | `pore` |
 | τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached (extrap. 20.2) | not reached (extrap. 16) | — | n/a | `pore` |
 | ordered-site fraction (crystallinity monitor, uncalibrated) | 0.174 | 0.126 | 0.114 | 0.108 | — | — | `pore` |
-| γ, run monitor (mN/m) | 34.3 ± 0.5 | 30.5 ± 0.4 | 28.0 ± 0.1 | 26.3 ± 0.2 | — | comp | `pore` progress |
-| γ, analysis (mN/m) | 34.4 ± 0.4 | 30.8 ± 0.3 | 28.1 ± 0.1 | 26.5 ± 0.1 | — | comp | `pore` |
-| dγ/dT (mN m⁻¹ K⁻¹) | — | — | — | — | cooling branch 25–201.6 °C: -0.0556 ± 0.0011 (χ²<sub>red</sub> 0.925); heating sweep 25–160 °C: -0.0590 ± 0.0028 (χ²<sub>red</sub> 1.11) | comp | `pore` |
-| γ at 25 °C from the dγ/dT fit (mN/m) | — | — | — | — | cooling branch: 34.10; heating sweep: 34.37 | comp | `pore` |
+| γ, analysis (mN/m) | 34.4 ± 0.4 | 30.8 ± 0.3 | 28.1 ± 0.1 | 26.5 ± 0.1 | — | todo | `pore` |
+| dγ/dT (mN m⁻¹ K⁻¹) | — | — | — | — | cooling branch 25–201.6 °C: -0.0556 ± 0.0011 (χ²<sub>red</sub> 0.925); heating sweep 25–160 °C: -0.0590 ± 0.0028 (χ²<sub>red</sub> 1.11) | todo | `pore` |
+| γ at 25 °C from the dγ/dT fit (mN/m) | — | — | — | — | cooling branch: 34.10; heating sweep: 34.37 | todo | `pore` |
 | film thickness between the Gibbs surfaces (Å) | 64.53 ± 0.01 | 65.48 ± 0.01 | 66.09 ± 0.01 | 66.58 ± 0.01 | — | trend | `pore` |
 | gap between the Gibbs surfaces (Å) | 50.00 | 49.05 | 48.44 | 47.95 | — | trend | `pore` |
 | film interior density (g/cm³) | 0.8346 ± 0.0001 | 0.7982 ± 0.0001 | 0.7761 ± 0.0001 | 0.7597 ± 0.0001 | — | trend | `pore` |
@@ -6551,12 +6584,11 @@ PE CG, 5 nm dry slit pore, 640 chains × C240, 51,200 beads; built from `pe_cg_p
 
 **Stages**
 
-- **pore** (rdyu-rog): finished; started 2026-11-06 14:43 UTC, ended 2026-11-09 07:03 UTC
-  - γ per hold (monitor, second half of each segment, mN/m): 25 °C 34.3 ± 0.5; 90 °C 30.5 ± 0.4; 130 °C 28.0 ± 0.1; 160 °C 26.3 ± 0.2
+- No runs found.
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | 25 °C 34.3 ± 0.5; 90 °C 30.5 ± 0.4; 130 °C 28.0 ± 0.1; 160 °C 26.3 ± 0.2 | finished: pore | pore |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | pore: not started | pore |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6641,7 +6673,7 @@ PE UA, bulk amorphous box, 40 chains × C240, 9,600 united atoms; grown chains (
 |---|---|---|---|---|---|---|---|
 | 500 K equilibration (D47) | — | — | — | — | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | — | `extend` progress |
 | ρ (g/cm³) | 0.86142 ± 0.00045 | 0.82268 ± 0.00035 | 0.80014 ± 0.00016 | 0.78336 ± 0.00025 | 500 K: 0.74581 ± 0.00008 | comp | `extend`, `sweep` |
-| κ<sub>T</sub> (GPa⁻¹) | 0.681 ± 0.036 | 0.884 ± 0.026 | 1.117 ± 0.023 | 1.192 ± 0.024 | 500 K: 1.632 ± 0.010 | comp | `extend`, `sweep` |
+| κ<sub>T</sub> (GPa⁻¹) | 0.681 ± 0.036 | 0.884 ± 0.026 | 1.117 ± 0.023 | 1.192 ± 0.024 | 500 K: 1.632 ± 0.012 | comp | `extend`, `sweep` |
 | α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 7.151 ± 0.057 (χ²<sub>red</sub> 5.03); 25–90 °C: 6.946 ± 0.200 (χ²<sub>red</sub> 6.04); 90–160 °C: 7.007 ± 0.067 (χ²<sub>red</sub> 1.19) | comp | `sweep` |
 | C<sub>p</sub>, classical (J g⁻¹ K⁻¹) | — | — | — | — | 25–160 °C: 2.431 ± 0.011 (χ²<sub>red</sub> 18.7); 25–90 °C: 2.439 ± 0.041 (χ²<sub>red</sub> 26.4); 90–160 °C: 2.385 ± 0.019 (χ²<sub>red</sub> 9.98) | no | `sweep` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 8.19 (melt 6.7) | comp | `extend` progress |
@@ -6687,7 +6719,7 @@ PE UA, bulk amorphous box, 40 chains × C240, 9,600 united atoms; grown chains (
 
 **`extend` analysis**
 
-`sepsim analyze hold`, generated 2026-10-30 19:25 UTC on rdyu-server, run started; segment Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm; 98.19 ns analysed of 80 ns planned (not complete).
+`sepsim analyze hold`, generated 2026-11-09 18:54 UTC on rdyu-server, run started; segment Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm; 98.19 ns analysed of 80 ns planned (not complete).
 
 - Note: Relaxation times use lags up to half the analysed hold (49.1 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
 - Note: hold not complete: thermo and trajectory over the part run
@@ -6749,7 +6781,7 @@ No analysed properties yet. Equilibration: from `pe_ua_amorph_n40_c240_s1`: D47 
 
 ### `pe_ua_pore_w5nm_n40_c240_s1`
 
-PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Stage now: pore (running, 68.2% (22/28 segments, seg 13 step 130 C); ETA 2026-11-11 08:38 UTC).
+PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Stage now: pore (running, 75.9% (23/28 segments, seg 14 hold 130 C); ETA 2026-11-11 17:21 UTC).
 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
@@ -6772,12 +6804,12 @@ PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe
 
 **Stages**
 
-- **pore** (rdyu-server): running, 68.2% (22/28 segments, seg 13 step 130 C); ETA 2026-11-11 08:38 UTC; started 2026-11-04 22:15 UTC; reads `systems/pe_ua_pore_w5nm_n40_c240_s1/data.lmp`
+- **pore** (rdyu-server): running, 75.9% (23/28 segments, seg 14 hold 130 C); ETA 2026-11-11 17:21 UTC; started 2026-11-04 22:15 UTC; reads `systems/pe_ua_pore_w5nm_n40_c240_s1/data.lmp`
   - γ per hold (monitor, second half of each segment, mN/m): 25 °C 33.0 ± 2.8; 90 °C 26.2 ± 2.5
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.68 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | 25 °C 33.0 ± 2.8; 90 °C 26.2 ± 2.5 | pore: running, 68.2% (22/28 segments, seg 13 step 130 C); ETA 2026-11-11 08:38 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.68 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | 25 °C 33.0 ± 2.8; 90 °C 26.2 ± 2.5 | pore: running, 75.9% (23/28 segments, seg 14 hold 130 C); ETA 2026-11-11 17:21 UTC | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6785,9 +6817,9 @@ PE UA, 5 nm dry slit pore, 40 chains × C240, 9,600 united atoms; built from `pe
 
 ### `pe_aa_amorph_n40_c240_s1_from_ua`
 
-PE AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `pe_ua_amorph_n40_c240_s1` (`hold_ext_70ns.data`). Stage now: sweep (running, 65.8% (15/22 segments, seg 14 hold 130 C); ETA 2026-11-11 12:24 UTC).
+PE AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `pe_ua_amorph_n40_c240_s1` (`hold_ext_70ns.data`). Stage now: sweep (cancelled/killed?, 14.7%).
 
-No analysed properties yet; pending: sweep: running, 65.8% (15/22 segments, seg 14 hold 130 C); ETA 2026-11-11 12:24 UTC. Equilibration: from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted.
+No analysed properties yet; pending: sweep: cancelled/killed?, 14.7%. Equilibration: from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6809,8 +6841,8 @@ No analysed properties yet; pending: sweep: running, 65.8% (15/22 segments, seg 
   - 500 K hold 5.0 ns: D47 criteria on this hold FAIL (R<sub>ee</sub> ACF 0.82 at 2.5 ns, 1/e not reached; COM MSD/⟨R<sub>g</sub>²⟩ 0.08); C<sub>n</sub> 8.57 vs 6.7 (outside band, info); drift (Δ -0.65 ± 0.14)
   - monitor flags: R<sub>ee</sub> not decorrelated (0.82 at 2.5 ns); MSD/R<sub>g</sub>² 0.08; drift seg 7,9; hyst max 0.44%
 - **`sweep_crashed_20261102`** (rdyu-rog): cancelled/killed?, 0.1%; started 2026-11-02 18:52 UTC; reads `../prep/cooled.data`
-- **sweep** (rdyu-rog): running, 65.8% (15/22 segments, seg 14 hold 130 C); ETA 2026-11-11 12:24 UTC; started 2026-11-03 01:01 UTC; reads `../prep/cooled.data`
-  - monitor flags: drift seg 4,14; step!=hold 90 C; hyst max 0.44%
+- **sweep** (rdyu-rog): cancelled/killed?, 14.7%; started 2026-11-03 01:01 UTC; reads `../prep/cooled.data`
+  - monitor flags: hyst max 0.44%
 
 - Sweep analysis: not analysed yet.
 
@@ -6823,22 +6855,25 @@ iPP UA, bulk amorphous box, 40 chains × C240, 12,760 united atoms; grown chains
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
 | 500 K equilibration (D47) | — | — | — | — | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | — | `extend` progress |
-| ρ (g/cm³) | 0.86029 ± 0.00022 | 0.83585 ± 0.00025 | 0.81456 ± 0.00045 | 0.79855 ± 0.00024 | — | comp | `sweep` |
-| κ<sub>T</sub> (GPa⁻¹) | 0.582 ± 0.025 | 0.803 ± 0.026 | 1.122 ± 0.063 | 1.190 ± 0.034 | — | comp | `sweep` |
+| ρ (g/cm³) | 0.86029 ± 0.00022 | 0.83585 ± 0.00025 | 0.81456 ± 0.00045 | 0.79855 ± 0.00024 | 500 K: 0.76325 ± 0.00009 | comp | `extend`, `sweep` |
+| κ<sub>T</sub> (GPa⁻¹) | 0.582 ± 0.025 | 0.803 ± 0.026 | 1.122 ± 0.063 | 1.190 ± 0.034 | 500 K: 1.620 ± 0.020 | comp | `extend`, `sweep` |
 | α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 5.755 ± 0.223 (χ²<sub>red</sub> 106); 25–90 °C: 4.434 ± 0.372 (χ²<sub>red</sub> 52.9); 90–160 °C: 6.619 ± 0.103 (χ²<sub>red</sub> 3.45) | comp | `sweep` |
 | C<sub>p</sub>, classical (J g⁻¹ K⁻¹) | — | — | — | — | 25–160 °C: 2.511 ± 0.021 (χ²<sub>red</sub> 84); 25–90 °C: 2.409 ± 0.027 (χ²<sub>red</sub> 32.4); 90–160 °C: 2.657 ± 0.019 (χ²<sub>red</sub> 6.44) | no | `sweep` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 5.66 (melt 6.15) | comp | `extend` progress |
 | R<sub>g</sub> (Å) | 19.47 ± 0.01 | 19.80 ± 0.01 | 19.75 ± 0.04 | 19.63 ± 0.06 | — | trend | `sweep` |
+| R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 18.51 ± 0.49 | comp | `extend` |
 | R<sub>ee</sub> (Å) | 50.3 ± 0.1 | 50.8 ± 0.4 | 49.1 ± 0.2 | 49.7 ± 0.3 | — | trend | `sweep` |
+| R<sub>ee</sub> (Å), 500 K hold | — | — | — | — | 500 K: 46.3 ± 1.7 | comp | `extend` |
 | C<sub>n</sub> | 6.46 ± 0.00 | 6.64 ± 0.03 | 6.33 ± 0.03 | 6.32 ± 0.03 | — | trend | `sweep` |
-| P2 1/e time (ps) | — | 1.78e+03 | 237 | 79.3 | — | corr | `sweep` |
-| segment MSD at 1 ns lag (Å²) | 2.8 | 10.47 | 33.83 | 69.23 | — | corr | `sweep` |
-| max chain COM MSD (Å²) at lag | 0.5077 at 5 ns | 2.678 at 5 ns | 14.66 at 5 ns | 37.52 at 5 ns | — | todo | `sweep` |
-| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.00 | 0.01 | 0.04 | 0.10 | — | todo | `sweep` |
-| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.68) | not diffusive (slope 0.48) | not diffusive (slope 0.75) | not diffusive (slope 0.56) | — | todo | `sweep` |
-| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached | not reached (extrap. 24.3) | — | todo | `sweep` |
-| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | — | todo | `sweep` |
-| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.137 | 0.138 | 0.143 | 0.134 | — | — | `sweep` |
+| C<sub>n</sub>, 500 K hold | — | — | — | — | 500 K: 5.64 ± 0.45 | comp | `extend` |
+| P2 1/e time (ps) | — | 1.78e+03 | 237 | 79.3 | 500 K: 17.2 | corr | `extend`, `sweep` |
+| segment MSD at 1 ns lag (Å²) | 2.8 | 10.47 | 33.83 | 69.23 | 500 K: 179.4 | corr | `extend`, `sweep` |
+| max chain COM MSD (Å²) at lag | 0.5077 at 5 ns | 2.678 at 5 ns | 14.66 at 5 ns | 37.52 at 5 ns | 500 K: 705.3 at 30.01 ns | todo | `extend`, `sweep` |
+| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.00 | 0.01 | 0.04 | 0.10 | 500 K: 2.06 | todo | `extend`, `sweep` |
+| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.68) | not diffusive (slope 0.48) | not diffusive (slope 0.75) | not diffusive (slope 0.56) | 500 K: not diffusive (slope 0.91) | todo | `extend`, `sweep` |
+| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached | not reached (extrap. 24.3) | 500 K: 14.7 | todo | `extend`, `sweep` |
+| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | 500 K: 19.9 | todo | `extend`, `sweep` |
+| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.137 | 0.138 | 0.143 | 0.134 | 500 K: 0.138 | — | `extend`, `sweep` |
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6864,6 +6899,14 @@ iPP UA, bulk amorphous box, 40 chains × C240, 12,760 united atoms; grown chains
 - **sweep** (rdyu-rog): finished; started 2026-10-28 07:16 UTC, ended 2026-11-04 05:33 UTC; reads `../cool/cooled.data`
   - monitor flags: drift seg 1,5,8,12,13,16; step!=hold 90 C,130 C; hyst max 0.67%
 - Superseded (not used): `prep_server_cancelled` (cancelled/killed?)
+
+**`extend` analysis**
+
+`sepsim analyze hold`, generated 2026-11-09 18:52 UTC on rdyu-server, run started; segment Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm; 60.01 ns analysed of 80 ns planned (not complete).
+
+- Note: Relaxation times use lags up to half the analysed hold (30.01 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
+- Note: hold not complete: thermo and trajectory over the part run
+- Note: no burst DCDs (deck without D46 bursts): lags from the hold DCD only
 
 **`sweep` analysis** (UA iPP C240, 60.0 ns at 500 K)
 
@@ -6922,7 +6965,7 @@ No analysed properties yet. Equilibration: from `ipp_ua_amorph_n40_c240_s1`: D47
 
 ### `ipp_ua_pore_w5nm_n40_c240_s1`
 
-iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `ipp_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Status: finished: pore.
+iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `ipp_ua_pore500k_w10nm_n40_c240_s1` (`pore_relax/relaxed.data`). Stage now: pore (cancelled/killed?, 12.6%).
 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
@@ -6941,10 +6984,9 @@ iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `
 | τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached (extrap. 23.8) | not reached (extrap. 15.1) | — | n/a | `pore` |
 | τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached (extrap. 36) | not reached (extrap. 25.3) | — | n/a | `pore` |
 | ordered-site fraction (crystallinity monitor, uncalibrated) | 0.153 | 0.157 | 0.164 | 0.159 | — | — | `pore` |
-| γ, run monitor (mN/m) | 20.1 ± 3.2 | 22.3 ± 3.5 | 27.3 ± 2.8 | 17.2 ± 3.8 | — | comp | `pore` progress |
-| γ, analysis (mN/m) | 20.6 ± 2.1 | 25.2 ± 2.8 | 25.3 ± 2.1 | 16.4 ± 2.6 | — | comp | `pore` |
-| dγ/dT (mN m⁻¹ K⁻¹) | — | — | — | — | cooling branch 25–201.6 °C: -0.0821 ± 0.0456 (χ²<sub>red</sub> 0.448); heating sweep 25–160 °C: 0.0001 ± 0.0300 (χ²<sub>red</sub> 2.1) | comp | `pore` |
-| γ at 25 °C from the dγ/dT fit (mN/m) | — | — | — | — | cooling branch: 33.43; heating sweep: 23.01 | comp | `pore` |
+| γ, analysis (mN/m) | 20.6 ± 2.1 | 25.2 ± 2.8 | 25.3 ± 2.1 | 16.4 ± 2.6 | — | todo | `pore` |
+| dγ/dT (mN m⁻¹ K⁻¹) | — | — | — | — | cooling branch 25–201.6 °C: -0.0821 ± 0.0456 (χ²<sub>red</sub> 0.448); heating sweep 25–160 °C: 0.0001 ± 0.0300 (χ²<sub>red</sub> 2.1) | todo | `pore` |
+| γ at 25 °C from the dγ/dT fit (mN/m) | — | — | — | — | cooling branch: 33.43; heating sweep: 23.01 | todo | `pore` |
 | film thickness between the Gibbs surfaces (Å) | 64.52 ± 0.06 | 65.81 ± 0.06 | 66.94 ± 0.04 | 67.63 ± 0.04 | — | trend | `pore` |
 | gap between the Gibbs surfaces (Å) | 49.05 | 47.76 | 46.64 | 45.95 | — | trend | `pore` |
 | film interior density (g/cm³) | 0.8480 ± 0.0008 | 0.8152 ± 0.0007 | 0.7883 ± 0.0005 | 0.7695 ± 0.0004 | — | trend | `pore` |
@@ -6969,12 +7011,11 @@ iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `
 
 **Stages**
 
-- **pore** (rdyu-rog): finished; started 2026-11-04 10:09 UTC, ended 2026-11-08 15:24 UTC
-  - γ per hold (monitor, second half of each segment, mN/m): 25 °C 20.1 ± 3.2; 90 °C 22.3 ± 3.5; 130 °C 27.3 ± 2.8; 160 °C 17.2 ± 3.8
+- **pore** (rdyu-rog): cancelled/killed?, 12.6%; started 2026-11-04 10:09 UTC; reads `systems/ipp_ua_pore_w5nm_n40_c240_s1/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.74 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | 25 °C 20.1 ± 3.2; 90 °C 22.3 ± 3.5; 130 °C 27.3 ± 2.8; 160 °C 17.2 ± 3.8 | finished: pore | pore |
+| narrow | 5 nm (at 25 °C) | 4.74 nm | 6.4 nm | 6.4 × 6.4 nm (25 °C) | — | pore: cancelled/killed?, 12.6% | pore |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -7074,9 +7115,9 @@ Per segment:
 
 ### `ipp_aa_amorph_n40_c240_s1_from_ua`
 
-iPP AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `ipp_ua_amorph_n40_c240_s1` (`hold_ext_40ns.data`). Stage now: `sweep_failed_20261102` (failed, 0.0%).
+iPP AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `ipp_ua_amorph_n40_c240_s1` (`hold_ext_40ns.data`). Stage now: sweep (failed, 0.0%).
 
-No analysed properties yet; pending: `sweep_failed_20261102`: failed, 0.0%. Equilibration: from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+No analysed properties yet; pending: sweep: failed, 0.0%. Equilibration: from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -7098,7 +7139,6 @@ No analysed properties yet; pending: `sweep_failed_20261102`: failed, 0.0%. Equi
   - 500 K hold 5.0 ns: D47 criteria on this hold FAIL (R<sub>ee</sub> ACF 0.72 at 2.5 ns, 1/e not reached; COM MSD/⟨R<sub>g</sub>²⟩ 0.25); C<sub>n</sub> 5.58 vs 6.15 (in band, info); no drift (Δ -0.01 ± 0.16)
   - monitor flags: R<sub>ee</sub> not decorrelated (0.72 at 2.5 ns); MSD/R<sub>g</sub>² 0.25; drift seg 9,12
 - **sweep** (rdyu-rog): failed, 0.0%; started 2026-11-02 14:06 UTC, ended 2026-11-02 14:06 UTC; reads `../prep/cooled.data`
-- **`sweep_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 14:06 UTC, ended 2026-11-02 14:06 UTC
 - Superseded (not used): `sweep_cancelled_pe_first` (cancelled/killed?)
 
 - Sweep analysis: not analysed yet.
