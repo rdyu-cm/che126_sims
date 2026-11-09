@@ -124,8 +124,43 @@ def parse_args(argv=None):
         help="also render an animation per view (OVITO's built-in encoder; png: numbered frames)",
     )
     ap.add_argument("--movie-frames", type=int, default=100, help="frames in the movie (about)")
+    ap.add_argument(
+        "--movie-range",
+        type=int,
+        nargs=2,
+        metavar=("FIRST", "LAST"),
+        help="trajectory frames the movie covers (default: all)",
+    )
     ap.add_argument("--fps", type=int, default=10)
     ap.add_argument("--no-label", action="store_true", help="no system/stage/frame text label")
+    ap.add_argument(
+        "--label",
+        help="label text instead of system/stage/frame, with [t_ns] (--t0-ns + frame x"
+        " --frame-ns), [T] (--temps) and [frame] filled in per frame,"
+        " e.g. 't = [t_ns] ns   T = [T]'",
+    )
+    ap.add_argument("--frame-ns", type=float, default=0.0, help="ns between frames, for [t_ns]")
+    ap.add_argument("--t0-ns", type=float, default=0.0, help="[t_ns] of frame 0")
+    ap.add_argument(
+        "--temps",
+        nargs="+",
+        default=[],
+        metavar="FRAME:TEXT",
+        help="[T] text from each FRAME on (e.g. 0:'500 K' 50:'475 K')",
+    )
+    ap.add_argument(
+        "--whole-chains",
+        action="store_true",
+        help="with --highlight: draw the highlighted chains whole (unbroken by the periodic"
+        " wrap), each shifted by cell vectors so its centre of mass is in the cell; the"
+        " others stay wrapped (unwrapped trajectories)",
+    )
+    ap.add_argument(
+        "--center-xy",
+        action="store_true",
+        help="cancel the lateral (x, y) drift of the centre of mass relative to the first"
+        " frame drawn (unwrapped trajectories), e.g. to keep a hole in place",
+    )
     return ap.parse_args(argv)
 
 
@@ -162,6 +197,73 @@ def _drop_particles(frame, data):
     """Pipeline function: keep only the cell (for the image outlines)."""
     if data.particles is not None:
         data.objects.remove(data.particles)
+
+
+def parse_temps(items: list[str]) -> list[tuple[int, str]]:
+    """``FRAME:TEXT`` items -> sorted (frame, text) breakpoints."""
+    out = []
+    for item in items:
+        f, sep, text = item.partition(":")
+        if not sep or not f.strip().isdigit():
+            raise SystemExit(f"--temps: bad item {item!r} (want FRAME:TEXT)")
+        out.append((int(f), text))
+    return sorted(out)
+
+
+def temp_at(temps: list[tuple[int, str]], frame: int) -> str:
+    """Text of the last --temps breakpoint at or before `frame` ('' if none)."""
+    return next((text for f, text in reversed(temps) if f <= frame), "")
+
+
+def annotate(args, temps):
+    """Pipeline function: the [t_ns], [T] and [frame] attributes of the --label text."""
+
+    def modify(frame, data):
+        data.attributes["t_ns"] = f"{args.t0_ns + frame * args.frame_ns:.3g}"
+        data.attributes["T"] = temp_at(temps, frame)
+        data.attributes["frame"] = str(frame)
+
+    return modify
+
+
+def center_xy(ref):
+    """Pipeline function: shift x, y so the centre of mass stays at `ref` (x, y); insert
+    it before the wrap."""
+
+    def modify(frame, data):
+        pos = data.particles_.positions_
+        pos[:, :2] -= pos[:, :2].mean(axis=0) - ref
+
+    return modify
+
+
+def keep_unwrapped(frame, data):
+    """Pipeline function: copy the (unwrapped) positions before the wrap, for
+    whole_highlighted()."""
+    data.particles_.create_property("Unwrapped Position", data=data.particles.positions)
+
+
+def whole_highlighted(frame, data):
+    """Pipeline function (after the wrap and the highlight): put each highlighted chain
+    (Transparency 0) back together from its unwrapped positions, shifted by cell vectors
+    so its centre of mass is in the cell (orthogonal cells)."""
+    import numpy as np
+
+    cell = np.asarray(data.cell)
+    lo, length = cell[:, 3], np.diag(cell[:, :3])
+    on = np.asarray(data.particles["Transparency"]) == 0
+    mol = np.asarray(data.particles["Molecule Identifier"])
+    unwrapped = np.asarray(data.particles["Unwrapped Position"])
+    pos = data.particles_.positions_
+    for m in np.unique(mol[on]):
+        sel = mol == m
+        com = unwrapped[sel].mean(axis=0)
+        pos[sel] = unwrapped[sel] - np.floor((com - lo) / length) * length
+    bonds = data.particles.bonds
+    if bonds is not None and bonds.count and "Periodic Image" in bonds:
+        topo = np.asarray(bonds.topology)
+        inside = on[topo[:, 0]] & on[topo[:, 1]]
+        data.particles_.bonds_["Periodic Image_"][inside] = 0
 
 
 def pick_frames(spec: str, n: int) -> list[int]:
@@ -210,7 +312,8 @@ def main(argv=None) -> int:
 
     def fit(vp):
         vp.zoom_all()
-        vp.fov *= MARGIN
+        # whole chains reach out of the cell, differently in each frame: leave room
+        vp.fov *= MARGIN * (1.35 if args.whole_chains else 1.0)
 
     dcd = Path(args.dcd).resolve()
     _, system, stage, _, root = ov.parse_path(dcd)
@@ -247,6 +350,18 @@ def main(argv=None) -> int:
         highlight=args.highlight,
         highlight_seed=args.seed,
     )
+    if args.center_xy:
+        # the raw trajectory frame the drift is measured from: the movie's first frame
+        first = args.movie_range[0] if args.movie_range else 0
+        raw = pipeline.modifiers[0].source.compute(first).particles.positions
+        pipeline.modifiers.insert(1, center_xy(np.asarray(raw)[:, :2].mean(axis=0)))
+    if args.whole_chains:
+        if not args.highlight or args.no_wrap:
+            raise SystemExit("--whole-chains needs --highlight and the wrap")
+        pipeline.modifiers.insert(1 + args.center_xy, keep_unwrapped)
+        pipeline.modifiers.append(whole_highlighted)
+    if args.label:
+        pipeline.modifiers.append(annotate(args, parse_temps(args.temps)))
     cell_vis = pipeline.source.data.cell.vis
     cell_vis.enabled = True
     cell_vis.rendering_color = (0.0, 0.0, 0.0)
@@ -318,24 +433,31 @@ def main(argv=None) -> int:
                 alignment=QtCore.Qt.AlignmentFlag.AlignBottom | QtCore.Qt.AlignmentFlag.AlignLeft,
             )
             label.offset_x, label.offset_y = 0.01, 0.01
+            if args.label:  # filled in per frame from the annotate() attributes
+                label.pipeline = pipeline
+                label.font_size = 0.045
+                label.text = _label(args.label)
             vp.overlays.append(label)
         for f in frames:
             t = time.time()
             ovito.scene.anim.current_frame = f
             place_outlines(f)
             fit(vp)
-            if label is not None:
+            if label is not None and not args.label:
                 label.text = _label(f"{system}   {stage}/{dcd.name}   frame {f}/{n - 1}")
             path = out / f"{dcd.stem}_{name}{tag}_f{f:05d}.png"
             vp.render_image(size=tuple(args.size), frame=f, filename=str(path), renderer=renderer)
             written.append(path)
             print(f"{path}  {time.time() - t:.1f} s", flush=True)
         if args.movie:
-            every = max(1, n // max(args.movie_frames, 1))
-            if label is not None:
+            lo, hi = args.movie_range or (0, n - 1)
+            if not 0 <= lo <= hi < n:
+                raise SystemExit(f"--movie-range: want 0 <= FIRST <= LAST <= {n - 1}")
+            every = max(1, (hi - lo + 1) // max(args.movie_frames, 1))
+            if label is not None and not args.label:
                 label.text = _label(f"{system}   {stage}/{dcd.name}   every {every} frame(s)")
-            ovito.scene.anim.current_frame = n - 1
-            place_outlines(n - 1)
+            ovito.scene.anim.current_frame = hi
+            place_outlines(hi)
             fit(vp)
             stem = f"{dcd.stem}_{name}{tag}_movie"
             path = out / (f"{stem}.{args.movie}" if args.movie != "png" else f"{stem}_*.png")
@@ -345,11 +467,12 @@ def main(argv=None) -> int:
                 size=tuple(args.size),
                 fps=args.fps,
                 renderer=renderer,
-                range=(0, n - 1),
+                range=(lo, hi),
                 every_nth=every,
             )
             written.append(path)
-            print(f"{path}  {time.time() - t:.1f} s ({len(range(0, n, every))} frames)", flush=True)
+            nf = len(range(lo, hi + 1, every))
+            print(f"{path}  {time.time() - t:.1f} s ({nf} frames)", flush=True)
     print(f"{len(written)} file(s) in {out}; total {time.time() - t0:.1f} s")
     return 0
 
