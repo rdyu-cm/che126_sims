@@ -7,8 +7,8 @@ seed: 1
 box_angstrom:
 - [13.4450334064, 279.485415834]
 - [13.4450334064, 279.485415834]
-- [11.54597903, 130.79705077104163]
-density_g_cm3: 0.42413242481669083
+- [11.54597903, 280.79705077104165]
+density_g_cm3: 0.18784789190425927
 counts:
   per_chain: {atoms: 80, bonds: 79, angles: 78, dihedrals: 0}
   total: {atoms: 51200, bonds: 50560, angles: 49920, dihedrals: 0}
@@ -18,7 +18,7 @@ formula:
 total_mass_g_mol: 2155806.592
 forcefield: {name: sdk_cg, file: sdk_cg.yaml, sha256: 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba}
 sepsim_version: 0.1.0
-git: {commit: 3604952a9fe8822aefb2bcb37f414c619d10f049, dirty: false}
+git: {commit: e27e3a6c62013a19c8bb2076416a7b88ae7fd5b0, dirty: false}
 type_ids:
   atom: {CM: 1, CT: 2}
   bond: {CM-CM: 1, CM-CT: 2}
@@ -118,14 +118,14 @@ hole:
   radius_nm: 3.0
   t_c: 160.0
   axis_angstrom: [146.4652246202, 146.4652246202]
-  lz_new: 119.25107174104163
+  lz_new: 269.25107174104164
   film_thickness_angstrom: 66.59088548609746
   film_thickness_with_hole: 69.25107174104163
-  gap_angstrom: 50.0
+  gap_angstrom: 200.0
   area: 70777.48508222365
   hole_area_fraction: 0.03994820365468096
   bulk_density_g_cm3: 0.7595370725333973
-  film_z_extent_angstrom: [25.0654104170078, 114.02494690749072]
+  film_z_extent_angstrom: [100.06541041700781, 189.02494690749074]
   ligament_angstrom: 206.04038242759998
   source:
     id: pe_cg_pore_w5nm_n640_c240_s1_rep441
