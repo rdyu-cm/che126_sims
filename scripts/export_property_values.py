@@ -1,7 +1,8 @@
 """Flatten the `sepsim analyze` results into tidy CSVs of final property values.
 
 Reads (read-only) every ``<analysis>/<system>/<stage>/results.json`` and the system
-manifests (``<systems>/<id>/manifest.yaml``, for polymer / resolution / kind) and writes
+manifests (``<systems>/<id>/manifest.yaml``, for polymer / resolution / kind) and writes,
+next to the per-run dirs in ``results/analysis/`` (``--out-dir`` to override),
 
 - ``property_values.csv`` (long): one row per value, with its error, unit and the dotted
   path into results.json it came from;
@@ -945,7 +946,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--analysis-dir", type=Path, default=ROOT / "results" / "analysis")
     ap.add_argument("--systems", type=Path, default=ROOT / "systems")
     ap.add_argument("--runs-dir", type=Path, default=ROOT / "results" / "runs")
-    ap.add_argument("--out-dir", type=Path, default=ROOT / "results")
+    ap.add_argument("--out-dir", type=Path, default=ROOT / "results" / "analysis")
     args = ap.parse_args(argv)
 
     ex = export(args.analysis_dir, args.systems, args.runs_dir)
