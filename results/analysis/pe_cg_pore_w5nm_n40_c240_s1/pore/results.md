@@ -1,7 +1,7 @@
 # Pore analysis: pe_cg_pore_w5nm_n40_c240_s1 / pore
 
 - system: `pe_cg_pore_w5nm_n40_c240_s1` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_pore_w5nm_n40_c240_s1/pore` (status finished, node rdyu-rog, run code commit eb03f2965b)
-- analysis: `sepsim analyze pore` (D51), code commit 05d80a64df (dirty), 2026-10-30 19:29 on rdyu-server
+- analysis: `sepsim analyze pore` (D51), code commit e27e3a6c62 (dirty), 2026-11-09 19:02 on rdyu-server
 - pore: nominal width 5 nm at 25 °C, wall 64.9 Å at 25 °C, Lz 114.87 Å (fixed), slab mass 134738 g/mol; units real
 - windows: steps, cool stages and the re-relaxation second half (50% of rows dropped); holds without the first 10% of rows; SEM from the statistical inefficiency (D26)
 - bulk reference: `results/analysis/pe_cg_amorph_n40_c240_s1/sweep/results.json`
@@ -170,7 +170,7 @@ Where τ_1 is not reached, p²τ_p of the faster modes estimates it under ideal 
 - 130 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 27.8, p=3: 23.5, p=4: 20.5, p=5: 18.8 ns.
 - 160 °C: τ_1 ≈ p²τ_p from the reached modes: p=2: 14.3, p=3: 16.1, p=4: 15.1, p=5: 13.5 ns.
 
-CG times are model times: SDK PE chains move ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so multiply by 4.07 before comparing with experiment.
+CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 ## Equilibration
 
@@ -216,7 +216,7 @@ Chain-scale quantities (Rg, R_ee, C_n, chain COM motion) relax on the end-to-end
 - The slit is a local patch of a pore wall: real separator pores are 30–100 nm and their walls semicrystalline (D50); these walls are amorphous (melt-like or post-shutdown).
 - Layers: surface = within 15 Å of either Gibbs surface on the film side (or outside it), interior = the rest, assigned at each time origin; sites leave their layer at long lags, so long-lag layer MSDs mix layers. MSDs are per dimension: in-plane (⟨Δx²⟩+⟨Δy²⟩)/2, normal ⟨Δz²⟩, bulk MSD/3 (isotropic).
 - Cv = dE/dT (total energy, NVT, per gram) and the surface excess energy are classical: Cv is not comparable to experiment for the same reasons as the bulk Cp (classical equipartition; UA/CG drop degrees of freedom). e_s = (E_pore − (M_pore/M_bulk) E_bulk(T))/(2A) compares the NVT film with the NPT bulk at 1 atm (PV ≈ 0) at the same set T; the film's lateral box follows the bulk density (D48).
-- CG time is not real time: SDK beads move faster than the atoms they represent, so MSD and P2 times are model times (not rescaled).
+- CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment.
 
 ## Plots
 

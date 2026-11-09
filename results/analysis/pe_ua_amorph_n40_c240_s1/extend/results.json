@@ -3,23 +3,24 @@
   "Relaxation times use lags up to half the analysed hold (49.1 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given."
  ],
  "code_git": {
-  "branch": "chain-relaxation",
-  "commit": "05d80a64df834e22a2f67fa4fedd31d55c1ddf47",
+  "branch": "analysis-refresh",
+  "commit": "e27e3a6c62013a19c8bb2076416a7b88ae7fd5b0",
   "dirty": true
  },
  "combined_with": [
   "/home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/prep/hold.dcd"
  ],
  "complete": false,
- "generated": "2026-10-30T19:25:16+00:00",
+ "generated": "2026-11-09T18:54:31+00:00",
  "generated_on": "rdyu-server",
  "kappa": {
   "V_mean_A3": 300008.1524475674,
   "V_std_A3": 1838.6755471731603,
-  "g": 1.4566772717487093,
+  "g": 1.8818412242133877,
   "kappa_T_GPa": 1.6323897430762886,
   "samples": 70376,
-  "sem": 0.010499749094112845
+  "sem": 0.011934074321114464,
+  "sem_lower_bound": false
  },
  "method": {
   "hold_window": "without the first 10% of rows",

@@ -1,5 +1,5 @@
 {
- "created": "2026-11-05T06:35:04+00:00",
+ "created": "2026-11-09T19:33:58+00:00",
  "dcds": [
   {
    "dcd": "inflate.dcd",
@@ -47255,7 +47255,7 @@
   "slope": -294.9339400243513,
   "slope_se": 17.190170974444076
  },
- "run_dir": "results/runs/pe_cg_hole_r2nm_160C_n320_c240_s1_rep222/hole_free",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r2nm_160C_n320_c240_s1_rep222/hole_free",
  "segments": [
   {
    "end_ns": 20.0,

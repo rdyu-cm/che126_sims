@@ -32,7 +32,7 @@ Inflate 10 ns + push hold 10 ns (indent, K 0.5); grid `160h`; frames every 50 ps
 
 - The scaffold is imposed harmonic tethers (fix spring/self) on the film outside R + d, a stand-in for the semicrystalline network that holds real separator pores open; it is not crystallinity, and its release is an emulation of melting, not a prediction of the shutdown temperature.
 - The free film is the post-shutdown limit (a hole in an amorphous melt-like film).
-- Times are CG model times (the SDK CG dynamics is faster than real PE by an unknown factor); compare runs with each other, not with experiment.
+- CG time is not real time: SDK PE chains diffuse ≈ 4.07× faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment. The 4.07 factor is for chain diffusion and is not established for hole closure: compare hole runs with each other, not with experiment.
 - All holes here have R < h (R/h <= 0.31), so closure is expected from the energy balance (R_c proportional to h, prefactor ~0.3-1 depending on rim geometry; Taylor & Michael 1973, Ilton et al. 2016): these runs measure closure kinetics (viscous scale ~ eta R / gamma), not the opening threshold.
 - Finite size: the film is periodic in x, y; the ligament between the hole and its periodic images is L - 2R (given above; R = 4 nm leaves ~5 nm).
 - gamma (and so the closure speed) depends on the plain LJ cutoff without tail correction (D48).

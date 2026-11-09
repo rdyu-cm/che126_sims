@@ -7,11 +7,11 @@
   "The slit is a local patch of a pore wall: real separator pores are 30\u2013100 nm and their walls semicrystalline (D50); these walls are amorphous (melt-like or post-shutdown).",
   "Layers: surface = within 15 \u00c5 of either Gibbs surface on the film side (or outside it), interior = the rest, assigned at each time origin; sites leave their layer at long lags, so long-lag layer MSDs mix layers. MSDs are per dimension: in-plane (\u27e8\u0394x\u00b2\u27e9+\u27e8\u0394y\u00b2\u27e9)/2, normal \u27e8\u0394z\u00b2\u27e9, bulk MSD/3 (isotropic).",
   "Cv = dE/dT (total energy, NVT, per gram) and the surface excess energy are classical: Cv is not comparable to experiment for the same reasons as the bulk Cp (classical equipartition; UA/CG drop degrees of freedom). e_s = (E_pore \u2212 (M_pore/M_bulk) E_bulk(T))/(2A) compares the NVT film with the NPT bulk at 1 atm (PV \u2248 0) at the same set T; the film's lateral box follows the bulk density (D48).",
-  "CG time is not real time: SDK beads move faster than the atoms they represent, so MSD and P2 times are model times (not rescaled)."
+  "CG time is not real time: SDK PE chains diffuse \u2248 4.07\u00d7 faster than real PE (Hall et al. 2019; docs/experiment_comparison.md), so MSD, D_COM, P2 and relaxation times are model times (not rescaled); multiply chain-motion times by 4.07 before comparing with experiment."
  ],
  "code_git": {
-  "branch": "chain-relaxation",
-  "commit": "05d80a64df834e22a2f67fa4fedd31d55c1ddf47",
+  "branch": "analysis-refresh",
+  "commit": "e27e3a6c62013a19c8bb2076416a7b88ae7fd5b0",
   "dirty": true
  },
  "convergence": [
@@ -158839,7 +158839,7 @@
    ]
   }
  },
- "generated": "2026-10-30T19:35:11+00:00",
+ "generated": "2026-11-09T19:06:13+00:00",
  "generated_on": "rdyu-server",
  "holds": [
   {

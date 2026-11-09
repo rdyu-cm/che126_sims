@@ -1,6 +1,6 @@
 # Tensile analysis (D54)
 
-Generated 2026-10-31T10:54:55-07:00. E_app and ν fitted over 0 ≤ ε ≤ 0.02; peak after a 0.01-strain moving average; flow stress = mean true stress over ε ∈ [0.3, 0.5]. True stress σ = −(P_axis − p_atm), tension positive; engineering stress σ·A/A0.
+Generated 2026-11-09T18:58:26+00:00. E_app and ν fitted over 0 ≤ ε ≤ 0.02; peak after a 0.01-strain moving average; flow stress = mean true stress over ε ∈ [0.3, 0.5]. True stress σ = −(P_axis − p_atm), tension positive; engineering stress σ·A/A0.
 
 ## pe_cg_amorph_n40_c240_s1 / tensile_130C
 

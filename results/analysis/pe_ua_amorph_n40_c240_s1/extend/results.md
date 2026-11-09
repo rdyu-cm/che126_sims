@@ -1,7 +1,7 @@
 # Hold analysis: pe_ua_amorph_n40_c240_s1 / extend
 
 - system: `pe_ua_amorph_n40_c240_s1` (ua); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/extend` (extend, status started, node rdyu-server, run code commit f08478df5d)
-- analysis: `sepsim analyze hold` (D56), code commit 05d80a64df (dirty), 2026-10-30 19:25 on rdyu-server
+- analysis: `sepsim analyze hold` (D56), code commit e27e3a6c62 (dirty), 2026-11-09 18:54 on rdyu-server
 - segment: Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm (80 ns planned, not complete); thermo window without the first 10% of rows, SEM from 100 ps block means (D55)
 - trajectory: `/home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/prep/hold.dcd` read ahead of the hold DCD as one continuous trajectory (D47)
 - note: hold not complete: thermo and trajectory over the part run
@@ -10,7 +10,7 @@
 
 | window (ns) | T (°C) | density (g/cm³) | H (kcal/mol) | V (Å³) | κ_T (GPa⁻¹) |
 |---|---|---|---|---|---|
-| 70.38 | 226.85 ± 0.02 | 0.74581 ± 0.00008 | 23622.3 ± 2.9 | 300008 ± 31 | 1.632 ± 0.010 |
+| 70.38 | 226.85 ± 0.02 | 0.74581 ± 0.00008 | 23622.3 ± 2.9 | 300008 ± 31 | 1.632 ± 0.012 |
 
 ## Trajectory: mobility and chain size
 
