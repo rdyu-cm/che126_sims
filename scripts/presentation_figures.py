@@ -3632,6 +3632,14 @@ def _hole_label(r: dict) -> str:
     return f"R$_0$ {r['radius_nominal_nm']:g} nm, {float(r.get('t_c') or 0):g} °C, {v}"
 
 
+def _hole_color(r: dict) -> tuple:
+    """T colour, lighter for small and darker for large R0 (2 -> 6 nm), so the radii run at
+    one temperature stay distinguishable."""
+    base = np.array(matplotlib.colors.to_rgb(t_color(float(r.get("t_c") or 0))))
+    f = 0.6 * min(max((float(r["radius_nominal_nm"]) - 3.5) / 2.5, -1.0), 1.0)
+    return tuple(base * (1 - f) if f > 0 else base + (1 - base) * -f)
+
+
 def _built_holes(data: dict) -> list[str]:
     desc = []
     for sid in sorted(sid for sid in data["systems"] if "_hole" in sid):
@@ -3751,20 +3759,23 @@ def _f8_reff(ax, holes, info) -> None:
     info["b"] = []
     for h in holes:
         r = h["res"]
-        fr = [f for f in r["frames"] if f.get("phase") == "production"]
+        # log time axis: t = 0 (the release frame) cannot be drawn
+        fr = [f for f in r["frames"] if f.get("phase") == "production" and f["t_ns"] > 0]
         if not fr:
             continue
         free = str(r.get("variant", "free")).startswith("free")
-        tc = float(r.get("t_c") or 0)
+        col = _hole_color(r)
+        t = [f["t_ns"] for f in fr]
         ax.plot(
-            [f["t_ns"] for f in fr],
+            t,
             np.array([f["r_eff"] for f in fr]) / 10.0,
-            color=t_color(tc),
+            color=col,
             ls="-" if free else "--",
             label=_hole_label(r),
         )
+        ax.plot(t, np.array([f["r_min"] for f in fr]) / 10.0, color=col, ls=":", lw=1.2)
         if r.get("t_close_ns") is not None:
-            ax.plot(r["t_close_ns"], 0, marker="v", color=t_color(tc), ms=9, mec="black")
+            ax.plot(r["t_close_ns"], 0, marker="v", color=col, ms=9, mec="black", clip_on=False)
         info["b"].append(
             {
                 "sid": h["sid"],
@@ -3774,19 +3785,21 @@ def _f8_reff(ax, holes, info) -> None:
                 "rate": g(r, "rate_initial"),
             }
         )
-    ax.set_xlabel("production time (ns, model time)")
-    ax.set_ylabel(r"$R_{eff}$ (nm)")
-    ax.set_ylim(bottom=-0.1)
+    ax.set_xscale("log")
+    ax.set_xlabel("time after release (ns, model time)")
+    ax.set_ylabel(r"$R_{eff}$, $R_{min}$ (nm)")
+    # headroom above the curves for the legend
+    ax.set_ylim(0, ax.get_ylim()[1] * 1.5)
     ax.legend(
         loc="upper right",
         fontsize=8.5,
-        title="solid: free, dashed: scaffold; ▼ t$_{close}$",
-        title_fontsize=8.5,
+        title="solid: R$_{eff}$ (free), dashed: R$_{eff}$ (scaffold),\n"
+        "dotted: R$_{min}$ (narrowest slab); ▼ t$_{close}$ (R$_{min}$ ≈ 0)",
+        title_fontsize=8,
     )
 
 
 def _f8_rz(ax, holes, info) -> None:
-    panel_label(ax, "c", "R(z) through the film")
     h = next(
         (
             h
@@ -3796,9 +3809,11 @@ def _f8_rz(ax, holes, info) -> None:
         None,
     )
     if h is None:
+        panel_label(ax, "c", "R(z) through the film")
         no_data(ax, "no R(z) slabs stored", pending=True)
         return
     r = h["res"]
+    panel_label(ax, "c", f"R(z) through the film ({_hole_label(r)})")
     fr = [f for f in r["frames"] if f.get("phase") == "production" and f.get("slab_r")]
     t_end = r.get("t_close_ns") or fr[-1]["t_ns"]
     fr = [f for f in fr if f["t_ns"] <= t_end] or fr
@@ -3818,7 +3833,7 @@ def _f8_rz(ax, holes, info) -> None:
     ax.set_xlabel("R (nm)")
     ax.set_ylabel("z from the film centre (nm)")
     ax.set_xlim(left=0)
-    ax.legend(loc="upper right", fontsize=9, title=_hole_label(r), title_fontsize=8.5)
+    ax.legend(loc="center right", fontsize=9)
     info["c"] = {"sid": h["sid"], "stage": h["stage"], "times": [fr[i]["t_ns"] for i in idx]}
 
 
@@ -3842,18 +3857,21 @@ def _f8_outcome(ax, holes, info) -> None:
                 "t_end": r.get("production_ns"),
                 "free": str(r.get("variant", "free")).startswith("free"),
                 "thin": "rep441" in h["sid"],
+                "color": _hole_color(r),
             }
         )
     info["d"] = rows
     if not rows:
         no_data(ax, "no hole runs with production frames", pending=True)
         return
-    ax.axvspan(0.3, 1.0, color="0.5", alpha=0.12, lw=0)
-    ax.axvline(1.0, color="black", ls="--", lw=1.3)
+    # critical radius r_c = pi h / 4 (Taupin et al. 1975), which Ilton et al. 2016 confirm in
+    # PS films (r_c/h 0.62 and 0.76 measured at h = 810 and 965 nm)
+    ax.axvspan(0.62, 0.76, color="0.5", alpha=0.15, lw=0)
+    ax.axvline(np.pi / 4, color="black", ls="--", lw=1.3)
     ax.text(
-        0.31,
+        np.pi / 4 + 0.02,
         0.97,
-        "R$_c$/h ≈ 0.3–1\n(Ilton 2016; Taylor &\nMichael 1973)",
+        "R$_c$ = πh/4\n(Taupin 1975);\nshaded: measured,\nPS films\n(Ilton 2016)",
         transform=ax.get_xaxis_transform(),
         fontsize=8.5,
         va="top",
@@ -3866,9 +3884,9 @@ def _f8_outcome(ax, holes, info) -> None:
             y,
             marker="o" if q["free"] else "s",
             ms=9,
-            color=t_color(q["t_c"]),
-            mfc=t_color(q["t_c"]) if q["closed"] else "white",
-            mec="black" if q["thin"] else t_color(q["t_c"]),
+            color=q["color"],
+            mfc=q["color"] if q["closed"] else "white",
+            mec="black" if q["thin"] else q["color"],
             ls="",
         )
         if not q["closed"]:
@@ -3876,11 +3894,12 @@ def _f8_outcome(ax, holes, info) -> None:
                 "",
                 xy=(q["x"], y * 1.5),
                 xytext=(q["x"], y),
-                arrowprops={"arrowstyle": "->", "color": t_color(q["t_c"])},
+                arrowprops={"arrowstyle": "->", "color": q["color"]},
             )
     ys = [q["t_close"] if q["closed"] else (q["t_end"] or top) for q in rows]
     if max(ys) > 10 * max(min(ys), 1e-9):
         ax.set_yscale("log")
+        ax.set_ylim(min(ys) / 2, max(ys) * 4)
     else:
         ax.set_ylim(0, max(ys) * 1.8)
     ax.set_xlim(0, max(1.2, max(q["x"] for q in rows) * 1.15))
@@ -3888,17 +3907,26 @@ def _f8_outcome(ax, holes, info) -> None:
     ax.set_ylabel("t$_{close}$ or run length (ns, model time)")
     ts = sorted({q["t_c"] for q in rows})
     _t_legend(ax, ts, loc="lower right", title=None, fontsize=9)
-    ax.legend(
-        handles=[
+    # style keys only for the kinds of point actually drawn
+    keys = [
+        (
+            any(q["closed"] for q in rows),
             Line2D([], [], color="0.3", marker="o", ls="", label="closed (t$_{close}$)"),
+        ),
+        (
+            any(not q["closed"] for q in rows),
             Line2D([], [], color="0.3", marker="o", mfc="white", ls="", label="open at run end"),
+        ),
+        (
+            any(not q["free"] for q in rows),
             Line2D([], [], color="0.3", marker="s", ls="", label="scaffolded"),
+        ),
+        (
+            any(q["thin"] for q in rows),
             Line2D([], [], color="0.6", marker="o", mec="black", ls="", label="thin film (4×4×1)"),
-        ],
-        loc="upper left",
-        bbox_to_anchor=(0.0, 0.8),
-        fontsize=8.5,
-    )
+        ),
+    ]
+    ax.legend(handles=[hd for shown, hd in keys if shown], loc="upper left", fontsize=8.5)
 
 
 def fig8_holes(data: dict, out: Path) -> tuple[list[Path], dict]:
@@ -4484,17 +4512,22 @@ def caption_fig8(info: dict, data: dict) -> str:
             " production time (colour = T; solid free, dashed scaffolded; ▼ = t<sub>close</sub>);"
             " (c) R(z) through the film at up to five times before closure (one run); (d)"
             " closure outcome vs R₀/h: t<sub>close</sub> (filled) or run length (open, still"
-            " open), with the expected critical R<sub>c</sub>/h ≈ 0.3–1 (Taylor & Michael 1973;"
-            " Ilton et al. 2016) and the 4×4×1 thin-film (rep441) critical-size scan marked."
+            " open), with the critical R<sub>c</sub> = πh/4 (Taupin et al. 1975; Ilton et al."
+            " 2016) and the 4×4×1 thin-film (rep441) critical-size scan marked."
         )
     else:
         rest = (
-            " (b) R<sub>eff</sub> = √(A/π) of the projected hole vs production time (colour ="
-            " T; solid free, dashed scaffolded; ▼ = t<sub>close</sub>). (c) R(z) per 10 Å slab"
-            " through the film at up to five times before closure. (d) t<sub>close</sub>"
-            " (filled) or run length (open: still open) vs R₀/h; band = the expected critical"
-            " R<sub>c</sub>/h ≈ 0.3–1 (Taylor & Michael 1973; Ilton et al. 2016); black edge ="
-            " thin film (4×4×1)."
+            " (b) Hole radius vs time after release (log axis): R<sub>eff</sub> = √(A/π) of the"
+            " projected hole (solid free, dashed scaffolded) and R<sub>min</sub>, the radius of"
+            " the narrowest 10 Å slab (dotted). Colour = T, lighter for smaller and darker for"
+            " larger R₀. ▼ = t<sub>close</sub>, when R<sub>min</sub> stays below 3 Å: the hole"
+            " pinches shut inside the film first, and the dimples left in the two surfaces fill"
+            " in later (R<sub>eff</sub> → 0). (c) R(z) per 10 Å slab through the film at up to"
+            " five times before t<sub>close</sub>. (d) t<sub>close</sub> (filled) or run length"
+            " (open: still open) vs R₀/h; dashed line = the critical radius R<sub>c</sub> = πh/4"
+            " (Taupin et al. 1975), shaded = R<sub>c</sub>/h measured in 0.8–1 µm polystyrene"
+            " films (0.62, 0.76; Ilton et al. 2016), both macroscopic; black edge = thin film"
+            " (4×4×1)."
         )
     return (
         "**Figure 8. Cylindrical hole through the free film (D52).** "
