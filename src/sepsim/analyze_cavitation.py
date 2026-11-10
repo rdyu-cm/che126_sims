@@ -115,7 +115,7 @@ def voids(dcd: Path, probe_a: float) -> dict | None:
         "largest_A3": largest,
         "r_void_A": [r["r_void_A"] for r in rows],
         "n_voids": [r["n_voids"] for r in rows],
-        "ev_first_void": C.first_void(ev, phi_rel, largest),
+        "ev_first_void": C.first_void(ev, largest),
     }
 
 
@@ -254,7 +254,6 @@ def make_plots(report: dict, out_dir: Path) -> dict:
             if v["ev_first_void"] is not None:
                 for ax in (ax1, ax2):
                     ax.axvline(v["ev_first_void"], color=col, ls=":", lw=0.8)
-        ax1.axhline(C.FIRST_VOID_PHI * 100, color="0.5", ls=":", lw=0.8)
         ax1.set(
             xlabel="ε_V",
             ylabel="φ_v − φ_v(0) (%)",
@@ -298,8 +297,8 @@ def render_markdown(r: dict) -> str:
         f" σ_cav − the lowest smoothed σ_h after it; plateau = mean σ_h over ε_V ≥ ε_V,cav +"
         f" {C.PLATEAU_OFFSET:g}; K_app = dσ_h/dε_V over ε_V ≤ {C.K_FIT_MAX:g}. Voids: probe"
         f" {r['probe_A']:g} Å on a {C.VOXEL_A:g} Å grid; first void = largest void >"
-        f" {C.FIRST_VOID_A3 / 1000:.1f} nm³ (R = 1 nm) or φ_v − φ_v(0) >"
-        f" {C.FIRST_VOID_PHI:.1%}."
+        f" {C.FIRST_VOID_A3 / 1000:.1f} nm³ (R = 1 nm) for {C.FIRST_VOID_FRAMES} frames"
+        " in a row."
     )
     for run in r["runs"]:
         c, v = run["curve"], run["voids"]

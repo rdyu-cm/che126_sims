@@ -192,9 +192,9 @@ def test_periodic_label_merges_across_faces():
     m[4:6, 4:6, 4:6] = True  # a separate void
     labels, n = C.periodic_label(m)
     assert n == 2 and labels[0, 4, 4] == labels[9, 4, 4] != labels[5, 5, 5]
-    assert C.first_void([0.0, 0.1, 0.2], [0.0, 0.001, 0.0], [0.0, 5000.0, 0.0]) == 0.1
-    assert C.first_void([0.0, 0.1], [0.0, 0.006], [0.0, 0.0]) == 0.1
-    assert C.first_void([0.0, 0.1], [0.0, 0.001], [0.0, 1000.0]) is None
+    assert C.first_void([0.0, 0.1, 0.2, 0.3], [0.0, 5000.0, 5000.0, 5000.0]) == 0.1
+    assert C.first_void([0.0, 0.1, 0.2, 0.3], [0.0, 5000.0, 0.0, 5000.0]) == 0.3  # spike
+    assert C.first_void([0.0, 0.1], [0.0, 1000.0]) is None
 
 
 # --------------------------------------------------------------------------- report / CLI

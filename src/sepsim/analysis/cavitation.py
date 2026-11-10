@@ -38,7 +38,7 @@ VOXEL_A = 2.0
 PROBE_A = 4.0
 VOID_MIN_A3 = 1000.0  # 1 nm^3: counted voids
 FIRST_VOID_A3 = 4.0 / 3.0 * math.pi * 10.0**3  # R = 1 nm (4.19 nm^3)
-FIRST_VOID_PHI = 0.005  # or phi_v - phi_v(0) above 0.5%
+FIRST_VOID_FRAMES = 3  # ... for 3 frames in a row (or to the end of the run)
 
 
 def hydrostatic_stress(press_atm, p_ref_atm: float = 1.0) -> np.ndarray:
@@ -154,10 +154,12 @@ def void_stats(pos, lengths, probe: float = PROBE_A, spacing: float = VOXEL_A) -
     }
 
 
-def first_void(ev, phi_rel, largest_A3) -> float | None:
-    """Volume strain of the first frame with a void above ``FIRST_VOID_A3`` or a void
-    fraction above its eV = 0 baseline by more than ``FIRST_VOID_PHI``."""
-    for e, phi, v in zip(ev, phi_rel, largest_A3, strict=True):
-        if v > FIRST_VOID_A3 or phi > FIRST_VOID_PHI:
-            return float(e)
+def first_void(ev, largest_A3) -> float | None:
+    """Volume strain of the first frame from which the largest void stays above
+    ``FIRST_VOID_A3`` for ``FIRST_VOID_FRAMES`` frames (or to the last frame). The void
+    fraction is no criterion: the affine expansion alone raises it from the first frame."""
+    big = np.asarray(largest_A3, dtype=float) > FIRST_VOID_A3
+    for i in range(len(big)):
+        if big[i : i + FIRST_VOID_FRAMES].all():
+            return float(ev[i])
     return None

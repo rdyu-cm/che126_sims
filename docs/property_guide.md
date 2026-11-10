@@ -84,7 +84,7 @@ A fair comparison needs amorphous or melt data at the same temperature and a sim
 
 8n. **Cavitation stress σ_cav and strain ε_V,cav.** The box is stretched equally along x, y and z at a fixed rate; σ_h = −(P − 1 atm) is the hydrostatic tension. It rises roughly as K_app·ε_V, peaks at σ_cav when a void opens, drops and settles to a plateau as the void grows. K_app is the initial slope (compare with 1/κ_T).
 
-8o. **Void fraction φ_v.** Space farther than a probe radius (4 Å) from every bead centre, swept by the probe, on a 2 Å grid, minus its value before stretching; the largest void's volume gives R_void. The first void (R_void > 1 nm or φ_v up by 0.5%) gives a second, structural cavitation strain next to the pressure-based one. Both depend on the rate and, after cavitation, on the box size (one void per small box).
+8o. **Void fraction φ_v.** Space farther than a probe radius (4 Å) from every bead centre, swept by the probe, on a 2 Å grid, minus its value before stretching; the largest void's volume gives R_void. The first void (R_void > 1 nm for 3 frames in a row) gives a second, structural cavitation strain next to the pressure-based one. Both depend on the rate and, after cavitation, on the box size (one void per small box).
 
 ### Equilibration and quality checks
 
