@@ -16,6 +16,7 @@ A fair comparison needs amorphous or melt data at the same temperature and a sim
 | Dynamics: D, viscosity, P2 times, MSD | **AA roughly; UA partly; CG only with a time-mapping factor** | CG runs several times faster than real PE (smoothed energy landscape). UA is also somewhat fast (no hydrogen friction). Temperature trends are meaningful; absolute CG times need scaling to one experimental or AA point. |
 | Young's modulus, Poisson ratio, yield (tensile) | **Not against separator data** | Real separator stiffness and yield come from crystals, and MD strain rates (10⁸–10⁹ s⁻¹) are about 10⁹× faster than tests. Only the amorphous-phase response and its trends with temperature and rate. |
 | Pores: surface structure, hole closure | **No direct experiment** | The mechanism, and comparisons within our own simulations. |
+| Puncture (F_peak, d_break, W), cavitation (σ_cav, ε_cav) | **Not against separator data** | nm-scale amorphous melt under MD rates (10³–10⁴× faster puncture, 10⁸ s⁻¹ tension), no bond breaking: T, rate and size trends only. |
 
 **Our numbers next to experiment, with sources:** `docs/experiment_comparison.md`. In short, CG PE density is about 2% low, α_V about 5% low, surface tension within 1–3%, κ_T 50–60% too high, Cp about 3× low (degrees of freedom), chains about 20% too large (C240), and dynamics about 4× too fast.
 
@@ -70,6 +71,20 @@ A fair comparison needs amorphous or melt data at the same temperature and a sim
 8e. **Poisson ratio ν.** ν = −d ln L_lateral / d ln L_axis. A melt that flows at constant volume gives 0.5; glassy polymers about 0.33–0.4. At MD rates the lateral barostat lags the pull, which biases ν low at small strain.
 
 8f. **Peak and flow stress.** The maximum of the smoothed σ (with its strain), and the mean σ over strains 0.3–0.5. In a melt there is no true yield: the plateau is a viscous flow stress, about 3η × strain rate for a simple liquid, so it scales with the rate.
+
+### Puncture and cavitation (`puncture`, `cavitation`, D57, D58)
+
+8j. **Force–depth curve (puncture).** A hemispherical-tipped cylinder (radius R) is driven down through the free film at constant speed. F is the z force on the indenter (nN); depth d is how far the tip bottom is below the undisturbed film top at the start. Contact is where F first rises above the noise.
+
+8k. **F_peak and d_break.** F_peak is the maximum of F averaged over 0.5 nm of depth. Break-through needs both the force to fall below half of F_peak (for 0.5 nm) and no material left just ahead of the tip; d_break is the depth where both hold. The tip passing the film's bottom surface is reported too. A melt film parts by chains pulling out and flowing, not by bonds breaking.
+
+8l. **Puncture energy W.** ∫F dd from contact to the peak and to break-through, in aJ (1 aJ = 1 nN·nm = 144 kcal/mol). Rate-dependent like F_peak.
+
+8m. **Re-seal.** After break-through the hole around the indenter column can close again by surface tension (a melt heals); the free radius √(R_eff² − R²) about the axis and the time it stays below 3 Å.
+
+8n. **Cavitation stress σ_cav and strain ε_V,cav.** The box is stretched equally along x, y and z at a fixed rate; σ_h = −(P − 1 atm) is the hydrostatic tension. It rises roughly as K_app·ε_V, peaks at σ_cav when a void opens, drops and settles to a plateau as the void grows. K_app is the initial slope (compare with 1/κ_T).
+
+8o. **Void fraction φ_v.** Space farther than a probe radius (4 Å) from every bead centre, swept by the probe, on a 2 Å grid, minus its value before stretching; the largest void's volume gives R_void. The first void (R_void > 1 nm or φ_v up by 0.5%) gives a second, structural cavitation strain next to the pressure-based one. Both depend on the rate and, after cavitation, on the box size (one void per small box).
 
 ### Equilibration and quality checks
 

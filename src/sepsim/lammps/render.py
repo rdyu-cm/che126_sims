@@ -1,14 +1,15 @@
 """Render plain LAMMPS input decks from Jinja templates for a built system.
 
 A deck is rendered from ``templates/<protocol>.in.j2`` (``prep``, ``sweep``,
-``benchmark``, ``extend``, ``cool``, ``diffuse``, ``tensile`` for bulk systems; ``pore_relax`` for wide 500 K
-slit pores and ``pore`` for narrowed ones, D44/D48; ``hole`` for hole systems, D52) and the system's
+``benchmark``, ``extend``, ``cool``, ``diffuse``, ``tensile``, ``cavitation`` for bulk systems; ``pore_relax`` for wide 500 K
+slit pores and ``pore`` for narrowed ones, D44/D48; ``hole`` for hole systems, D52; ``puncture``
+for film systems, D57) and the system's
 ``manifest.yaml``: styles, mixing, special_bonds, type ids and SHAKE bond types come
 from the manifest; every coefficient line is emitted from the force-field YAML via
 ``sepsim.ff.params.to_lammps_real`` (the deck must not rely on data-file coefficients,
 because changing ``pair_style`` during the push-off discards them). Run parameters come
 from a per-protocol, per-resolution defaults table (decisions D12a, D12c, D12g, D20,
-D24, D25, D28, D31, D34-D39, D44, D47, D48, D53, D54), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
+D24, D25, D28, D31, D34-D39, D44, D47, D48, D53, D54, D57, D58), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
 header lists every resolved parameter; output is deterministic (no timestamps).
 
 Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to ``lmp``.
@@ -32,8 +33,12 @@ TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 PROTOCOLS = ("prep", "sweep", "benchmark", "pore_relax", "pore", "extend", "cool")
 PROTOCOLS += ("diffuse", "tensile")  # D53, D54
 PROTOCOLS += ("hole",)  # D52
+PROTOCOLS += ("puncture", "cavitation")  # D57, D58
 # protocols for slit-pore systems (manifest has a ``pore`` key), by pore.kind (D48)
 PORE_PROTOCOLS = {"pore_relax": "wide", "pore": "narrow"}
+# free films (D52, D57): manifest key -> the one protocol such a system takes (and only it)
+FILM_PROTOCOLS = {"hole": "hole", "film": "puncture"}
+_FILM_DECISION = {"hole": "D52", "film": "D57"}
 MANIFEST_NAME = "manifest.yaml"
 DATA_NAME = "data.lmp"
 
@@ -290,6 +295,52 @@ TENSILE_DEFAULTS = {
     for res in DEFAULTS
 }
 
+# Puncture test (D57) of a free film (sepsim build film): NVT at the film T with its D48
+# box, z non-periodic (boundary p p m: no z image), a hemispherical-tipped cylinder from
+# two fix indent (sphere + cone with equal radii, K in kcal/mol/A^3) settled clear of
+# the film, then driven down at indent_v_m_s by travel_nm (0 = auto: film z extent
+# + 2 clearance + R + overshoot); averages every avg_ps into puncture.txt.
+PUNCTURE_THERMOSTATS = ("nvt", "partial")
+PUNCTURE_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in _FF_KEYS}
+    | _PORE_FF[res]
+    | {
+        "indent_r_nm": 2.0,
+        "indent_v_m_s": 1.0,
+        "indent_k": 1.0,
+        "indent_x_nm": 0.0,  # axis offset from the box centre
+        "indent_y_nm": 0.0,
+        "clearance_nm": 1.0,  # tip bottom above the film's max z at the start
+        "overshoot_nm": 2.0,
+        "travel_nm": 0.0,  # 0 = auto
+        "settle_ps": 200.0,
+        "avg_ps": 10.0,
+        "puncture_dump_ps": 20.0,
+        "thermostat": "nvt",  # nvt | partial (compute temp/partial 1 1 0: x, y only)
+        "boundary": "p p m",
+        "tag": "",  # stage suffix (positions, replicas)
+    }
+    for res in DEFAULTS
+}
+
+# Cavitation test (D58): from the sweep's hold_<T>C.data, fix deform erate rate_per_s on
+# x, y and z (triaxial; uniaxial_fixed: z only, x and y fixed), NVT, to strain_max per
+# axis; averages every avg_ps into cavitation.txt, frames every cav_dump_ps.
+CAV_MODES = ("triaxial", "uniaxial_fixed")
+CAVITATION_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in _FF_KEYS}
+    | {
+        "t_c": 25.0,
+        "rate_per_s": 1.0e8,  # engineering strain rate per axis, 1/s
+        "strain_max": 0.26,  # engineering strain per axis (volume strain 1.26^3 - 1 = 1.0)
+        "cav_mode": "triaxial",
+        "avg_ps": 1.0,
+        "cav_dump_ps": 10.0,
+        "tag": "",
+    }
+    for res in DEFAULTS
+}
+
 PROTOCOL_DEFAULTS = {
     "prep": DEFAULTS,
     "sweep": SWEEP_DEFAULTS,
@@ -301,6 +352,8 @@ PROTOCOL_DEFAULTS = {
     "hole": HOLE_DEFAULTS,
     "diffuse": DIFFUSE_DEFAULTS,
     "tensile": TENSILE_DEFAULTS,
+    "puncture": PUNCTURE_DEFAULTS,
+    "cavitation": CAVITATION_DEFAULTS,
 }
 
 # Data a protocol reads by default: a prep output in the sibling prep/ run directory.
@@ -308,10 +361,10 @@ DEFAULT_INPUT = {"sweep": "cooled.data", "benchmark": "compressed.data", "extend
 # Protocols that read an earlier stage's output (results/runs/<id>/<stage>/): a relative
 # --data path is taken relative to the run directory and may not exist yet. cool has no
 # default input (the extension snapshot to cool is chosen once the D47 checks pass).
-STAGE_INPUT = (*DEFAULT_INPUT, "cool", "diffuse", "tensile")
-# Protocols run once per temperature (D53, D54): the default stage directory carries
-# t_c (and a non-default tensile rate) so the runs do not overwrite each other.
-PER_T_STAGE = ("diffuse", "tensile")
+STAGE_INPUT = (*DEFAULT_INPUT, "cool", "diffuse", "tensile", "cavitation")
+# Protocols run once per temperature (D53, D54, D58): the default stage directory carries
+# t_c (and a non-default tensile/cavitation rate) so the runs do not overwrite each other.
+PER_T_STAGE = ("diffuse", "tensile", "cavitation")
 
 # ps-scale stages for checking that a deck runs end to end. A protocol ignores the
 # keys it does not use.
@@ -358,6 +411,12 @@ PRESETS = {
         "rate_per_s": 1.0e10,
         "avg_ps": 0.1,
         "tensile_dump_ps": 0.5,
+        # puncture (D57): 1 nm at 100 m/s = 1000 steps; cavitation (D58): as tensile
+        "settle_ps": 1.0,
+        "indent_v_m_s": 100.0,
+        "travel_nm": 1.0,
+        "puncture_dump_ps": 0.1,
+        "cav_dump_ps": 0.5,
         # benchmark
         "warmup_steps": 100,
         "timed_steps": 200,
@@ -440,6 +499,15 @@ def resolve_params(
         if not (params["rate_per_s"] > 0 and params["strain_max"] > 0 and params["avg_ps"] > 0):
             raise RenderError("rate_per_s, strain_max and avg_ps must be > 0")
         tensile_axes(params)
+    if protocol == "puncture":
+        _check_puncture(params)
+    if protocol == "cavitation":
+        if not all(params[k] > 0 for k in ("rate_per_s", "strain_max", "avg_ps", "cav_dump_ps")):
+            raise RenderError("rate_per_s, strain_max, avg_ps and cav_dump_ps must be > 0")
+        if params["cav_mode"] not in CAV_MODES:
+            raise RenderError(
+                f"cav_mode: expected one of {', '.join(CAV_MODES)}, got {params['cav_mode']!r}"
+            )
     if protocol == "benchmark" and params["ensemble"] not in BENCHMARK_ENSEMBLES:
         raise RenderError(
             f"--set ensemble: expected one of {', '.join(BENCHMARK_ENSEMBLES)},"
@@ -547,16 +615,33 @@ def tensile_axes(params: dict) -> list[dict]:
     return out
 
 
-def default_stage(protocol: str, resolution: str, overrides: dict | None = None) -> str:
+def default_stage(
+    protocol: str, resolution: str, overrides: dict | None = None, manifest: dict | None = None
+) -> str:
     """Default stage directory name: the protocol, or for the per-temperature protocols
-    (D53, D54) ``diffuse_<T>C`` / ``tensile_<T>C`` with ``_r<rate>`` for a tensile rate
-    other than the default (e.g. ``tensile_25C_r1e9``)."""
+    (D53, D54, D58) ``diffuse_<T>C`` / ``tensile_<T>C`` / ``cavitation_<T>C`` with
+    ``_r<rate>`` for a tensile or cavitation rate other than the default (e.g.
+    ``tensile_25C_r1e9``) and ``_<tag>`` for a cavitation tag. A puncture (D57) is
+    ``puncture_<T>C_v<v>_R<R>nm[_<tag>]`` with T from the film ``manifest``."""
+    if protocol == "puncture":
+        p = resolve_params(resolution, None, overrides, protocol)
+        film = (manifest or {}).get("film")
+        if not film:
+            raise RenderError("puncture: the stage name needs a film manifest (sepsim build film)")
+        name = (
+            f"puncture_{_label(film['t_c'])}_v{rate_label(p['indent_v_m_s'])}"
+            f"_R{rate_label(p['indent_r_nm'])}nm"
+        )
+        return name + (f"_{p['tag']}" if p["tag"] else "")
     if protocol not in PER_T_STAGE:
         return protocol
     p = resolve_params(resolution, None, overrides, protocol)
     name = f"{protocol}_{_label(p['t_c'])}"
-    if protocol == "tensile" and p["rate_per_s"] != TENSILE_DEFAULTS[resolution]["rate_per_s"]:
+    rated = {"tensile": TENSILE_DEFAULTS, "cavitation": CAVITATION_DEFAULTS}
+    if protocol in rated and p["rate_per_s"] != rated[protocol][resolution]["rate_per_s"]:
         name += f"_r{rate_label(p['rate_per_s'])}"
+    if protocol == "cavitation" and p["tag"]:
+        name += f"_{p['tag']}"
     return name
 
 
@@ -564,7 +649,7 @@ _HOLD_DATA = re.compile(r"^hold_(m?)([\d.]+)C\.data$")
 
 
 def data_temperature_warning(protocol: str, data: str | Path, t_c: float) -> str | None:
-    """For diffuse/tensile (D53, D54): a warning when the input is a sweep snapshot
+    """For diffuse/tensile/cavitation (D53, D54, D58): a warning when the input is a sweep snapshot
     ``hold_<T>C.data`` of another temperature than t_c, else None."""
     if protocol not in PER_T_STAGE:
         return None
@@ -775,23 +860,25 @@ def render_deck(
         raise RenderError(f"{manifest_path}: no such file")
     manifest = yaml.safe_load(manifest_path.read_text())
     pore = manifest.get("pore")
-    hole = manifest.get("hole")
-    if (hole is not None) != (protocol == "hole"):
+    film = next((k for k in FILM_PROTOCOLS if manifest.get(k) is not None), None)
+    if film is not None and protocol != FILM_PROTOCOLS[film]:
         raise RenderError(
-            f"{manifest['id']}: "
-            + (
-                f"a hole system (D52) takes the hole protocol, not {protocol}"
-                if hole is not None
-                else "the hole protocol is for hole systems (sepsim build hole, D52)"
-            )
+            f"{manifest['id']}: a {film} system ({_FILM_DECISION[film]}) takes the"
+            f" {FILM_PROTOCOLS[film]} protocol, not {protocol}"
         )
-    if hole is None and (pore is not None) != (protocol in PORE_PROTOCOLS):
+    if film is None and protocol in FILM_PROTOCOLS.values():
+        key = next(k for k, v in FILM_PROTOCOLS.items() if v == protocol)
+        raise RenderError(
+            f"{manifest['id']}: the {protocol} protocol is for {key} systems"
+            f" (sepsim build {key}, {_FILM_DECISION[key]})"
+        )
+    if film is None and (pore is not None) != (protocol in PORE_PROTOCOLS):
         raise RenderError(
             f"{manifest['id']}: the {protocol} protocol is for "
             + ("slit-pore systems (use prep/sweep/benchmark)" if pore is None else "bulk systems")
             + ("" if pore is None else f"; pore systems use {', '.join(PORE_PROTOCOLS)}")
         )
-    if hole is None and pore is not None and pore.get("kind") != PORE_PROTOCOLS[protocol]:
+    if film is None and pore is not None and pore.get("kind") != PORE_PROTOCOLS[protocol]:
         want = {v: k for k, v in PORE_PROTOCOLS.items()}.get(pore.get("kind"))
         raise RenderError(
             f"{manifest['id']}: {protocol} is for {PORE_PROTOCOLS[protocol]} pores (D48); this"
@@ -853,6 +940,9 @@ def render_deck(
     elif protocol == "tensile":
         context["axes"] = tensile_axes(params)
         context["rate"] = rate_label(params["rate_per_s"])
+    elif protocol == "cavitation":
+        context["rate"] = rate_label(params["rate_per_s"])
+        context["cav_ps"] = params["strain_max"] / params["rate_per_s"] * 1e12
     elif protocol in ("sweep", "pore"):
         context["segments"] = sweep_segments(params)
         context["n_vdos"] = lambda ps: steps(ps, params["vdos_dt_fs"])
@@ -861,6 +951,8 @@ def render_deck(
         _pore_boxes(context, manifest, params)
     if protocol == "hole":
         _hole_context(context, manifest, params)
+    if protocol == "puncture":
+        _puncture_context(context, manifest, params)
     return _environment().get_template(f"{protocol}.in.j2").render(context)
 
 
@@ -1129,3 +1221,68 @@ def _hole_context(context: dict, manifest: dict, params: dict) -> None:
         "rho_r_max": n_rho * params["rho_r_bin"],
         "dump_every": steps(params["hole_dump_ps"], dt),
     }
+
+
+# --------------------------------------------------------------------------- puncture (D57)
+
+A_PER_FS_PER_M_S = 1.0e-5  # 1 m/s = 1e10 A / 1e15 fs
+
+
+def _check_puncture(params: dict) -> None:
+    """Puncture parameters (D57): positive sizes, speed and durations, a known
+    thermostat, and a boundary periodic in x and y."""
+    for key in ("indent_r_nm", "indent_v_m_s", "indent_k", "settle_ps", "avg_ps"):
+        if params[key] <= 0:
+            raise RenderError(f"{key} must be > 0")
+    if params["puncture_dump_ps"] <= 0:
+        raise RenderError("puncture_dump_ps must be > 0")
+    for key in ("travel_nm", "clearance_nm", "overshoot_nm"):
+        if params[key] < 0:
+            raise RenderError(f"{key} must be >= 0")
+    if params["thermostat"] not in PUNCTURE_THERMOSTATS:
+        raise RenderError(
+            f"thermostat: expected one of {', '.join(PUNCTURE_THERMOSTATS)},"
+            f" got {params['thermostat']!r}"
+        )
+    b = params["boundary"].split()
+    if len(b) != 3 or b[:2] != ["p", "p"]:
+        raise RenderError(f"boundary: expected 'p p <z>' (e.g. p p m), got {params['boundary']!r}")
+
+
+def puncture_plan(params: dict, film: dict, box) -> dict:
+    """Indenter geometry and the indentation run (D57), lengths in A: axis (box centre +
+    offset), start centre z0 (tip bottom ``clearance_nm`` above the film's max z), travel
+    (``travel_nm``, or 0 = film z extent + 2 clearance + R + overshoot) rounded to whole
+    steps at indent_v_m_s, end centre z1."""
+    r_a = 10.0 * params["indent_r_nm"]
+    zmin, zmax = (float(z) for z in film["film_z_extent_angstrom"])
+    clear = 10.0 * params["clearance_nm"]
+    auto = params["travel_nm"] == 0
+    want = (
+        (zmax - zmin) + 2.0 * clear + r_a + 10.0 * params["overshoot_nm"]
+        if auto
+        else 10.0 * params["travel_nm"]
+    )
+    per_step = params["indent_v_m_s"] * A_PER_FS_PER_M_S * params["dt_fs"]
+    n_steps = max(1, round(want / per_step))
+    travel = n_steps * per_step
+    z0 = zmax + clear + r_a
+    return {
+        "r_a": r_a,
+        "xc": 0.5 * (box[0][0] + box[0][1]) + 10.0 * params["indent_x_nm"],
+        "yc": 0.5 * (box[1][0] + box[1][1]) + 10.0 * params["indent_y_nm"],
+        "z0": z0,
+        "z1": z0 - travel,
+        "travel": travel,
+        "auto": auto,
+        "n_steps": n_steps,
+        "a_per_fs": params["indent_v_m_s"] * A_PER_FS_PER_M_S,
+        "film_z": [zmin, zmax],
+    }
+
+
+def _puncture_context(context: dict, manifest: dict, params: dict) -> None:
+    """Puncture deck (D57): the film block and the indenter plan."""
+    film = manifest["film"]
+    context["film"] = film
+    context["pu"] = puncture_plan(params, film, manifest["box_angstrom"])

@@ -89,6 +89,8 @@ PROPERTIES = (
     ("film", "film structure"),
     ("tensile", "tensile E/ν/yield"),
     ("hole", "hole closure"),
+    ("puncture", "puncture F/d_break"),
+    ("cavitation", "cavitation σ_cav"),
 )
 PROP_LABEL = dict(PROPERTIES)
 # Written out below the validity table (summary.md)
@@ -116,6 +118,11 @@ ABBREVIATIONS = (
     ("ν", "Poisson ratio"),
     ("yield", "peak / flow stress of the tensile curve"),
     ("hole closure", "closure time and speed of a cylindrical hole through the film (D52)"),
+    (
+        "puncture F/d_break",
+        "peak indenter force and break-through depth of a film puncture test (D57)",
+    ),
+    ("cavitation σ_cav", "peak hydrostatic tension before voids open, triaxial tension (D58)"),
     ("VDOS", "vibrational density of states (quantum correction for Cp)"),
     ("CG / UA / AA", "coarse-grained (SDK/SPICA) / united-atom (TraPPE-UA) / all-atom (OPLS)"),
 )
@@ -285,6 +292,31 @@ BASE_RULES: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
         "bulk": {"*": (NA, "pore/film protocol")},
         "pore": {"*": (TREND, "no direct experiment: closure mechanism and trends only")},
     },
+    "puncture": {
+        "bulk": {"*": (NA, "film protocol")},
+        "pore": {
+            "*": (
+                TREND,
+                (
+                    "nm-scale puncture of an amorphous melt film at MD speeds (10³–10⁴× standard"
+                    " tests), no bond breaking: not separator puncture strength; T, rate and"
+                    " radius trends"
+                ),
+            )
+        },
+    },
+    "cavitation": {
+        "bulk": {
+            "*": (
+                TREND,
+                (
+                    "melt under fast affine triaxial tension (MD rates, small box): not the"
+                    " cavitation of a stretched semicrystalline separator; T and rate trends"
+                ),
+            )
+        },
+        "pore": {"*": (NA, "bulk test")},
+    },
 }
 
 
@@ -452,6 +484,10 @@ def system_facts(sid: str, ctx: dict) -> dict:
         "tensile_runs": [_run_state(r) for r in _runs(ctx, sid, "tensile")],
         "tensile_res": [k for k, _ in _analysis(ctx, sid, "tensile")],
         "hole_runs": [_run_state(r) for r in _runs(ctx, sid, "hole")],
+        "puncture_runs": [_run_state(r) for r in _runs(ctx, sid, "puncture")],
+        "puncture_res": [k for k, _ in _analysis(ctx, sid, "puncture")],
+        "cavitation_runs": [_run_state(r) for r in _runs(ctx, sid, "cavitation")],
+        "cavitation_res": [k for k, _ in _analysis(ctx, sid, "cavitation")],
     }
 
 
@@ -727,6 +763,19 @@ def _rule_hole(f, base, holds):
     return _todo(base, "no hole run (D52)")
 
 
+def _rule_analysed(name: str, decision: str):
+    """Rule of a run + analysis property (as tensile): base verdict once analysed."""
+
+    def rule(f, base, holds):
+        if f.get(f"{name}_res"):
+            return _v(*base)
+        if f.get(f"{name}_runs"):
+            return _todo(base, f"{name} runs {_runs_text(f[f'{name}_runs'])}, no analysis yet")
+        return _todo(base, f"no {name} run ({decision})")
+
+    return rule
+
+
 _RULES = {
     "rho": _rule_rho,
     "alpha": _rule_alpha,
@@ -740,6 +789,8 @@ _RULES = {
     "film": _rule_film,
     "tensile": _rule_tensile,
     "hole": _rule_hole,
+    "puncture": _rule_analysed("puncture", "D57"),
+    "cavitation": _rule_analysed("cavitation", "D58"),
 }
 
 

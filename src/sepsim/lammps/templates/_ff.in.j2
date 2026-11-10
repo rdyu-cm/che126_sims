@@ -1,7 +1,8 @@
 {#- Force-field setup shared by every protocol. Import with context:
     {% import "_ff.in.j2" as ff with context %}
     ff.header()  - comment block: system, hashes, every resolved parameter
-    ff.setup()   - units, styles, special_bonds, read_data, all coefficients, neighbor, timestep
+    ff.setup()   - units, boundary (p p p unless p.boundary, D57), styles, special_bonds,
+                   read_data, all coefficients, neighbor, timestep
     ff.pair()    - pair_style + pair_modify + pair_coeff + kspace (re-issue after a pair switch)
     ff.thermo()  - thermo_style + thermo_modify, the same columns in every protocol
                    (pore systems add pxx pyy pzz, D44; so does ff.thermo(stress=true), D54)
@@ -46,7 +47,8 @@ kspace_style pppm {{ p.kspace_accuracy }}
 {% macro setup() %}
 units real
 atom_style full
-boundary p p p
+{# only the puncture defaults (D57) set a boundary (p p m: z not periodic) #}
+boundary {{ p.get("boundary", "p p p") }}
 {% for kind in ("bond", "angle", "dihedral", "improper") %}
 {% if styles[kind] != "none" %}
 {{ kind }}_style {{ styles[kind] }}

@@ -94,6 +94,19 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --time
   uv run sepsim render tensile --system $S --data ../sweep/hold_90C.data --set t_c=90 --set rate_per_s=1e9 --job --node rdyu-rog --cpus 2 --time 06:00:00
   uv run sepsim analyze tensile results/runs/pe_cg_amorph_n40_c240_s1/tensile_90C [more run dirs] [--fit-max 0.02]
   ```
+- Puncture of the free film (D57): a film system per T from the narrow pore's snapshot (`build film`, z non-periodic in the deck), an indenter of radius 2 nm driven down at 1 m/s (`indent_r_nm`, `indent_v_m_s`, `indent_x_nm`/`indent_y_nm` for other positions, `tag` per position); stage `puncture_<T>C_v<v>_R<R>nm[_<tag>]`:
+  ```
+  P=pe_cg_pore_w5nm_n640_c240_s1_rep441; F=pe_cg_film_160C_n640_c240_s1_rep441
+  uv run sepsim build film --data results/runs/$P/pore/hold_160C.data --source systems/$P --t-c 160
+  uv run sepsim render puncture --system systems/$F --set tag=p1 --job --node rdyu-rog --cpus 4 --time 3-00:00:00
+  uv run sepsim analyze puncture results/runs/$F/puncture_160C_v1_R2nm_p1 [more run dirs]   # F-d, F_peak, d_break, W, re-seal
+  ```
+- Cavitation (D58): triaxial tension of the bulk box from a sweep snapshot (`--set cav_mode=uniaxial_fixed` for z only); stage `cavitation_<T>C[_r<rate>][_<tag>]`:
+  ```
+  S=systems/pe_cg_amorph_n40_c240_s1
+  uv run sepsim render cavitation --system $S --data ../sweep/hold_25C.data --job --node rdyu-rog --cpus 2 --time 1-00:00:00   # to 0.26 per axis at 1e8 /s
+  uv run sepsim analyze cavitation results/runs/pe_cg_amorph_n40_c240_s1/cavitation_25C [more run dirs] [--probe-a 4]   # σ_cav, ε_V,cav, voids
+  ```
 - Sweep and pore holds write a dense 10 ps burst at 0.1 ps every 1 ns into `segNN_hold_XXC_burstKK.dcd` (D46); `--set burst_period_ps=0` turns them off.
 - Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`, extend `../prep/hold.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.
 - Render, then `ssubmit` (not plain `sbatch`), so the deck reaches the other node. Re-render and resubmit after changes.

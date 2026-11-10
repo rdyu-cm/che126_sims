@@ -1,0 +1,40 @@
+{#- Cavitation test (D58) at t_c (deg C) from the sweep's hold_<T>C.data (velocities
+    kept). One segment: NVT Nose-Hoover at T and fix deform erate (engineering rate per
+    axis, 1/fs in units real) on x, y and z (triaxial: hydrostatic tension), or on z only
+    with x and y fixed (cav_mode uniaxial_fixed), to strain_max. Every avg_ps the averages
+    of the engineering strain e of the pulled axis, the volume strain V/V0 - 1, the
+    pressure and its diagonal (atm), Lx Ly Lz, T and PE go to cavitation.txt; frames
+    every cav_dump_ps into cavitation.dcd. `sepsim analyze cavitation` reads both. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% set t_k = p.t_c + 273.15 %}
+{% set erate = p.rate_per_s * 1e-15 %}
+{% set navg = n(p.avg_ps) %}
+{% set ax = "x" if p.cav_mode == "triaxial" else "z" %}
+{{ ff.setup() -}}
+{{ ff.thermo(stress=true) -}}
+{{ ff.shake() -}}
+# velocities come from the data file (no velocity create)
+thermo {{ n(p.thermo_ps) }}
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+# ---- Segment 1: {{ "triaxial" if p.cav_mode == "triaxial" else "uniaxial z" }} tension at {{ p.t_c | num }} C, {{ rate }} /s per axis (D58) -> cavitation.txt, cavitation.dcd
+# engineering strain rate {{ erate | num }} 1/fs, {{ n(cav_ps) }} steps ({{ cav_ps | num }} ps) to strain {{ p.strain_max | num }} per axis{% if p.cav_mode != "triaxial" %} (z only; x and y fixed){% endif %}
+
+variable cav_l0 equal $(l{{ ax }})
+variable cav_v0 equal $(vol)
+variable cav_e equal (l{{ ax }}-v_cav_l0)/v_cav_l0
+variable cav_ev equal vol/v_cav_v0-1
+{% for b in ("x", "y", "z") %}
+variable cav_l{{ b }} equal l{{ b }}
+{% endfor %}
+fix md all nvt temp {{ t_k | num }} {{ t_k | num }} {{ tdamp | num }}
+fix pull all deform 1{% for b in (("x", "y", "z") if p.cav_mode == "triaxial" else ("z",)) %} {{ b }} erate {{ erate | num }}{% endfor %} remap x
+fix cave all ave/time 1 {{ navg }} {{ navg }} v_cav_e v_cav_ev c_thermo_press c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] v_cav_lx v_cav_ly v_cav_lz c_thermo_temp c_thermo_pe file cavitation.txt
+dump cav all dcd {{ n(p.cav_dump_ps) }} cavitation.dcd
+dump_modify cav unwrap yes
+run {{ n(cav_ps) }}
+undump cav
+unfix cave
+{{ ff.write_data("cavitated") -}}

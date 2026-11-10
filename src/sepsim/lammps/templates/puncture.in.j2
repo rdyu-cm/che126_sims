@@ -1,0 +1,65 @@
+{#- Puncture test of a free-standing film (D57). The film (film system data.lmp: a
+    narrow-pore snapshot at T with its D48 lateral box and velocities) runs NVT
+    Nose-Hoover with x, y fixed and z non-periodic (boundary p p m: shrink-wrapped, never
+    smaller than the data box, so the film has no z image). The indenter is a
+    hemispherical-tipped cylinder about a z axis at the box centre (+ offset): fix indent
+    sphere (the tip) + fix indent cone with equal radii from the tip centre up 200 A (the
+    shaft), F = K (R - r)^2 on beads inside, both in the energy (fix_modify energy yes).
+    Stage 1 settles with the tip clearance_nm above the film; Stage 2 drives the tip
+    centre down at indent_v_m_s (ramp). Every avg_ps the averages of the tip centre z, the
+    forces on the indenter (fix indent vectors), the energies, T (all, near the axis, far
+    field), the bead z range and Pzz go to puncture.txt (both stages); `sepsim analyze
+    puncture` reads it with the DCDs. thermostat=partial thermostats x, y only
+    (compute temp/partial 1 1 0). Plain LJ cutoff without tail correction; thermo adds
+    pxx pyy pzz. -#}
+{% import "_ff.in.j2" as ff with context %}
+{{ ff.header() -}}
+# Puncture (D57): film at {{ film.t_c | num }} C, {{ "%.2f" | format(film.film_thickness_angstrom) }} A thick, z extent {{ "%.2f" | format(pu.film_z[0]) }}..{{ "%.2f" | format(pu.film_z[1]) }} A (build); boundary {{ p.boundary }}
+# Indenter: R {{ p.indent_r_nm | num }} nm ({{ pu.r_a | num }} A), axis x {{ "%.4f" | format(pu.xc) }} y {{ "%.4f" | format(pu.yc) }} A, K {{ p.indent_k | num }} kcal/mol/A^3; {{ p.indent_v_m_s | num }} m/s = {{ pu.a_per_fs | num }} A/fs; tip centre z {{ "%.4f" | format(pu.z0) }} -> {{ "%.4f" | format(pu.z1) }} A (travel {{ "%.4f" | format(pu.travel) }} A{% if pu.auto %}, auto: film z extent + 2 clearance + R + overshoot{% endif %}) in {{ pu.n_steps }} steps
+{{ ff.setup() -}}
+{{ ff.thermo(stress=true) -}}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{% set t_k = film.t_c + 273.15 %}
+{% set navg = n(p.avg_ps) %}
+
+# rolling restart files (alternating restart.a / restart.b)
+restart {{ n(p.restart_ps) }} restart.a restart.b
+thermo {{ n(p.thermo_ps) }}
+# velocities come from the data file (no velocity create)
+fix md all nvt temp {{ t_k | num }} {{ t_k | num }} {{ tdamp | num }}
+{% if p.thermostat == "partial" %}
+# thermostat x and y only (the indenter drives a flow along z; fixed dof)
+compute tpart all temp/partial 1 1 0
+fix_modify md temp tpart
+{% endif %}
+
+# indenter: sphere (tip) + cylinder above it (cone with equal radii), tip centre at v_zc
+variable zc equal {{ pu.z0 | num }}
+variable zs equal v_zc+200
+fix tip all indent {{ p.indent_k | num }} sphere {{ pu.xc | num }} {{ pu.yc | num }} v_zc {{ pu.r_a | num }} units box
+fix shaft all indent {{ p.indent_k | num }} cone z {{ pu.xc | num }} {{ pu.yc | num }} {{ pu.r_a | num }} {{ pu.r_a | num }} v_zc v_zs units box
+fix_modify tip energy yes
+fix_modify shaft energy yes
+# diagnostics: T near the axis (r < R + 10 A) and in the far field (r > R + 50 A), bead z range
+region near cylinder z {{ pu.xc | num }} {{ pu.yc | num }} {{ (pu.r_a + 10) | num }} INF INF units box
+region far cylinder z {{ pu.xc | num }} {{ pu.yc | num }} {{ (pu.r_a + 50) | num }} INF INF side out units box
+compute tnear all temp/region near
+compute tfar all temp/region far
+compute zmin all reduce min z
+compute zmax all reduce max z
+fix pave all ave/time 1 {{ navg }} {{ navg }} v_zc f_tip[1] f_tip[2] f_tip[3] f_shaft[1] f_shaft[2] f_shaft[3] f_tip f_shaft c_thermo_temp c_tnear c_tfar c_zmin c_zmax c_thermo_press[3] file puncture.txt
+
+# ---- Stage 1: settle {{ p.settle_ps | num }} ps NVT at {{ t_k | num }} K, indenter clear of the film (tip bottom {{ p.clearance_nm | num }} nm above it) -> settle.dcd
+dump settle all dcd {{ n(p.puncture_dump_ps) }} settle.dcd
+dump_modify settle unwrap yes
+run {{ n(p.settle_ps) }}
+undump settle
+
+# ---- Stage 2: indent at {{ p.indent_v_m_s | num }} m/s, R {{ p.indent_r_nm | num }} nm, travel {{ (pu.travel / 10) | num }} nm (NVT at {{ t_k | num }} K) -> puncture.dcd, punctured.data
+variable zc equal ramp({{ pu.z0 | num }},{{ pu.z1 | num }})
+dump puncture all dcd {{ n(p.puncture_dump_ps) }} puncture.dcd
+dump_modify puncture unwrap yes
+run {{ pu.n_steps }}
+undump puncture
+unfix pave
+{{ ff.write_data("punctured") -}}

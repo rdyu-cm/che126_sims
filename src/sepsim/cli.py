@@ -151,6 +151,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="where the data file came from, recorded in the manifest (default: --data as given)",
     )
     ho.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
+    film_help = (
+        "Free-standing film for the puncture test (D57): as `build hole` without the hole"
+        " (a narrow pore's snapshot at T, molecules whole, film re-centred, x, y, ids, types"
+        " and velocities kept), Lz = t_T + gap with t_T = M/(rho_bulk(T) A); id"
+        " ..._film_<T>C_...; puncture it with `sepsim render puncture`."
+    )
+    fi = kinds.add_parser("film", help=film_help, description=film_help)
+    fi.add_argument("--data", required=True, help="narrow-pore snapshot, e.g. pore/hold_160C.data")
+    fi.add_argument("--source", required=True, help="narrow pore system directory")
+    fi.add_argument(
+        "--t-c", type=float, required=True, help="temperature of the snapshot in C (checked)"
+    )
+    fi.add_argument(
+        "--gap-nm", type=float, default=5.0, help="vacuum above the film (default %(default)s)"
+    )
+    fi.add_argument(
+        "--data-origin",
+        help="where the data file came from, recorded in the manifest (default: --data as given)",
+    )
+    fi.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
     render = subparsers.add_parser("render", help=_RENDER_HELP, description=_RENDER_HELP)
     render.set_defaults(render_parser=render)
     protocols = render.add_subparsers(dest="protocol", metavar="protocol")
@@ -241,6 +261,19 @@ def build_parser() -> argparse.ArgumentParser:
         " axes NPT at 1 atm (coupled); averages every avg_ps into tensile_<axis>.txt for"
         " `sepsim analyze tensile`. Default OUT: results/runs/<id>/tensile_<T>C (+ _r<rate>"
         " for a non-default rate). Writes OUT/in.tensile.",
+        "puncture": "Puncture test of a film system (D57, `sepsim build film`): boundary p p m"
+        " (z not periodic), NVT at the film T; a hemispherical-tipped cylinder (fix indent"
+        " sphere + cone, R indent_r_nm 2, K indent_k 1 kcal/mol/A^3) settles clear of the film"
+        " (settle_ps 200) and is driven down at indent_v_m_s (1 m/s) by travel_nm (0 = auto);"
+        " averages every avg_ps into puncture.txt for `sepsim analyze puncture`;"
+        " thermostat=partial thermostats x, y only. Default OUT:"
+        " results/runs/<id>/puncture_<T>C_v<v>_R<R>nm[_<tag>]. Writes OUT/in.puncture.",
+        "cavitation": "Cavitation test (D58) at t_c (deg C) from a sweep snapshot (--data"
+        " ../sweep/hold_25C.data): NVT, fix deform erate rate_per_s (1e8 /s) on x, y and z"
+        " (cav_mode=uniaxial_fixed: z only) to strain_max (0.26 per axis, ε_V = 1); averages"
+        " every avg_ps into cavitation.txt, frames every cav_dump_ps into cavitation.dcd for"
+        " `sepsim analyze cavitation`. Default OUT: results/runs/<id>/cavitation_<T>C"
+        " (+ _r<rate>, _<tag>). Writes OUT/in.cavitation.",
     }
     stage_rel = (
         "; a relative path is taken relative to OUT (the run directory) unless it exists"
@@ -259,6 +292,8 @@ def build_parser() -> argparse.ArgumentParser:
         "hole": "data file to start from (default: SYSTEM/data.lmp)",
         "diffuse": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
         "tensile": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
+        "puncture": "data file to start from (default: SYSTEM/data.lmp)",
+        "cavitation": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
     }
     for name, help_text in protocol_help.items():
         pr = protocols.add_parser(name, help=help_text, description=help_text, parents=[common])
@@ -382,6 +417,39 @@ def build_parser() -> argparse.ArgumentParser:
     )
     te.add_argument(
         "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
+    )
+    punct_help = (
+        "Puncture runs (D57): force on the indenter F (nN) vs depth d (nm), contact, F_peak,"
+        " d_peak, break-through (force drop and no material ahead of the tip), the work W"
+        " (aJ), re-seal of the hole about the axis, diagnostics (beads inside the indenter,"
+        " bond stretch, T near/far, z images); runs at the same T, v and R pooled. Writes"
+        " results.md, results.json and PNGs to results/analysis/<system>/<stage>/ (or --out)."
+    )
+    pu = analyses.add_parser("puncture", help=punct_help, description=punct_help)
+    pu.add_argument("run_dirs", nargs="+", metavar="RUN_DIR", help="puncture run directories")
+    pu.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
+    )
+    pu.add_argument(
+        "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
+    cav_help = (
+        "Cavitation runs (D58): hydrostatic stress σ_h = −(P − p_atm) (MPa) vs volume strain,"
+        " σ_cav, ε_V,cav, the drop and plateau, K_app; voids per DCD frame (probe-swept space"
+        " on a 2 Å grid): void fraction, largest void, strain at the first void; replicas"
+        " pooled. Writes results.md, results.json and PNGs to"
+        " results/analysis/<system>/<stage>/ (or --out)."
+    )
+    ca = analyses.add_parser("cavitation", help=cav_help, description=cav_help)
+    ca.add_argument("run_dirs", nargs="+", metavar="RUN_DIR", help="cavitation run directories")
+    ca.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
+    )
+    ca.add_argument(
+        "--probe-a",
+        type=float,
+        default=4.0,
+        help="void probe radius in angstrom (default %(default)s)",
     )
     prog_help = (
         "Write progress.md, progress.json and PNG plots for run directories (D45): status,"
@@ -510,6 +578,17 @@ def _build(args: argparse.Namespace) -> int:
                 out=args.out,
                 data_origin=args.data_origin,
             )
+        elif args.kind == "film":
+            from sepsim.build.hole import build_film
+
+            sysdir = build_film(
+                args.data,
+                args.source,
+                args.t_c,
+                gap_nm=args.gap_nm,
+                out=args.out,
+                data_origin=args.data_origin,
+            )
         elif args.kind == "replicate":
             from sepsim.build.replicate import build_replicate
 
@@ -576,6 +655,10 @@ def _analyze(args: argparse.Namespace) -> int:
         return _analyze_hole(args)
     if args.analysis == "tensile":
         return _analyze_tensile(args)
+    if args.analysis == "puncture":
+        return _analyze_puncture(args)
+    if args.analysis == "cavitation":
+        return _analyze_cavitation(args)
     from sepsim.analyze import AnalyzeError, analyze_sweep, write_results
 
     try:
@@ -622,6 +705,32 @@ def _analyze_tensile(args: argparse.Namespace) -> int:
         write_results(report, out_dir)
     except (TensileError, OSError) as exc:
         print(f"sepsim analyze tensile: error: {exc}", file=sys.stderr)
+        return 1
+    print(out_dir / "results.md")
+    return 0
+
+
+def _analyze_puncture(args: argparse.Namespace) -> int:
+    from sepsim.analyze_puncture import PunctureError, analyze_puncture, write_results
+
+    try:
+        report, out_dir = analyze_puncture(args.run_dirs, out=args.out, systems=args.systems)
+        write_results(report, out_dir)
+    except (PunctureError, OSError) as exc:
+        print(f"sepsim analyze puncture: error: {exc}", file=sys.stderr)
+        return 1
+    print(out_dir / "results.md")
+    return 0
+
+
+def _analyze_cavitation(args: argparse.Namespace) -> int:
+    from sepsim.analyze_cavitation import CavitationError, analyze_cavitation, write_results
+
+    try:
+        report, out_dir = analyze_cavitation(args.run_dirs, out=args.out, probe_a=args.probe_a)
+        write_results(report, out_dir)
+    except (CavitationError, OSError) as exc:
+        print(f"sepsim analyze cavitation: error: {exc}", file=sys.stderr)
         return 1
     print(out_dir / "results.md")
     return 0
@@ -718,7 +827,7 @@ def _render(args: argparse.Namespace) -> int:
     try:
         manifest = yaml.safe_load((Path(args.system) / "manifest.yaml").read_text())
         overrides = parse_overrides(args.overrides)
-        stage = default_stage(args.protocol, manifest["resolution"], overrides)
+        stage = default_stage(args.protocol, manifest["resolution"], overrides, manifest)
         run_dir = Path(args.out or Path("results") / "runs" / manifest["id"] / stage)
         out = run_dir
         if args.job:

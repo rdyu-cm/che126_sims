@@ -169,6 +169,21 @@ def test_tensile_trend(va):
     assert v["verdict"] == va.TREND and "crystallinity" in v["reason"]
 
 
+def test_puncture_and_cavitation_trend(va):
+    v = va.assess(_facts())
+    assert v["cavitation"]["verdict"] == va.NOT_YET and "D58" in v["cavitation"]["reason"]
+    assert v["puncture"]["verdict"] == va.NA
+    runs = [{"stage": "cavitation_25C", "status": "finished", "percent": 100.0}]
+    todo = va.assess(_facts(cavitation_runs=runs))["cavitation"]
+    assert todo["verdict"] == va.NOT_YET and "no analysis yet" in todo["reason"]
+    cav = va.assess(_facts(cavitation_runs=runs, cavitation_res=["cavitation_25C"]))["cavitation"]
+    assert cav["verdict"] == va.TREND and "semicrystalline" in cav["reason"]
+    film = _facts(sid="pe_cg_film_160C_n640_c240_s1_rep441", kind="pore", holds=[])
+    pu = va.assess(dict(film, puncture_res=["puncture_160C_v1_R2nm"]))
+    assert pu["puncture"]["verdict"] == va.TREND and "melt film" in pu["puncture"]["reason"]
+    assert pu["cavitation"]["verdict"] == va.NA
+
+
 def test_not_accepted_flags(va):
     v = va.assess(_facts(accepted=False))
     assert v["rho"]["flag"] and "NOT accepted" in v["rho"]["reason"]

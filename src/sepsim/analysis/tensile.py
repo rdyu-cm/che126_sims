@@ -22,13 +22,22 @@ FLOW_WINDOW = (0.3, 0.5)  # engineering strain window of the flow stress
 SMOOTH_STRAIN = 0.01  # moving-average width (strain) for the peak stress
 
 _PRESS = re.compile(r"^c_thermo_press\[(\d)\]$")
+_THERMO = {"c_thermo_temp": "temp", "c_thermo_press": "press", "c_thermo_pe": "pe"}
 
 
-def read_ave_time(path: str | Path) -> dict[str, np.ndarray]:
-    """Columns of a tensile ``fix ave/time`` file by short name: ``step``, ``e``, ``pxx``,
-    ``pyy``, ``pzz``, ``lx``, ``ly``, ``lz``, ``temp``. The names come from the file's
-    ``# TimeStep ...`` header line (``v_<prefix>_<name>``, ``c_thermo_press[k]``,
-    ``c_thermo_temp``). A partly written last line (a running job) is dropped."""
+TENSILE_COLUMNS = ("e", "pxx", "pyy", "pzz", "lx", "ly", "lz")
+
+
+def read_ave_time(
+    path: str | Path, required: tuple[str, ...] = TENSILE_COLUMNS
+) -> dict[str, np.ndarray]:
+    """Columns of a ``fix ave/time`` file by short name, e.g. for a tensile file ``step``,
+    ``e``, ``pxx``, ``pyy``, ``pzz``, ``lx``, ``ly``, ``lz``, ``temp``. The names come from
+    the file's ``# TimeStep ...`` header line (``v_<prefix>_<name>`` -> ``<name>``,
+    ``c_thermo_press[k]`` -> ``pxx``..., ``c_thermo_press`` -> ``press``, ``c_thermo_temp``
+    -> ``temp``, ``c_thermo_pe`` -> ``pe``; anything else, e.g. ``f_tip[3]``, as is). A
+    partly written last line (a running job) is dropped. Raises ValueError if a column
+    in ``required`` (default: the tensile columns) is missing."""
     names, rows = None, []
     for line in Path(path).read_text(errors="replace").splitlines():
         if line.startswith("#"):
@@ -47,7 +56,7 @@ def read_ave_time(path: str | Path) -> dict[str, np.ndarray]:
         raise ValueError(f"{path}: no '# TimeStep ...' header (not a fix ave/time file?)")
     data = np.array(rows, dtype=float).reshape(-1, len(names))
     out = {name: data[:, k] for k, name in enumerate(names)}
-    missing = [k for k in ("e", "pxx", "pyy", "pzz", "lx", "ly", "lz") if k not in out]
+    missing = [k for k in required if k not in out]
     if missing:
         raise ValueError(f"{path}: missing columns {', '.join(missing)}")
     return out
@@ -58,8 +67,8 @@ def _short_name(token: str) -> str:
         return "step"
     if m := _PRESS.match(token):
         return "p" + 2 * AXES[int(m.group(1)) - 1]
-    if token == "c_thermo_temp":
-        return "temp"
+    if token in _THERMO:
+        return _THERMO[token]
     if token.startswith("v_"):
         return token.rsplit("_", 1)[-1]
     return token
