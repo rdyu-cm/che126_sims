@@ -83,7 +83,11 @@ def test_coeff_lines_match_committed_data_file(path):
     """Masses and every coefficient section rendered from the YAML equal the data file's."""
     kind = (manifest(path).get("pore") or {}).get("kind")
     protocol = {"wide": "pore_relax", "narrow": "pore"}.get(kind, "prep")
-    deck = render_deck("hole" if "hole" in manifest(path) else protocol, path)  # D52
+    if "hole" in manifest(path):
+        protocol = "hole"  # D52
+    elif "film" in manifest(path):
+        protocol = "puncture"  # D57
+    deck = render_deck(protocol, path)
     df = read_data_file(path / "data.lmp")
     cmds = commands(deck)
     # The full pair block appears once in setup (and again after a push-off); take the first.
