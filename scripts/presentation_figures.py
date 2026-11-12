@@ -3628,10 +3628,15 @@ def hole_results(data: dict) -> list[dict]:
 
 def _hole_label(r: dict, thickness: bool = True) -> str:
     v = str(r.get("variant", "free"))
-    v = "free" if v.startswith("free") else ("scaffold" + (", released" if "released" in v else ""))
+    if v.startswith("free"):
+        v = ""  # solid line = free film (legend title)
+    else:  # scaffold geometry, e.g. "annulus d=2.5 nm, released at 130 C" -> "annulus 2.5 nm"
+        v = v.split(",")[0].replace(" d=", " ")
     h = r.get("film_thickness_angstrom")
     h = f", h {h / 10:.1f} nm" if h and thickness else ""
-    return f"R$_0$ {r['radius_nominal_nm']:g} nm, {float(r.get('t_c') or 0):g} °C{h}, {v}"
+    return f"R$_0$ {r['radius_nominal_nm']:g} nm, {float(r.get('t_c') or 0):g} °C{h}" + (
+        f", {v}" if v else ""
+    )
 
 
 def _hole_color(r: dict) -> tuple:
@@ -3759,6 +3764,8 @@ def _f8_snapshots(fig, spec, data, info) -> None:
 def _f8_reff(ax, holes, info) -> None:
     panel_label(ax, "b", r"Hole radius $R_{eff}(t)$")
     info["b"] = []
+    # scaffold runs share a colour when R0 and T match: tell them apart by dash pattern
+    dashes = iter(["--", "-.", (0, (6, 1.5, 1, 1.5, 1, 1.5)), (0, (8, 3))] * 4)
     for h in holes:
         r = h["res"]
         # log time axis: t = 0 (the release frame) cannot be drawn
@@ -3772,7 +3779,7 @@ def _f8_reff(ax, holes, info) -> None:
             t,
             np.array([f["r_eff"] for f in fr]) / 10.0,
             color=col,
-            ls="-" if free else "--",
+            ls="-" if free else next(dashes),
             label=_hole_label(r),
         )
         ax.plot(t, np.array([f["r_min"] for f in fr]) / 10.0, color=col, ls=":", lw=1.2)
@@ -3788,15 +3795,13 @@ def _f8_reff(ax, holes, info) -> None:
             }
         )
     ax.set_xscale("log")
-    ax.set_xlabel("time after release (ns, model time)")
+    ax.set_xlabel("time after the push is removed (ns, model time)")
     ax.set_ylabel(r"$R_{eff}$, $R_{min}$ (nm)")
     # headroom above the curves for the legend
-    ax.set_ylim(0, ax.get_ylim()[1] * 1.7)
+    ax.set_ylim(0, ax.get_ylim()[1] * 2.3)
     ax.legend(
         loc="upper right",
-        fontsize=8.5,
-        ncols=2,
-        columnspacing=0.8,
+        fontsize=7.5,
         title="solid: R$_{eff}$ (free), dashed: R$_{eff}$ (scaffold),\n"
         "dotted: R$_{min}$ (narrowest slab); ▼ t$_{close}$ (R$_{min}$ ≈ 0)",
         title_fontsize=8,
@@ -3930,7 +3935,12 @@ def _f8_outcome(ax, holes, info) -> None:
             Line2D([], [], color="0.6", marker="o", mec="black", ls="", label="thin film (4×4×1)"),
         ),
     ]
-    ax.legend(handles=[hd for shown, hd in keys if shown], loc="upper left", fontsize=8.5)
+    ax.legend(
+        handles=[hd for shown, hd in keys if shown],
+        loc="upper left",
+        bbox_to_anchor=(0.19, 1.0),
+        fontsize=8.5,
+    )
 
 
 def fig8_holes(data: dict, out: Path) -> tuple[list[Path], dict]:
@@ -4521,7 +4531,7 @@ def caption_fig8(info: dict, data: dict) -> str:
         )
     else:
         rest = (
-            " (b) Hole radius vs time after release (log axis): R<sub>eff</sub> = √(A/π) of the"
+            " (b) Hole radius vs time after the push is removed (log axis): R<sub>eff</sub> = √(A/π) of the"
             " projected hole (solid free, dashed scaffolded) and R<sub>min</sub>, the radius of"
             " the narrowest 10 Å slab (dotted). Colour = T, lighter for smaller and darker for"
             " larger R₀. ▼ = t<sub>close</sub>, when R<sub>min</sub> stays below 3 Å: the hole"
