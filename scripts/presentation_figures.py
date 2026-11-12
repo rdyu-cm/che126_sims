@@ -3626,10 +3626,12 @@ def hole_results(data: dict) -> list[dict]:
     return out
 
 
-def _hole_label(r: dict) -> str:
+def _hole_label(r: dict, thickness: bool = True) -> str:
     v = str(r.get("variant", "free"))
     v = "free" if v.startswith("free") else ("scaffold" + (", released" if "released" in v else ""))
-    return f"R$_0$ {r['radius_nominal_nm']:g} nm, {float(r.get('t_c') or 0):g} °C, {v}"
+    h = r.get("film_thickness_angstrom")
+    h = f", h {h / 10:.1f} nm" if h and thickness else ""
+    return f"R$_0$ {r['radius_nominal_nm']:g} nm, {float(r.get('t_c') or 0):g} °C{h}, {v}"
 
 
 def _hole_color(r: dict) -> tuple:
@@ -3789,10 +3791,12 @@ def _f8_reff(ax, holes, info) -> None:
     ax.set_xlabel("time after release (ns, model time)")
     ax.set_ylabel(r"$R_{eff}$, $R_{min}$ (nm)")
     # headroom above the curves for the legend
-    ax.set_ylim(0, ax.get_ylim()[1] * 1.5)
+    ax.set_ylim(0, ax.get_ylim()[1] * 1.7)
     ax.legend(
         loc="upper right",
         fontsize=8.5,
+        ncols=2,
+        columnspacing=0.8,
         title="solid: R$_{eff}$ (free), dashed: R$_{eff}$ (scaffold),\n"
         "dotted: R$_{min}$ (narrowest slab); ▼ t$_{close}$ (R$_{min}$ ≈ 0)",
         title_fontsize=8,
@@ -3813,7 +3817,7 @@ def _f8_rz(ax, holes, info) -> None:
         no_data(ax, "no R(z) slabs stored", pending=True)
         return
     r = h["res"]
-    panel_label(ax, "c", f"R(z) through the film ({_hole_label(r)})")
+    panel_label(ax, "c", f"R(z) through the film ({_hole_label(r, thickness=False)})")
     fr = [f for f in r["frames"] if f.get("phase") == "production" and f.get("slab_r")]
     t_end = r.get("t_close_ns") or fr[-1]["t_ns"]
     fr = [f for f in fr if f["t_ns"] <= t_end] or fr
@@ -3870,7 +3874,7 @@ def _f8_outcome(ax, holes, info) -> None:
     ax.axvline(np.pi / 4, color="black", ls="--", lw=1.3)
     ax.text(
         np.pi / 4 + 0.02,
-        0.97,
+        0.6,
         "R$_c$ = πh/4\n(Taupin 1975);\nshaded: measured,\nPS films\n(Ilton 2016)",
         transform=ax.get_xaxis_transform(),
         fontsize=8.5,
