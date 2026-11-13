@@ -25,7 +25,10 @@ caption per figure) into ``results/presentation/`` by default (appendix figures 
   ``fig6_1_dynamics_curves`` (segment MSD, long-hold COM MSD, P2 times, Rouse spectrum);
 - ``fig7_mechanics``: CG tensile stress-strain, peak/flow stress, E_app;
 - ``fig8_holes``: cylindrical-hole snapshots, R_eff(t), R(z), closure vs R/h (pending
-  placeholders until ``sepsim analyze hole`` results exist).
+  placeholders until ``sepsim analyze hole`` results exist);
+- ``fig9_local_slopes``: adjacent-pair and 3-point slopes between sweep temperatures
+  (alpha_V, c_p, kappa_T, d ln Rg^2/dT, pore dgamma/dT) with Birge-scaled errors, and the
+  table ``<out>/fig9_local_slopes.csv``.
 
 Inputs: ``<analysis>/<system>/<stage>/results.json``, ``systems/*/manifest.yaml`` and
 ``data.lmp``, the run ``progress.json`` copies (``results/run_sidecars``,
@@ -43,6 +46,7 @@ from __future__ import annotations
 
 import argparse
 import colorsys
+import csv
 import re
 import sys
 from pathlib import Path
@@ -64,6 +68,7 @@ import validity
 
 from sepsim.analysis.stats import timeseries_mean
 from sepsim.analysis.thermo import isothermal_compressibility, thermal_expansion
+from sepsim.analysis.units import KCAL_J
 from sepsim.build.datafile import read_data_file
 
 ROOT = ss.ROOT
@@ -3988,6 +3993,455 @@ def fig8_holes(data: dict, out: Path) -> tuple[list[Path], dict]:
     return save(fig, out, "fig8_holes"), info
 
 
+# ================================================================== figure 9: local slopes
+# Per-property spec: value key, value unit, slope key, slope unit, d ln y / dT, sign, scale
+# of the slope (alpha_V = -d ln rho / dT in 1e-4/K, c_p = dH/dT with H in J/g, ...).
+LOCAL_PROPS = {
+    "density": ("g cm^-3", "alpha_V", "1e-4 K^-1", True, -1.0, 1e4),
+    "enthalpy": ("J g^-1", "c_p", "J g^-1 K^-1", False, 1.0, 1.0),
+    "kappa_T": ("GPa^-1", "dkappa_T_dT", "1e-3 GPa^-1 K^-1", False, 1.0, 1e3),
+    "rg2": ("A^2", "dln_rg2_dT", "1e-3 K^-1", True, 1.0, 1e3),
+    "gamma": ("mN m^-1", "dgamma_dT", "mN m^-1 K^-1", False, 1.0, 1.0),
+}
+SLOPE_CSV = "fig9_local_slopes.csv"
+SLOPE_COLUMNS = (
+    "system",
+    "polymer",
+    "resolution",
+    "property",
+    "kind",
+    "t_c",
+    "t_lo",
+    "t_hi",
+    "value",
+    "sem_raw",
+    "birge_scale",
+    "sem",
+    "unit",
+    "segment_kinds",
+    "note",
+)
+BIRGE_DEG = 2  # quadratic y(T) for the Birge scale of the per-step SEMs (D55: lower bounds)
+RG_NOTE = "chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+PORE_MARKER = {"rep222": "D", "rep441": "^"}  # fig9: CG pores told apart by marker
+
+
+def per_t_points(rows) -> list[tuple]:
+    """One (T, y, sem, kind) per temperature from (T, y, sem, kind) rows: the step where
+    the sweep has one, else the hold (25 °C); rows with y None are skipped."""
+    pts: dict[float, tuple] = {}
+    for t, y, e, kind in rows:
+        if y is None:
+            continue
+        tc = round(float(t), 3)
+        if tc in pts and pts[tc][3] == "step":
+            continue
+        pts[tc] = (tc, float(y), float(e or 0.0), kind)
+    return [pts[t] for t in sorted(pts)]
+
+
+def sweep_points(res: dict) -> dict[str, list[tuple]]:
+    """Per-T points of the bulk sweep properties: density and enthalpy (J/g of box,
+    arbitrary zero) from the segment stats, kappa_T and <Rg^2> from ``steps`` / ``holds``."""
+    segs = [x for x in res.get("segments") or [] if x.get("kind") in ("step", "hold")]
+    to_jg = KCAL_J / float(res.get("mass_gmol") or np.nan)  # kcal/mol of box -> J/g
+    out = {
+        "density": per_t_points(
+            (
+                x["t_set_c"],
+                g(x, "stats", "density", "mean"),
+                g(x, "stats", "density", "sem"),
+                x["kind"],
+            )
+            for x in segs
+        )
+    }
+    out["enthalpy"] = [
+        (t, y * to_jg, e * to_jg, k)
+        for t, y, e, k in per_t_points(
+            (
+                x["t_set_c"],
+                g(x, "stats", "enthalpy", "mean"),
+                g(x, "stats", "enthalpy", "sem"),
+                x["kind"],
+            )
+            for x in segs
+        )
+    ]
+    pts = [(x, "step") for x in res.get("steps") or []] + [
+        (x, "hold") for x in res.get("holds") or []
+    ]
+    out["kappa_T"] = per_t_points(
+        (x["t_c"], g(x, "kappa", "kappa_T_GPa"), g(x, "kappa", "sem"), k) for x, k in pts
+    )
+    out["rg2"] = per_t_points(
+        (x["t_c"], g(x, "traj", "rg", "rg2_A2", "mean"), g(x, "traj", "rg", "rg2_A2", "sem"), k)
+        for x, k in pts
+        if g(x, "traj", "available")
+    )
+    return {k: v for k, v in out.items() if v}
+
+
+def pore_points(res: dict) -> dict[str, list[tuple]]:
+    """Per-T gamma of the pore sweep (steps, else holds; the 500 K cooling stages are not
+    sweep temperatures)."""
+    pts = per_t_points(
+        (x["t_set_c"], g(x, "stats", "gamma", "mean"), g(x, "stats", "gamma", "sem"), x["kind"])
+        for x in res.get("segments") or []
+        if x.get("kind") in ("step", "hold")
+    )
+    return {"gamma": pts} if pts else {}
+
+
+def slopes_adjacent(t, y, e) -> dict:
+    """Adjacent-pair differences (y_{i+1} - y_i) / (T_{i+1} - T_i) at T_mid, error
+    sqrt(e_i^2 + e_{i+1}^2) / dT (independent points); ``i`` = index of the lower point."""
+    t, y, e = (np.asarray(a, float) for a in (t, y, e))
+    dt = t[1:] - t[:-1]
+    return {
+        "t": 0.5 * (t[1:] + t[:-1]),
+        "t_lo": t[:-1],
+        "t_hi": t[1:],
+        "slope": (y[1:] - y[:-1]) / dt,
+        "err": np.hypot(e[1:], e[:-1]) / dt,
+        "i": np.arange(len(dt)),
+        "j": np.arange(1, len(dt) + 1),
+    }
+
+
+def slopes_central3(t, y, e) -> dict:
+    """3-point central differences (y_{i+1} - y_{i-1}) / (T_{i+1} - T_{i-1}) at T_i (exact
+    for a straight line on an uneven grid such as 85/90/100 °C), error
+    sqrt(e_{i-1}^2 + e_{i+1}^2) / (T_{i+1} - T_{i-1})."""
+    t, y, e = (np.asarray(a, float) for a in (t, y, e))
+    dt = t[2:] - t[:-2]
+    return {
+        "t": t[1:-1],
+        "t_lo": t[:-2],
+        "t_hi": t[2:],
+        "slope": (y[2:] - y[:-2]) / dt,
+        "err": np.hypot(e[2:], e[:-2]) / dt,
+        "i": np.arange(len(dt)),
+        "j": np.arange(2, len(dt) + 2),
+    }
+
+
+def log_values(y, e) -> tuple[np.ndarray, np.ndarray]:
+    """ln y and its error e / y, for d ln y / dT with the slope helpers."""
+    y, e = np.asarray(y, float), np.asarray(e, float)
+    return np.log(y), e / np.abs(y)
+
+
+def birge_scale(t, y, e, deg: int = BIRGE_DEG) -> tuple[float, float | None]:
+    """Birge ratio s = sqrt(max(1, chi2_red)) of a 1/e^2-weighted polynomial fit of
+    degree ``deg`` to y(T), and chi2_red (None, s = 1, with too few points). Zero SEMs
+    take the smallest positive one."""
+    t, y, e = (np.asarray(a, float) for a in (t, y, e))
+    e = np.where(e > 0, e, e[e > 0].min() if (e > 0).any() else 1.0)
+    if len(t) <= deg + 1:
+        return 1.0, None
+    x = t - t.mean()
+    coef = np.polyfit(x, y, deg, w=1.0 / e)
+    chi2 = float(np.sum(((y - np.polyval(coef, x)) / e) ** 2) / (len(t) - deg - 1))
+    return float(np.sqrt(max(1.0, chi2))), chi2
+
+
+def local_slope_rows(s: dict, prop: str, pts: list[tuple]) -> list[dict]:
+    """CSV rows (SLOPE_COLUMNS) of one system and property: the per-T values, then the
+    adjacent-pair and 3-point central slopes, errors from the per-step SEMs (raw) and
+    Birge-scaled by the quadratic fit of y(T)."""
+    unit, sprop, sunit, log, sign, scale = LOCAL_PROPS[prop]
+    t, y, e = (np.array([p[k] for p in pts], float) for k in range(3))
+    kinds = [p[3] for p in pts]
+    sb, chi2 = birge_scale(t, y, e)
+    base = {"system": s["sid"], "polymer": s["polymer"], "resolution": s["res"]}
+    note = RG_NOTE if prop == "rg2" else ""
+    rows = []
+    for k in range(len(t)):
+        extra = "hold (no step at this T)" if kinds[k] == "hold" else ""
+        if prop == "enthalpy":
+            extra = "; ".join(x for x in (extra, "box enthalpy per gram, arbitrary zero") if x)
+        fit = f"quadratic chi2_red {chi2:.3g}" if chi2 is not None else "too few points for a fit"
+        rows.append(
+            base
+            | {
+                "property": prop,
+                "kind": "value",
+                "t_c": t[k],
+                "t_lo": t[k],
+                "t_hi": t[k],
+                "value": y[k],
+                "sem_raw": e[k],
+                "birge_scale": sb,
+                "sem": sb * e[k],
+                "unit": unit,
+                "segment_kinds": kinds[k],
+                "note": "; ".join(x for x in (extra, fit, note) if x),
+            }
+        )
+    yy, ee = log_values(y, e) if log else (y, e)
+    for kind, fn in (("slope_adjacent", slopes_adjacent), ("slope_central3", slopes_central3)):
+        if len(t) < (2 if kind == "slope_adjacent" else 3):
+            continue
+        d = fn(t, yy, ee)
+        for k in range(len(d["t"])):
+            raw = abs(sign * scale) * d["err"][k]
+            rows.append(
+                base
+                | {
+                    "property": sprop,
+                    "kind": kind,
+                    "t_c": d["t"][k],
+                    "t_lo": d["t_lo"][k],
+                    "t_hi": d["t_hi"][k],
+                    "value": sign * scale * d["slope"][k],
+                    "sem_raw": raw,
+                    "birge_scale": sb,
+                    "sem": sb * raw,
+                    "unit": sunit,
+                    "segment_kinds": f"{kinds[d['i'][k]]}+{kinds[d['j'][k]]}",
+                    "note": note,
+                }
+            )
+    return rows
+
+
+def write_slope_csv(rows: list[dict], path: Path) -> Path:
+    """The fig9 table, long format (SLOPE_COLUMNS; floats to 6 significant digits)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=SLOPE_COLUMNS)
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: (f"{v:.6g}" if isinstance(v, float) else v) for k, v in r.items()})
+    return path
+
+
+def _f9_style(s: dict) -> dict:
+    """fig9 series style: the CG replicated pore boxes get their own markers (open /
+    filled marks the estimator here, not the box)."""
+    tag = next((k for k in PORE_MARKER if k in s["suffix"]), None)
+    return {"color": s["color"], "marker": PORE_MARKER[tag] if tag else s["marker"]}
+
+
+def _f9_slopes(ax, series, rows, prop, info) -> None:
+    """Adjacent-pair (small open) and 3-point central (filled, line) slopes of ``prop``."""
+    n = len(series)
+    for i, s in enumerate(series):
+        st = _f9_style(s)
+        off = (i - (n - 1) / 2) * 0.9
+        mine = [r for r in rows if r["system"] == s["sid"] and r["property"] == prop]
+        adj = [r for r in mine if r["kind"] == "slope_adjacent"]
+        cen = [r for r in mine if r["kind"] == "slope_central3"]
+        if adj:
+            ax.errorbar(
+                [r["t_c"] + off for r in adj],
+                [r["value"] for r in adj],
+                [r["sem"] for r in adj],
+                fmt=st["marker"],
+                color=st["color"],
+                mfc="white",
+                ms=3.8,
+                mew=0.9,
+                elinewidth=0.6,
+                capsize=1.2,
+                alpha=0.75,
+                ls="",
+                zorder=2,
+            )
+        if cen:
+            ax.errorbar(
+                [r["t_c"] + off for r in cen],
+                [r["value"] for r in cen],
+                [r["sem"] for r in cen],
+                fmt=st["marker"],
+                color=st["color"],
+                ms=5.0,
+                elinewidth=1.0,
+                capsize=2.0,
+                ls="-",
+                lw=1.3,
+                zorder=3,
+            )
+        if mine:
+            info.setdefault(prop, {})[s["label"]] = {
+                "birge": mine[0]["birge_scale"],
+                "central3": [(r["t_c"], r["value"], r["sem"]) for r in cen],
+                "adjacent": [(r["t_c"], r["value"], r["sem"]) for r in adj],
+            }
+    ax.axhline(0.0, color="0.6", lw=0.8, zorder=0)
+    ax.set_xlabel("T (°C)")
+    ax.set_xlim(15, 170)
+
+
+def _f9_fit_lines(ax, series, stage, key, val, scale) -> bool:
+    """The results.json window fits (25–90 / 90–160 / 25–160 °C) as translucent bars."""
+    drawn = False
+    for s in series:
+        fits = g(s, "results", stage, "fits", key)
+        for f in fits if isinstance(fits, list) else ([fits] if isinstance(fits, dict) else []):
+            if f.get(val) is None or not f.get("window_c"):
+                continue
+            w0, w1 = f["window_c"][0], min(f["window_c"][1], 160.0)
+            ax.plot(
+                [w0, w1],
+                [f[val] * scale] * 2,
+                color=s["color"],
+                lw=3.2 if (w1 - w0) < 100 else 1.6,
+                alpha=0.35,
+                solid_capstyle="butt",
+                zorder=1,
+            )
+            drawn = True
+    return drawn
+
+
+def _f9_values(ax, series, rows, prop, info) -> None:
+    """Per-T values of ``prop`` (scaled SEM bars), one line per system."""
+    n = len(series)
+    for i, s in enumerate(series):
+        st = _f9_style(s)
+        off = (i - (n - 1) / 2) * 0.9
+        v = [r for r in rows if r["system"] == s["sid"] and r["property"] == prop]
+        if v:
+            ax.errorbar(
+                [r["t_c"] + off for r in v],
+                [r["value"] for r in v],
+                [r["sem"] for r in v],
+                fmt=st["marker"],
+                color=st["color"],
+                ms=4.5,
+                elinewidth=0.9,
+                capsize=1.5,
+                ls="-",
+                lw=1.2,
+            )
+            info.setdefault(prop, {})[s["label"]] = [(r["t_c"], r["value"]) for r in v]
+    ax.set_xlabel("T (°C)")
+    ax.set_xlim(15, 170)
+
+
+def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
+    fig, axes = plt.subplots(2, 4, figsize=(19.0, 9.0), layout="constrained")
+    info: dict = {}
+    sweeps = [s for s in find_series(data, "bulk", "sweep") if s["primary"]]
+    pores = find_series(data, "pore", "pore")
+    rows: list[dict] = []
+    for s in sweeps:
+        for prop, pts in sweep_points(s["results"]["sweep"]).items():
+            rows += local_slope_rows(s, prop, pts)
+        segs = s["results"]["sweep"].get("segments") or []
+        w = [g(x, "stats", "window_ps") for x in segs if x.get("kind") == "step"]
+        if any(w):
+            info.setdefault("window_ns", {})[s["label"]] = (
+                float(np.median([x for x in w if x])) / 1e3
+            )
+    for s in pores:
+        for prop, pts in pore_points(s["results"]["pore"]).items():
+            rows += local_slope_rows(s, prop, pts)
+    csv_path = write_slope_csv(rows, out / SLOPE_CSV)
+    info["csv"] = csv_path.name
+    info["rows"] = len(rows)
+    cg_pores = [s for s in pores if s["res"] == "cg"]
+    ua_pores = [s for s in pores if s["res"] != "cg"]
+    # (axis, letter, title, series, property, y label, values instead of slopes)
+    panels = (
+        (
+            axes[0, 0],
+            "a",
+            r"$\alpha_V = -\mathrm{d}\ln\rho/\mathrm{d}T$",
+            sweeps,
+            "alpha_V",
+            r"$\alpha_V$ ($10^{-4}$ K$^{-1}$)",
+            False,
+        ),
+        (
+            axes[0, 1],
+            "b",
+            r"$c_p = \mathrm{d}H/\mathrm{d}T$ (classical)",
+            sweeps,
+            "c_p",
+            r"$c_p$ (J g$^{-1}$ K$^{-1}$)",
+            False,
+        ),
+        (axes[0, 2], "c", r"$\kappa_T$ per T", sweeps, "kappa_T", r"$\kappa_T$ (GPa$^{-1}$)", True),
+        (
+            axes[0, 3],
+            "d",
+            r"$\mathrm{d}\kappa_T/\mathrm{d}T$",
+            sweeps,
+            "dkappa_T_dT",
+            r"d$\kappa_T$/dT ($10^{-3}$ GPa$^{-1}$ K$^{-1}$)",
+            False,
+        ),
+        (
+            axes[1, 0],
+            "e",
+            r"$\mathrm{d}\ln\langle R_g^2\rangle/\mathrm{d}T$ (not equilibrium)",
+            sweeps,
+            "dln_rg2_dT",
+            r"d ln$\langle R_g^2\rangle$/dT ($10^{-3}$ K$^{-1}$)",
+            False,
+        ),
+        (axes[1, 1], "f", r"Pore $\gamma$ per T", pores, "gamma", r"$\gamma$ (mN m$^{-1}$)", True),
+        (
+            axes[1, 2],
+            "g",
+            r"CG pores $\mathrm{d}\gamma/\mathrm{d}T$",
+            cg_pores,
+            "dgamma_dT",
+            r"d$\gamma$/dT (mN m$^{-1}$ K$^{-1}$)",
+            False,
+        ),
+        (
+            axes[1, 3],
+            "h",
+            r"UA pores $\mathrm{d}\gamma/\mathrm{d}T$",
+            ua_pores,
+            "dgamma_dT",
+            r"d$\gamma$/dT (mN m$^{-1}$ K$^{-1}$)",
+            False,
+        ),
+    )
+    fits_drawn = False
+    for ax, letter, title, series, prop, ylabel, values in panels:
+        panel_label(ax, letter, title)
+        if not series:
+            no_data(ax, "no bulk sweeps" if series is sweeps else "no pore results", pending=True)
+            continue
+        if values:
+            _f9_values(ax, series, rows, prop, info)
+        else:
+            _f9_slopes(ax, series, rows, prop, info)
+        ax.set_ylabel(ylabel)
+    if sweeps:
+        fits_drawn |= _f9_fit_lines(axes[0, 0], sweeps, "sweep", "alpha_V", "alpha_V_per_K", 1e4)
+        fits_drawn |= _f9_fit_lines(axes[0, 1], sweeps, "sweep", "cp", "cp_J_gK", 1.0)
+    for ax, ps in ((axes[1, 2], cg_pores), (axes[1, 3], ua_pores)):
+        if ps:
+            fits_drawn |= _f9_fit_lines(ax, ps, "pore", "sweep", "dgamma_dT_mN_mK", 1.0)
+    bulk = [
+        Line2D([], [], color=s["color"], marker=s["marker"], ls="", label=s["label"])
+        for s in sweeps
+    ]
+    pore = [
+        Line2D([], [], color=s["color"], marker=_f9_style(s)["marker"], ls="", label=pore_label(s))
+        for s in pores
+    ]
+    keys = [
+        _key("filled + line: 3-point central slope at T", "o", "-"),
+        _key("small open: adjacent-pair slope at T$_{mid}$", "o", mfc="white", ms=3.8),
+    ]
+    if fits_drawn:
+        keys.append(
+            Line2D([], [], color="0.3", lw=3.2, alpha=0.35, label="results.json fit (window)")
+        )
+    if sweeps or pores:
+        fig_legend(fig, [bulk, pore, keys])
+    info["sids"] = [s["sid"] for s in [*sweeps, *pores]]
+    return save(fig, out, "fig9_local_slopes"), info
+
+
 # ================================================================== captions
 def _join(items) -> str:
     return "; ".join(i for i in items if i) or "none yet"
@@ -4560,6 +5014,51 @@ def caption_fig8(info: dict, data: dict) -> str:
     )
 
 
+def caption_fig9(info: dict, data: dict) -> str:
+    win = info.get("window_ns") or {}
+    wtxt = ", ".join(f"{k} {v:g} ns" for k, v in win.items()) or "n/a"
+    birge = []
+    for prop, name in (
+        ("alpha_V", "ρ"),
+        ("c_p", "H"),
+        ("dkappa_T_dT", "κ<sub>T</sub>"),
+        ("dln_rg2_dT", "⟨R<sub>g</sub>²⟩"),
+        ("dgamma_dT", "γ"),
+    ):
+        sv = [v["birge"] for v in (info.get(prop) or {}).values()]
+        if sv:
+            birge.append(f"{name} {min(sv):.1f}–{max(sv):.1f}")
+    return (
+        "**Figure 9. Local temperature slopes from every sweep temperature.** One point per"
+        " sweep temperature (25, 35, …, 85, 90, 100, …, 160 °C): the heating step's value"
+        " where there is one, the hold otherwise (25 °C; the 4×4×1 pore has steps only at"
+        " 90/130/160 °C). Steps are short non-equilibrium windows, analysed over their"
+        f" second half (analysed window: {wtxt}). Two estimators: small open = adjacent pair"
+        " (y<sub>i+1</sub> − y<sub>i</sub>)/(T<sub>i+1</sub> − T<sub>i</sub>) at the"
+        " midpoint; filled + line = 3-point central (y<sub>i+1</sub> −"
+        " y<sub>i−1</sub>)/(T<sub>i+1</sub> − T<sub>i−1</sub>) at T<sub>i</sub>, exact for a"
+        " straight line on the uneven 85/90/100 °C grid. (a) α<sub>V</sub> = −d ln ρ/dT;"
+        " (b) classical c<sub>p</sub> = dH/dT per gram (CG/UA lack degrees of freedom: not"
+        " comparable to experiment); (c) κ<sub>T</sub> per T (volume fluctuations) and (d)"
+        " its slope; (e) d ln⟨R<sub>g</sub>²⟩/dT: chains do not relax within a step"
+        " (τ<sub>1</sub> ≫ step length, D56), so the per-step R<sub>g</sub> carries the"
+        " history of the previous temperatures and this slope is **not an equilibrium"
+        " quantity**; (f) pore surface tension γ per T and its slope dγ/dT for (g) the CG"
+        " pores (40-chain circle, 2×2×2 diamond, 4×4×1 triangle) and (h) the UA pores, whose"
+        " per-step γ SEM (≈6 mN m⁻¹) swamps the slope. Translucent bars = the results.json"
+        " SEM-weighted line fits"
+        " over 25–90 / 90–160 (thick) and 25–160 °C (thin). **Errors**: the per-step SEMs"
+        " are lower bounds (true noise 1.3–3.5× larger, D55), so each system and property"
+        " gets a Birge scale s = √max(1, χ²<sub>red</sub>) from a 1/SEM²-weighted"
+        " quadratic fit of y(T) and the error bars are s × SEM propagated to the slopes as"
+        " independent points (relative errors for the ln-derivatives); s ranges: "
+        + (", ".join(birge) or "n/a")
+        + ". Differences of neighbouring 10 K points amplify the noise: read trends from"
+        " the 3-point slopes and the fits. Table (values, both slopes, raw SEM, s, scaled"
+        f" SEM, segment kinds): [{info.get('csv', SLOPE_CSV)}]({info.get('csv', SLOPE_CSV)})."
+    )
+
+
 CAPTIONS = {
     "fig1_models": caption_fig1,
     "fig2_equilibration": caption_fig2,
@@ -4569,6 +5068,7 @@ CAPTIONS = {
     "fig6_dynamics": caption_fig6,
     "fig7_mechanics": caption_fig7,
     "fig8_holes": caption_fig8,
+    "fig9_local_slopes": caption_fig9,
 }
 # appendix figures (``<out>/appendix/``): name -> (parent figure, caption); their info is
 # ``infos[parent]["appendix"][name]``
@@ -4650,6 +5150,7 @@ FIGURES = {
     "fig6": ("fig6_dynamics", fig6_dynamics),
     "fig7": ("fig7_mechanics", fig7_mechanics),
     "fig8": ("fig8_holes", fig8_holes),
+    "fig9": ("fig9_local_slopes", fig9_local_slopes),
 }
 
 
