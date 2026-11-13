@@ -320,10 +320,18 @@ def test_local_slopes_real_data(pf, tmp_path):
     assert cg["birge"] >= 1.0
     with (tmp_path / pf.SLOPE_CSV).open() as fh:
         rows = list(pf.csv.DictReader(fh))
-    assert {r["property"] for r in rows} >= {"alpha_V", "c_p", "dkappa_T_dT", "dgamma_dT"}
+    props = {r["property"] for r in rows}
+    assert props == {"density", "alpha_V", "kappa_T", "dkappa_T_dT", "rg", "dln_rg_dT"} | {
+        "gamma",
+        "dgamma_dT",
+    }
+    rg = [r for r in rows if r["property"] == "rg" and r["kind"] == "value"]
+    assert all(15.0 < float(r["value"]) < 40.0 and r["unit"] == "A" for r in rg)
+    assert all(b >= 1.0 for b in info["birge"]["density"].values())
     v25 = [r for r in rows if r["kind"] == "value" and r["t_c"] == "25"]
     assert v25 and all(r["segment_kinds"] == "hold" for r in v25)
-    assert "not an equilibrium" in pf.caption_fig9(info, data)
+    cap = pf.caption_fig9(info, data)
+    assert "not equilibrium values" in cap and "5 / 2 / 1 ns" in cap and "Birge" in cap
 
 
 def test_summary_links_presentation(tmp_path):
