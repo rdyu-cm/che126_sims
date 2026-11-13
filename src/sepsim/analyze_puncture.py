@@ -236,7 +236,7 @@ def _frames(reader, data_path: Path, geo: dict, dump_every: int, curve: dict) ->
     bonds = _bonds(data_path) if data_path.is_file() else np.zeros((0, 2), np.int64)
     plan, axis, r_a = geo["plan"], geo["axis"], geo["r_a"]
     d_force = curve.get("d_break_force_nm")
-    out, l0 = [], None
+    out, l0, edge0 = [], None, None
     for k, ts in enumerate(reader):
         pos = ts.positions.astype(float)
         lengths = np.asarray(ts.dimensions[:3], dtype=float)
@@ -248,6 +248,8 @@ def _frames(reader, data_path: Path, geo: dict, dump_every: int, curve: dict) ->
             v = pos[bonds[:, 1]] - pos[bonds[:, 0]]
             v[:, :2] -= lengths[:2] * np.round(v[:, :2] / lengths[:2])
             l0 = float(np.median(np.sqrt((v * v).sum(axis=1))))
+        ez = P.edge_z(pos, axis, lengths)
+        edge0 = ez if edge0 is None else edge0
         fr = {
             "k": k,
             "t_ps": k_step * geo["dt_fs"] / 1000.0,
@@ -258,6 +260,7 @@ def _frames(reader, data_path: Path, geo: dict, dump_every: int, curve: dict) ->
             "n_beads": len(pos),
             "stretch": P.max_bond_stretch(pos, bonds, lengths, l0) if use_bonds else None,
             "zspan": float(np.ptp(pos[:, 2])),
+            "edge_dz": ez - edge0,
         }
         if d_force is not None and d >= d_force:
             z = pos[:, 2]
@@ -316,6 +319,14 @@ def _diagnostics(run, data, ind, frames, params, manifest, t_k) -> None:
                     f"max bond stretch {max(st):.0%} (> {st[0]:.0%} before contact"
                     f" + {P.STRETCH_FLAG:.0%}): bonds over-strained"
                 )
+        drift = max((abs(fr.get("edge_dz", 0.0)) for fr in frames), default=0.0)
+        diag["edge_drift_max_A"] = drift
+        if drift > P.DRIFT_FLAG_A:
+            run["flags"].append(
+                f"the film edge moved {drift / 10:.1f} nm in z (> {P.DRIFT_FLAG_A / 10:.1f} nm):"
+                " the film translates with the tip, so depth overstates the indentation and"
+                " the force includes accelerating the film (clamp it: clamp_r_nm)"
+            )
     lz = float(manifest["box_angstrom"][2][1] - manifest["box_angstrom"][2][0])
     zspan = None
     if "c_zmax" in data and "c_zmin" in data:
@@ -654,6 +665,7 @@ def render_markdown(r: dict) -> str:
                 f"| max bond stretch (before contact) | {_f(diag.get('max_bond_stretch'), '.1%')}"
                 f" ({_f(diag.get('bond_stretch_baseline'), '.1%')}) |"
             ),
+            f"| film edge z drift, max (nm) | {_f(diag['edge_drift_max_A'] / 10 if 'edge_drift_max_A' in diag else None, '.2f')} |",
             f"| z span max / Lz data (Å) | {_f(diag.get('zspan_max_A'), '.1f')} / {diag['lz_data_A']:.1f}"
             + (f"; Lz growth {diag['lz_growth_A']:.1f} Å" if "lz_growth_A" in diag else "")
             + (f"; image rows {diag['image_rows']}" if diag.get("image_rows") else "")

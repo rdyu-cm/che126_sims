@@ -318,6 +318,11 @@ PUNCTURE_DEFAULTS = {
         "puncture_dump_ps": 20.0,
         "thermostat": "nvt",  # nvt | partial (compute temp/partial 1 1 0: x, y only)
         "boundary": "p p m",
+        # clamp (O-ring stand-in): beads farther than clamp_r_nm from the axis at the start
+        # are tethered in z (fix spring/self clamp_k z, kcal/mol/A^2), so the push indents
+        # the film instead of translating it (unclamped, the film moved with the tip); 0 = none
+        "clamp_r_nm": 8.0,
+        "clamp_k": 5.0,
         "tag": "",  # stage suffix (positions, replicas)
     }
     for res in DEFAULTS
@@ -1236,9 +1241,11 @@ def _check_puncture(params: dict) -> None:
             raise RenderError(f"{key} must be > 0")
     if params["puncture_dump_ps"] <= 0:
         raise RenderError("puncture_dump_ps must be > 0")
-    for key in ("travel_nm", "clearance_nm", "overshoot_nm"):
+    for key in ("travel_nm", "clearance_nm", "overshoot_nm", "clamp_r_nm"):
         if params[key] < 0:
             raise RenderError(f"{key} must be >= 0")
+    if params["clamp_k"] <= 0:
+        raise RenderError("clamp_k must be > 0")
     if params["thermostat"] not in PUNCTURE_THERMOSTATS:
         raise RenderError(
             f"thermostat: expected one of {', '.join(PUNCTURE_THERMOSTATS)},"
@@ -1267,6 +1274,14 @@ def puncture_plan(params: dict, film: dict, box) -> dict:
     n_steps = max(1, round(want / per_step))
     travel = n_steps * per_step
     z0 = zmax + clear + r_a
+    clamp_a = 10.0 * params["clamp_r_nm"]
+    half = 0.5 * min(box[k][1] - box[k][0] for k in (0, 1))
+    if clamp_a and not r_a + 10.0 <= clamp_a < half:
+        raise RenderError(
+            f"clamp_r_nm {params['clamp_r_nm']:g}: the clamp must start at least 1 nm beyond"
+            f" the indenter (R {params['indent_r_nm']:g} nm) and inside the half box"
+            f" ({half / 10:.2f} nm), or be 0 (no clamp)"
+        )
     return {
         "r_a": r_a,
         "xc": 0.5 * (box[0][0] + box[0][1]) + 10.0 * params["indent_x_nm"],
@@ -1278,6 +1293,7 @@ def puncture_plan(params: dict, film: dict, box) -> dict:
         "n_steps": n_steps,
         "a_per_fs": params["indent_v_m_s"] * A_PER_FS_PER_M_S,
         "film_z": [zmin, zmax],
+        "clamp_a": clamp_a,
     }
 
 

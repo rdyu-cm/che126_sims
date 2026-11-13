@@ -120,7 +120,7 @@ def test_cli_build_film(pores, tmp_path, capsys):
 
 
 def test_puncture_deck_round_trip(film_sys, tmp_path):
-    over = {"travel_nm": "13.5", "tag": "p2"}
+    over = {"travel_nm": "13.5", "tag": "p2", "clamp_r_nm": "0"}  # box too small to clamp
     text = render_deck("puncture", film_sys, overrides=over)
     deck = tmp_path / "in.puncture"
     deck.write_text(text)
@@ -192,13 +192,18 @@ def test_puncture_deck_round_trip(film_sys, tmp_path):
 def test_puncture_auto_travel_smoke_and_partial(film_sys):
     m = yaml.safe_load((film_sys / MANIFEST_NAME).read_text())
     zmin, zmax = m["film"]["film_z_extent_angstrom"]
-    p = resolve_params("cg", None, {"indent_v_m_s": "10"}, "puncture")
+    p = resolve_params("cg", None, {"indent_v_m_s": "10", "clamp_r_nm": "0"}, "puncture")
     plan = puncture_plan(p, m["film"], m["box_angstrom"])
     want = (zmax - zmin) + 20.0 + 20.0 + 20.0  # extent + 2 clearance + R + overshoot
     assert plan["auto"] and plan["travel"] == pytest.approx(want, abs=1e-3)  # whole steps
     assert plan["n_steps"] == round(want / 1e-3)
     smoke = commands(
-        render_deck("puncture", film_sys, preset="smoke", overrides={"thermostat": "partial"})
+        render_deck(
+            "puncture",
+            film_sys,
+            preset="smoke",
+            overrides={"thermostat": "partial", "clamp_r_nm": "0"},
+        )
     )
     # settle 1 ps; 1 nm at 100 m/s = 1e-3 A/fs: 10 A / 0.01 A per step = 1000 steps
     assert [c[1] for c in smoke if c[0] == "run"] == ["100", "1000"]
@@ -336,7 +341,7 @@ def _write_dcd(path, frames, lengths):
 def _puncture_run(film_sys, run, z_top, tag=""):
     """A smoke puncture deck (travel 10 nm at 100 m/s) and a synthetic puncture.txt:
     settle rows with noise, then F(d) of :func:`_force` with d from the tip ramp."""
-    over = {"travel_nm": "10"} | ({"tag": tag} if tag else {})
+    over = {"travel_nm": "10", "clamp_r_nm": "0"} | ({"tag": tag} if tag else {})
     run.mkdir(parents=True)
     deck = render_deck("puncture", film_sys, preset="smoke", overrides=over, deck_dir=run)
     (run / "in.puncture").write_text(deck)
@@ -415,3 +420,48 @@ def test_analyze_puncture_report_and_cli(film_sys, tmp_path, monkeypatch, capsys
     assert (cmp_dir / "film_maps.png").is_file()
     assert main(["analyze", "puncture", str(tmp_path)]) == 1
     assert "no in.puncture" in capsys.readouterr().err
+
+
+def test_puncture_clamp_block_and_checks(film_sys):
+    """Default clamp on a full-size film: beads beyond 8 nm of the axis tethered in z only;
+    clamp_r_nm 0 drops it; a clamp inside the indenter or past the half box is refused."""
+    film = REPO / "systems" / "pe_cg_film_160C_n640_c240_s1_rep441"
+    cmds = commands(render_deck("puncture", film))
+    m = yaml.safe_load((film / MANIFEST_NAME).read_text())
+    box = m["box_angstrom"]
+    xc, yc = (0.5 * (box[k][0] + box[k][1]) for k in (0, 1))
+    reg = next(c for c in cmds if c[:2] == ["region", "clampr"])
+    assert reg[2:4] == ["cylinder", "z"] and reg[6:] == [
+        "80",
+        "INF",
+        "INF",
+        "side",
+        "out",
+        "units",
+        "box",
+    ]
+    assert [float(t) for t in reg[4:6]] == pytest.approx([xc, yc])
+    assert ["group", "clamped", "region", "clampr"] in cmds
+    assert ["fix", "clamp", "clamped", "spring/self", "5", "z"] in cmds
+    # tethered before the settle run, so the film settles clamped
+    first_run = next(i for i, c in enumerate(cmds) if c[0] == "run")
+    assert cmds.index(["fix", "clamp", "clamped", "spring/self", "5", "z"]) < first_run
+    off = commands(render_deck("puncture", film, overrides={"clamp_r_nm": "0"}))
+    assert not any(c[:2] == ["fix", "clamp"] for c in off)
+    for bad, match in (
+        ({"clamp_r_nm": "2.5"}, "clamp_r_nm"),  # inside R + 1 nm
+        ({"clamp_r_nm": "14"}, "half box"),  # half box 13.3 nm
+        ({"clamp_k": "0"}, "clamp_k"),
+    ):
+        with pytest.raises(RenderError, match=match):
+            render_deck("puncture", film, overrides=bad)
+    with pytest.raises(RenderError, match="half box"):
+        render_deck("puncture", film_sys)  # the tiny test film is too small for the default
+
+
+def test_edge_z_drift():
+    """edge_z: the mean z of the beads beyond 0.4 min(Lx, Ly) of the axis."""
+    lengths = np.array([100.0, 100.0, 50.0])
+    pos = np.array([[50.0, 50.0, 0.0], [95.0, 50.0, 10.0], [5.0, 50.0, 20.0], [50.0, 2.0, 30.0]])
+    # axis (50, 50): r = 0, 45, 45, 48; edge r > 40: the last three
+    assert P.edge_z(pos, (50.0, 50.0), lengths) == pytest.approx(20.0)

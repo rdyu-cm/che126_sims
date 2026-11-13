@@ -40,6 +40,8 @@ AHEAD_A = 10.0
 AHEAD_MAX = 2
 AHEAD_FRAMES = 3
 FAR_PAD_A = 20.0  # far field: r > R + 2 nm
+EDGE_FRAC = 0.4  # film edge: r > 0.4 min(Lx, Ly) (inside the default clamp, r > 8 nm)
+DRIFT_FLAG_A = 3.0  # edge mean z moving more than this: the film translates with the tip
 INSIDE_FLAG = 1e-3  # beads inside the indenter: flag above this fraction
 STRETCH_FLAG = 0.20  # bond stretch: flag 20 points above the first Stage 2 frame (thermal baseline)
 Z_PAD_A = 20.0  # z padding of the (non-periodic) film profile
@@ -156,6 +158,13 @@ def inside_count(pos: np.ndarray, axis, lengths, zc: float, r_a: float) -> int:
     r = axis_r(pos, axis, lengths)
     dz = pos[:, 2] - zc
     return int(((r < r_a) & ((dz > 0) | (r * r + dz * dz < r_a * r_a))).sum())
+
+
+def edge_z(pos: np.ndarray, axis, lengths) -> float:
+    """Mean z of the film edge (beads with r > ``EDGE_FRAC`` min(Lx, Ly)): with the film
+    clamped it stays put; its drift from frame 0 is the rigid translation of the film."""
+    edge = axis_r(pos, axis, lengths) > EDGE_FRAC * float(min(lengths[0], lengths[1]))
+    return float(pos[edge, 2].mean()) if edge.any() else float(pos[:, 2].mean())
 
 
 def far_surfaces(pos: np.ndarray, axis, lengths, r_a: float) -> tuple[float, float]:
