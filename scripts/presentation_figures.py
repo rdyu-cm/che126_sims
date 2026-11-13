@@ -3626,17 +3626,21 @@ def hole_results(data: dict) -> list[dict]:
     return out
 
 
-def _hole_label(r: dict, thickness: bool = True) -> str:
+def _hole_label(r: dict, thickness: bool = True, compact: bool = False) -> str:
+    """Run label; ``compact`` drops the units named in the panel (b) legend title."""
+    nm = "" if compact else " nm"
     v = str(r.get("variant", "free"))
     if v.startswith("free"):
         v = ""  # solid line = free film (legend title)
-    else:  # scaffold geometry, e.g. "annulus d=2.5 nm, released at 130 C" -> "annulus 2.5 nm"
-        v = v.split(",")[0].replace(" d=", " ")
+    else:  # "annulus d=2.5 nm, released at 130 C, ramp" -> "annulus 2.5 nm, rel. 130 °C"
+        parts = [p.strip() for p in v.split("(")[0].split(",")]
+        v = parts[0].replace(" d=", " ").replace(" nm", nm)
+        if len(parts) > 1:
+            v += ", " + parts[1].replace("released at ", "rel. ").replace(" C", " °C")
     h = r.get("film_thickness_angstrom")
-    h = f", h {h / 10:.1f} nm" if h and thickness else ""
-    return f"R$_0$ {r['radius_nominal_nm']:g} nm, {float(r.get('t_c') or 0):g} °C{h}" + (
-        f", {v}" if v else ""
-    )
+    h = f", {'' if compact else 'h '}{h / 10:.1f}{nm}" if h and thickness else ""
+    r0 = f"{r['radius_nominal_nm']:g}" if compact else f"R$_0$ {r['radius_nominal_nm']:g} nm"
+    return f"{r0}, {float(r.get('t_c') or 0):g} °C{h}" + (f", {v}" if v else "")
 
 
 def _hole_color(r: dict) -> tuple:
@@ -3780,7 +3784,7 @@ def _f8_reff(ax, holes, info) -> None:
             np.array([f["r_eff"] for f in fr]) / 10.0,
             color=col,
             ls="-" if free else next(dashes),
-            label=_hole_label(r),
+            label=_hole_label(r, compact=True),
         )
         ax.plot(t, np.array([f["r_min"] for f in fr]) / 10.0, color=col, ls=":", lw=1.2)
         if r.get("t_close_ns") is not None:
@@ -3801,9 +3805,13 @@ def _f8_reff(ax, holes, info) -> None:
     ax.set_ylim(0, ax.get_ylim()[1] * 2.3)
     ax.legend(
         loc="upper right",
-        fontsize=7.5,
+        ncol=2,
+        fontsize=6.5,
+        handlelength=1.8,
+        columnspacing=0.8,
         title="solid: R$_{eff}$ (free), dashed: R$_{eff}$ (scaffold),\n"
-        "dotted: R$_{min}$ (narrowest slab); ▼ t$_{close}$ (R$_{min}$ ≈ 0)",
+        "dotted: R$_{min}$ (narrowest slab); ▼ t$_{close}$ (R$_{min}$ ≈ 0)\n"
+        "R$_0$ (nm), T, film h (nm), scaffold d (nm), release T",
         title_fontsize=8,
     )
 
