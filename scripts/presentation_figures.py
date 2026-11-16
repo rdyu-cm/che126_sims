@@ -4307,7 +4307,7 @@ def _f9_values(ax, series, rows, prop, info) -> None:
 
 def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
     fig, axes = plt.subplot_mosaic(
-        [["a", "b", "c"], ["d", "e", "e"]], figsize=(15.0, 9.0), layout="constrained"
+        [["a", "b", "c"], ["d", "e", "."]], figsize=(15.0, 9.0), layout="constrained"
     )
     info: dict = {}
     sweeps = [s for s in find_series(data, "bulk", "sweep") if s["primary"]]
