@@ -27,7 +27,11 @@ REPO = Path(__file__).resolve().parents[1]
 ALL_SYSTEMS = sorted(p.parent for p in (REPO / "systems").glob("*/manifest.yaml"))
 # bulk systems run prep/sweep/benchmark; slit-pore systems run pore_relax (wide) or pore (D48)
 PORES = [p for p in ALL_SYSTEMS if "pore" in yaml.safe_load((p / "manifest.yaml").read_text())]
-SYSTEMS = [p for p in ALL_SYSTEMS if p not in PORES]
+# crystal systems (D59) run the crystal protocol (and tensile) only
+CRYSTALS = [
+    p for p in ALL_SYSTEMS if "crystal" in yaml.safe_load((p / "manifest.yaml").read_text())
+]
+SYSTEMS = [p for p in ALL_SYSTEMS if p not in PORES and p not in CRYSTALS]
 IDS = [p.name for p in SYSTEMS]
 FIVE = {
     "pe_aa_amorph_n40_c240_s1",
@@ -87,6 +91,8 @@ def test_coeff_lines_match_committed_data_file(path):
         protocol = "hole"  # D52
     elif "film" in manifest(path):
         protocol = "puncture"  # D57
+    elif "crystal" in manifest(path):
+        protocol = "crystal"  # D59
     deck = render_deck(protocol, path)
     df = read_data_file(path / "data.lmp")
     cmds = commands(deck)

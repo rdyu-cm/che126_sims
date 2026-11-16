@@ -21,7 +21,9 @@ DCDs) this writes ``results.md``, ``results.json`` and PNG plots into
   (with <= 100 block means of each for convergence plots);
 - per hold (D56): the end-to-end vector and Rouse mode (p = 1..5) autocorrelations with
   their 1/e times and exponential fits (``chain_relaxation``), and a crystallinity
-  monitor (D26 alignment order, fixed uncalibrated threshold; ``crystallinity_monitor``).
+  monitor (D26 alignment order; ``crystallinity_monitor``): the fixed, uncalibrated
+  threshold 0.4, or the D59 calibration record ``data/crystals/calibration_<res>_<polymer>.json``
+  (threshold and r_c from a crystal reference vs the melt) when it exists.
 
 The segment parser, log reader and thermo concatenation are those of
 :mod:`sepsim.progress`; the DCDs are read with MDAnalysis ``DCDReader`` (id-sorted,
@@ -991,6 +993,66 @@ CRYSTAL_THRESHOLD = 0.4  # D56: fixed p2 threshold, uncalibrated (no crystal ref
 CRYSTAL_FRAMES = 50  # hold frames (evenly spaced) for the crystallinity monitor
 CRYSTAL_RC_UA_AA = 6.5  # Angstrom, backbone carbons (UA/AA)
 CRYSTAL_LABEL = "uncalibrated, melt baseline"
+# D59: calibration records (sepsim analyze crystal --calibrate), one per resolution/polymer
+CALIBRATION_DIR = Path(__file__).resolve().parents[2] / "data" / "crystals"
+
+
+def calibration_path(resolution: str, polymer: str = "pe") -> Path:
+    """``data/crystals/calibration_<res>_<polymer>.json`` (D59)."""
+    return CALIBRATION_DIR / f"calibration_{resolution}_{polymer}.json"
+
+
+def crystal_calibration(manifest: dict, notes: list[str] | None = None) -> dict | None:
+    """The D59 calibration record for the system's resolution and polymer, or None (then
+    the D56 fixed threshold applies) when there is none, or, with a note in ``notes``,
+    when it is unreadable (malformed JSON, no threshold or r_c), names no force-field
+    file, or was made with another force-field file or sha256 than the system's."""
+    import json
+
+    notes = [] if notes is None else notes
+    path = calibration_path(manifest["resolution"], manifest.get("polymer", "pe"))
+    if not path.is_file():
+        return None
+    try:
+        rec = json.loads(path.read_text())
+        float(rec["threshold"]), float(rec["r_c_A"])
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        notes.append(f"calibration record {path.name} ignored: unreadable ({exc})")
+        return None
+    rec_ff = rec.get("forcefield") if isinstance(rec.get("forcefield"), dict) else {}
+    sys_ff = manifest.get("forcefield") or {}
+    if not rec_ff.get("file"):
+        notes.append(f"calibration record {path.name} ignored: it names no force-field file")
+        return None
+    if (sys_ff.get("file") and rec_ff["file"] != sys_ff["file"]) or (
+        rec_ff.get("sha256") and sys_ff.get("sha256") and rec_ff["sha256"] != sys_ff["sha256"]
+    ):
+        notes.append(f"calibration record {path.name} ignored: force field changed")
+        return None
+    return rec | {"_path": path}
+
+
+def monitor_settings(manifest: dict) -> dict:
+    """Crystallinity settings (:func:`crystal_parameters`) with the threshold and r_c of
+    the D59 calibration record when there is one (label "calibrated (<file>, <date>)"),
+    else the D56 fixed threshold (label ``CRYSTAL_LABEL``)."""
+    par = crystal_parameters(manifest)
+    notes: list[str] = []
+    cal = crystal_calibration(manifest, notes)
+    if cal is None:
+        return par | {
+            "threshold": CRYSTAL_THRESHOLD,
+            "label": CRYSTAL_LABEL,
+            "calibration": None,
+            "calibration_note": "; ".join(notes) or None,
+        }
+    return par | {
+        "calibration_note": None,
+        "r_c_A": float(cal["r_c_A"]),
+        "threshold": float(cal["threshold"]),
+        "label": f"calibrated ({cal['_path'].name}, {cal.get('date', 'n/a')})",
+        "calibration": cal["_path"].name,
+    }
 
 
 def crystal_parameters(manifest: dict) -> dict:
@@ -1019,12 +1081,15 @@ def crystallinity_monitor(tr: dict, chains, manifest: dict, n_frames: int = CRYS
     D26 local-alignment order (:func:`sepsim.analysis.order.crystallinity`) with the
     :func:`crystal_parameters` cutoff and a fixed, uncalibrated threshold p2 >=
     ``CRYSTAL_THRESHOLD`` (no crystal reference: a melt baseline, to confirm the boxes
-    stay amorphous). Fraction (mean, SD, first/last frame, max) and largest cluster."""
+    stay amorphous), or the threshold and r_c of the D59 calibration record when there is
+    one (:func:`monitor_settings`). Fraction (mean, SD, first/last frame, max) and
+    largest cluster."""
     from MDAnalysis.lib.mdamath import triclinic_vectors
 
     from sepsim.analysis.order import crystallinity
 
-    par = crystal_parameters(manifest)
+    settings = monitor_settings(manifest)
+    par = {k: settings[k] for k in ("r_c_A", "half_span", "l_proj_A")}
     nf = len(tr["bb"])
     pick = np.unique(np.linspace(0, nf - 1, min(nf, n_frames)).round().astype(int))
     order = np.concatenate(chains)
@@ -1039,7 +1104,7 @@ def crystallinity_monitor(tr: dict, chains, manifest: dict, n_frames: int = CRYS
             chain_id,
             triclinic_vectors(box),
             r_c=par["r_c_A"],
-            threshold=CRYSTAL_THRESHOLD,
+            threshold=settings["threshold"],
             half_span=par["half_span"],
             l_proj=par["l_proj_A"],
         )
@@ -1049,8 +1114,10 @@ def crystallinity_monitor(tr: dict, chains, manifest: dict, n_frames: int = CRYS
     frac = np.array(frac)
     return {
         "available": True,
-        "label": CRYSTAL_LABEL,
-        "threshold": CRYSTAL_THRESHOLD,
+        "label": settings["label"],
+        "threshold": settings["threshold"],
+        "calibration": settings["calibration"],
+        "calibration_note": settings["calibration_note"],
         **par,
         "frames": len(pick),
         "sites": len(order),
@@ -1602,6 +1669,15 @@ def relaxation_markdown(items, resolution: str | None, what: str = "hold") -> li
     if not rows:
         return lines + ["No trajectory results."]
     lag = rows[0][1]["relaxation"]["lag_max_ps"]
+    crs = [tr.get("crystallinity") or {} for _, tr in rows]
+    cal = next((c for c in crs if c.get("available") and c.get("calibration")), None)
+    crys_note = (
+        f" p2 ≥ {cal['threshold']:.3g} (**{cal['label']}**: D59 equal-error threshold of"
+        f" a crystal reference vs the melt, r_c {cal['r_c_A']:.2f} Å) and"
+        if cal
+        else f" p2 ≥ {CRYSTAL_THRESHOLD:g} (**{CRYSTAL_LABEL}**: no crystal reference, so the"
+        " number is a baseline for an amorphous box, not a calibrated crystallinity) and"
+    )
     lines += [
         (
             "End-to-end vector ACF ⟨R(t)·R(0)⟩/⟨R²⟩ and Rouse mode ACFs ⟨X_p(t)·X_p(0)⟩/⟨X_p²⟩,"
@@ -1613,9 +1689,8 @@ def relaxation_markdown(items, resolution: str | None, what: str = "hold") -> li
             " is 4 for Rouse chains. p²⟨X_p²⟩ (relative to p = 1, p = 2…5) is flat for an ideal"
             " Rouse chain; it falls at high p where the chain is stiffer than Gaussian on that"
             " scale. Crystallinity: D26 local alignment, fraction of backbone sites with"
-            f" p2 ≥ {CRYSTAL_THRESHOLD:g} (**{CRYSTAL_LABEL}**: no crystal reference, so the"
-            " number is a baseline for an amorphous box, not a calibrated crystallinity) and"
-            " the largest crystalline cluster (sites)."
+            + crys_note
+            + " the largest crystalline cluster (sites)."
         ),
         "",
         (
@@ -1663,6 +1738,9 @@ def relaxation_markdown(items, resolution: str | None, what: str = "hold") -> li
             "",
             *est,
         ]
+    ignored = sorted({c["calibration_note"] for c in crs if c.get("calibration_note")})
+    if ignored:
+        lines += ["", *(f"Note: {n}." for n in ignored)]
     if resolution == "cg":
         lines += ["", CG_TIME_NOTE]
     return lines

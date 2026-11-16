@@ -107,6 +107,14 @@ uv run sepsim render sweep --system $S --job --node rdyu-server --cpus 12 --time
   uv run sepsim render cavitation --system $S --data ../sweep/hold_25C.data --job --node rdyu-rog --cpus 2 --time 1-00:00:00   # to 0.26 per axis at 1e8 /s
   uv run sepsim analyze cavitation results/runs/pe_cg_amorph_n40_c240_s1/cavitation_25C [more run dirs] [--probe-a 4]   # σ_cav, ε_V,cav, voids
   ```
+- Crystal reference (D59): perfect PE crystal of infinite stems (CG `pe_cg_crystal_7x10x27_s1`, UA `pe_ua_crystal_7x10x40_s1`), NPT holds at 25/90/130/160 C with x, y, z independent (CG 10 ns, UA 2 ns each; `--set ramp=yes` adds a ramp to 200 C); the analysis reports a, b, c, density, area per chain, crystallinity and expansion, and `--calibrate` writes `data/crystals/calibration_cg_pe.json`, which the D56 monitor then uses ("calibrated"):
+  ```
+  C=pe_cg_crystal_7x10x27_s1
+  uv run sepsim build crystal --res cg   # or --res ua; --na/--nb/--nz or --lateral LX LY
+  uv run sepsim render crystal --system systems/$C --job --node rdyu-rog --cpus 4 --time 2-00:00:00
+  uv run sepsim analyze crystal results/runs/$C/crystal --calibrate results/runs/pe_cg_amorph_n40_c240_s1/sweep
+  uv run sepsim render tensile --system systems/$C --data ../crystal/hold_25C.data   # lateral axes couple none
+  ```
 - Sweep and pore holds write a dense 10 ps burst at 0.1 ps every 1 ns into `segNN_hold_XXC_burstKK.dcd` (D46); `--set burst_period_ps=0` turns them off.
 - Inputs made by an earlier stage (sweep reads `../prep/cooled.data`, benchmark `../prep/compressed.data`, extend `../prep/hold.data`) exist only on the node that ran it, so pin a system's stages to one node (`--node`). Rendering before that file exists only warns; the job checks for it.
 - Render, then `ssubmit` (not plain `sbatch`), so the deck reaches the other node. Re-render and resubmit after changes.

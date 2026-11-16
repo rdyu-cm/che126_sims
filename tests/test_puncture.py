@@ -237,6 +237,7 @@ def test_other_decks_keep_periodic_z(pores, tmp_path_factory):
     _, _, wide, nar, snap = pores
     hole = build_hole(snap, nar, 0.5, 160.0, out=tmp_path_factory.mktemp("h2"))
     where = {"pore_relax": wide, "pore": nar, "hole": hole}
+    where["crystal"] = REPO / "systems" / "pe_cg_crystal_7x10x27_s1"  # D59
     seen = set()
     for protocol in PROTOCOLS:
         if protocol == "puncture":

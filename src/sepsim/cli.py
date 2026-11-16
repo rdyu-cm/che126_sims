@@ -171,6 +171,31 @@ def build_parser() -> argparse.ArgumentParser:
         help="where the data file came from, recorded in the manifest (default: --data as given)",
     )
     fi.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
+    crys_help = (
+        "Perfect PE crystal (D59): straight stems along z on the orthorhombic Busing cell (two"
+        " chains per a x b cell), each bonded to its own z image (D6d: no chain ends). CG: CM"
+        " beads at the rise r0 sin(theta0/2) of the SDK bond/angle (3.633 A); UA: TraPPE"
+        " planar zigzag (l 1.54 A, theta from c) at the 41 deg setting angle. Id"
+        " pe_<res>_crystal_<na>x<nb>x<nz>_s<seed>; run it with `sepsim render crystal`."
+    )
+    cr = kinds.add_parser("crystal", help=crys_help, description=crys_help)
+    cr.add_argument("--res", required=True, choices=["cg", "ua"], help="resolution")
+    cr.add_argument("--na", type=int, help="cells along a = x (default CG 7, UA 7)")
+    cr.add_argument("--nb", type=int, help="cells along b = y (default CG 10, UA 10)")
+    cr.add_argument(
+        "--nz",
+        type=int,
+        help="repeats along the stems = z: CG beads, UA c repeats of 2 CH2 (default CG 27, UA 40)",
+    )
+    cr.add_argument(
+        "--lateral",
+        type=float,
+        nargs=2,
+        metavar=("LX", "LY"),
+        help="lateral box in A instead of --na/--nb (nearest whole numbers of cells)",
+    )
+    cr.add_argument("--seed", type=int, default=1, help="velocity seed of the decks (default 1)")
+    cr.add_argument("--out", default="systems", help="output root; files go to OUT/<system_id>/")
     render = subparsers.add_parser("render", help=_RENDER_HELP, description=_RENDER_HELP)
     render.set_defaults(render_parser=render)
     protocols = render.add_subparsers(dest="protocol", metavar="protocol")
@@ -274,6 +299,12 @@ def build_parser() -> argparse.ArgumentParser:
         " every avg_ps into cavitation.txt, frames every cav_dump_ps into cavitation.dcd for"
         " `sepsim analyze cavitation`. Default OUT: results/runs/<id>/cavitation_<T>C"
         " (+ _r<rate>, _<tag>). Writes OUT/in.cavitation.",
+        "crystal": "Crystal reference (D59) of a `sepsim build crystal` system: minimize with the"
+        " box relaxed (aniso), velocities at the first T, then NPT holds at crystal_grid_c"
+        " (25,90,130,160 C; CG 10 ns, UA 2 ns each) with x, y, z barostatted independently"
+        " (aniso, couple none), frames every 10 ps into seg<NN>_hold_<T>C.dcd, write_data"
+        " hold_<T>C.data per hold; ramp=true adds a heating ramp to ramp_to_c (200 C)."
+        " Crystal systems also take tensile (lateral axes couple none). Writes OUT/in.crystal.",
     }
     stage_rel = (
         "; a relative path is taken relative to OUT (the run directory) unless it exists"
@@ -294,6 +325,7 @@ def build_parser() -> argparse.ArgumentParser:
         "tensile": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
         "puncture": "data file to start from (default: SYSTEM/data.lmp)",
         "cavitation": "data file to start from (required), e.g. ../sweep/hold_25C.data" + stage_rel,
+        "crystal": "data file to start from (default: SYSTEM/data.lmp)",
     }
     for name, help_text in protocol_help.items():
         pr = protocols.add_parser(name, help=help_text, description=help_text, parents=[common])
@@ -451,6 +483,47 @@ def build_parser() -> argparse.ArgumentParser:
         default=4.0,
         help="void probe radius in angstrom (default %(default)s)",
     )
+    crys_an = (
+        "Crystal run (D59, in.crystal): per hold the cell a, b, c from Lx/na, Ly/nb, Lz/nz"
+        " (mean ± SEM, drift), density vs the 0.996 g/cm3 Busing cell, area per chain vs 18.3"
+        " A^2, and from its DCD the crystallinity (D26 local P2 with the calibrated threshold"
+        " when data/crystals/calibration_<res>_pe.json exists, else the D56 0.4), the stem"
+        " P2 along z and the largest cluster; thermal expansion of a, b, c and V over the"
+        " stable holds. --calibrate MELT_RUN_DIR... (CG): per-site p2 of the stable crystal"
+        " holds vs the melt sweep holds, equal-error threshold, r_c check -> calibration JSON."
+        " Writes results.md, results.json and PNGs to results/analysis/<system>/<stage>/."
+    )
+    ac = analyses.add_parser("crystal", help=crys_an, description=crys_an)
+    ac.add_argument("run_dir", metavar="RUN_DIR", help="crystal run directory (in.crystal)")
+    ac.add_argument(
+        "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
+    )
+    ac.add_argument(
+        "--max-frames",
+        type=int,
+        default=50,
+        help="evenly spaced frames per hold for the crystallinity (default %(default)s)",
+    )
+    ac.add_argument(
+        "--systems", default="systems", help="system directories root (default %(default)s)"
+    )
+    ac.add_argument(
+        "--calibrate",
+        nargs="+",
+        default=[],
+        metavar="MELT_RUN_DIR",
+        help="melt sweep run directories (in.sweep, hold DCDs) to calibrate the threshold against",
+    )
+    ac.add_argument(
+        "--melt-t",
+        metavar="T,T",
+        help="melt hold temperatures (C) to use, comma separated (default: every hold)",
+    )
+    ac.add_argument(
+        "--calibration-out",
+        metavar="PATH",
+        help="calibration record to write (default data/crystals/calibration_<res>_pe.json)",
+    )
     prog_help = (
         "Write progress.md, progress.json and PNG plots for run directories (D45): status,"
         " segments done, ns/day, ETA, per-segment means, prep-hold chain checks (prep hold +"
@@ -589,6 +662,18 @@ def _build(args: argparse.Namespace) -> int:
                 out=args.out,
                 data_origin=args.data_origin,
             )
+        elif args.kind == "crystal":
+            from sepsim.build.crystal import build_crystal
+
+            sysdir = build_crystal(
+                args.res,
+                na=args.na,
+                nb=args.nb,
+                nz=args.nz,
+                seed=args.seed,
+                out=args.out,
+                lateral=None if args.lateral is None else tuple(args.lateral),
+            )
         elif args.kind == "replicate":
             from sepsim.build.replicate import build_replicate
 
@@ -659,6 +744,8 @@ def _analyze(args: argparse.Namespace) -> int:
         return _analyze_puncture(args)
     if args.analysis == "cavitation":
         return _analyze_cavitation(args)
+    if args.analysis == "crystal":
+        return _analyze_crystal(args)
     from sepsim.analyze import AnalyzeError, analyze_sweep, write_results
 
     try:
@@ -732,6 +819,30 @@ def _analyze_cavitation(args: argparse.Namespace) -> int:
     except (CavitationError, OSError) as exc:
         print(f"sepsim analyze cavitation: error: {exc}", file=sys.stderr)
         return 1
+    print(out_dir / "results.md")
+    return 0
+
+
+def _analyze_crystal(args: argparse.Namespace) -> int:
+    from sepsim.analyze_crystal import CrystalAnalysisError, analyze_crystal, write_results
+
+    try:
+        melt_t = [float(t) for t in args.melt_t.split(",") if t.strip()] if args.melt_t else None
+        report, out_dir = analyze_crystal(
+            args.run_dir,
+            out=args.out,
+            systems=args.systems,
+            max_frames=args.max_frames,
+            calibrate=args.calibrate,
+            melt_t=melt_t,
+            calibration_out=args.calibration_out,
+        )
+        write_results(report, out_dir)
+    except (CrystalAnalysisError, OSError, ValueError) as exc:
+        print(f"sepsim analyze crystal: error: {exc}", file=sys.stderr)
+        return 1
+    if report.get("calibration_file"):
+        print(report["calibration_file"])
     print(out_dir / "results.md")
     return 0
 

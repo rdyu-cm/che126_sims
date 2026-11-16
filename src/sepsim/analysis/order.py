@@ -95,14 +95,16 @@ def _neighbour_pairs(x: np.ndarray, h: np.ndarray, r_c: float):
     return pairs[:, 0], pairs[:, 1]
 
 
-def chord_vectors(positions, chain_id, cell, half_span: int) -> np.ndarray:
+def chord_vectors(positions, chain_id, cell, half_span: int, ring: bool = False) -> np.ndarray:
     """Normalized chord u_i = (r_{i+h} - r_{i-h}) / |...| with h = ``half_span``.
 
     Sites must be backbone sites only, ordered along the backbone within each
     chain, and each chain's sites contiguous in the arrays. The chord is taken
     with the minimum-image convention (MDAnalysis ``minimize_vectors``), so
     wrapped or unwrapped coordinates both work (requires the chord length < half the smallest cell width). The first
-    and last h sites of each chain (chain ends) get NaN.
+    and last h sites of each chain (chain ends) get NaN, unless ``ring``: every chain is
+    an infinite stem bonded to its own periodic image (D6d, D59; the last site bonded to
+    the first), so the chord wraps around the chain and every site gets one.
     """
     x = np.asarray(positions, dtype=float)
     cid = np.asarray(chain_id)
@@ -117,6 +119,13 @@ def chord_vectors(positions, chain_id, cell, half_span: int) -> np.ndarray:
         raise ValueError("sites of each chain must be contiguous")
     for s, e in zip(starts, ends, strict=True):
         if e - s <= 2 * half_span:
+            continue
+        if ring:
+            c = x[s:e]
+            d = minimize_vectors(
+                np.roll(c, -half_span, axis=0) - np.roll(c, half_span, axis=0), box
+            )
+            u[s:e] = d / np.linalg.norm(d, axis=1, keepdims=True)
             continue
         d = minimize_vectors(x[s + 2 * half_span : e] - x[s : e - 2 * half_span], box)
         u[s + half_span : e - half_span] = d / np.linalg.norm(d, axis=1, keepdims=True)
@@ -133,6 +142,7 @@ def crystallinity(
     half_span: int,
     l_proj: float = 1.27,
     exclude_window: int | None = None,
+    ring: bool = False,
 ) -> CrystallinityResult:
     """Crystalline fraction and largest crystalline cluster from local chain alignment.
 
@@ -158,6 +168,9 @@ def crystallinity(
     backbone step on the stem axis (Angstrom; 1.27 for PE at AA/UA, ~1.08 for
     the iPP 3_1 helix = 6.5 A / 6; set it for CG beads). Same-chain sites
     beyond the window (a stem folded back next to its own chain) still count.
+    ``ring``: chains are infinite stems bonded to their own periodic image (a crystal
+    built with ``sepsim build crystal``, D59): chords wrap around each chain (no end
+    sites) and the same-chain distance |i - j| is taken around the ring.
     Neighbour search: MDAnalysis ``self_capped_distance``, orthorhombic or
     triclinic cells; r_c must be less than half the smallest perpendicular
     cell width.
@@ -179,7 +192,7 @@ def crystallinity(
     cid = np.asarray(chain_id)
     h_mat = _cell_matrix(cell)
     n = len(x)
-    u = chord_vectors(x, cid, h_mat, half_span)
+    u = chord_vectors(x, cid, h_mat, half_span, ring=ring)
     valid = ~np.isnan(u[:, 0])
     idx = np.flatnonzero(valid)
 
@@ -191,7 +204,11 @@ def crystallinity(
         exclude_window = int(np.ceil(r_c / l_proj)) + half_span
     pi, pj = _neighbour_pairs(x[idx], h_mat, r_c)
     i, j = idx[pi], idx[pj]
-    keep = (cid[i] != cid[j]) | (np.abs(seq[i] - seq[j]) > exclude_window)
+    sep = np.abs(seq[i] - seq[j])
+    if ring:  # around the ring: the chain's length minus the forward distance
+        length = np.diff(np.r_[starts, n])[np.searchsorted(starts, i, side="right") - 1]
+        sep = np.minimum(sep, length - sep)
+    keep = (cid[i] != cid[j]) | (sep > exclude_window)
     i, j = i[keep], j[keep]
 
     p2_pair = 1.5 * np.einsum("ij,ij->i", u[i], u[j]) ** 2 - 0.5

@@ -95,7 +95,10 @@ def _straight_chains(nx, length, spacing, step):
     return pos, chains
 
 
-def test_crystallinity_monitor_aligned_vs_random():
+def test_crystallinity_monitor_aligned_vs_random(tmp_path, monkeypatch):
+    import sepsim.analyze as an
+
+    monkeypatch.setattr(an, "CALIBRATION_DIR", tmp_path)  # no D59 record: the D56 threshold
     par = crystal_parameters(CG_MAN)
     assert par["r_c_A"] == pytest.approx(1.4 * 4.506) and par["l_proj_A"] == pytest.approx(3.64)
     assert crystal_parameters({"polymer": "pe", "resolution": "ua"})["r_c_A"] == 6.5

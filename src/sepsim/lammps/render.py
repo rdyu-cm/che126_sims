@@ -3,13 +3,14 @@
 A deck is rendered from ``templates/<protocol>.in.j2`` (``prep``, ``sweep``,
 ``benchmark``, ``extend``, ``cool``, ``diffuse``, ``tensile``, ``cavitation`` for bulk systems; ``pore_relax`` for wide 500 K
 slit pores and ``pore`` for narrowed ones, D44/D48; ``hole`` for hole systems, D52; ``puncture``
-for film systems, D57) and the system's
+for film systems, D57; ``crystal`` for crystal systems, which also take ``tensile``,
+D59) and the system's
 ``manifest.yaml``: styles, mixing, special_bonds, type ids and SHAKE bond types come
 from the manifest; every coefficient line is emitted from the force-field YAML via
 ``sepsim.ff.params.to_lammps_real`` (the deck must not rely on data-file coefficients,
 because changing ``pair_style`` during the push-off discards them). Run parameters come
 from a per-protocol, per-resolution defaults table (decisions D12a, D12c, D12g, D20,
-D24, D25, D28, D31, D34-D39, D44, D47, D48, D53, D54, D57, D58), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
+D24, D25, D28, D31, D34-D39, D44, D47, D48, D53, D54, D57, D58, D59), an optional preset (``smoke``) and ``key=value`` overrides, in that order. The deck
 header lists every resolved parameter; output is deterministic (no timestamps).
 
 Decks carry no accelerator ``package`` or suffix lines; pass ``-sf``/``-pk`` to ``lmp``.
@@ -34,11 +35,15 @@ PROTOCOLS = ("prep", "sweep", "benchmark", "pore_relax", "pore", "extend", "cool
 PROTOCOLS += ("diffuse", "tensile")  # D53, D54
 PROTOCOLS += ("hole",)  # D52
 PROTOCOLS += ("puncture", "cavitation")  # D57, D58
+PROTOCOLS += ("crystal",)  # D59
 # protocols for slit-pore systems (manifest has a ``pore`` key), by pore.kind (D48)
 PORE_PROTOCOLS = {"pore_relax": "wide", "pore": "narrow"}
 # free films (D52, D57): manifest key -> the one protocol such a system takes (and only it)
 FILM_PROTOCOLS = {"hole": "hole", "film": "puncture"}
 _FILM_DECISION = {"hole": "D52", "film": "D57"}
+# crystal systems (manifest key ``crystal``, D59) take only these; ``crystal`` needs one
+CRYSTAL_PROTOCOLS = ("crystal", "tensile")
+CRYSTAL_TENSILE_AXES = "x,y"  # default tensile axes of a crystal (z = along the stems)
 MANIFEST_NAME = "manifest.yaml"
 DATA_NAME = "data.lmp"
 
@@ -346,6 +351,28 @@ CAVITATION_DEFAULTS = {
     for res in DEFAULTS
 }
 
+# Perfect-crystal reference (D59): minimize (box relaxed, aniso), then NPT holds at each T
+# of crystal_grid_c with x, y, z barostatted independently (aniso, couple none: the
+# lateral axes are inequivalent), frames every crystal_dump_ps, write_data per hold;
+# optional heating ramp after the last hold to ramp_to_c over ramp_ps (stability bound).
+CRYSTAL_DEFAULTS = {
+    res: {k: DEFAULTS[res][k] for k in (*_FF_KEYS, *_MIN_KEYS)}
+    | {
+        # tighter than the bulk 1e-4: with the box relaxing, the relative energy change per
+        # iteration is small long before the lattice stress is gone (smoke: 14 iterations)
+        "min_etol": 1.0e-8,
+        "min_box_relax": True,  # fix box/relax aniso p_atm couple none during the minimization
+        "crystal_grid_c": "25,90,130,160",  # holds in deg C, in this order
+        "crystal_hold_ps": {"aa": 1000.0, "ua": 2000.0, "cg": 10000.0}[res],
+        "crystal_dump_ps": 10.0,
+        "ramp": False,
+        "ramp_to_c": 200.0,
+        "ramp_ps": {"aa": 2000.0, "ua": 4000.0, "cg": 20000.0}[res],
+        "ramp_dump_ps": 100.0,
+    }
+    for res in DEFAULTS
+}
+
 PROTOCOL_DEFAULTS = {
     "prep": DEFAULTS,
     "sweep": SWEEP_DEFAULTS,
@@ -359,6 +386,7 @@ PROTOCOL_DEFAULTS = {
     "tensile": TENSILE_DEFAULTS,
     "puncture": PUNCTURE_DEFAULTS,
     "cavitation": CAVITATION_DEFAULTS,
+    "crystal": CRYSTAL_DEFAULTS,
 }
 
 # Data a protocol reads by default: a prep output in the sibling prep/ run directory.
@@ -422,6 +450,11 @@ PRESETS = {
         "travel_nm": 1.0,
         "puncture_dump_ps": 0.1,
         "cav_dump_ps": 0.5,
+        # crystal (D59): 2 ps holds, a 1 ps ramp when switched on
+        "crystal_hold_ps": 2.0,
+        "crystal_dump_ps": 0.5,
+        "ramp_ps": 1.0,
+        "ramp_dump_ps": 0.5,
         # benchmark
         "warmup_steps": 100,
         "timed_steps": 200,
@@ -513,6 +546,8 @@ def resolve_params(
             raise RenderError(
                 f"cav_mode: expected one of {', '.join(CAV_MODES)}, got {params['cav_mode']!r}"
             )
+    if protocol == "crystal":
+        crystal_segments(params)
     if protocol == "benchmark" and params["ensemble"] not in BENCHMARK_ENSEMBLES:
         raise RenderError(
             f"--set ensemble: expected one of {', '.join(BENCHMARK_ENSEMBLES)},"
@@ -536,6 +571,64 @@ def parse_grid(text: str) -> list[tuple[float, bool]]:
     if len(points) < 2 and not points[0][1]:
         raise RenderError("sweep_grid_c: no segments (need a hold or at least two points)")
     return points
+
+
+def crystal_segments(params: dict) -> list[dict]:
+    """Segments of the crystal deck (D59): one NPT hold per temperature of
+    ``crystal_grid_c`` (deg C, comma separated, run in that order; an ``h`` suffix is
+    accepted), each with its DCD and ``hold_<T>C`` snapshot, then the optional ramp."""
+    temps = []
+    for raw in str(params["crystal_grid_c"]).split(","):
+        item = raw.strip().lower().removesuffix("h")
+        try:
+            temps.append(float(item))
+        except ValueError:
+            raise RenderError(
+                f"crystal_grid_c: bad point {raw!r} (expected e.g. 25,90,130,160)"
+            ) from None
+    if not temps or len(set(temps)) != len(temps):
+        raise RenderError(
+            f"crystal_grid_c: need distinct temperatures, got {params['crystal_grid_c']!r}"
+        )
+    for key in ("crystal_hold_ps", "crystal_dump_ps", "ramp_ps", "ramp_dump_ps"):
+        if params[key] <= 0:
+            raise RenderError(f"{key} must be > 0")
+    segs = []
+    for k, t_c in enumerate(temps):
+        label = _label(t_c)
+        segs.append(
+            {
+                "index": k + 1,
+                "kind": "hold",
+                "t_c": t_c,
+                "t_k": t_c + 273.15,
+                "ps": params["crystal_hold_ps"],
+                "dump_ps": params["crystal_dump_ps"],
+                "dcd": f"seg{k + 1:02d}_hold_{label}.dcd",
+                "stage": f"hold_{label}",
+            }
+        )
+    if params["ramp"]:
+        t0, t1 = temps[-1], params["ramp_to_c"]
+        if t1 <= t0:
+            raise RenderError(f"ramp_to_c {t1:g} C must be above the last hold ({t0:g} C)")
+        k = len(segs) + 1
+        segs.append(
+            {
+                "index": k,
+                "kind": "ramp",
+                "t_c": t0,
+                "t_k": t0 + 273.15,
+                "t1_c": t1,
+                "t1_k": t1 + 273.15,
+                "ps": params["ramp_ps"],
+                "dump_ps": params["ramp_dump_ps"],
+                "rate_k_ns": (t1 - t0) / (params["ramp_ps"] / 1000.0),
+                "dcd": f"seg{k:02d}_ramp_{_label(t0)}_{_label(t1)}.dcd",
+                "stage": f"ramp_{_label(t1)}",
+            }
+        )
+    return segs
 
 
 def _check_bursts(params: dict) -> None:
@@ -865,6 +958,17 @@ def render_deck(
         raise RenderError(f"{manifest_path}: no such file")
     manifest = yaml.safe_load(manifest_path.read_text())
     pore = manifest.get("pore")
+    crystal = manifest.get("crystal")
+    if crystal is not None and protocol not in CRYSTAL_PROTOCOLS:
+        raise RenderError(
+            f"{manifest['id']}: a crystal system (D59) takes the"
+            f" {' or '.join(CRYSTAL_PROTOCOLS)} protocol, not {protocol}"
+        )
+    if crystal is None and protocol == "crystal":
+        raise RenderError(
+            f"{manifest['id']}: the crystal protocol is for crystal systems"
+            " (sepsim build crystal, D59)"
+        )
     film = next((k for k in FILM_PROTOCOLS if manifest.get(k) is not None), None)
     if film is not None and protocol != FILM_PROTOCOLS[film]:
         raise RenderError(
@@ -943,8 +1047,22 @@ def render_deck(
     elif protocol == "diffuse":
         context["chunks"] = extend_chunks(params, "diffuse_ps", "hold")
     elif protocol == "tensile":
+        if crystal is not None and "axes" not in (overrides or {}):
+            # D59: pulling a crystal along z stretches its infinite covalent stems (bonds and
+            # angles across the periodic boundary), not a material response: x and y only
+            # unless z is asked for explicitly (--set axes=x,y,z)
+            params["axes"] = CRYSTAL_TENSILE_AXES
         context["axes"] = tensile_axes(params)
         context["rate"] = rate_label(params["rate_per_s"])
+        context["crystal_tensile"] = crystal is not None
+        if crystal is not None:  # D59: the lateral axes of a crystal are inequivalent
+            for a in context["axes"]:
+                a["couple"] = "none"
+    elif protocol == "crystal":
+        context["segments"] = crystal_segments(params)
+        context["crystal"] = crystal
+        # D59: x, y and z barostatted independently (aniso, couple none)
+        context["barostat"] = f"aniso {p_atm} {p_atm} {pdamp} couple none"
     elif protocol == "cavitation":
         context["rate"] = rate_label(params["rate_per_s"])
         context["cav_ps"] = params["strain_max"] / params["rate_per_s"] * 1e12

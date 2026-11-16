@@ -907,7 +907,8 @@ def progress_report(
         report["errors"] = log.errors[-3:]
     segments = parse_deck(deck)
     rows, info = _segments_with_log(segments, log)
-    if protocol == "tensile":  # D54: Pxx Pyy Pzz are the load, not a surface tension
+    # D54: Pxx Pyy Pzz are the load, not a surface tension; D59: a crystal has no surface
+    if protocol in ("tensile", "crystal"):
         for r in rows:
             (r.get("stats") or {}).pop("gamma", None)
     if info["extra_runs"]:

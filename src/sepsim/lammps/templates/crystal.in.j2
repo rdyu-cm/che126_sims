@@ -1,0 +1,57 @@
+{#- Perfect-crystal reference (D59) of a `sepsim build crystal` system: infinite stems along
+    z bonded to their own image (D6d). Minimize (box relaxed anisotropically at p_atm when
+    min_box_relax), then one NPT hold per temperature of crystal_grid_c, in order, each
+    after an instantaneous target change, with x, y and z barostatted independently
+    (aniso, couple none: a and b are inequivalent); a DCD per hold and write_data
+    hold_<T>C.data at its end; optional heating ramp from the last hold to ramp_to_c
+    (ramp=true; a periodic perfect crystal superheats, so it bounds stability, not Tm).
+    Velocities are created at the first hold T after the minimization. -#}
+{% import "_ff.in.j2" as ff with context %}
+{% set tdamp = p.tdamp_dt * p.dt_fs %}
+{{ ff.header() -}}
+# Crystal (D59): {{ crystal.stems }} stems x {{ crystal.sites_per_stem }} sites, {{ crystal.repeats.na }} x {{ crystal.repeats.nb }} cells of {{ crystal.lattice.source }} (a {{ crystal.lattice.a_A | num }}, b {{ crystal.lattice.b_A | num }} A), stems along z, box {{ crystal.box_lengths_A | map("round", 4) | join(" x ") }} A
+#   seg  kind   T/C            ps        frame/ps  outputs
+{% for s in segments %}
+#   {{ "%-4s" | format(s.index) }} {{ "%-6s" | format(s.kind) }} {{ "%-14s" | format((s.t_c | num) ~ ((" -> " ~ (s.t1_c | num)) if s.kind == "ramp" else "")) }} {{ "%-9s" | format(s.ps | num) }} {{ "%-9s" | format(s.dump_ps | num) }} {{ s.dcd }} {{ s.stage }}.data
+{% endfor %}
+{{ ff.setup() -}}
+{{ ff.thermo(stress=true) -}}
+
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart {{ n(p.restart_ps) }} restart.a restart.b
+
+# ---- Stage 1: minimize the lattice{% if p.min_box_relax %} with the box relaxed (aniso {{ p.p_atm | num }} atm, couple none){% endif %} -> minimized.data
+thermo 100
+{% if p.min_box_relax %}
+fix relax all box/relax aniso {{ p.p_atm | num }} couple none vmax 0.001
+{% endif %}
+minimize {{ p.min_etol }} {{ p.min_ftol }} {{ p.min_maxiter }} {{ p.min_maxeval }}
+{% if p.min_box_relax %}
+unfix relax
+{% endif %}
+{{ ff.write_data("minimized") -}}
+# the minimizer advanced the step counter: restart it so dump intervals line up with segment starts
+reset_timestep 0
+{% if shake_types %}
+
+# ---- SHAKE on the constrained bond types (after the minimization)
+{{ ff.shake() -}}
+{% endif %}
+thermo {{ n(p.thermo_ps) }}
+velocity all create {{ segments[0].t_k | num }} {{ system.seed }} mom yes rot no dist gaussian
+{% for s in segments %}
+
+{% if s.kind == "hold" %}
+# ---- Segment {{ s.index }}: hold at {{ s.t_c | num }} C ({{ s.t_k | num }} K), {{ s.ps | num }} ps, frames every {{ s.dump_ps | num }} ps -> {{ s.dcd }}, {{ s.stage }}.data
+fix md all npt temp {{ s.t_k | num }} {{ s.t_k | num }} {{ tdamp | num }} {{ barostat }}
+{% else %}
+# ---- Segment {{ s.index }}: ramp from {{ s.t_c | num }} to {{ s.t1_c | num }} C at {{ "%.4g" | format(s.rate_k_ns) }} K/ns ({{ s.ps | num }} ps, frames every {{ s.dump_ps | num }} ps) -> {{ s.dcd }}, {{ s.stage }}.data
+fix md all npt temp {{ s.t_k | num }} {{ s.t1_k | num }} {{ tdamp | num }} {{ barostat }}
+{% endif %}
+dump traj all dcd {{ n(s.dump_ps) }} {{ s.dcd }}
+dump_modify traj unwrap yes
+run {{ n(s.ps) }}
+undump traj
+unfix md
+{{ ff.write(s.stage) -}}
+{% endfor %}

@@ -3,7 +3,8 @@
     each starts from the same snapshot (`clear`, then the force-field setup and read_data
     again; variables survive `clear`, so their names carry the axis). Along the axis
     `fix deform erate` (engineering rate, 1/fs in units real); the two lateral axes are
-    barostatted at p_atm, coupled (fix npt; no dimension is in both fixes). Every avg_ps
+    barostatted at p_atm, coupled (fix npt; no dimension is in both fixes; a crystal
+    system, D59, keeps them independent: couple none). Every avg_ps
     the averages of the engineering strain, Pxx Pyy Pzz (atm), Lx Ly Lz and T go to
     tensile_<axis>.txt; frames every tensile_dump_ps into tensile_<axis>.dcd.
     `sepsim analyze tensile` reads the .txt files. -#}
@@ -28,7 +29,10 @@ thermo {{ n(p.thermo_ps) }}
 restart {{ n(p.restart_ps) }} restart.a restart.b
 
 # ---- Segment {{ a.index }}: tensile along {{ a.ax }} at {{ p.t_c | num }} C, {{ rate }} /s (D54) -> {{ a.txt }}, {{ a.dcd }}
-# engineering strain rate {{ erate | num }} 1/fs, {{ n(a.run_ps) }} steps ({{ a.run_ps | num }} ps) to strain {{ p.strain_max | num }}; {{ a.lat | join(" and ") }} at {{ p.p_atm | num }} atm, coupled
+# engineering strain rate {{ erate | num }} 1/fs, {{ n(a.run_ps) }} steps ({{ a.run_ps | num }} ps) to strain {{ p.strain_max | num }}; {{ a.lat | join(" and ") }} at {{ p.p_atm | num }} atm, {{ "coupled" if a.couple != "none" else "independent (crystal, D59)" }}
+{% if crystal_tensile and a.ax == "z" %}
+# z requested explicitly on a crystal (D59): this stretches the infinite covalent stems bonded across the periodic boundary, a model artefact rather than a material property
+{% endif %}
 variable {{ a.var }}_l0 equal $(l{{ a.ax }})
 variable {{ a.var }}_e equal (l{{ a.ax }}-v_{{ a.var }}_l0)/v_{{ a.var }}_l0
 {% for b in ("x", "y", "z") %}
