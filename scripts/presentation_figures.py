@@ -4306,7 +4306,9 @@ def _f9_values(ax, series, rows, prop, info) -> None:
 
 
 def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
-    fig, axes = plt.subplots(2, 3, figsize=(15.0, 9.0), layout="constrained")
+    fig, axes = plt.subplot_mosaic(
+        [["a", "b", "c"], ["d", "e", "e"]], figsize=(15.0, 9.0), layout="constrained"
+    )
     info: dict = {}
     sweeps = [s for s in find_series(data, "bulk", "sweep") if s["primary"]]
     pores = find_series(data, "pore", "pore")
@@ -4326,13 +4328,11 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
     csv_path = write_slope_csv(rows, out / SLOPE_CSV)
     info["csv"] = csv_path.name
     info["rows"] = len(rows)
-    cg_pores = [s for s in pores if s["res"] == "cg"]
-    ua_pores = [s for s in pores if s["res"] != "cg"]  # step gamma SEM ~6 mN/m: own panel
     # (axis, letter, title, series, property, y label, values instead of slopes)
     panels = (
-        (axes[0, 0], "a", r"Density $\rho$", sweeps, "density", r"$\rho$ (g cm$^{-3}$)", True),
+        (axes["a"], "a", r"Density $\rho$", sweeps, "density", r"$\rho$ (g cm$^{-3}$)", True),
         (
-            axes[0, 1],
+            axes["b"],
             "b",
             r"Thermal expansion $\alpha_V = -\mathrm{d}\ln\rho/\mathrm{d}T$",
             sweeps,
@@ -4341,7 +4341,7 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
             False,
         ),
         (
-            axes[0, 2],
+            axes["c"],
             "c",
             r"Compressibility $\kappa_T$",
             sweeps,
@@ -4350,7 +4350,7 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
             True,
         ),
         (
-            axes[1, 0],
+            axes["d"],
             "d",
             r"$R_g = \langle R_g^2\rangle^{1/2}$ (not equilibrium)",
             sweeps,
@@ -4359,19 +4359,10 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
             True,
         ),
         (
-            axes[1, 1],
+            axes["e"],
             "e",
-            r"Surface tension $\gamma$, CG pores",
-            cg_pores,
-            "gamma",
-            r"$\gamma$ (mN m$^{-1}$)",
-            True,
-        ),
-        (
-            axes[1, 2],
-            "f",
-            r"Surface tension $\gamma$, UA pores",
-            ua_pores,
+            r"Surface tension $\gamma$, pores (CG and UA)",
+            pores,
             "gamma",
             r"$\gamma$ (mN m$^{-1}$)",
             True,
@@ -4388,7 +4379,7 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
             _f9_slopes(ax, series, rows, prop, info)
         ax.set_ylabel(ylabel)
     fits_drawn = bool(sweeps) and _f9_fit_lines(
-        axes[0, 1], sweeps, "sweep", "alpha_V", "alpha_V_per_K", 1e4
+        axes["b"], sweeps, "sweep", "alpha_V", "alpha_V_per_K", 1e4
     )
     for r in rows:  # Birge scale per property (value rows) and system
         if r["kind"] == "value":
@@ -4410,6 +4401,16 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
     if fits_drawn:
         keys.append(
             Line2D([], [], color="0.3", lw=3.2, alpha=0.35, label="(b) results.json fit (window)")
+        )
+    for pol in _exp_polymers(pores):  # experimental gamma(T) on the shared pore axis
+        gl = EXPERIMENT.get(pol, {}).get("gamma_line")
+        if gl:
+            tt = np.array([25.0, 160.0])
+            axes["e"].plot(tt, gl["a"] + gl["b"] * tt, **EXP_KW, lw=1.6)
+            info.setdefault("gamma_expt", []).append(gl["source"])
+    if info.get("gamma_expt"):
+        keys.append(
+            Line2D([], [], color="black", lw=1.6, label="(e) PE expt. γ (LLDPE melt, Moreira)")
         )
     if sweeps or pores:
         fig_legend(fig, [bulk, pore, keys])
@@ -5017,9 +5018,10 @@ def caption_fig9(info: dict, data: dict) -> str:
         " fluctuations of each step. (d) R<sub>g</sub> = ⟨R<sub>g</sub>²⟩<sup>1/2</sup>:"
         " chains do not relax within a step (τ<sub>1</sub> ≫ step length, D56), so the"
         " per-step R<sub>g</sub> carries the history of the previous temperatures and these"
-        " are **not equilibrium values**. (e, f) Pore surface tension γ of the CG pores"
-        " (40-chain circle, 2×2×2 diamond, 4×4×1 triangle) and of the UA pores, whose"
-        " per-step γ SEM (≈6 mN m⁻¹) would swamp the CG points. **Errors**: the per-step"
+        " are **not equilibrium values**. (e) Pore surface tension γ of the CG pores"
+        " (40-chain circle, 2×2×2 diamond, 4×4×1 triangle) and the UA pores on one axis;"
+        " the UA per-step SEM (≈6 mN m⁻¹) is ~4× the CG one; black line: LLDPE melt"
+        " γ = 39.05 − 0.0725 T(°C) mN m⁻¹ (Moreira et al. 2003). **Errors**: the per-step"
         " SEMs are lower bounds (true noise 1.3–3.5× larger, D55), so each system and"
         " property gets a Birge scale s = √max(1, χ²<sub>red</sub>) from a 1/SEM²-weighted"
         " quadratic fit of y(T); error bars are s × SEM (s ranges: "
