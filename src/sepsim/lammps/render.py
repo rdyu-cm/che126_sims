@@ -301,10 +301,11 @@ TENSILE_DEFAULTS = {
 }
 
 # Puncture test (D57) of a free film (sepsim build film): NVT at the film T with its D48
-# box, z non-periodic (boundary p p m: no z image), a hemispherical-tipped cylinder from
-# two fix indent (sphere + cone with equal radii, K in kcal/mol/A^3) settled clear of
-# the film, then driven down at indent_v_m_s by travel_nm (0 = auto: film z extent
-# + 2 clearance + R + overshoot); averages every avg_ps into puncture.txt.
+# box, z non-periodic (boundary p p m: no z image), a hemispherical-tipped cylinder (fix
+# indent sphere, K in kcal/mol/A^3, + a moving cylinder region with fix wall/region
+# harmonic as the shaft) settled clear of the film, then driven down at indent_v_m_s by
+# travel_nm (0 = auto: film z extent + 2 clearance + R + overshoot); averages every
+# avg_ps into puncture.txt.
 PUNCTURE_THERMOSTATS = ("nvt", "partial")
 PUNCTURE_DEFAULTS = {
     res: {k: DEFAULTS[res][k] for k in _FF_KEYS}
@@ -313,6 +314,10 @@ PUNCTURE_DEFAULTS = {
         "indent_r_nm": 2.0,
         "indent_v_m_s": 1.0,
         "indent_k": 1.0,
+        # shaft wall (fix wall/region harmonic): eps kcal/mol/A^2, cutoff A; region radius
+        # R - cut, so the force starts at r = R (job 418 test, 2026-11-16)
+        "shaft_eps": 5.0,
+        "shaft_cut_a": 3.0,
         "indent_x_nm": 0.0,  # axis offset from the box centre
         "indent_y_nm": 0.0,
         "clearance_nm": 1.0,  # tip bottom above the film's max z at the start
@@ -1357,6 +1362,13 @@ def _check_puncture(params: dict) -> None:
     for key in ("indent_r_nm", "indent_v_m_s", "indent_k", "settle_ps", "avg_ps"):
         if params[key] <= 0:
             raise RenderError(f"{key} must be > 0")
+    for key in ("shaft_eps", "shaft_cut_a"):
+        if params[key] <= 0:
+            raise RenderError(f"{key} must be > 0")
+    if params["shaft_cut_a"] >= 10.0 * params["indent_r_nm"]:
+        raise RenderError(
+            f"shaft_cut_a {params['shaft_cut_a']:g} must be < R ({params['indent_r_nm']:g} nm)"
+        )
     if params["puncture_dump_ps"] <= 0:
         raise RenderError("puncture_dump_ps must be > 0")
     for key in ("travel_nm", "clearance_nm", "overshoot_nm", "clamp_r_nm"):
@@ -1378,7 +1390,8 @@ def puncture_plan(params: dict, film: dict, box) -> dict:
     """Indenter geometry and the indentation run (D57), lengths in A: axis (box centre +
     offset), start centre z0 (tip bottom ``clearance_nm`` above the film's max z), travel
     (``travel_nm``, or 0 = film z extent + 2 clearance + R + overshoot) rounded to whole
-    steps at indent_v_m_s, end centre z1."""
+    steps at indent_v_m_s, end centre z1; the shaft region (radius R - shaft_cut_a, from
+    z0 to z0 + travel + 200, so its top stays >= 200 A above the start)."""
     r_a = 10.0 * params["indent_r_nm"]
     zmin, zmax = (float(z) for z in film["film_z_extent_angstrom"])
     clear = 10.0 * params["clearance_nm"]
@@ -1412,6 +1425,8 @@ def puncture_plan(params: dict, film: dict, box) -> dict:
         "a_per_fs": params["indent_v_m_s"] * A_PER_FS_PER_M_S,
         "film_z": [zmin, zmax],
         "clamp_a": clamp_a,
+        "shaft_r": r_a - params["shaft_cut_a"],
+        "shaft_top": z0 + travel + 200.0,
     }
 
 

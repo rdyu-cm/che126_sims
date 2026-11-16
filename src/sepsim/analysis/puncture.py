@@ -1,8 +1,9 @@
 """Puncture test of a free film (D57): force-depth curve, peak, break-through, energy.
 
 Input is the ``fix ave/time`` output of the ``puncture`` deck (``puncture.txt``: the tip
-centre z ``zc``, the force on the indenter from its two ``fix indent`` (``f_tip[k]``,
-``f_shaft[k]``, kcal/mol/A), T near and far from the axis, the bead z range) and,
+centre z ``zc``, the force on the indenter from the tip ``fix indent`` and the shaft
+``fix wall/region`` (``f_tip[k]``, ``f_shaft[k]``, kcal/mol/A; a ``fix indent cone`` shaft
+before 2026-11-16), T near and far from the axis, the bead z range) and,
 frame by frame, the bead positions of ``puncture.dcd``. All lengths here are Angstrom
 unless named ``_nm``; forces are converted to nN.
 
@@ -43,6 +44,7 @@ FAR_PAD_A = 20.0  # far field: r > R + 2 nm
 EDGE_FRAC = 0.4  # film edge: r > 0.4 min(Lx, Ly) (inside the default clamp, r > 8 nm)
 DRIFT_FLAG_A = 3.0  # edge mean z moving more than this: the film translates with the tip
 INSIDE_FLAG = 1e-3  # beads inside the indenter: flag above this fraction
+SHAFT_FLAG = 0.10  # shaft share of F at the peak: flag above this fraction
 STRETCH_FLAG = 0.20  # bond stretch: flag 20 points above the first Stage 2 frame (thermal baseline)
 Z_PAD_A = 20.0  # z padding of the (non-periodic) film profile
 
@@ -53,6 +55,16 @@ def indenter_force(data: dict[str, np.ndarray]) -> tuple[np.ndarray, bool]:
     f = (np.asarray(data["f_tip[3]"]) + np.asarray(data["f_shaft[3]"])) * KCAL_MOL_A_NN
     flipped = bool(len(f) and -f.min() > f.max())
     return (-f if flipped else f), flipped
+
+
+def shaft_share(d, f, f_shaft, d_peak: float) -> float | None:
+    """|f_shaft[3]| / |F| at the row nearest d_peak (``f``, ``f_shaft`` in the same
+    units); None without rows or for F = 0 there."""
+    d, f = np.asarray(d, dtype=float), np.asarray(f, dtype=float)
+    if not len(d):
+        return None
+    k = int(np.argmin(np.abs(d - d_peak)))
+    return float(abs(np.asarray(f_shaft, dtype=float)[k]) / abs(f[k])) if f[k] else None
 
 
 def depth_nm(zc, r_a: float, z_top0: float) -> np.ndarray:

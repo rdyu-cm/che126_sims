@@ -134,18 +134,23 @@ def test_puncture_deck_round_trip(film_sys, tmp_path):
     tip = next(c for c in cmds if c[:2] == ["fix", "tip"])
     assert tip[3:6] == ["indent", "1", "sphere"] and tip[8:] == ["v_zc", "20", "units", "box"]
     assert [float(t) for t in tip[6:8]] == pytest.approx([xc, yc])
-    shaft = next(c for c in cmds if c[:2] == ["fix", "shaft"])
-    assert shaft[3:7] == ["indent", "1", "cone", "z"] and shaft[9:] == [
-        "20",
-        "20",
-        "v_zc",
-        "v_zs",
-        "units",
-        "box",
-    ]
+    # shaft: a cylinder region (radius R - cut, from the tip centre up) moving with v_zc,
+    # fix wall/region harmonic (not fix indent cone, amendment 2026-11-16)
+    travel = 135.0
+    reg = next(c for c in cmds if c[:2] == ["region", "shaftr"])
+    assert reg[2:4] == ["cylinder", "z"] and [float(t) for t in reg[4:6]] == pytest.approx([xc, yc])
+    assert float(reg[6]) == pytest.approx(17.0) and float(reg[7]) == pytest.approx(z0)
+    assert float(reg[8]) == pytest.approx(z0 + travel + 200.0)
+    assert reg[9:] == ["side", "out", "move", "NULL", "NULL", "v_dz", "units", "box"]
+    assert ["fix", "shaft", "all", "wall/region", "shaftr", "harmonic", "5", "1", "3"] in cmds
+    assert not any(c[:2] == ["fix", "shaft"] and "cone" in c for c in cmds)
+    dz = next(c for c in cmds if c[:2] == ["variable", "dz"])
+    assert dz[3] == f"v_zc-{z0:.12g}"
     assert ["fix_modify", "tip", "energy", "yes"] in cmds
     assert ["fix_modify", "shaft", "energy", "yes"] in cmds
-    assert ["variable", "zs", "equal", "v_zc+200"] in cmds
+    # the region and dz are defined once, before Stage 1; v_zc is redefined for Stage 2
+    first_run = next(i for i, c in enumerate(cmds) if c[0] == "run")
+    assert cmds.index(reg) < first_run and cmds.index(dz) < first_run
     zc = [c for c in cmds if c[:2] == ["variable", "zc"]]
     assert float(zc[0][3]) == pytest.approx(z0)
     # 13.5 nm at 1 m/s = 1e-5 A/fs, dt 10 fs: 135 A / 1e-4 A per step = 1,350,000 steps
@@ -214,6 +219,8 @@ def test_puncture_auto_travel_smoke_and_partial(film_sys):
         ({"boundary": "p m p"}, "boundary"),
         ({"indent_r_nm": "0"}, "indent_r_nm"),
         ({"travel_nm": "-1"}, "travel_nm"),
+        ({"shaft_eps": "0"}, "shaft_eps"),
+        ({"shaft_cut_a": "20"}, "shaft_cut_a .* < R"),  # region radius R - cut must be > 0
     ):
         with pytest.raises(RenderError, match=match):
             render_deck("puncture", film_sys, overrides=bad)
@@ -339,9 +346,10 @@ def _write_dcd(path, frames, lengths):
             w.write(u.atoms)
 
 
-def _puncture_run(film_sys, run, z_top, tag=""):
+def _puncture_run(film_sys, run, z_top, tag="", shaft=0.05):
     """A smoke puncture deck (travel 10 nm at 100 m/s) and a synthetic puncture.txt:
-    settle rows with noise, then F(d) of :func:`_force` with d from the tip ramp."""
+    settle rows with noise, then F(d) of :func:`_force` with d from the tip ramp, a
+    fraction ``shaft`` of it on the shaft."""
     over = {"travel_nm": "10", "clamp_r_nm": "0"} | ({"tag": tag} if tag else {})
     run.mkdir(parents=True)
     deck = render_deck("puncture", film_sys, preset="smoke", overrides=over, deck_dir=run)
@@ -363,7 +371,7 @@ def _puncture_run(film_sys, run, z_top, tag=""):
         d = (z_top - (zc - plan["r_a"])) / 10.0
         f = (float(_force(d)) if step > 100 else rng.normal(0, 0.005)) / P.KCAL_MOL_A_NN
         lines.append(
-            f"{step} {zc:.8g} 0 0 {0.7 * f:.8g} 0 0 {0.3 * f:.8g} 0 0 433 434 433"
+            f"{step} {zc:.8g} 0 0 {(1 - shaft) * f:.8g} 0 0 {shaft * f:.8g} 0 0 433 434 433"
             f" {z_top - 60.0:.8g} {z_top:.8g} 1"
         )
     (run / "puncture.txt").write_text("\n".join(lines) + "\n")
@@ -390,11 +398,13 @@ def test_analyze_puncture_report_and_cli(film_sys, tmp_path, monkeypatch, capsys
     assert r["break"]["d_break_nm"] is None and any("no puncture.dcd" in n for n in r["notes"])
     assert r["diagnostics"]["t_near_K"] == pytest.approx(434.0)
     assert "lz_growth_A" in r["diagnostics"] and not r["flags"]
+    assert r["shaft_share_peak"] == pytest.approx(0.05) and not r["cone_shaft"]
     write_results(report, tmp_path / "res")
     js = json.loads((tmp_path / "res" / "results.json").read_text())
     assert js["runs"][0]["curve"]["f_peak_nN"] == pytest.approx(c["f_peak_nN"])
     md = (tmp_path / "res" / "results.md").read_text()
     assert "Caveats" in md and "chain pull-out" in md and "| F_peak |" in md
+    assert "| shaft share of F at the peak | 5.0% |" in md
     for png in ("force_depth.png", "puncture_vs_T.png", "rate_radius.png", "diagnostics.png"):
         assert (out / png).is_file()
     # a second position with a DCD of the (static) film: frames, diagnostics, maps
@@ -466,3 +476,36 @@ def test_edge_z_drift():
     pos = np.array([[50.0, 50.0, 0.0], [95.0, 50.0, 10.0], [5.0, 50.0, 20.0], [50.0, 2.0, 30.0]])
     # axis (50, 50): r = 0, 45, 45, 48; edge r > 40: the last three
     assert P.edge_z(pos, (50.0, 50.0), lengths) == pytest.approx(20.0)
+
+
+def test_analyze_puncture_shaft_flags(film_sys, tmp_path, monkeypatch):
+    """The shaft share of F at the peak is flagged above 10%; a deck with the old fix indent
+    cone shaft is flagged as carrying the cone-shaft artefact."""
+    from sepsim.analyze_puncture import analyze_puncture, render_markdown
+
+    monkeypatch.chdir(tmp_path)
+    m = yaml.safe_load((film_sys / MANIFEST_NAME).read_text())
+    z_top = m["film"]["film_z_extent_angstrom"][1]
+    run = tmp_path / "runs" / film_sys.name / "puncture_160C_v100_R2nm"
+    _puncture_run(film_sys, run, z_top, shaft=0.3)
+    report, _ = analyze_puncture([run], systems=film_sys.parent, plots=False)
+    r = report["runs"][0]
+    assert r["shaft_share_peak"] == pytest.approx(0.3) and not r["cone_shaft"]
+    assert len(r["flags"]) == 1 and "shaft carries 30% of F at the peak" in r["flags"][0]
+    # the deck as rendered before 2026-11-16: shaft = fix indent cone
+    deck = run / "in.puncture"
+    lines = [
+        ln
+        for ln in deck.read_text().splitlines()
+        if not ln.startswith(("fix shaft", "region shaftr"))
+    ]
+    lines.insert(
+        next(i for i, ln in enumerate(lines) if ln.startswith("fix tip")) + 1,
+        "fix shaft all indent 1 cone z 50 50 20 20 v_zc v_zs units box",
+    )
+    deck.write_text("\n".join(lines) + "\n")
+    report, _ = analyze_puncture([run], systems=film_sys.parent, plots=False)
+    r = report["runs"][0]
+    assert r["cone_shaft"] and any("cone shaft (fix indent cone" in f for f in r["flags"])
+    assert any("(cone shaft artefact)" in f for f in r["flags"])
+    assert "| shaft share of F at the peak | 30.0% (cone shaft) |" in render_markdown(report)

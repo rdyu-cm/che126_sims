@@ -55,8 +55,9 @@ CAVEATS = [
         " the axis (L/2R sets the span); the deflection and the force scale with it."
     ),
     (
-        "The indenter is soft (fix indent, F = K (R − r)², K in kcal/mol/Å³): beads penetrate"
-        " it slightly; check the inside-indenter count below."
+        "The indenter is soft (fix indent tip, F = K (R − r)², K in kcal/mol/Å³; fix"
+        " wall/region shaft, harmonic shaft_eps over shaft_cut_a): beads penetrate it"
+        " slightly; check the inside-indenter count below."
     ),
     (
         "A hole in a melt re-seals: closure after break-through is physical (surface tension),"
@@ -113,6 +114,16 @@ def _bonds(data: Path) -> np.ndarray:
     ids = df.sorted_atoms()[:, 0].astype(np.int64)
     pairs = df.topology("Bonds")[:, 2:4].astype(np.int64)
     return np.searchsorted(ids, pairs)
+
+
+def _cone_shaft(deck: Path) -> bool:
+    """True for a deck whose shaft is ``fix shaft ... indent ... cone`` (before
+    2026-11-16): its force points from the cone's mid-axis point, not the surface normal."""
+    for line in deck.read_text(errors="replace").splitlines():
+        t = line.split("#", 1)[0].split()
+        if t[:2] == ["fix", "shaft"] and "indent" in t and "cone" in t:
+            return True
+    return False
 
 
 def _zc(plan: dict, k_step: int) -> float:
@@ -175,6 +186,13 @@ def analyze_run(run_dir: Path, systems: Path) -> dict:
     f, flipped = P.indenter_force(data)
     if flipped:
         run["notes"].append("indenter z force was negative while pushing: sign flipped")
+    run["cone_shaft"] = _cone_shaft(deck)
+    if run["cone_shaft"]:
+        run["flags"].append(
+            "cone shaft (fix indent cone, before 2026-11-16): its force points from the cone's"
+            " mid-axis point, not the surface normal, so F includes a spurious push on the"
+            " shaft beads (non-conservative); re-run with the fix wall/region shaft"
+        )
     settle = data["step"] <= settle_steps
     ind = ~settle
 
@@ -203,6 +221,15 @@ def analyze_run(run_dir: Path, systems: Path) -> dict:
     if "error" in curve:
         raise PunctureError(f"{run_dir}: {curve['error']}")
     run["curve"] = curve
+    f_shaft = np.asarray(data["f_shaft[3]"], dtype=float) * P.KCAL_MOL_A_NN
+    share = P.shaft_share(d_all[ind], f[ind], f_shaft[ind], curve["d_peak_nm"])
+    run["shaft_share_peak"] = share
+    if share is not None and share > P.SHAFT_FLAG:
+        run["flags"].append(
+            f"the shaft carries {share:.0%} of F at the peak (> {P.SHAFT_FLAG:.0%}): F is not"
+            " the tip alone"
+            + (" (cone shaft artefact)" if run["cone_shaft"] else " (shaft or cap-rim contact)")
+        )
     # signal ii: the tip bottom below the far-field bottom surface
     run["d_bottom_nm"] = run["thickness_nm"] if curve["d_max_nm"] >= run["thickness_nm"] else None
 
@@ -636,6 +663,9 @@ def render_markdown(r: dict) -> str:
             f"| contact depth (nm) | {_f(c['d_contact_nm'])} |",
             f"| F_peak | {fpk:.3g} nN ({fpk * 1e3:.0f} pN){' (at end)' if c['peak_at_end'] else ''} |",
             f"| d_peak (nm) | {c['d_peak_nm']:.2f} |",
+            f"| shaft share of F at the peak | {_f(run.get('shaft_share_peak'), '.1%')}"
+            + (" (cone shaft)" if run.get("cone_shaft") else "")
+            + " |",
             f"| (i) force break d (nm) | {_f(c['d_break_force_nm'])} |",
             f"| (iii) clear ahead d (nm) | {_f(b['d_break_clear_nm'])} |",
             f"| (ii) tip below bottom surface d (nm) | {_f(run['d_bottom_nm'])} |",

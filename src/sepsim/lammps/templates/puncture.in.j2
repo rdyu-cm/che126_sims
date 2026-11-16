@@ -3,12 +3,16 @@
     Nose-Hoover with x, y fixed and z non-periodic (boundary p p m: shrink-wrapped, never
     smaller than the data box, so the film has no z image). The indenter is a
     hemispherical-tipped cylinder about a z axis at the box centre (+ offset): fix indent
-    sphere (the tip) + fix indent cone with equal radii from the tip centre up 200 A (the
-    shaft), F = K (R - r)^2 on beads inside, both in the energy (fix_modify energy yes).
+    sphere (the tip, F = K (R - r)^2 on beads inside) + a moving cylinder region with fix
+    wall/region harmonic (the shaft, from the tip centre up; its region radius R - shaft_cut_a
+    so the wall force starts at r = R), both in the energy (fix_modify energy yes). Not fix
+    indent cone: it takes the force direction from the cone's mid-axis point, not the
+    surface normal, so it pushed shaft beads down along it (non-conservative; amendment
+    2026-11-16).
     Stage 1 settles with the tip clearance_nm above the film; Stage 2 drives the tip
     centre down at indent_v_m_s (ramp). Every avg_ps the averages of the tip centre z, the
-    forces on the indenter (fix indent vectors), the energies, T (all, near the axis, far
-    field), the bead z range and Pzz go to puncture.txt (both stages); `sepsim analyze
+    forces on the indenter (fix indent and wall/region vectors), the energies, T (all,
+    near the axis, far field), the bead z range and Pzz go to puncture.txt (both stages); `sepsim analyze
     puncture` reads it with the DCDs. thermostat=partial thermostats x, y only
     (compute temp/partial 1 1 0). clamp_r_nm > 0 tethers the beads beyond clamp_r_nm
     of the axis at the start in z (fix spring/self clamp_k z; an O-ring clamp stand-in)
@@ -35,11 +39,18 @@ compute tpart all temp/partial 1 1 0
 fix_modify md temp tpart
 {% endif %}
 
-# indenter: sphere (tip) + cylinder above it (cone with equal radii), tip centre at v_zc
+# indenter: sphere (tip) + cylinder above it (shaft), tip centre at v_zc
+# shaft: region radius {{ pu.shaft_r | num }} A = R - cut, from the tip centre (inside the sphere) to
+# {{ pu.shaft_top | num }} A (z0 + travel + 200: the top stays >= 200 A above the start); moves with v_zc
+# via v_dz (Stage 1 0, Stage 2 the ramp). fix wall/region harmonic E = eps (cut - r)^2 at
+# distance r < cut from the region surface, force along its normal; its vector is the
+# total force on the wall from the beads, the force on the indenter as fix indent's, so
+# F = f_tip[3] + f_shaft[3] (smoke 2026-11-16)
 variable zc equal {{ pu.z0 | num }}
-variable zs equal v_zc+200
+variable dz equal v_zc-{{ pu.z0 | num }}
 fix tip all indent {{ p.indent_k | num }} sphere {{ pu.xc | num }} {{ pu.yc | num }} v_zc {{ pu.r_a | num }} units box
-fix shaft all indent {{ p.indent_k | num }} cone z {{ pu.xc | num }} {{ pu.yc | num }} {{ pu.r_a | num }} {{ pu.r_a | num }} v_zc v_zs units box
+region shaftr cylinder z {{ pu.xc | num }} {{ pu.yc | num }} {{ pu.shaft_r | num }} {{ pu.z0 | num }} {{ pu.shaft_top | num }} side out move NULL NULL v_dz units box
+fix shaft all wall/region shaftr harmonic {{ p.shaft_eps | num }} 1 {{ p.shaft_cut_a | num }}
 fix_modify tip energy yes
 fix_modify shaft energy yes
 {% if pu.clamp_a > 0 %}

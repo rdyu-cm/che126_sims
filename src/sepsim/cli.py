@@ -288,7 +288,8 @@ def build_parser() -> argparse.ArgumentParser:
         " for a non-default rate). Writes OUT/in.tensile.",
         "puncture": "Puncture test of a film system (D57, `sepsim build film`): boundary p p m"
         " (z not periodic), NVT at the film T; a hemispherical-tipped cylinder (fix indent"
-        " sphere + cone, R indent_r_nm 2, K indent_k 1 kcal/mol/A^3) settles clear of the film"
+        " sphere, R indent_r_nm 2, K indent_k 1 kcal/mol/A^3, + a fix wall/region cylinder shaft,"
+        " shaft_eps 5, shaft_cut_a 3) settles clear of the film"
         " (settle_ps 200) and is driven down at indent_v_m_s (1 m/s) by travel_nm (0 = auto);"
         " averages every avg_ps into puncture.txt for `sepsim analyze puncture`;"
         " thermostat=partial thermostats x, y only. Default OUT:"
