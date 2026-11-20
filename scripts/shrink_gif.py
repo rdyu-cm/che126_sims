@@ -1,15 +1,29 @@
-"""Re-encode a GIF (e.g. from render_snapshots.py --movie gif) smaller: optional resize,
-one shared adaptive palette, and frame differencing.
+"""Re-encode a GIF (e.g. from render_snapshots.py --movie gif) smaller, or make one from a
+directory of PNG frames (render_movies.py): optional resize, one shared adaptive palette,
+and frame differencing.
 
-    uv run python scripts/shrink_gif.py IN.gif OUT.gif [--width 400] [--colors 64]
-        [--hold-last 1.5]
+    uv run python scripts/shrink_gif.py IN.gif|FRAMES_DIR OUT.gif [--width 400]
+        [--colors 64] [--fps 20] [--hold-last 1.5]
 """
 
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 from PIL import Image
+
+
+def load_frames(src: str) -> tuple[list, float | None]:
+    """RGB frames and the frame time (ms; None for PNG frames) of a GIF or a PNG directory."""
+    if Path(src).is_dir():
+        return [Image.open(p).convert("RGB") for p in sorted(Path(src).glob("*.png"))], None
+    im = Image.open(src)
+    frames = []
+    for k in range(im.n_frames):
+        im.seek(k)
+        frames.append(im.convert("RGB"))
+    return frames, im.info.get("duration")
 
 
 def main(argv=None) -> int:
@@ -22,15 +36,13 @@ def main(argv=None) -> int:
     ap.add_argument("--hold-last", type=float, default=0.0, help="extra seconds on the last frame")
     args = ap.parse_args(argv)
 
-    im = Image.open(args.src)
-    ms = args.fps and 1000.0 / args.fps or im.info.get("duration", 100)
-    frames = []
-    for k in range(im.n_frames):
-        im.seek(k)
-        f = im.convert("RGB")
-        if args.width and f.width != args.width:
-            f = f.resize((args.width, round(f.height * args.width / f.width)), Image.LANCZOS)
-        frames.append(f)
+    frames, src_ms = load_frames(args.src)
+    if not frames:
+        raise SystemExit(f"{args.src}: no frames")
+    ms = args.fps and 1000.0 / args.fps or src_ms or 100
+    if args.width and frames[0].width != args.width:
+        size = (args.width, round(frames[0].height * args.width / frames[0].width))
+        frames = [f.resize(size, Image.LANCZOS) for f in frames]
     # one palette from a sample of frames, so colours do not flicker between frames
     sample = Image.new("RGB", (frames[0].width, frames[0].height * 4))
     for i, k in enumerate(range(0, len(frames), max(1, len(frames) // 4))):
