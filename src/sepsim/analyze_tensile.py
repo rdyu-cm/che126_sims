@@ -17,7 +17,14 @@ from pathlib import Path
 
 import numpy as np
 
-from sepsim.analysis.tensile import FLOW_WINDOW, SMOOTH_STRAIN, analyze_axis, mean_sd, read_ave_time
+from sepsim.analysis.tensile import (
+    FITS,
+    FLOW_WINDOW,
+    SMOOTH_STRAIN,
+    analyze_axis,
+    mean_sd,
+    read_ave_time,
+)
 from sepsim.progress import deck_params, deck_system, load_json
 from sepsim.reporting import _f, dump_json, plots_markdown, write_atomic
 
@@ -56,7 +63,7 @@ class TensileError(ValueError):
     """A run directory cannot be analysed (no tensile deck, no data)."""
 
 
-def analyze_run(run_dir: Path, fit_max: float) -> dict:
+def analyze_run(run_dir: Path, fit_max: float, fit: str = "origin") -> dict:
     """Per-axis results and the mean ± SD over axes of one tensile run directory."""
     deck = run_dir / DECK
     if not deck.is_file():
@@ -87,7 +94,7 @@ def analyze_run(run_dir: Path, fit_max: float) -> dict:
             run["notes"].append(f"axis {ax}: tensile_{ax}.txt not found (not run yet)")
             continue
         try:
-            r = analyze_axis(read_ave_time(path), ax, p_ref, fit_max)
+            r = analyze_axis(read_ave_time(path), ax, p_ref, fit_max, fit)
         except ValueError as exc:
             run["notes"].append(f"axis {ax}: {exc}")
             continue
@@ -109,12 +116,18 @@ def analyze_run(run_dir: Path, fit_max: float) -> dict:
 
 
 def analyze_tensile(
-    run_dirs, out: str | Path | None = None, fit_max: float = 0.02, plots: bool = True
+    run_dirs,
+    out: str | Path | None = None,
+    fit_max: float = 0.02,
+    plots: bool = True,
+    fit: str = "origin",
 ) -> tuple[dict, Path]:
     """Report dict and output directory for one or more tensile run directories."""
     if fit_max <= 0:
         raise TensileError("--fit-max must be > 0")
-    runs = [analyze_run(Path(d), fit_max) for d in run_dirs]
+    if fit not in FITS:
+        raise TensileError(f"--fit must be one of {', '.join(FITS)}")
+    runs = [analyze_run(Path(d), fit_max, fit) for d in run_dirs]
     systems = sorted({r["system"] for r in runs if r["system"]})
     if out is None:
         if len(systems) != 1:
@@ -139,6 +152,7 @@ def analyze_tensile(
     ]
     report = {
         "generated": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
+        "fit": fit,
         "fit_max": fit_max,
         "smooth_strain": SMOOTH_STRAIN,
         "flow_window": list(FLOW_WINDOW),
@@ -171,10 +185,11 @@ def make_plots(report: dict, out_dir: Path) -> dict:
             col = colors[a["axis"]]
             ax1.plot(e, c["sigma_true"], color=col, alpha=0.2, lw=0.6)
             ax1.plot(e, c["sigma_smooth"], color=col, ls=ls, label=f"{tag}{a['axis']}")
-            near = e <= 5 * fit_max
+            e0 = a.get("fit_start", 0.0)
+            near = e <= max(5 * fit_max, e0 + 2 * fit_max)
             ax2.plot(e[near], c["sigma_true"][near], ".", color=col, ms=2, alpha=0.5)
             if a.get("E_MPa") is not None:
-                xf = np.array([0.0, fit_max])
+                xf = np.array([e0, e0 + fit_max])
                 ax2.plot(
                     xf,
                     a["E_intercept_MPa"] + a["E_MPa"] * xf,
@@ -190,7 +205,8 @@ def make_plots(report: dict, out_dir: Path) -> dict:
         title=f"σ–ε (faint: {report['runs'][0]['avg_ps']:g} ps averages; lines:"
         f" {SMOOTH_STRAIN:g} strain moving average)",
     )
-    ax2.axvline(fit_max, color="0.5", lw=0.8, ls=":")
+    if report.get("fit", "origin") == "origin":
+        ax2.axvline(fit_max, color="0.5", lw=0.8, ls=":")
     ax2.set(xlabel="engineering strain", ylabel="true stress (MPa)", title="E_app fits")
     ax3.axhline(0.5, color="0.5", lw=0.8, ls=":")
     ax3.set(
@@ -219,8 +235,14 @@ def render_markdown(r: dict) -> str:
     """results.md for a tensile report."""
     lines = ["# Tensile analysis (D54)", ""]
     lines.append(
-        f"Generated {r['generated']}. E_app and ν fitted over 0 ≤ ε ≤ {r['fit_max']:g};"
-        f" peak after a {r['smooth_strain']:g}-strain moving average; flow stress = mean"
+        f"Generated {r['generated']}. "
+        + (
+            f"E_app and ν fitted over the steepest {r['fit_max']:g}-wide strain window before"
+            " the peak (largest slope of the smoothed stress; window in the E_app column);"
+            if r.get("fit") == "steepest"
+            else f"E_app and ν fitted over 0 ≤ ε ≤ {r['fit_max']:g};"
+        )
+        + f" peak after a {r['smooth_strain']:g}-strain moving average; flow stress = mean"
         f" true stress over ε ∈ [{r['flow_window'][0]:g}, {r['flow_window'][1]:g}]."
         " True stress σ = −(P_axis − p_atm), tension positive; engineering stress σ·A/A0."
     )
@@ -245,6 +267,9 @@ def render_markdown(r: dict) -> str:
         ]
         for a in run["axes"]:
             e = "n/a" if a["E_MPa"] is None else f"{a['E_MPa']:.0f} ± {a['E_err_MPa']:.0f}"
+            if a["E_MPa"] is not None and r.get("fit") == "steepest":
+                e0 = a["fit_start"]
+                e += f" (ε {e0:.3f}–{e0 + a['fit_max']:.3f})"
             peak = f"{a['peak_strain']:.3f}" + (" (end)" if a["peak_at_end"] else "")
             lines.append(
                 f"| {a['axis']} | {a['strain_max']:.3f} | {e} | {_f(a['nu_fit'], '.2f')} |"

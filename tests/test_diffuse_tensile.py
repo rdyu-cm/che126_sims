@@ -328,6 +328,25 @@ def test_tensile_axis_analysis_recovers_e_nu_and_flow(tmp_path):
     assert m[5] == 5.0 and not full[0] and full[5]
 
 
+def test_tensile_steepest_fit_skips_a_soft_toe(tmp_path):
+    eps = np.linspace(0.0005, 0.5, 1000)
+    # a flat toe to e = 0.04, then E = 4000 MPa to a 200 MPa peak at e = 0.09, then 100 MPa
+    sigma = np.where(eps < 0.04, 0.0, np.minimum(4000.0 * (eps - 0.04), 200.0))
+    sigma = np.where(eps > 0.12, 100.0, sigma)
+    _ave_file(tmp_path / "tensile_x.txt", "x", eps, sigma, nu=0.4, noise=2.0)
+    data = read_ave_time(tmp_path / "tensile_x.txt")
+    origin = analyze_axis(data, "x", fit_max=0.02)
+    assert origin["fit"] == "origin" and origin["fit_start"] == 0.0
+    assert origin["E_MPa"] < 200.0  # the 0-2% window lies in the toe
+    r = analyze_axis(data, "x", fit_max=0.02, fit="steepest")
+    assert r["fit"] == "steepest" and 0.038 <= r["fit_start"] <= 0.052
+    assert r["E_MPa"] == pytest.approx(4000.0, rel=0.05)
+    assert r["nu_fit"] == pytest.approx(0.4, abs=0.01)
+    assert r["peak_MPa"] == origin["peak_MPa"]
+    with pytest.raises(ValueError, match="fit"):
+        analyze_axis(data, "x", fit="other")
+
+
 def test_analyze_tensile_report_and_cli(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)  # the default output directory is relative to the cwd
     run, _ = _deck(tmp_path, "tensile", "tensile_25C")
@@ -355,6 +374,8 @@ def test_analyze_tensile_report_and_cli(tmp_path, monkeypatch, capsys):
     assert main(["analyze", "tensile", str(run), str(run2), "--out", "cmp"]) == 0
     md = (tmp_path / "cmp" / "results.md").read_text()
     assert "Pooled over runs" in md and "tensile_25C_b" in md
+    assert main(["analyze", "tensile", str(run), "--fit", "steepest", "--out", "st"]) == 0
+    assert "steepest 0.02-wide strain window" in (tmp_path / "st" / "results.md").read_text()
     assert "axis y: tensile_y.txt not found" in md and "reached strain 0.150" in md
     assert (tmp_path / "cmp" / "stress_strain.png").is_file()
     assert (tmp_path / "cmp" / "poisson.png").is_file()

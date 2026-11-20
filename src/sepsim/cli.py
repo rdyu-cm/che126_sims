@@ -449,6 +449,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="engineering strain up to which E and ν are fitted (default %(default)s)",
     )
     te.add_argument(
+        "--fit",
+        choices=("origin", "steepest"),
+        default="origin",
+        help="E and ν window: [0, --fit-max] (origin, default), or the steepest"
+        " --fit-max-wide window before the peak (steepest: skips a soft toe, e.g. the UA"
+        " crystal at 1e9 /s)",
+    )
+    te.add_argument(
         "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
     )
     punct_help = (
@@ -789,7 +797,9 @@ def _analyze_tensile(args: argparse.Namespace) -> int:
     from sepsim.analyze_tensile import TensileError, analyze_tensile, write_results
 
     try:
-        report, out_dir = analyze_tensile(args.run_dirs, out=args.out, fit_max=args.fit_max)
+        report, out_dir = analyze_tensile(
+            args.run_dirs, out=args.out, fit_max=args.fit_max, fit=args.fit
+        )
         write_results(report, out_dir)
     except (TensileError, OSError) as exc:
         print(f"sepsim analyze tensile: error: {exc}", file=sys.stderr)

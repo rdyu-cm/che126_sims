@@ -20,6 +20,8 @@ ATM_MPA = 0.101325  # 1 atm in MPa
 AXES = ("x", "y", "z")
 FLOW_WINDOW = (0.3, 0.5)  # engineering strain window of the flow stress
 SMOOTH_STRAIN = 0.01  # moving-average width (strain) for the peak stress
+FITS = ("origin", "steepest")  # E_app window: [0, fit_max], or the steepest fit_max-wide one
+STEEPEST_STEP = 0.1  # window start spacing of the steepest search, in units of fit_max
 
 _PRESS = re.compile(r"^c_thermo_press\[(\d)\]$")
 _THERMO = {"c_thermo_temp": "temp", "c_thermo_press": "press", "c_thermo_pe": "pe"}
@@ -85,6 +87,21 @@ def moving_average(x, y, width: float) -> tuple[np.ndarray, np.ndarray]:
     return (cs[hi] - cs[lo]) / (hi - lo), full
 
 
+def _steepest_start(eps, smooth, width: float, e_peak: float) -> float:
+    """Start e0 of the ``width``-wide strain window (>= 3 points) with the largest OLS
+    slope of the smoothed stress, e0 in steps of STEEPEST_STEP * width from 0 to
+    ``e_peak`` - width (0 when no window fits before the peak)."""
+    best, e_best = -np.inf, 0.0
+    for e0 in np.arange(0.0, max(e_peak - width, 0.0) + 1e-12, STEEPEST_STEP * width):
+        sel = (eps >= e0) & (eps <= e0 + width)
+        if sel.sum() < 3:
+            continue
+        slope = linear_fit(eps[sel], smooth[sel])[0]
+        if slope > best:
+            best, e_best = slope, float(e0)
+    return e_best
+
+
 def _ln_fit(eps, ln_l, sel):
     """slope, intercept, slope error of ln L vs ln(1 + e) over ``sel`` (>= 3 points)."""
     if sel.sum() < 3:
@@ -93,13 +110,21 @@ def _ln_fit(eps, ln_l, sel):
 
 
 def analyze_axis(
-    data: dict[str, np.ndarray], axis: str, p_ref_atm: float = 1.0, fit_max: float = 0.02
+    data: dict[str, np.ndarray],
+    axis: str,
+    p_ref_atm: float = 1.0,
+    fit_max: float = 0.02,
+    fit: str = "origin",
 ) -> dict:
     """Tensile properties of one axis run (``data`` from :func:`read_ave_time`).
 
     - true stress sigma = -(P_axis - p_ref) in MPa; engineering stress sigma A/A0 with
       A0 the lateral area at e = 0 (from the fits of ln L_lat);
-    - E_app: OLS slope of the true stress vs e over 0 <= e <= fit_max (MPa);
+    - E_app: OLS slope of the true stress vs e over 0 <= e <= fit_max (MPa), or with
+      ``fit="steepest"`` over the fit_max-wide window [e0, e0 + fit_max] with the largest
+      slope of the smoothed stress, e0 stepped by STEEPEST_STEP * fit_max from 0 to the
+      peak strain (``fit_start``: a soft toe before the linear rise, e.g. the UA crystal at
+      1e9 /s, is skipped; the max over windows biases E up by ~ its noise);
     - Poisson ratio nu = -d ln L_lat / d ln L_axis (L_axis = L0 (1 + e)), the mean of
       the two lateral axes, from OLS fits over the same window and over the whole run;
     - peak: the maximum of the true stress after a SMOOTH_STRAIN moving average, and
@@ -110,6 +135,8 @@ def analyze_axis(
     """
     if axis not in AXES:
         raise ValueError(f"axis {axis!r}")
+    if fit not in FITS:
+        raise ValueError(f"fit {fit!r} (one of {', '.join(FITS)})")
     eps = np.asarray(data["e"], dtype=float)
     order = np.argsort(eps, kind="stable")
     eps = eps[order]
@@ -126,7 +153,13 @@ def analyze_axis(
     if n < 3:
         out["error"] = f"only {n} rows"
         return out
-    win = (eps >= 0) & (eps <= fit_max)
+    smooth, full = moving_average(eps, sigma, SMOOTH_STRAIN)
+    pick = np.flatnonzero(full) if full.any() else np.arange(n)
+    k = pick[np.argmax(smooth[pick])]
+    e0 = _steepest_start(eps, smooth, fit_max, eps[k]) if fit == "steepest" else 0.0
+    win = (eps >= e0) & (eps <= e0 + fit_max)
+    out["fit"] = fit
+    out["fit_start"] = float(e0)
     out["fit_max"] = fit_max
     out["fit_rows"] = int(win.sum())
     if win.sum() >= 3:
@@ -147,9 +180,6 @@ def analyze_axis(
     out["nu_run_per_axis"] = nu_run
     lat_strain = np.stack([ln_l - l0 for ln_l, l0 in zip(ln_lat, ln_l0, strict=True)])
     sigma_eng = sigma * np.exp(lat_strain.sum(axis=0))  # sigma A / A0
-    smooth, full = moving_average(eps, sigma, SMOOTH_STRAIN)
-    pick = np.flatnonzero(full) if full.any() else np.arange(n)
-    k = pick[np.argmax(smooth[pick])]
     out["peak_MPa"] = float(smooth[k])
     out["peak_strain"] = float(eps[k])
     out["peak_at_end"] = bool(eps[k] >= eps[-1] - SMOOTH_STRAIN)
