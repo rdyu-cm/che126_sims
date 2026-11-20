@@ -41,21 +41,6 @@ pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,slope_central3,120,110,130,6.87576,0.1316
 pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,slope_central3,130,120,140,7.41234,0.109327,2.14201,0.23418,1e-4 K^-1,step+step,
 pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,slope_central3,140,130,150,6.87094,0.155146,2.14201,0.332324,1e-4 K^-1,step+step,
 pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,slope_central3,150,140,160,6.88806,0.137406,2.14201,0.294325,1e-4 K^-1,step+step,
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,25,25,160,6.89098,0.0360642,2.14076,0.0772049,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,35,25,160,6.9038,0.0306685,2.14076,0.0656541,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,45,25,160,6.91662,0.0253983,2.14076,0.0543717,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,55,25,160,6.92944,0.0203509,2.14076,0.0435665,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,65,25,160,6.94226,0.0157425,2.14076,0.0337009,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,75,25,160,6.95508,0.0120859,2.14076,0.025873,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,85,25,160,6.9679,0.0104349,2.14076,0.0223387,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,90,25,160,6.97431,0.0107011,2.14076,0.0229085,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,100,25,160,6.98713,0.0131984,2.14076,0.0282546,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,110,25,160,6.99995,0.017276,2.14076,0.0369838,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,120,25,160,7.01277,0.0220748,2.14076,0.0472569,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,130,25,160,7.02559,0.027216,2.14076,0.0582631,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,140,25,160,7.03841,0.0325377,2.14076,0.0696556,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,150,25,160,7.05123,0.0379641,2.14076,0.0812722,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
-pe_cg_amorph_n40_c240_s1,pe,cg,alpha_V,fit_global,160,25,160,7.06405,0.0434559,2.14076,0.0930289,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 4.58"
 pe_cg_amorph_n40_c240_s1,pe,cg,kappa_T,value,25,25,25,1.00019,0.0145016,1,0.0145016,GPa^-1,hold,hold (no step at this T); quadratic chi2_red 0.899
 pe_cg_amorph_n40_c240_s1,pe,cg,kappa_T,value,35,35,35,0.942183,0.035676,1,0.035676,GPa^-1,step,quadratic chi2_red 0.899
 pe_cg_amorph_n40_c240_s1,pe,cg,kappa_T,value,45,45,45,1.13209,0.0575089,1,0.0575089,GPa^-1,step,quadratic chi2_red 0.899
@@ -182,21 +167,6 @@ pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,slope_central3,120,110,130,6.04464,0.5274
 pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,slope_central3,130,120,140,6.91104,0.279497,1.7367,0.485404,1e-4 K^-1,step+step,
 pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,slope_central3,140,130,150,7.25101,0.313428,1.7367,0.544332,1e-4 K^-1,step+step,
 pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,slope_central3,150,140,160,7.24,0.318984,1.7367,0.553981,1e-4 K^-1,step+step,
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,25,25,160,6.86106,0.123941,1.73456,0.214983,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,35,25,160,6.89405,0.107588,1.73456,0.186618,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,45,25,160,6.92704,0.0914387,1.73456,0.158606,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,55,25,160,6.96002,0.0756249,1.73456,0.131176,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,65,25,160,6.99301,0.0604098,1.73456,0.104785,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,75,25,160,7.026,0.0463864,1.73456,0.0804603,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,85,25,160,7.05899,0.0350172,1.73456,0.0607396,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,90,25,160,7.07549,0.0312731,1.73456,0.0542452,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,100,25,160,7.10848,0.0301781,1.73456,0.0523459,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,110,25,160,7.14146,0.0376241,1.73456,0.0652614,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,120,25,160,7.17445,0.0499256,1.73456,0.0865991,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,130,25,160,7.20744,0.064356,1.73456,0.11163,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,140,25,160,7.24043,0.0797682,1.73456,0.138363,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,150,25,160,7.27342,0.095689,1.73456,0.165979,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
-pe_ua_amorph_n40_c240_s1,pe,ua,alpha_V,fit_global,160,25,160,7.30641,0.111901,1.73456,0.1941,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 3.01"
 pe_ua_amorph_n40_c240_s1,pe,ua,kappa_T,value,25,25,25,0.68112,0.0360822,1.35436,0.0488683,GPa^-1,hold,hold (no step at this T); quadratic chi2_red 1.83
 pe_ua_amorph_n40_c240_s1,pe,ua,kappa_T,value,35,35,35,0.683784,0.05298,1.35436,0.071754,GPa^-1,step,quadratic chi2_red 1.83
 pe_ua_amorph_n40_c240_s1,pe,ua,kappa_T,value,45,45,45,0.741281,0.0582379,1.35436,0.0788751,GPa^-1,step,quadratic chi2_red 1.83
@@ -323,21 +293,6 @@ pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,slope_central3,120,110,130,8.3848
 pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,slope_central3,130,120,140,8.43722,0.48794,2.69292,1.31398,1e-4 K^-1,step+step,
 pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,slope_central3,140,130,150,9.14539,0.589867,2.69292,1.58846,1e-4 K^-1,step+step,
 pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,slope_central3,150,140,160,8.78131,0.413711,2.69292,1.11409,1e-4 K^-1,step+step,
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,25,25,160,8.22087,0.104749,2.68399,0.281145,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,35,25,160,8.28087,0.0903526,2.68399,0.242506,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,45,25,160,8.34087,0.0762889,2.68399,0.204759,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,55,25,160,8.40087,0.0627817,2.68399,0.168506,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,65,25,160,8.46087,0.0502816,2.68399,0.134955,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,75,25,160,8.52087,0.0397503,2.68399,0.106689,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,85,25,160,8.58087,0.0331222,2.68399,0.0888997,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,90,25,160,8.61087,0.0320937,2.68399,0.0861393,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,100,25,160,8.67087,0.0352806,2.68399,0.0946929,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,110,25,160,8.73087,0.0438701,2.68399,0.117747,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,120,25,160,8.79088,0.0554039,2.68399,0.148704,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,130,25,160,8.85088,0.0684087,2.68399,0.183609,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,140,25,160,8.91088,0.0821892,2.68399,0.220595,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,150,25,160,8.97088,0.0964133,2.68399,0.258772,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
-pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,alpha_V,fit_global,160,25,160,9.03088,0.11091,2.68399,0.297683,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 7.2"
 pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,kappa_T,value,25,25,25,0.543561,0.0458641,1.08632,0.0498229,GPa^-1,hold,hold (no step at this T); quadratic chi2_red 1.18
 pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,kappa_T,value,35,35,35,0.418808,0.0329168,1.08632,0.035758,GPa^-1,step,quadratic chi2_red 1.18
 pe_aa_amorph_n40_c240_s1_from_ua,pe,aa,kappa_T,value,45,45,45,0.546227,0.0854227,1.08632,0.0927961,GPa^-1,step,quadratic chi2_red 1.18
@@ -464,21 +419,6 @@ ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,slope_central3,120,110,130,8.13412,0.73
 ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,slope_central3,130,120,140,6.77768,0.684028,3.55737,2.43334,1e-4 K^-1,step+step,
 ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,slope_central3,140,130,150,5.73821,0.622182,3.55737,2.21333,1e-4 K^-1,step+step,
 ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,slope_central3,150,140,160,6.0193,0.38033,3.55737,1.35297,1e-4 K^-1,step+step,
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,25,25,160,2.82725,0.0952237,3.43551,0.327142,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,35,25,160,3.28043,0.0813508,3.43551,0.279481,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,45,25,160,3.73361,0.0677833,3.43551,0.23287,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,55,25,160,4.18679,0.0547489,3.43551,0.18809,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,65,25,160,4.63997,0.0427379,3.43551,0.146826,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,75,25,160,5.09315,0.0328914,3.43551,0.112999,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,85,25,160,5.54633,0.0276296,3.43551,0.0949217,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,90,25,160,5.77292,0.0276407,3.43551,0.0949597,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,100,25,160,6.2261,0.0329379,3.43551,0.113158,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,110,25,160,6.67929,0.0428023,3.43551,0.147047,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,120,25,160,7.13247,0.0548215,3.43551,0.188339,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,130,25,160,7.58565,0.06786,3.43551,0.233133,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,140,25,160,8.03883,0.0814298,3.43551,0.279752,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,150,25,160,8.49201,0.095304,3.43551,0.327418,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
-ipp_ua_amorph_n40_c240_s1,ipp,ua,alpha_V,fit_global,160,25,160,8.94519,0.109367,3.43551,0.375731,1e-4 K^-1,,"quadratic 1/SEM^2-weighted fit of ln density(T) over 25-160 C, 15 points, chi2_red 11.8"
 ipp_ua_amorph_n40_c240_s1,ipp,ua,kappa_T,value,25,25,25,0.581633,0.0248642,1.39795,0.034759,GPa^-1,hold,hold (no step at this T); quadratic chi2_red 1.95
 ipp_ua_amorph_n40_c240_s1,ipp,ua,kappa_T,value,35,35,35,0.629041,0.0567259,1.39795,0.0793001,GPa^-1,step,quadratic chi2_red 1.95
 ipp_ua_amorph_n40_c240_s1,ipp,ua,kappa_T,value,45,45,45,0.549165,0.026855,1.39795,0.037542,GPa^-1,step,quadratic chi2_red 1.95
@@ -605,22 +545,6 @@ pe_cg_pore_w5nm_n40_c240_s1,pe,cg,dgamma_dT,slope_central3,120,110,130,-0.131583
 pe_cg_pore_w5nm_n40_c240_s1,pe,cg,dgamma_dT,slope_central3,130,120,140,-0.114174,0.0474286,1.88942,0.0896129,mN m^-1 K^-1,step+step,
 pe_cg_pore_w5nm_n40_c240_s1,pe,cg,dgamma_dT,slope_central3,140,130,150,-0.00237253,0.0560305,1.88942,0.105865,mN m^-1 K^-1,step+step,
 pe_cg_pore_w5nm_n40_c240_s1,pe,cg,dgamma_dT,slope_central3,150,140,160,-0.0781063,0.0586543,1.88942,0.110823,mN m^-1 K^-1,step+step,
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,25,25,160,34.0773,0.293751,1.81939,0.534449,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,35,25,160,33.555,0.262828,1.81939,0.478187,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,45,25,160,33.0328,0.235075,1.81939,0.427694,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,55,25,160,32.5105,0.211744,1.81939,0.385245,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,65,25,160,31.9883,0.194432,1.81939,0.353748,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,75,25,160,31.466,0.184839,1.81939,0.336294,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,85,25,160,30.9437,0.184174,1.81939,0.335085,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,90,25,160,30.6826,0.18727,1.81939,0.340717,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,100,25,160,30.1603,0.199786,1.81939,0.363489,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,110,25,160,29.6381,0.219436,1.81939,0.39924,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,120,25,160,29.1158,0.244506,1.81939,0.444852,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,130,25,160,28.5936,0.273509,1.81939,0.497621,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,140,25,160,28.0713,0.305327,1.81939,0.55551,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,150,25,160,27.549,0.339169,1.81939,0.617081,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,fit_global,160,25,160,27.0268,0.374485,1.81939,0.681335,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
-pe_cg_pore_w5nm_n40_c240_s1,pe,cg,dgamma_dT,fit_global,92.3333,25,160,-0.052226,0.00411898,1.81939,0.00749405,mN m^-1 K^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 3.31"
 pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,value,25,25,25,34.371,0.260585,1.33974,0.349115,mN m^-1,hold,hold (no step at this T); quadratic chi2_red 1.79
 pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,value,35,35,35,32.4473,0.899327,1.33974,1.20486,mN m^-1,step,quadratic chi2_red 1.79
 pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,value,45,45,45,32.1506,0.648659,1.33974,0.869032,mN m^-1,step,quadratic chi2_red 1.79
@@ -663,22 +587,6 @@ pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,dgamma_dT,slope_central3,120,110,130,-
 pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,dgamma_dT,slope_central3,130,120,140,-0.00815823,0.0575578,1.33974,0.0771123,mN m^-1 K^-1,step+step,
 pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,dgamma_dT,slope_central3,140,130,150,-0.0586687,0.0486339,1.33974,0.0651566,mN m^-1 K^-1,step+step,
 pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,dgamma_dT,slope_central3,150,140,160,-0.0302298,0.0470908,1.33974,0.0630892,mN m^-1 K^-1,step+step,
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,25,25,160,34.2965,0.223138,1.29883,0.289819,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,35,25,160,33.7265,0.201028,1.29883,0.261101,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,45,25,160,33.1566,0.181717,1.29883,0.236019,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,55,25,160,32.5866,0.166182,1.29883,0.215842,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,65,25,160,32.0166,0.15556,1.29883,0.202046,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,75,25,160,31.4467,0.150892,1.29883,0.195983,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,85,25,160,30.8767,0.152724,1.29883,0.198363,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,90,25,160,30.5917,0.156038,1.29883,0.202667,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,100,25,160,30.0218,0.166987,1.29883,0.216888,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,110,25,160,29.4518,0.182779,1.29883,0.237399,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,120,25,160,28.8819,0.202284,1.29883,0.262733,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,130,25,160,28.3119,0.224536,1.29883,0.291634,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,140,25,160,27.7419,0.248799,1.29883,0.323148,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,150,25,160,27.172,0.27454,1.29883,0.356581,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,gamma,fit_global,160,25,160,26.602,0.301381,1.29883,0.391443,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
-pe_cg_pore_w5nm_n320_c240_s1_rep222,pe,cg,dgamma_dT,fit_global,92.3333,25,160,-0.0569961,0.00315193,1.29883,0.00409382,mN m^-1 K^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.69"
 pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,gamma,value,25,25,25,34.4103,0.397083,1,0.397083,mN m^-1,hold,hold (no step at this T); quadratic chi2_red 0.0181
 pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,gamma,value,90,90,90,30.5933,0.203035,1,0.203035,mN m^-1,step,quadratic chi2_red 0.0181
 pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,gamma,value,130,130,130,28.2718,0.211575,1,0.211575,mN m^-1,step,quadratic chi2_red 0.0181
@@ -688,11 +596,6 @@ pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,dgamma_dT,slope_adjacent,110,90,130,-0
 pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,dgamma_dT,slope_adjacent,145,130,160,-0.054795,0.00988957,1,0.00988957,mN m^-1 K^-1,step+step,
 pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,dgamma_dT,slope_central3,90,25,130,-0.058462,0.00428507,1,0.00428507,mN m^-1 K^-1,hold+step,
 pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,dgamma_dT,slope_central3,130,90,160,-0.0566475,0.00415227,1,0.00415227,mN m^-1 K^-1,step+step,
-pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,gamma,fit_global,25,25,160,34.3447,0.293109,1,0.293109,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 4 points, chi2_red 0.0533"
-pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,gamma,fit_global,90,25,160,30.6104,0.14005,1,0.14005,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 4 points, chi2_red 0.0533"
-pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,gamma,fit_global,130,25,160,28.3123,0.120216,1,0.120216,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 4 points, chi2_red 0.0533"
-pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,gamma,fit_global,160,25,160,26.5888,0.16852,1,0.16852,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 4 points, chi2_red 0.0533"
-pe_cg_pore_w5nm_n640_c240_s1_rep441,pe,cg,dgamma_dT,fit_global,101.25,25,160,-0.0574506,0.00291291,1,0.00291291,mN m^-1 K^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 4 points, chi2_red 0.0533"
 pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,value,25,25,25,32.2553,1.85035,1,1.85035,mN m^-1,hold,hold (no step at this T); quadratic chi2_red 0.47
 pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,value,35,35,35,28.9439,6.91898,1,6.91898,mN m^-1,step,quadratic chi2_red 0.47
 pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,value,45,45,45,36.5261,5.27985,1,5.27985,mN m^-1,step,quadratic chi2_red 0.47
@@ -735,22 +638,6 @@ pe_ua_pore_w5nm_n40_c240_s1,pe,ua,dgamma_dT,slope_central3,120,110,130,0.0046655
 pe_ua_pore_w5nm_n40_c240_s1,pe,ua,dgamma_dT,slope_central3,130,120,140,-0.723581,0.401598,1,0.401598,mN m^-1 K^-1,step+step,
 pe_ua_pore_w5nm_n40_c240_s1,pe,ua,dgamma_dT,slope_central3,140,130,150,-0.431659,0.418031,1,0.418031,mN m^-1 K^-1,step+step,
 pe_ua_pore_w5nm_n40_c240_s1,pe,ua,dgamma_dT,slope_central3,150,140,160,0.410732,0.412782,1,0.412782,mN m^-1 K^-1,step+step,
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,25,25,160,33.3047,1.63306,1,1.63306,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,35,25,160,32.3216,1.46923,1,1.46923,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,45,25,160,31.3386,1.33592,1,1.33592,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,55,25,160,30.3556,1.243,1,1.243,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,65,25,160,29.3726,1.19989,1,1.19989,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,75,25,160,28.3896,1.21191,1,1.21191,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,85,25,160,27.4066,1.27752,1,1.27752,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,90,25,160,26.9151,1.32819,1,1.32819,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,100,25,160,25.9321,1.45907,1,1.45907,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,110,25,160,24.9491,1.62111,1,1.62111,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,120,25,160,23.9661,1.80595,1,1.80595,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,130,25,160,22.983,2.00729,1,2.00729,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,140,25,160,22,2.22065,1,2.22065,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,150,25,160,21.017,2.44289,1,2.44289,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,gamma,fit_global,160,25,160,20.034,2.67178,1,2.67178,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
-pe_ua_pore_w5nm_n40_c240_s1,pe,ua,dgamma_dT,fit_global,92.3333,25,160,-0.0983011,0.0259152,1,0.0259152,mN m^-1 K^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 0.547"
 ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,value,25,25,25,20.5803,2.12691,1.08961,2.31751,mN m^-1,hold,hold (no step at this T); quadratic chi2_red 1.19
 ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,value,35,35,35,7.96756,6.81636,1.08961,7.4272,mN m^-1,step,quadratic chi2_red 1.19
 ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,value,45,45,45,30.2034,7.40881,1.08961,8.07275,mN m^-1,step,quadratic chi2_red 1.19
@@ -793,19 +680,3 @@ ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,dgamma_dT,slope_central3,120,110,130,-0.9652
 ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,dgamma_dT,slope_central3,130,120,140,-0.0720527,0.453454,1.08961,0.494089,mN m^-1 K^-1,step+step,
 ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,dgamma_dT,slope_central3,140,130,150,0.056373,0.439827,1.08961,0.479242,mN m^-1 K^-1,step+step,
 ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,dgamma_dT,slope_central3,150,140,160,-0.442086,0.453997,1.08961,0.494682,mN m^-1 K^-1,step+step,
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,25,25,160,22.1187,1.85829,1.34009,2.49028,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,35,25,160,22.4213,1.67124,1.34009,2.23962,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,45,25,160,22.7238,1.51577,1.34009,2.03127,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,55,25,160,23.0264,1.40241,1.34009,1.87936,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,65,25,160,23.3289,1.34189,1.34009,1.79825,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,75,25,160,23.6315,1.34137,1.34009,1.79756,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,85,25,160,23.934,1.40092,1.34009,1.87736,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,90,25,160,24.0853,1.45121,1.34009,1.94475,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,100,25,160,24.3879,1.5863,1.34009,2.12579,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,110,25,160,24.6904,1.75825,1.34009,2.35621,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,120,25,160,24.993,1.95734,1.34009,2.62302,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,130,25,160,25.2955,2.17616,1.34009,2.91625,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,140,25,160,25.598,2.40932,1.34009,3.22871,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,150,25,160,25.9006,2.65306,1.34009,3.55534,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,gamma,fit_global,160,25,160,26.2031,2.9047,1.34009,3.89257,mN m^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"
-ipp_ua_pore_w5nm_n40_c240_s1,ipp,ua,dgamma_dT,fit_global,92.3333,25,160,0.0302548,0.0286969,1.34009,0.0384565,mN m^-1 K^-1,,"linear 1/SEM^2-weighted fit of gamma(T) over 25-160 C, 15 points, chi2_red 1.8"

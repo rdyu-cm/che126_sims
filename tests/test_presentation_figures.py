@@ -261,34 +261,6 @@ def test_sweep_steps_drawn_when_present(pf, tmp_path):
     assert "5 ns sweep step" not in pf.caption_fig4(out0["infos"]["fig4_chains"], data0)
 
 
-def test_global_fit_helpers(pf):
-    tt = np.arange(25.0, 165.0, 10.0)
-    # ln rho quadratic in T: alpha_V = -(b + 2 c (T - t0)) exactly, small errors
-    lnr = np.log(0.85) - 7e-4 * (tt - 25) - 1e-6 * (tt - 25) ** 2
-    rho = [(t, np.exp(y), 1e-5, "step") for t, y in zip(tt, lnr, strict=True)]
-    s = pf.series_info("pe_cg_amorph_n40_c240_s1")
-    rows = pf.global_fit_rows(s, "density", rho)
-    assert len(rows) == len(tt) and {r["property"] for r in rows} == {"alpha_V"}
-    expect = 1e4 * (7e-4 + 2e-6 * (tt - 25))
-    assert np.allclose([r["value"] for r in rows], expect, rtol=1e-6)
-    assert all(r["kind"] == "fit_global" and r["birge_scale"] == 1.0 for r in rows)
-    # gamma: a straight line + scatter >> SEM -> Birge s > 1 scales the errors
-    gam = 30.0 - 0.07 * tt + np.where(np.arange(len(tt)) % 2, 0.5, -0.5)
-    pts = [(t, y, 0.1, "step") for t, y in zip(tt, gam, strict=True)]
-    rows = pf.global_fit_rows(s, "gamma", pts)
-    slope = [r for r in rows if r["property"] == "dgamma_dT"]
-    assert len(rows) == len(tt) + 1 and len(slope) == 1
-    assert slope[0]["value"] == pytest.approx(-0.07, abs=0.01)
-    assert slope[0]["birge_scale"] > 1 and slope[0]["sem"] == pytest.approx(
-        slope[0]["birge_scale"] * slope[0]["sem_raw"]
-    )
-    fit = pf.global_poly_fit(tt, gam, np.full(len(tt), 0.1), 1)
-    val, err = pf.global_fit_curve(fit, tt, False)
-    assert np.allclose(val, np.polyval(np.polyfit(tt, gam, 1), tt)) and (err > 0).all()
-    assert pf.global_poly_fit(tt[:2], gam[:2], np.ones(2), 1) is None
-    assert pf.global_fit_rows(s, "gamma", pts[:2]) == []
-
-
 def test_local_slope_helpers(pf, tmp_path):
     # uneven grid 85/90/100: both estimators are exact for a straight line
     t = np.array([80.0, 85.0, 90.0, 100.0])
@@ -342,13 +314,10 @@ def test_local_slopes_real_data(pf, tmp_path):
     out = pf.build(data, tmp_path, only=["fig9"], log=lambda *_: None)
     info = out["infos"]["fig9_local_slopes"]
     assert (tmp_path / "fig9_local_slopes.png").stat().st_size > 10_000
-    cg = info["alpha_V_fit"]["CG PE C240"]
-    assert len(cg["points"]) == 15  # the global fit at the 15 sweep temperatures
-    assert all(5.0 < a < 9.0 and 0 < e < 1.0 for _, a, e in cg["points"])
-    assert cg["birge"] >= 1.0 and "quadratic" in cg["note"]
-    assert all(len(v["points"]) >= 4 for v in info["gamma_fit"].values())
-    dg = info["dgamma_dT"]  # mN/m/K; the UA iPP pore slope is within 1 sigma of zero
-    assert all(-0.1 < v < 0.0 and e > 0 for k, (v, e) in dg.items() if "_cg_" in k)
+    cg = info["alpha_V"]["CG PE C240"]
+    assert len(cg["central3"]) == 13 and len(cg["adjacent"]) == 14  # 15 sweep temperatures
+    assert all(5.0 < a < 9.0 for _, a, _ in cg["central3"])
+    assert cg["birge"] >= 1.0
     with (tmp_path / pf.SLOPE_CSV).open() as fh:
         rows = list(pf.csv.DictReader(fh))
     props = {r["property"] for r in rows}
@@ -361,14 +330,8 @@ def test_local_slopes_real_data(pf, tmp_path):
     assert all(b >= 1.0 for b in info["birge"]["density"].values())
     v25 = [r for r in rows if r["kind"] == "value" and r["t_c"] == "25"]
     assert v25 and all(r["segment_kinds"] == "hold" for r in v25)
-    assert {r["property"] for r in rows if r["kind"] == "fit_global"} == {
-        "alpha_V",
-        "gamma",
-        "dgamma_dT",
-    }
     cap = pf.caption_fig9(info, data)
     assert "not equilibrium values" in cap and "5 / 2 / 1 ns" in cap and "Birge" in cap
-    assert "global fit" in cap and "dγ/dT (mN m⁻¹ K⁻¹): " in cap
 
 
 def test_summary_links_presentation(tmp_path):

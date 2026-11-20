@@ -4020,13 +4020,6 @@ SLOPE_COLUMNS = (
     "note",
 )
 BIRGE_DEG = 2  # quadratic y(T) for the Birge scale of the per-step SEMs (D55: lower bounds)
-# fig9 global fits over all sweep temperatures: input property -> (fit ln y?, degree,
-# plotted property, sign, scale, unit, derivative?). alpha_V = -d ln rho/dT of a quadratic
-# ln rho(T) (alpha_V linear in T); gamma(T) a straight line (dgamma/dT one number).
-GLOBAL_FITS = {
-    "density": (True, 2, "alpha_V", -1.0, 1e4, "1e-4 K^-1", True),
-    "gamma": (False, 1, "gamma", 1.0, 1.0, "mN m^-1", False),
-}
 RG_NOTE = "chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
 PORE_MARKER = {"rep222": "D", "rep441": "^"}  # fig9: CG pores told apart by marker
 
@@ -4139,91 +4132,6 @@ def birge_scale(t, y, e, deg: int = BIRGE_DEG) -> tuple[float, float | None]:
     return float(np.sqrt(max(1.0, chi2))), chi2
 
 
-def global_poly_fit(t, y, e, deg: int) -> dict | None:
-    """1/e^2-weighted polynomial fit of y against x = T - t0 (t0 = mean T): coefficients
-    (highest power first), their covariance scaled by the Birge factor s^2 =
-    max(1, chi2_red) (the per-step SEMs are lower bounds, D55), t0, chi2_red and s; None
-    with <= deg + 1 points. Zero SEMs take the smallest positive one."""
-    t, y, e = (np.asarray(a, float) for a in (t, y, e))
-    if len(t) <= deg + 1:
-        return None
-    e = np.where(e > 0, e, e[e > 0].min() if (e > 0).any() else 1.0)
-    t0 = float(t.mean())
-    x = t - t0
-    coef, cov = np.polyfit(x, y, deg, w=1.0 / e, cov="unscaled")
-    chi2 = float(np.sum(((y - np.polyval(coef, x)) / e) ** 2) / (len(t) - deg - 1))
-    sb = float(np.sqrt(max(1.0, chi2)))
-    return {"coef": coef, "cov": cov * sb**2, "t0": t0, "chi2_red": chi2, "s": sb}
-
-
-def global_fit_curve(fit: dict, t, derivative: bool) -> tuple[np.ndarray, np.ndarray]:
-    """The fitted y(T) (or dy/dT) at ``t`` and its 1-sigma error from the covariance."""
-    coef, cov = fit["coef"], fit["cov"]
-    x = np.asarray(t, float) - fit["t0"]
-    deg = len(coef) - 1
-    powers = np.arange(deg, -1, -1)
-    if derivative:
-        jac = np.stack([p * x ** max(p - 1, 0) if p else np.zeros_like(x) for p in powers], -1)
-    else:
-        jac = np.stack([x**p for p in powers], -1)
-    val = jac @ coef
-    err = np.sqrt(np.einsum("ij,jk,ik->i", jac, cov, jac))
-    return val, err
-
-
-def global_fit_rows(s: dict, prop: str, pts: list[tuple]) -> list[dict]:
-    """CSV rows (SLOPE_COLUMNS, kind ``fit_global``) of one system's global fit of
-    ``prop`` (GLOBAL_FITS) at its sweep temperatures: alpha_V from the quadratic ln rho(T),
-    gamma from the straight line (plus one ``dgamma_dT`` row); errors from the
-    Birge-scaled covariance (``sem_raw`` = unscaled)."""
-    log, deg, out_prop, sign, scale, unit, deriv = GLOBAL_FITS[prop]
-    t, y, e = (np.array([p[k] for p in pts], float) for k in range(3))
-    yy, ee = log_values(y, e) if log else (y, e)
-    fit = global_poly_fit(t, yy, ee, deg)
-    if fit is None:
-        return []
-    base = {"system": s["sid"], "polymer": s["polymer"], "resolution": s["res"]}
-    note = (
-        f"{'quadratic' if deg == 2 else 'linear'} 1/SEM^2-weighted fit of"
-        f" {'ln ' if log else ''}{prop}(T) over {t.min():g}-{t.max():g} C,"
-        f" {len(t)} points, chi2_red {fit['chi2_red']:.3g}"
-    )
-    common = {"kind": "fit_global", "t_lo": t.min(), "t_hi": t.max(), "birge_scale": fit["s"]}
-    val, err = global_fit_curve(fit, t, deriv)
-    rows = [
-        base
-        | common
-        | {
-            "property": out_prop,
-            "t_c": t[k],
-            "value": sign * scale * val[k],
-            "sem_raw": scale * err[k] / fit["s"],
-            "sem": scale * err[k],
-            "unit": unit,
-            "segment_kinds": "",
-            "note": note,
-        }
-        for k in range(len(t))
-    ]
-    if not deriv:  # the straight line's slope
-        b, be = global_fit_curve(fit, [fit["t0"]], True)
-        rows.append(
-            base
-            | common
-            | {
-                "property": f"d{prop}_dT",
-                "t_c": fit["t0"],
-                "value": sign * scale * b[0],
-                "sem_raw": scale * be[0] / fit["s"],
-                "sem": scale * be[0],
-                "unit": f"{unit} K^-1",
-                "segment_kinds": "",
-                "note": note,
-            }
-        )
-    return rows
-
-
 def local_slope_rows(s: dict, prop: str, pts: list[tuple]) -> list[dict]:
     """CSV rows (SLOPE_COLUMNS) of one system and property: the per-T values, then the
     adjacent-pair and 3-point central slopes, errors from the per-step SEMs (raw) and
@@ -4300,18 +4208,85 @@ def _f9_style(s: dict) -> dict:
     return {"color": s["color"], "marker": PORE_MARKER[tag] if tag else s["marker"]}
 
 
-def _f9_values(ax, series, rows, prop, info, faint: bool = False) -> None:
-    """Per-T values of ``prop`` (scaled SEM bars), one line per system (``faint``: markers
-    only, translucent, under a global fit)."""
+def _f9_slopes(ax, series, rows, prop, info) -> None:
+    """Adjacent-pair (small open) and 3-point central (filled, line) slopes of ``prop``."""
     n = len(series)
     for i, s in enumerate(series):
         st = _f9_style(s)
         off = (i - (n - 1) / 2) * 0.9
-        v = [
-            r
-            for r in rows
-            if r["system"] == s["sid"] and r["property"] == prop and r["kind"] == "value"
-        ]
+        mine = [r for r in rows if r["system"] == s["sid"] and r["property"] == prop]
+        adj = [r for r in mine if r["kind"] == "slope_adjacent"]
+        cen = [r for r in mine if r["kind"] == "slope_central3"]
+        if adj:
+            ax.errorbar(
+                [r["t_c"] + off for r in adj],
+                [r["value"] for r in adj],
+                [r["sem"] for r in adj],
+                fmt=st["marker"],
+                color=st["color"],
+                mfc="white",
+                ms=3.8,
+                mew=0.9,
+                elinewidth=0.6,
+                capsize=1.2,
+                alpha=0.75,
+                ls="",
+                zorder=2,
+            )
+        if cen:
+            ax.errorbar(
+                [r["t_c"] + off for r in cen],
+                [r["value"] for r in cen],
+                [r["sem"] for r in cen],
+                fmt=st["marker"],
+                color=st["color"],
+                ms=5.0,
+                elinewidth=1.0,
+                capsize=2.0,
+                ls="-",
+                lw=1.3,
+                zorder=3,
+            )
+        if mine:
+            info.setdefault(prop, {})[s["label"]] = {
+                "birge": mine[0]["birge_scale"],
+                "central3": [(r["t_c"], r["value"], r["sem"]) for r in cen],
+                "adjacent": [(r["t_c"], r["value"], r["sem"]) for r in adj],
+            }
+    ax.axhline(0.0, color="0.6", lw=0.8, zorder=0)
+    ax.set_xlabel("T (°C)")
+    ax.set_xlim(15, 170)
+
+
+def _f9_fit_lines(ax, series, stage, key, val, scale) -> bool:
+    """The results.json window fits (25–90 / 90–160 / 25–160 °C) as translucent bars."""
+    drawn = False
+    for s in series:
+        fits = g(s, "results", stage, "fits", key)
+        for f in fits if isinstance(fits, list) else ([fits] if isinstance(fits, dict) else []):
+            if f.get(val) is None or not f.get("window_c"):
+                continue
+            w0, w1 = f["window_c"][0], min(f["window_c"][1], 160.0)
+            ax.plot(
+                [w0, w1],
+                [f[val] * scale] * 2,
+                color=s["color"],
+                lw=3.2 if (w1 - w0) < 100 else 1.6,
+                alpha=0.35,
+                solid_capstyle="butt",
+                zorder=1,
+            )
+            drawn = True
+    return drawn
+
+
+def _f9_values(ax, series, rows, prop, info) -> None:
+    """Per-T values of ``prop`` (scaled SEM bars), one line per system."""
+    n = len(series)
+    for i, s in enumerate(series):
+        st = _f9_style(s)
+        off = (i - (n - 1) / 2) * 0.9
+        v = [r for r in rows if r["system"] == s["sid"] and r["property"] == prop]
         if v:
             ax.errorbar(
                 [r["t_c"] + off for r in v],
@@ -4319,43 +4294,13 @@ def _f9_values(ax, series, rows, prop, info, faint: bool = False) -> None:
                 [r["sem"] for r in v],
                 fmt=st["marker"],
                 color=st["color"],
-                ms=3.8 if faint else 4.5,
-                elinewidth=0.7 if faint else 0.9,
-                capsize=1.2 if faint else 1.5,
-                ls="" if faint else "-",
+                ms=4.5,
+                elinewidth=0.9,
+                capsize=1.5,
+                ls="-",
                 lw=1.2,
-                alpha=0.45 if faint else 1.0,
-                zorder=2,
             )
             info.setdefault(prop, {})[s["label"]] = [(r["t_c"], r["value"]) for r in v]
-    ax.set_xlabel("T (°C)")
-    ax.set_xlim(15, 170)
-
-
-def _f9_global(ax, series, rows, prop, info) -> None:
-    """Global fit of ``prop`` (``fit_global`` rows) per system: line and ±1σ band."""
-    for s in series:
-        v = sorted(
-            (
-                r
-                for r in rows
-                if r["system"] == s["sid"] and r["property"] == prop and r["kind"] == "fit_global"
-            ),
-            key=lambda r: r["t_c"],
-        )
-        if not v:
-            continue
-        t = np.array([r["t_c"] for r in v])
-        y = np.array([r["value"] for r in v])
-        e = np.array([r["sem"] for r in v])
-        ax.fill_between(t, y - e, y + e, color=s["color"], alpha=0.2, lw=0, zorder=1)
-        ls = "--" if s["polymer"] == "ipp" else "-"  # UA PE and UA iPP share a colour
-        ax.plot(t, y, color=s["color"], lw=1.6, ls=ls, zorder=3)
-        info.setdefault(f"{prop}_fit", {})[s["label"]] = {
-            "birge": v[0]["birge_scale"],
-            "note": v[0]["note"],
-            "points": [(r["t_c"], r["value"], r["sem"]) for r in v],
-        }
     ax.set_xlabel("T (°C)")
     ax.set_xlim(15, 170)
 
@@ -4371,8 +4316,6 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
     for s in sweeps:
         for prop, pts in sweep_points(s["results"]["sweep"]).items():
             rows += local_slope_rows(s, prop, pts)
-            if prop in GLOBAL_FITS:
-                rows += global_fit_rows(s, prop, pts)
         segs = s["results"]["sweep"].get("segments") or []
         w = [g(x, "stats", "window_ps") for x in segs if x.get("kind") == "step"]
         if any(w):
@@ -4382,8 +4325,6 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
     for s in pores:
         for prop, pts in pore_points(s["results"]["pore"]).items():
             rows += local_slope_rows(s, prop, pts)
-            if prop in GLOBAL_FITS:
-                rows += global_fit_rows(s, prop, pts)
     csv_path = write_slope_csv(rows, out / SLOPE_CSV)
     info["csv"] = csv_path.name
     info["rows"] = len(rows)
@@ -4432,17 +4373,15 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
         if not series:
             no_data(ax, "no bulk sweeps" if series is sweeps else "no pore results", pending=True)
             continue
-        if prop == "gamma":  # per-T values faint, the global line on top
-            _f9_values(ax, series, rows, prop, info, faint=True)
-            _f9_global(ax, series, rows, prop, info)
-        elif values:
+        if values:
             _f9_values(ax, series, rows, prop, info)
         else:
-            _f9_global(ax, series, rows, prop, info)
+            _f9_slopes(ax, series, rows, prop, info)
         ax.set_ylabel(ylabel)
-    for r in rows:  # Birge scale per property (value rows) and system; gamma slopes
-        if r["kind"] == "fit_global" and r["property"] == "dgamma_dT":
-            info.setdefault("dgamma_dT", {})[r["system"]] = (r["value"], r["sem"])
+    fits_drawn = bool(sweeps) and _f9_fit_lines(
+        axes["b"], sweeps, "sweep", "alpha_V", "alpha_V_per_K", 1e4
+    )
+    for r in rows:  # Birge scale per property (value rows) and system
         if r["kind"] == "value":
             info.setdefault("birge", {}).setdefault(r["property"], {})[r["system"]] = r[
                 "birge_scale"
@@ -4456,11 +4395,13 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
         for s in pores
     ]
     keys = [
-        Line2D([], [], color="0.3", lw=1.6, label="(b, e) global fit over all T"),
-        Line2D([], [], color="0.3", lw=1.6, ls="--", label="(b, e) dashed: iPP"),
-        Patch(color="0.3", alpha=0.2, label="(b, e) ±1σ band (Birge-scaled)"),
-        _key("(e) faint: per-T values", "o", alpha=0.45),
+        _key("(b) filled + line: 3-point central slope at T", "o", "-"),
+        _key("(b) small open: adjacent-pair slope at T$_{mid}$", "o", mfc="white", ms=3.8),
     ]
+    if fits_drawn:
+        keys.append(
+            Line2D([], [], color="0.3", lw=3.2, alpha=0.35, label="(b) results.json fit (window)")
+        )
     for pol in _exp_polymers(pores):  # experimental gamma(T) on the shared pore axis
         gl = EXPERIMENT.get(pol, {}).get("gamma_line")
         if gl:
@@ -4474,9 +4415,6 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
     if sweeps or pores:
         fig_legend(fig, [bulk, pore, keys])
     info["sids"] = [s["sid"] for s in [*sweeps, *pores]]
-    info["labels"] = {s["sid"]: s["label"] for s in sweeps} | {
-        s["sid"]: pore_label(s) for s in pores
-    }
     return save(fig, out, "fig9_local_slopes"), info
 
 
@@ -5071,37 +5009,27 @@ def caption_fig9(info: dict, data: dict) -> str:
         " there is one, the hold otherwise (25 °C; the 4×4×1 pore has steps only at"
         " 90/130/160 °C). Steps are short non-equilibrium windows: 5 / 2 / 1 ns (CG / UA /"
         f" AA), analysed over their second half ({wtxt}). (a) Density ρ; (b) α<sub>V</sub> ="
-        " −d ln ρ/dT from one global fit per system: a 1/SEM²-weighted quadratic of ln ρ(T)"
-        " over all 15 sweep temperatures, so α<sub>V</sub> is linear in T (line; band ±1σ from"
-        " the Birge-scaled fit covariance), instead of noisy local slopes between neighbouring"
-        " temperatures (those stay in the table). (c) κ<sub>T</sub> from the volume"
+        " −d ln ρ/dT by two estimators: small open = adjacent pair (ln ρ<sub>i+1</sub> −"
+        " ln ρ<sub>i</sub>)/(T<sub>i+1</sub> − T<sub>i</sub>) at the midpoint, filled + line ="
+        " 3-point central (ln ρ<sub>i+1</sub> − ln ρ<sub>i−1</sub>)/(T<sub>i+1</sub> −"
+        " T<sub>i−1</sub>) at T<sub>i</sub> (exact for a straight line on the uneven"
+        " 85/90/100 °C grid); translucent bars = the results.json SEM-weighted fits over"
+        " 25–90 / 90–160 (thick) and 25–160 °C (thin). (c) κ<sub>T</sub> from the volume"
         " fluctuations of each step. (d) R<sub>g</sub> = ⟨R<sub>g</sub>²⟩<sup>1/2</sup>:"
         " chains do not relax within a step (τ<sub>1</sub> ≫ step length, D56), so the"
         " per-step R<sub>g</sub> carries the history of the previous temperatures and these"
         " are **not equilibrium values**. (e) Pore surface tension γ of the CG pores"
-        " (40-chain circle, 2×2×2 diamond, 4×4×1 triangle) and the UA pores on one axis:"
-        " faint points = per-T values, line and band = a 1/SEM²-weighted straight-line fit"
-        " of γ(T) over each pore's temperatures (±1σ, Birge-scaled); dγ/dT (mN m⁻¹ K⁻¹): "
-        + (
-            "; ".join(
-                f"{(info.get('labels') or {}).get(k, k)} {v:.3f} ± {e:.3f}"
-                for k, (v, e) in (info.get("dgamma_dT") or {}).items()
-            )
-            or "n/a"
-        )
-        + ". The UA per-step SEM (≈6 mN m⁻¹) is ~4× the CG one after its Birge scale (at"
-        " 100 °C the UA 1 ps γ samples spread ~6× more, over a 2.5× shorter window); black"
-        " line: LLDPE melt"
+        " (40-chain circle, 2×2×2 diamond, 4×4×1 triangle) and the UA pores on one axis;"
+        " the UA per-step SEM (≈6 mN m⁻¹) is ~4× the CG one; black line: LLDPE melt"
         " γ = 39.05 − 0.0725 T(°C) mN m⁻¹ (Moreira et al. 2003). **Errors**: the per-step"
         " SEMs are lower bounds (true noise 1.3–3.5× larger, D55), so each system and"
         " property gets a Birge scale s = √max(1, χ²<sub>red</sub>) from a 1/SEM²-weighted"
         " quadratic fit of y(T); error bars are s × SEM (s ranges: "
         + (", ".join(birge) or "n/a")
-        + "); the global fits use the same s on their covariance. Table with the per-T"
-        " values, the local adjacent-pair and 3-point slopes of ρ (α<sub>V</sub>),"
+        + "), propagated to slopes as independent points (relative errors for"
+        " ln-derivatives). Table with the per-T values and both slopes of ρ (α<sub>V</sub>),"
         " κ<sub>T</sub> (dκ<sub>T</sub>/dT), R<sub>g</sub> (d ln R<sub>g</sub>/dT) and γ"
-        " (dγ/dT), and the global fits (kind fit_global: α<sub>V</sub>(T), γ(T), dγ/dT),"
-        " raw SEM, s and scaled SEM:"
+        " (dγ/dT), raw SEM, s and scaled SEM:"
         f" [{info.get('csv', SLOPE_CSV)}]({info.get('csv', SLOPE_CSV)})."
     )
 
