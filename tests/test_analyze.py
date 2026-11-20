@@ -228,7 +228,10 @@ def fake_sweep(tmp_path_factory):
     return run
 
 
-def test_cli_analyze_sweep_end_to_end(fake_sweep, tmp_path, capsys):
+def test_cli_analyze_sweep_end_to_end(fake_sweep, tmp_path, capsys, monkeypatch):
+    import sepsim.analyze as an
+
+    monkeypatch.setattr(an, "CALIBRATION_DIR", tmp_path)  # no D59 record: the D56 threshold
     out = tmp_path / "out"
     code = main(
         ["analyze", "sweep", str(fake_sweep), "--out", str(out), "--systems", str(CG.parent)]
