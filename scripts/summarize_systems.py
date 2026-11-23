@@ -1582,11 +1582,11 @@ def _pore_rows(rows: dict, stage: str, res: dict) -> None:
 
 
 def _crystal_rows(rows: dict, sid: str, ctx: dict) -> None:
-    """Density and crystallinity of each crystal hold, α_V of each crystal analysis; no
-    validity key (the validity rules are for the amorphous boxes)."""
+    """Density and crystallinity of each crystal hold, α_V of each crystal analysis (validity
+    keys rho and alpha: the crystal rules of validity.py; crystallinity has none)."""
     for stage, h in crystal_holds(sid, ctx):
         t, src = h.get("t_set_c"), f"`{stage}`"
-        _put(rows, ("rho", 0), "ρ (g/cm³)", None, t, fpm(get(h, "cell", "density"), ".5f"), src,
+        _put(rows, ("rho", 0), "ρ (g/cm³)", "rho", t, fpm(get(h, "cell", "density"), ".5f"), src,
              f"{fnum(t, 'g')} °C")  # fmt: skip
         _put(rows, ("cryst", 0), "crystallinity (ordered-site fraction)", None, t,
              fpm(get(h, "order", "fraction"), ".3f"), src, f"{fnum(t, 'g')} °C")  # fmt: skip
@@ -1595,7 +1595,7 @@ def _crystal_rows(rows: dict, sid: str, ctx: dict) -> None:
         if classify_stage(stage)[0] == "crystal" and e.get("alpha_per_K") is not None:
             ts = get(res, "expansion", "holds") or []
             v = f"{fnum(e['alpha_per_K'] * 1e4, '.3f')} ± {fnum((e.get('se') or 0) * 1e4, '.3f')}"
-            _put(rows, ("alpha", 0), "α_V (10⁻⁴ K⁻¹)", None, None,
+            _put(rows, ("alpha", 0), "α_V (10⁻⁴ K⁻¹)", "alpha", None,
                  _fit_text([min(ts), max(ts)] if ts else None, v, None), f"`{stage}`")  # fmt: skip
 
 

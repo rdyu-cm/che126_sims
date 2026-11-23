@@ -34,7 +34,11 @@ How a verdict is reached (:func:`assess`):
    - chain diffusion D_COM: only a COM MSD that is diffusive *and* beyond ⟨Rg²⟩ (sweep
      hold or D53 ``diffuse`` hold) counts; else ``not yet computed``;
    - α_V: χ²_red ≫ 1 over 25–160 °C is noted (α_V depends on T: use the half windows);
-   - pores: the 40-chain vs 2×2×2 γ difference (D50 finite-size check) is stated.
+   - pores: the 40-chain vs 2×2×2 γ difference (D50 finite-size check) is stated;
+   - D59 crystals (manifest ``crystal`` block): ρ from the ``crystal``/``crystal_fine_*``
+     analyses vs the Busing cell those analyses use, α_V as a model value (no in-repo
+     reference), tensile as a transverse single-crystal response; melt, chain, dynamics and
+     pore properties n/a.
 
 Used by ``scripts/summarize_systems.py`` ("Physical validity by system" section) and
 ``scripts/convergence_dashboard.py`` (``results/validity_overview.png``).
@@ -151,7 +155,8 @@ EXPERIMENT_OFFSETS: dict[tuple[str, str], dict[str, str]] = {
 }
 # Static offsets of these properties (force-field properties) have no principled correction
 OFFSET_ONLY = ("rho", "alpha", "kappa", "chain500", "chainT")
-NO_CORRECTION = "no principled correction for the offset (model property): compare our UA/AA values"
+NO_CORRECTION_CRYSTAL = "no principled correction for the offset (model property)"  # no AA crystal
+NO_CORRECTION = f"{NO_CORRECTION_CRYSTAL}: compare our UA/AA values"
 CURVED_CHI2 = 10.0  # alpha_V / Cp chi2_red over 25-160 C above this: T-dependent
 VDOS_CP_KEYS = ("cp_vdos", "cp_quantum")  # results.json keys of a quantum-corrected Cp
 D47_EXEMPT_CG_CARBONS = 1000
@@ -192,12 +197,47 @@ _CHAIN = (
 )
 _NOT_BULK = (NA, "bulk property (pores: see film structure)")
 _NOT_PORE = (NA, "pore property")
+# D59 crystals: the reference cell `sepsim analyze crystal` compares with (EXP_DENSITY there)
+CRYSTAL_CELL = "data/crystals/pe_orthorhombic_busing.yaml"
+CRYSTAL_DENSITY = 0.9963  # g/cm3, Busing 23 C cell (CRYSTAL_CELL verification.density_g_cm3)
+CRYSTAL_CELL_T = 23.0
+_NOT_CRYSTAL = (NA, "not computed for a crystal (`sepsim analyze crystal`: cell and order only)")
+_NO_CHAINS = (NA, "straight periodic stems with no ends (D59): no coil, no chain diffusion")
 
 # BASE_RULES[property][system kind][resolution or "*"] -> (verdict, reason).
-# System kind: "bulk" or "pore". From docs/property_guide.md, comparability table.
+# System kind: "bulk", "pore" or "crystal" (D59). From docs/property_guide.md, comparability
+# table; crystal rows from D59 and the `sepsim analyze crystal`/tensile caveats.
 BASE_RULES: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
-    "rho": {"bulk": {"*": _DENSITY}, "pore": {"*": _NOT_BULK}},
-    "alpha": {"bulk": {"*": _DENSITY}, "pore": {"*": _NOT_BULK}},
+    "rho": {
+        "bulk": {"*": _DENSITY},
+        "pore": {"*": _NOT_BULK},
+        "crystal": {
+            "*": (
+                COMPARABLE,
+                (
+                    f"vs the Busing orthorhombic cell ({CRYSTAL_DENSITY:g} g/cm³ at"
+                    f" {CRYSTAL_CELL_T:g} °C, {CRYSTAL_CELL}), the reference of"
+                    " `sepsim analyze crystal`: only the 25 °C hold is near that T (no in-repo"
+                    " ρ(T) of crystalline PE above it); a perfect periodic crystal, not a"
+                    " semicrystalline sample"
+                ),
+            )
+        },
+    },
+    "alpha": {
+        "bulk": {"*": _DENSITY},
+        "pore": {"*": _NOT_BULK},
+        "crystal": {
+            "*": (
+                TREND,
+                (
+                    "no in-repo reference for the thermal expansion of crystalline PE: model"
+                    " value of a perfect periodic crystal (anisotropic: α_a, α_b, α_c), T and"
+                    " resolution trends only"
+                ),
+            )
+        },
+    },
     "kappa": {
         "bulk": {
             "*": (COMPARABLE, "vs melt PVT data at 1 atm (bulk modulus 1/κ_T)"),
@@ -207,6 +247,7 @@ BASE_RULES: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
             ),
         },
         "pore": {"*": _NOT_BULK},
+        "crystal": {"*": _NOT_CRYSTAL},
     },
     "cp": {
         "bulk": {
@@ -240,18 +281,22 @@ BASE_RULES: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
     "chain500": {
         "bulk": {"*": _CHAIN},
         "pore": {"*": (NA, "the pore's chains come from its source box (see that row)")},
+        "crystal": {"*": (NA, "no 500 K melt (D59): built as a crystal")},
     },
     "chainT": {
         "bulk": {"*": _CHAIN},
         "pore": {"*": (TREND, "chain shape in a film vs bulk: no direct experiment")},
+        "crystal": {"*": _NO_CHAINS},
     },
     "segdyn": {
         "bulk": {"aa": _DYN_AA, "ua": _DYN_UA, "cg": _DYN_CG},
         "pore": {"aa": _DYN_AA, "ua": _DYN_UA, "cg": _DYN_CG},
+        "crystal": {"*": _NOT_CRYSTAL},
     },
     "chaindyn": {
         "bulk": {"aa": _DYN_AA, "ua": _DYN_UA, "cg": _DYN_CG},
         "pore": {"*": _NOT_PORE},
+        "crystal": {"*": _NO_CHAINS},
     },
     "gamma": {
         "bulk": {"*": _NOT_PORE},
@@ -271,10 +316,12 @@ BASE_RULES: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
                 ),
             ),
         },
+        "crystal": {"*": _NOT_PORE},
     },
     "film": {
         "bulk": {"*": _NOT_PORE},
         "pore": {"*": (TREND, "no direct experiment: mechanism and within-simulation comparisons")},
+        "crystal": {"*": _NOT_PORE},
     },
     "tensile": {
         "bulk": {
@@ -287,13 +334,27 @@ BASE_RULES: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
             )
         },
         "pore": {"*": (NA, "bulk test")},
+        "crystal": {
+            "*": (
+                TREND,
+                (
+                    "perfect periodic single crystal pulled transverse to the chains (D59: x, y"
+                    " only) at MD rates: E is the interchain transverse modulus and the peak the"
+                    " ideal transverse strength of a defect-free crystal; not comparable to"
+                    " separator data (semicrystalline, defects, ~10⁹× slower tests): T and"
+                    " rate trends only"
+                ),
+            )
+        },
     },
     "hole": {
         "bulk": {"*": (NA, "pore/film protocol")},
         "pore": {"*": (TREND, "no direct experiment: closure mechanism and trends only")},
+        "crystal": {"*": (NA, "pore/film protocol")},
     },
     "puncture": {
         "bulk": {"*": (NA, "film protocol")},
+        "crystal": {"*": (NA, "film protocol")},
         "pore": {
             "*": (
                 TREND,
@@ -316,7 +377,14 @@ BASE_RULES: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
             )
         },
         "pore": {"*": (NA, "bulk test")},
+        "crystal": {"*": (NA, "melt protocol (D58)")},
     },
+}
+# CG/UA classical Cp is not meaningful for a crystal either (same degrees of freedom removed)
+BASE_RULES["cp"]["crystal"] = {
+    "*": _NOT_CRYSTAL,
+    "cg": BASE_RULES["cp"]["bulk"]["cg"],
+    "ua": BASE_RULES["cp"]["bulk"]["ua"],
 }
 
 
@@ -405,6 +473,29 @@ def finite_size_partner(sid: str) -> str | None:
     return None
 
 
+def crystal_facts(analyses: list[tuple[str, dict]]) -> dict:
+    """Holds (T, ρ, ρ/ρ_cell, stable) and α_V per analysis of the D59 crystal analyses."""
+    holds, alpha = [], []
+    for stage, res in analyses:
+        for h in res.get("holds") or []:
+            cell = h.get("cell") or {}
+            holds.append(
+                {
+                    "t_c": h.get("t_set_c"),
+                    "rho": _get(cell, "density", "mean"),
+                    "rho_rel": cell.get("density_vs_exp"),
+                    "stable": h.get("stable"),
+                }
+            )
+        a = _get(res, "expansion", "volume_A3", "alpha_per_K")
+        ts = _get(res, "expansion", "t_c") or _get(res, "expansion", "holds") or []
+        if a is not None:
+            alpha.append({"stage": stage, "alpha": a, "t_lo": min(ts, default=None),
+                          "t_hi": max(ts, default=None)})  # fmt: skip
+    holds = sorted((h for h in holds if h["t_c"] is not None), key=lambda h: h["t_c"])
+    return {"holds": holds, "alpha": alpha}
+
+
 def system_facts(sid: str, ctx: dict) -> dict:
     """Everything the rules need about one system, from the summary context."""
     man = ctx["systems"].get(sid) or {}
@@ -413,6 +504,7 @@ def system_facts(sid: str, ctx: dict) -> dict:
     ch = eq.get("checks") or {}
     res_kind = (m.get("resolution") or "?").lower()
     pore = bool(m.get("pore"))
+    crystal = bool(m.get("crystal"))  # D59: manifest `crystal` block (summarize_systems.meta)
     sweep = _analysis(ctx, sid, "sweep")
     sweep_res = sweep[-1][1] if sweep else None
     pore_ana = _analysis(ctx, sid, "pore")
@@ -460,7 +552,7 @@ def system_facts(sid: str, ctx: dict) -> dict:
         "sid": sid,
         "res": res_kind,
         "polymer": m.get("polymer"),
-        "kind": "pore" if pore else "bulk",
+        "kind": "crystal" if crystal else "pore" if pore else "bulk",
         "n_chains": man.get("n_chains"),
         "n_carbons": man.get("n_carbons"),
         "long_cg": res_kind == "cg" and (man.get("n_carbons") or 0) >= D47_EXEMPT_CG_CARBONS,
@@ -488,6 +580,8 @@ def system_facts(sid: str, ctx: dict) -> dict:
         "puncture_res": [k for k, _ in _analysis(ctx, sid, "puncture")],
         "cavitation_runs": [_run_state(r) for r in _runs(ctx, sid, "cavitation")],
         "cavitation_res": [k for k, _ in _analysis(ctx, sid, "cavitation")],
+        "crystal": crystal_facts(_analysis(ctx, sid, "crystal")) if crystal else None,
+        "crystal_runs": [_run_state(r) for r in _runs(ctx, sid, "crystal")],
     }
 
 
@@ -549,24 +643,33 @@ def assess(f: dict) -> dict[str, dict]:
             continue
         out[prop] = _RULES[prop](f, base, holds)
     # experiment offsets (EXPERIMENT_DOC) and the no-correction note for model offsets
-    off = EXPERIMENT_OFFSETS.get((f["polymer"] or "", res), {})
+    # (melt offsets: not for a crystal)
+    off = {} if kind == "crystal" else EXPERIMENT_OFFSETS.get((f["polymer"] or "", res), {})
     for prop, v in out.items():
         if v["verdict"] in (NA, NOT_YET):
             continue
         extra = ""
         if prop in off:
             extra += f"; vs experiment: {off[prop]} ({EXPERIMENT_DOC})"
-        if prop in OFFSET_ONLY and res in ("cg", "ua"):
-            extra += f"; {NO_CORRECTION}"
+        # (crystal α_V has no reference, so no offset)
+        if prop in OFFSET_ONLY and res in ("cg", "ua") and (kind != "crystal" or prop == "rho"):
+            extra += f"; {NO_CORRECTION_CRYSTAL if kind == 'crystal' else NO_CORRECTION}"
         v["reason"] += extra
         v["note"] = (v["note"] + extra).lstrip("; ")
     # equilibration not accepted: every computed verdict is suspect
     if f["accepted"] is not True:
-        why = (
-            "500 K equilibration NOT accepted"
-            if f["accepted"] is False
-            else "no 500 K equilibration verdict yet"
-        )
+        if kind == "crystal":
+            why = (
+                "crystal holds NOT all stable"
+                if f["accepted"] is False
+                else "crystal holds not analysed yet"
+            )
+        else:
+            why = (
+                "500 K equilibration NOT accepted"
+                if f["accepted"] is False
+                else "no 500 K equilibration verdict yet"
+            )
         for v in out.values():
             if v["verdict"] not in (NA, NOT_YET, NOT_MEANINGFUL):
                 v["flag"] = True
@@ -582,11 +685,48 @@ def _thermo(f, base, holds, need_kappa=False):
     return _v(*base)
 
 
+def _crystal_missing(f: dict) -> str:
+    if f.get("crystal_runs"):
+        return f"no crystal analysis yet ({_runs_text(f['crystal_runs'])})"
+    return "no crystal run yet"
+
+
+def _rule_crystal_rho(f, base):
+    hs = [h for h in (f.get("crystal") or {}).get("holds", []) if h["rho"] is not None]
+    if not hs:
+        return _todo(base, _crystal_missing(f))
+    near = min(hs, key=lambda h: abs(h["t_c"] - CRYSTAL_CELL_T))
+    rel = near["rho_rel"] if near["rho_rel"] is not None else near["rho"] / CRYSTAL_DENSITY
+    lo, hi = hs[0], hs[-1]
+    note = (
+        f"; {near['t_c']:g} °C hold ρ {near['rho']:.3f} g/cm³ = {rel:.3f} × the cell;"
+        f" {lo['rho']:.3f} → {hi['rho']:.3f} g/cm³ over {lo['t_c']:g}–{hi['t_c']:g} °C"
+    )
+    return _v(*base, value=f"ρ/ρ_cell {rel:.3f}", note=note)
+
+
+def _rule_crystal_alpha(f, base):
+    al = (f.get("crystal") or {}).get("alpha") or []
+    if not al:
+        return _todo(base, _crystal_missing(f))
+    a = [x["alpha"] * 1e4 for x in al]
+    wins = ", ".join(_fmt(x["t_lo"], ".0f") + "–" + _fmt(x["t_hi"], ".0f") for x in al)
+    note = (
+        f"; α_V {min(a):.1f}–{max(a):.1f} ×10⁻⁴ K⁻¹ over the crystal analyses' T windows"
+        f" ({wins} °C)"
+    )
+    return _v(*base, value=f"α_V {min(a):.1f}–{max(a):.1f}", note=note)
+
+
 def _rule_rho(f, base, holds):
+    if f["kind"] == "crystal":
+        return _rule_crystal_rho(f, base)
     return _thermo(f, base, holds)
 
 
 def _rule_alpha(f, base, holds):
+    if f["kind"] == "crystal":
+        return _rule_crystal_alpha(f, base)
     v = _thermo(f, base, holds)
     if v["verdict"] == base[0]:
         c = f["chi2"]["alpha_V"].get((25.0, 160.0))

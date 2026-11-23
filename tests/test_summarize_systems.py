@@ -542,6 +542,13 @@ def test_crystal_pipeline(summ, tree):
     assert "500 K equilibration" not in table
     assert "| 25 | yes | 0.999 | 0.87500 ± 0.00003 |" in sec
     assert "Pore analysis" not in sec and "Sweep analysis: not analysed yet" not in sec
+    # validity: crystal rules (ρ vs the Busing cell, α_V trend, the rest n/a or not meaningful)
+    vrow = next(ln for ln in text.split("## Physical validity", 1)[1].splitlines() if sid in ln)
+    assert vrow == (
+        f"| `{sid}` | comp | trend | n/a | no | n/a | n/a | n/a | n/a | n/a | n/a | todo | n/a"
+        " | n/a | n/a |"
+    )
+    assert "| comp | `crystal`" in table
     # an unstable hold: not accepted, named in the verdict
     res = json.loads((tree["analysis"] / sid / "crystal" / "results.json").read_text())
     res["holds"][1]["stable"] = False

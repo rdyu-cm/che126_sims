@@ -67,7 +67,7 @@ def _facts(**kw):
 
 def test_rule_table_covers_every_property(va):
     for prop, _ in va.PROPERTIES:
-        for kind in ("bulk", "pore"):
+        for kind in ("bulk", "pore", "crystal"):
             for res in ("cg", "ua", "aa"):
                 verdict, reason = va.base_rule(prop, kind, res)
                 assert verdict in va.VERDICTS and reason
@@ -182,6 +182,46 @@ def test_puncture_and_cavitation_trend(va):
     pu = va.assess(dict(film, puncture_res=["puncture_160C_v1_R2nm"]))
     assert pu["puncture"]["verdict"] == va.TREND and "melt film" in pu["puncture"]["reason"]
     assert pu["cavitation"]["verdict"] == va.NA
+
+
+def test_crystal_kind(va):
+    """D59 crystals: ρ vs the Busing cell, α_V without a reference, transverse tensile,
+    melt/chain/dynamics/pore properties n/a; no melt experiment offsets."""
+    holds = [
+        {"t_c": t, "rho": rho, "rho_rel": rho / 0.9963, "stable": True}
+        for t, rho in ((25.0, 0.927), (90.0, 0.894), (160.0, 0.853))
+    ]
+    alpha = [{"stage": "crystal", "alpha": 6.1e-4, "t_lo": 25.0, "t_hi": 160.0}]
+    f = _facts(
+        sid="pe_cg_crystal_7x10x27_s1",
+        kind="crystal",
+        sweep=False,
+        sweep_runs=[],
+        holds=[],
+        d47={},
+        cn_plateau=None,
+        basis="crystal",
+        tensile_res=["tensile_25C"],
+        crystal={"holds": holds, "alpha": alpha},
+    )
+    v = va.assess(f)
+    assert v["rho"]["verdict"] == va.COMPARABLE and "Busing" in v["rho"]["reason"]
+    assert "0.9963" in v["rho"]["reason"] and "0.930 × the cell" in v["rho"]["note"]
+    assert "experiment_comparison.md" not in v["rho"]["reason"]  # melt offsets not applied
+    assert v["rho"]["reason"].endswith("no principled correction for the offset (model property)")
+    assert v["alpha"]["verdict"] == va.TREND and "no in-repo reference" in v["alpha"]["reason"]
+    assert "6.1" in v["alpha"]["note"] and "no principled correction" not in v["alpha"]["reason"]
+    t = v["tensile"]
+    assert t["verdict"] == va.TREND and "transverse" in t["reason"] and "G_e" not in t["reason"]
+    assert v["cp"]["verdict"] == va.NOT_MEANINGFUL
+    for k in ("kappa", "chain500", "chainT", "segdyn", "chaindyn", "gamma", "film", "hole"):
+        assert v[k]["verdict"] == va.NA, k
+    assert v["puncture"]["verdict"] == va.NA and v["cavitation"]["verdict"] == va.NA
+    assert not any(c["flag"] for c in v.values())
+    todo = va.assess(dict(f, crystal={"holds": [], "alpha": []}))
+    assert todo["rho"]["verdict"] == va.NOT_YET and "no crystal run" in todo["rho"]["note"]
+    bad = va.assess(dict(f, accepted=False))
+    assert bad["rho"]["flag"] and "crystal holds NOT all stable" in bad["rho"]["reason"]
 
 
 def test_not_accepted_flags(va):
