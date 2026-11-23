@@ -16,6 +16,8 @@ from sepsim.analysis.units import AVOGADRO
 from sepsim.analyze_crystal import (
     analyze_crystal,
     crystal_arrays,
+    elastic_constants,
+    elastic_markdown,
     equal_error,
     write_calibration,
 )
@@ -639,3 +641,45 @@ def test_analyze_crystal_needs_resolution_for_default_calibration_path(built, tm
     melt = _fake_melt(tmp_path, systems)
     with pytest.raises(CrystalAnalysisError, match="names no resolution"):
         analyze_crystal(run, out=tmp_path / "o", systems=systems, calibrate=[melt], plots=False)
+
+
+def test_elastic_constants_recover_known_compliance():
+    """Correlated Gaussian strains (AR(1), 10-row correlation) with covariance S k_B T / V
+    of a chosen orthorhombic compliance: E, nu and C come back within their bootstrap
+    errors, the errors are of the expected size, the halves agree."""
+    e_mod, nu = np.array([2.0, 3.0, 50.0]), {"xy": 0.3, "xz": 0.02, "yz": 0.03}
+    s = np.diag(1.0 / e_mod)
+    s[0, 1] = s[1, 0] = -nu["xy"] / e_mod[0]
+    s[0, 2] = s[2, 0] = -nu["xz"] / e_mod[0]
+    s[1, 2] = s[2, 1] = -nu["yz"] / e_mod[1]
+    t_k, l0 = 300.0, np.array([50.0, 50.0, 100.0])
+    cov = s * 1e-9 * 1.380649e-23 * t_k / (np.prod(l0) * 1e-30)  # 1/GPa -> strain^2
+    chol = np.linalg.cholesky(cov)
+    rng = np.random.default_rng(11)
+    n, phi = 40000, 0.9
+    z = rng.normal(size=(n, 3)) @ chol.T
+    eps = np.empty_like(z)
+    eps[0] = z[0]
+    for k in range(1, n):
+        eps[k] = phi * eps[k - 1] + math.sqrt(1 - phi**2) * z[k]
+    lx, ly, lz = (l0 * (1 + eps)).T
+    lx = np.r_[np.full(n // 9, 60.0), lx]  # an off-equilibrium start the 10% skip drops
+    ly, lz = np.r_[np.full(n // 9, 40.0), ly], np.r_[np.full(n // 9, 90.0), lz]
+    r = elastic_constants(lx, ly, lz, t_k, block=100)
+    assert r["blocks"] == 400 and r["volume_A3"] == pytest.approx(np.prod(l0), rel=1e-4)
+    g2 = (1 + phi**2) / (1 - phi**2)  # statistical inefficiency of eps^2
+    for i, a in enumerate("xyz"):
+        e = r["E_GPa"][a]
+        assert abs(e["mean"] - e_mod[i]) < 4 * e["sem"]
+        assert 0.5 < e["sem"] / e_mod[i] / math.sqrt(2 * g2 / 36000) < 2.0
+    assert r["nu"]["xy"]["mean"] == pytest.approx(nu["xy"], abs=4 * r["nu"]["xy"]["sem"])
+    assert r["nu"]["yx"]["mean"] == pytest.approx(nu["xy"] * e_mod[1] / e_mod[0], rel=0.1)
+    c = np.linalg.inv(s)
+    for key, ms in r["C_GPa"].items():
+        i, j = int(key[0]) - 1, int(key[1]) - 1
+        assert abs(ms["mean"] - c[i, j]) < 4 * ms["sem"] + 1e-6
+    assert r["halves_disagree"] == []
+    assert elastic_constants(lx[-700:], ly[-700:], lz[-700:], t_k, block=100) is None  # 6 blocks
+    assert elastic_constants(lx, ly, np.full(len(lz), 90.0), t_k, block=100) is None
+    md = "\n".join(elastic_markdown({"holds": [{"t_set_c": 25.0, "stable": True, "elastic": r}]}))
+    assert "## Elastic constants (strain fluctuations)" in md and "| 25 | 400 |" in md

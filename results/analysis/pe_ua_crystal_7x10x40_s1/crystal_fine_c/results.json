@@ -2,11 +2,13 @@
  "caveats": [
   "A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.",
   "CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = \u221a3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.",
-  "The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds."
+  "The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.",
+  "Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E_app; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.",
+  "E_z is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems."
  ],
  "code_git": {
-  "branch": "main",
-  "commit": "b969a5e8c3bedfc091e6717d0770264196948822",
+  "branch": "crystal-elastic",
+  "commit": "8b68bd2293b02e593b26f34f55290d0125b89368",
   "dirty": true
  },
  "crystal": {
@@ -57,8 +59,8 @@
    "se": 1.300746481996083e-06
   }
  },
- "generated": "2026-11-21T10:26:31-08:00",
- "generated_on": "rdyu-rog",
+ "generated": "2026-11-23T17:45:34+00:00",
+ "generated_on": "rdyu-server",
  "holds": [
   {
    "cell": {
@@ -152,6 +154,134 @@
     }
    },
    "done": true,
+   "elastic": {
+    "C_GPa": {
+     "11": {
+      "mean": 4.132185297032163,
+      "sem": 0.2163551499751692
+     },
+     "12": {
+      "mean": 3.1225809052387676,
+      "sem": 0.22223717985818855
+     },
+     "13": {
+      "mean": 8.58657668965116,
+      "sem": 0.894395437469923
+     },
+     "22": {
+      "mean": 4.101548121080949,
+      "sem": 0.252578327168329
+     },
+     "23": {
+      "mean": 8.36078853391021,
+      "sem": 0.8997509056570798
+     },
+     "33": {
+      "mean": 118.83697867274604,
+      "sem": 11.164805821879407
+     }
+    },
+    "E_GPa": {
+     "x": {
+      "mean": 1.706434566107585,
+      "sem": 0.05499374901109719
+     },
+     "y": {
+      "mean": 1.7071938245930276,
+      "sem": 0.0683670629184739
+     },
+     "z": {
+      "mean": 98.98215977070677,
+      "sem": 10.278174988309168
+     }
+    },
+    "block_rows": 100,
+    "blocks": 18,
+    "compliance_per_GPa": [
+     [
+      0.586017196242,
+      -0.420077270971,
+      -0.012788143753
+     ],
+     [
+      -0.420077270971,
+      0.585756570575,
+      -0.010858245729
+     ],
+     [
+      -0.012788143753,
+      -0.010858245729,
+      0.010102830675
+     ]
+    ],
+    "halves": {
+     "x": {
+      "disagree": false,
+      "first": {
+       "mean": 1.6976062946821648,
+       "sem": 0.05306277170726854
+      },
+      "second": {
+       "mean": 1.7716505254979928,
+       "sem": 0.09048411828494882
+      }
+     },
+     "y": {
+      "disagree": false,
+      "first": {
+       "mean": 1.668588583189049,
+       "sem": 0.08557995783819818
+      },
+      "second": {
+       "mean": 1.821395402633458,
+       "sem": 0.06715791325630804
+      }
+     },
+     "z": {
+      "disagree": true,
+      "first": {
+       "mean": 149.0516900625488,
+       "sem": 11.80034058579097
+      },
+      "second": {
+       "mean": 111.09212933278972,
+       "sem": 13.254149651159153
+      }
+     }
+    },
+    "halves_disagree": [
+     "z"
+    ],
+    "nu": {
+     "xy": {
+      "mean": 0.7168343756218749,
+      "sem": 0.01871432471358715
+     },
+     "xz": {
+      "mean": 0.02182213053716625,
+      "sem": 0.004770633362864706
+     },
+     "yx": {
+      "mean": 0.7171533228544015,
+      "sem": 0.021545772524674003
+     },
+     "yz": {
+      "mean": 0.018537130054855067,
+      "sem": 0.0041321462058121795
+     },
+     "zx": {
+      "mean": 1.2657980881704831,
+      "sem": 0.24541938085031684
+     },
+     "zy": {
+      "mean": 1.0747726136002382,
+      "sem": 0.27035171914691375
+     }
+    },
+    "rows": 1800,
+    "t_k": 393.15,
+    "volume_A3": 263309.6114025715
+   },
    "index": 1,
    "name": "seg 01 hold 120 C",
    "order": {
@@ -422,6 +552,132 @@
     }
    },
    "done": true,
+   "elastic": {
+    "C_GPa": {
+     "11": {
+      "mean": 4.37965147745568,
+      "sem": 0.1666957117095624
+     },
+     "12": {
+      "mean": 3.0689305883538633,
+      "sem": 0.18352813524378478
+     },
+     "13": {
+      "mean": 6.934559136440175,
+      "sem": 0.5302451986690393
+     },
+     "22": {
+      "mean": 4.3993669894851335,
+      "sem": 0.1837023889902887
+     },
+     "23": {
+      "mean": 6.5275748382288254,
+      "sem": 0.5267338184807945
+     },
+     "33": {
+      "mean": 113.68593897561443,
+      "sem": 3.0790950704742754
+     }
+    },
+    "E_GPa": {
+     "x": {
+      "mean": 2.184300898950609,
+      "sem": 0.0394046489542609
+     },
+     "y": {
+      "mean": 2.221790297901398,
+      "sem": 0.061994933323938586
+     },
+     "z": {
+      "mean": 101.46836130957847,
+      "sem": 3.1137926462203325
+     }
+    },
+    "block_rows": 100,
+    "blocks": 18,
+    "compliance_per_GPa": [
+     [
+      0.45781238312,
+      -0.303811194154,
+      -0.010481302687
+     ],
+     [
+      -0.303811194154,
+      0.450087481678,
+      -0.007311221033
+     ],
+     [
+      -0.010481302687,
+      -0.007311221033,
+      0.009855288753
+     ]
+    ],
+    "halves": {
+     "x": {
+      "disagree": false,
+      "first": {
+       "mean": 2.240180908931465,
+       "sem": 0.05815819098326622
+      },
+      "second": {
+       "mean": 2.1311409541709185,
+       "sem": 0.051487114093501936
+      }
+     },
+     "y": {
+      "disagree": false,
+      "first": {
+       "mean": 2.3192364277924455,
+       "sem": 0.055844189834650754
+      },
+      "second": {
+       "mean": 2.132259989629223,
+       "sem": 0.09078732632264012
+      }
+     },
+     "z": {
+      "disagree": false,
+      "first": {
+       "mean": 102.88033737958389,
+       "sem": 5.718663882413292
+      },
+      "second": {
+       "mean": 101.19886648870121,
+       "sem": 3.434580995992734
+      }
+     }
+    },
+    "halves_disagree": [],
+    "nu": {
+     "xy": {
+      "mean": 0.6636150645011356,
+      "sem": 0.022257944288467182
+     },
+     "xz": {
+      "mean": 0.02289431888046642,
+      "sem": 0.0030681271971149267
+     },
+     "yx": {
+      "mean": 0.6750047635644786,
+      "sem": 0.017932212307657583
+     },
+     "yz": {
+      "mean": 0.01624399995771024,
+      "sem": 0.0026648752244591823
+     },
+     "zx": {
+      "mean": 1.0635206079967827,
+      "sem": 0.14569400064972549
+     },
+     "zy": {
+      "mean": 0.7418576174261737,
+      "sem": 0.10676583819872021
+     }
+    },
+    "rows": 1800,
+    "t_k": 413.15,
+    "volume_A3": 265206.6503198895
+   },
    "index": 2,
    "name": "seg 02 hold 140 C",
    "order": {
@@ -699,6 +955,132 @@
     }
    },
    "done": true,
+   "elastic": {
+    "C_GPa": {
+     "11": {
+      "mean": 4.198086151296101,
+      "sem": 0.14176222543061467
+     },
+     "12": {
+      "mean": 2.7585424832500163,
+      "sem": 0.15317966374949213
+     },
+     "13": {
+      "mean": 7.977984230216427,
+      "sem": 0.5120800294974388
+     },
+     "22": {
+      "mean": 4.190036994906899,
+      "sem": 0.15825240255722167
+     },
+     "23": {
+      "mean": 7.188167037373954,
+      "sem": 0.6550498101962188
+     },
+     "33": {
+      "mean": 93.09557294390345,
+      "sem": 4.1779991944397095
+     }
+    },
+    "E_GPa": {
+     "x": {
+      "mean": 2.2515504686498025,
+      "sem": 0.047129357847726074
+     },
+     "y": {
+      "mean": 2.328827122226617,
+      "sem": 0.06281047592753652
+     },
+     "z": {
+      "mean": 76.34166028134294,
+      "sem": 3.314762484444861
+     }
+    },
+    "block_rows": 100,
+    "blocks": 18,
+    "compliance_per_GPa": [
+     [
+      0.444138389933,
+      -0.261782522098,
+      -0.017848244788
+     ],
+     [
+      -0.261782522098,
+      0.429400701519,
+      -0.010721316856
+     ],
+     [
+      -0.017848244788,
+      -0.010721316856,
+      0.013099007754
+     ]
+    ],
+    "halves": {
+     "x": {
+      "disagree": false,
+      "first": {
+       "mean": 2.2664118493209116,
+       "sem": 0.08638550029164783
+      },
+      "second": {
+       "mean": 2.3208681188209592,
+       "sem": 0.04006414398536186
+      }
+     },
+     "y": {
+      "disagree": false,
+      "first": {
+       "mean": 2.3268912584504844,
+       "sem": 0.09417799240892129
+      },
+      "second": {
+       "mean": 2.3770301372058547,
+       "sem": 0.0907119842943595
+      }
+     },
+     "z": {
+      "disagree": false,
+      "first": {
+       "mean": 87.24501775545133,
+       "sem": 7.837321219170459
+      },
+      "second": {
+       "mean": 77.81460845240066,
+       "sem": 4.667701852455045
+      }
+     }
+    },
+    "halves_disagree": [],
+    "nu": {
+     "xy": {
+      "mean": 0.5894165603141942,
+      "sem": 0.01888651093549546
+     },
+     "xz": {
+      "mean": 0.040186223917843114,
+      "sem": 0.00438410430912712
+     },
+     "yx": {
+      "mean": 0.6096462375868301,
+      "sem": 0.019560003699151538
+     },
+     "yz": {
+      "mean": 0.024968093480622008,
+      "sem": 0.005220277646110531
+     },
+     "zx": {
+      "mean": 1.3625646402524072,
+      "sem": 0.14219365783763543
+     },
+     "zy": {
+      "mean": 0.8184831292019694,
+      "sem": 0.18017212592269027
+     }
+    },
+    "rows": 1800,
+    "t_k": 423.15,
+    "volume_A3": 266133.4844367556
+   },
    "index": 3,
    "name": "seg 03 hold 150 C",
    "order": {
@@ -890,6 +1272,10 @@
   "cell": {
    "file": "cell.png",
    "title": "cell lengths and density per hold"
+  },
+  "elastic": {
+   "file": "elastic.png",
+   "title": "elastic moduli from strain fluctuations"
   },
   "order": {
    "file": "order.png",

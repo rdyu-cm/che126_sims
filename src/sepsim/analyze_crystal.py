@@ -18,6 +18,9 @@ For a ``crystal`` run directory ``results/runs/<crystal id>/crystal/`` (deck
   crystalline fraction >= ``STABLE_FRACTION`` and stem P2 >= ``STABLE_STEM_P2``;
 - thermal expansion alpha = d ln L / dT of a, b, c and V (OLS of ln of the hold means vs
   T, its standard error from >= 3 points) over the stable holds;
+- per hold, the static elastic constants from the box-length fluctuations
+  (:func:`elastic_constants`: E_x, E_y, E_z, Poisson ratios, the normal 3x3 stiffness,
+  block-bootstrap errors and a halves check), with a plot of E vs T;
 - the optional ramp (``ramp=true``): crystallinity per frame vs T (linear in time) and the
   T where the fraction first drops below half its starting value (a stability bound of
   a superheated periodic crystal, not Tm).
@@ -78,6 +81,10 @@ RC_SCAN = (1.2, 1.4, 1.6)  # r_c / sigma factors of the calibration check
 RC_FACTOR = 1.4  # D56 r_c = 1.4 sigma, kept by the calibration
 HIST_EDGES = np.linspace(-0.5, 1.0, 61)
 EXP_DENSITY = 0.9963  # g/cm3, Busing 23 C cell (data/crystals/pe_orthorhombic_busing.yaml)
+KB_J = 1.380649e-23  # J/K
+N_BOOT = 1000  # block bootstrap draws of the elastic constants
+ELASTIC_MIN_BLOCKS = 4  # blocks per half (of the hold window) for the elastic constants
+ELASTIC_NU_IJ = ((0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1))  # nu_xy, yx, xz, zx, yz, zy
 
 CAVEATS = [
     (
@@ -92,6 +99,23 @@ CAVEATS = [
     (
         "The barostat is anisotropic (x, y, z independent, couple none); the stems stay"
         " along z only while the crystal holds."
+    ),
+    (
+        "Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-"
+        "Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal,"
+        " so the shear strains are fixed and only the normal-normal block of the compliance"
+        " is sampled; it equals the normal block of the full S only if the normal-shear"
+        " couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems"
+        " along z) symmetry. They are static (zero-rate, isothermal) constants of the model"
+        " crystal, to compare with the rate-dependent tensile E_app; they rest on the MTK"
+        " (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps"
+        " apart), and fluctuation estimates converge slowly: the halves check flags E"
+        " that differ by more than 2 sigma between the first and second half of the hold."
+    ),
+    (
+        "E_z is along the covalent stems, each bonded to its own periodic image (infinite"
+        " chains with no ends or folds): a model property, an upper bound for real"
+        " crystalline stems."
     ),
 ]
 
@@ -260,6 +284,110 @@ def expansion(rows: list[dict]) -> dict | None:
             res = y - (slope * t + icpt)
             se = float(np.sqrt(res @ res / (len(t) - 2) / ((t - t.mean()) @ (t - t.mean()))))
         out[key] = {"alpha_per_K": float(slope), "se": se}
+    return out
+
+
+# --------------------------------------------------------------------------- elastic
+
+
+def _compliance(s1, s2, sv, n, l0, t_k) -> np.ndarray:
+    """S (1/GPa) from summed centred lengths ``s1`` (3), their outer products ``s2``
+    (3x3), the summed volume ``sv`` over ``n`` rows; ``l0``: the centring lengths."""
+    m = s1 / n
+    cov = s2 / n - np.outer(m, m)
+    lm = l0 + m
+    eps = cov / np.outer(lm, lm)
+    return (sv / n) * 1e-30 * eps / (KB_J * t_k) * 1e9
+
+
+def _derived(s: np.ndarray) -> np.ndarray:
+    """Flat E_x, E_y, E_z, nu_ij (i != j, ELASTIC_NU order), C (3x3) of a compliance."""
+    d = np.diag(s)
+    nu = [-s[i, j] / s[i, i] for i, j in ELASTIC_NU_IJ]
+    return np.concatenate([1.0 / d, nu, np.linalg.inv(s).ravel()])
+
+
+def _boot(s1, s2, sv, block, l0, t_k, n_boot, rng) -> tuple[np.ndarray, np.ndarray]:
+    """(point estimate, bootstrap sd) of :func:`_derived` over the given blocks."""
+    nb = len(s1)
+    est = _derived(_compliance(s1.sum(0), s2.sum(0), sv.sum(), nb * block, l0, t_k))
+    idx = rng.integers(0, nb, (n_boot, nb))
+    draws = []
+    for k in idx:
+        s = _compliance(s1[k].sum(0), s2[k].sum(0), sv[k].sum(), nb * block, l0, t_k)
+        try:
+            draws.append(_derived(s))
+        except np.linalg.LinAlgError:
+            continue
+    return est, np.std(draws, axis=0, ddof=1)
+
+
+def elastic_constants(
+    lx, ly, lz, t_k: float, block: int, skip: float = HOLD_SKIP, n_boot=N_BOOT, seed=0
+) -> dict | None:
+    """Elastic constants of an orthogonal anisotropic NPT hold from its box-length
+    fluctuations (Parrinello & Rahman, J. Appl. Phys. 52, 7182 (1981); Ray, Comput. Phys.
+    Rep. 8, 109 (1988)): after the first ``skip`` of the rows, strains eps_i = (L_i -
+    <L_i>)/<L_i>, compliance S_ij = <V> <eps_i eps_j> / (k_B T) (``t_k``: the set point)
+    over the normal strains (shear fixed by the box), E_i = 1/S_ii, nu_ij = -S_ij/S_ii
+    (strain along j per strain along a stress along i), C = S^-1. Errors: bootstrap over
+    non-overlapping blocks of ``block`` rows (the trailing remainder dropped); halves
+    check: the estimate from the first and second half of the blocks, each with its own
+    bootstrap error, flagged per axis when the E differ by more than 2 sigma. None when
+    the window has fewer than ``2 * ELASTIC_MIN_BLOCKS`` blocks, a box length does not
+    fluctuate or the strain covariance is singular."""
+    x = np.column_stack([lx, ly, lz]).astype(float)
+    x = x[int(np.floor(skip * len(x))) :]
+    nb = len(x) // block
+    if nb < 2 * ELASTIC_MIN_BLOCKS:
+        return None
+    x = x[: nb * block]
+    if not np.all(np.ptp(x, axis=0) > 0):  # a fixed box length: no fluctuation to use
+        return None
+    l0 = x.mean(0)
+    d = (x - l0).reshape(nb, block, 3)
+    s1 = d.sum(1)
+    s2 = np.einsum("bri,brj->bij", d, d)
+    sv = np.prod(x, axis=1).reshape(nb, block).sum(1)
+    rng = np.random.default_rng(seed)
+    h = nb // 2
+    try:
+        est, err = _boot(s1, s2, sv, block, l0, t_k, n_boot, rng)
+        halves = [
+            _boot(s1[sl], s2[sl], sv[sl], block, l0, t_k, n_boot, rng)
+            for sl in (slice(0, h), slice(nb - h, nb))
+        ]
+    except np.linalg.LinAlgError:  # singular strain covariance
+        return None
+
+    def ms(k):
+        return {"mean": float(est[k]), "sem": float(err[k])}
+
+    out: dict = {
+        "t_k": float(t_k),
+        "rows": int(nb * block),
+        "blocks": int(nb),
+        "block_rows": int(block),
+        "volume_A3": float(sv.sum() / (nb * block)),
+        "compliance_per_GPa": _compliance(s1.sum(0), s2.sum(0), sv.sum(), nb * block, l0, t_k)
+        .round(12)
+        .tolist(),
+        "E_GPa": {a: ms(i) for i, a in enumerate("xyz")},
+        "nu": {f"{'xyz'[i]}{'xyz'[j]}": ms(3 + k) for k, (i, j) in enumerate(ELASTIC_NU_IJ)},
+        "C_GPa": {
+            f"{i + 1}{j + 1}": ms(9 + 3 * i + j) for i in range(3) for j in range(3) if j >= i
+        },
+        "halves": {},
+    }
+    for i, a in enumerate("xyz"):
+        (e1, s_1), (e2, s_2) = halves
+        sig = float(np.hypot(s_1[i], s_2[i]))
+        out["halves"][a] = {
+            "first": {"mean": float(e1[i]), "sem": float(s_1[i])},
+            "second": {"mean": float(e2[i]), "sem": float(s_2[i])},
+            "disagree": bool(abs(e2[i] - e1[i]) > 2 * sig),
+        }
+    out["halves_disagree"] = [a for a in "xyz" if out["halves"][a]["disagree"]]
     return out
 
 
@@ -533,6 +661,11 @@ def analyze_crystal(
     for s, th in holds:
         row = {"index": s.sweep_index, "t_set_c": s.t_c, "done": th is not None, "name": s.name}
         row["cell"] = hold_cell(th, crystal) if th is not None else {}
+        row["elastic"] = (
+            elastic_constants(th["Lx"], th["Ly"], th["Lz"], s.t_c + 273.15, _block_rows(th))
+            if th is not None
+            else None
+        )
         dcd = s.dcd[0] if s.dcd else None
         if th is None:
             row["order"] = {"available": False, "notes": ["hold not complete"]}
@@ -591,7 +724,8 @@ def _ramp(run_dir: Path, ramp, arr, settings, max_frames) -> dict:
 
 def make_plots(report: dict, out_dir: Path) -> dict:
     """cell.png (a, b, c and density vs T), order.png (crystalline fraction and stem P2
-    per hold over its frames, ramp), calibration.png (p2 histograms and threshold)."""
+    per hold over its frames, ramp), elastic.png (E_x, E_y, E_z vs T of the holds not
+    marked unstable), calibration.png (p2 histograms and threshold)."""
     from sepsim.progress_plots import _save, plt
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -641,6 +775,24 @@ def make_plots(report: dict, out_dir: Path) -> dict:
                 ax.legend(fontsize=7)
         _save(fig, out_dir / "order.png")
         plots["order"] = {"file": "order.png", "title": "crystallinity and stem P2"}
+    rows = [r for r in report["holds"] if r.get("elastic") and r["stable"] is not False]
+    if rows:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.2))
+        t = [r["t_set_c"] for r in rows]
+        for ax, axes in ((ax1, "xy"), (ax2, "z")):
+            for a in axes:
+                e = [r["elastic"]["E_GPa"][a] for r in rows]
+                ax.errorbar(
+                    t, [v["mean"] for v in e], [v["sem"] for v in e], fmt="o-", label=f"E_{a}"
+                )
+            ax.legend(fontsize=7)
+        ax1.set(xlabel="T (°C)", ylabel="E (GPa)", title="transverse (strain fluctuations)")
+        ax2.set(xlabel="T (°C)", ylabel="E (GPa)", title="along the stems (model property)")
+        _save(fig, out_dir / "elastic.png")
+        plots["elastic"] = {
+            "file": "elastic.png",
+            "title": "elastic moduli from strain fluctuations",
+        }
     cal = report.get("calibration")
     if cal:
         fig, ax = plt.subplots(figsize=(6, 4.2))
@@ -774,9 +926,69 @@ def render_markdown(r: dict) -> str:
             f"| {h['source']} | {h['system']} | {h['t_c']:g} | {h['fraction_at_threshold']:.3f} |"
             for h in cal["per_hold"]
         ]
+    lines += elastic_markdown(r)
     lines += ["", "## Caveats", ""] + [f"- {c}" for c in r["caveats"]]
     lines += plots_markdown(r.get("plots"))
     return "\n".join(lines) + "\n"
+
+
+def elastic_markdown(r: dict) -> list[str]:
+    """The "## Elastic constants" section (holds with a result)."""
+    rows = [h for h in r["holds"] if h.get("elastic")]
+    if not rows:
+        return []
+    el = rows[0]["elastic"]
+    lines = [
+        "",
+        "## Elastic constants (strain fluctuations)",
+        "",
+        (
+            "Per hold (after the first 10%): ε_i = (L_i − ⟨L_i⟩)/⟨L_i⟩, S_ij = ⟨V⟩⟨ε_i ε_j⟩/(k_B T)"
+            " with T the set point, over the normal strains of the orthogonal box (shear fixed;"
+            " normal–shear couplings assumed zero by symmetry); E_i = 1/S_ii, ν_ij = −S_ij/S_ii,"
+            f" C = S⁻¹. ± is the bootstrap standard error over {el['block_rows']}-row blocks"
+            f" ({N_BOOT} draws). Rate-free (static, isothermal) constants; x, y transverse,"
+            " z along the stems."
+        ),
+        "",
+        (
+            "| T (°C) | blocks | E_x (GPa) | E_y (GPa) | E_z (GPa) | ν_xy | ν_yx | ν_xz | ν_yz |"
+            " C11 | C22 | C33 | C12 | C13 | C23 | stable |"
+        ),
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for h in rows:
+        e = h["elastic"]
+        ez = ".1f" if e["E_GPa"]["z"]["mean"] >= 10 else ".2f"
+        lines.append(
+            f"| {h['t_set_c']:g} | {e['blocks']} | {_pm(e['E_GPa']['x'], '.2f')} |"
+            f" {_pm(e['E_GPa']['y'], '.2f')} | {_pm(e['E_GPa']['z'], ez)} |"
+            + "".join(f" {_pm(e['nu'][k], '.3f')} |" for k in ("xy", "yx", "xz", "yz"))
+            + "".join(
+                f" {_pm(e['C_GPa'][k], '.1f')} |" for k in ("11", "22", "33", "12", "13", "23")
+            )
+            + f" {h['stable']} |"
+        )
+    lines += [
+        "",
+        (
+            "Halves check: E from the first vs the second half of the window (each with its"
+            " own bootstrap error); **flag** when they differ by more than 2σ."
+        ),
+        "",
+        "| T (°C) | E_x 1st → 2nd | E_y 1st → 2nd | E_z 1st → 2nd | flagged |",
+        "|---|---|---|---|---|",
+    ]
+    for h in rows:
+        e = h["elastic"]
+        cells = []
+        for a in "xyz":
+            hv = e["halves"][a]
+            fmt = ".1f" if hv["first"]["mean"] >= 10 else ".2f"
+            cells.append(f"{_pm(hv['first'], fmt)} → {_pm(hv['second'], fmt)}")
+        flag = ", ".join(f"E_{a}" for a in e["halves_disagree"]) or "none"
+        lines.append(f"| {h['t_set_c']:g} | {' | '.join(cells)} | {flag} |")
+    return lines
 
 
 def write_results(report: dict, out_dir: Path) -> None:
