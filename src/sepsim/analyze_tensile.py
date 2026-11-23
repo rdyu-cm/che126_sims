@@ -6,7 +6,9 @@ and writes to ``results/analysis/<system>/<stage>/`` (or ``--out``; several run
 directories: ``results/analysis/<system>/tensile_compare/``). Nothing is written into
 the run directories. The axes of one run are pseudo-replicas (same start snapshot,
 different pull direction): per run the mean ± SD over axes; runs at the same T and rate
-are also pooled.
+are also pooled. The caveats depend on the system: melt caveats for amorphous systems,
+crystal caveats (D59) for a system whose ``manifest.yaml`` (under ``systems``) has the
+``crystal`` block of `sepsim build crystal`.
 """
 
 from __future__ import annotations
@@ -30,9 +32,10 @@ from sepsim.reporting import _f, dump_json, plots_markdown, write_atomic
 
 MD_NAME, JSON_NAME = "results.md", "results.json"
 DECK = "in.tensile"
+SYSTEM_MANIFEST = "manifest.yaml"
 SUMMARY_KEYS = ("E_MPa", "nu_fit", "nu_run", "peak_MPa", "peak_strain", "flow_MPa")
 
-CAVEATS = [
+CAVEATS = [  # amorphous (melt) systems
     (
         "The box is an amorphous melt above Tg (Tg is below 25 °C for PE, D14), so the"
         " response is viscoelastic and rate-dependent: these are not the moduli of a"
@@ -59,11 +62,89 @@ CAVEATS = [
 ]
 
 
+# crystal systems (D59): perfect orthorhombic PE, stems along z, pulled along x and y
+CRYSTAL_CAVEATS = [
+    (
+        "The box is a defect-free periodic single crystal (D59: straight stems along z, each"
+        " bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries"
+        " or lamellar interfaces), so these are not the moduli of a semicrystalline separator."
+    ),
+    (
+        "The load is transverse to the chain axis (x, y): E_app is the transverse modulus of"
+        " the crystal, governed by the interchain non-bonded (van der Waals) interactions, and"
+        " much lower than the modulus along the covalent chain axis (z, not a default axis)."
+    ),
+    (
+        "E_app is the apparent modulus at the simulated strain rate, many orders of magnitude"
+        " above experiment; E_app and the peak stress are rate-dependent."
+    ),
+    (
+        "The peak is the transverse yield or failure of a perfect crystal (an ideal strength:"
+        " no defects or interfaces to start it), not the yield stress of a separator; the flow"
+        " stress after it is that of the yielded crystal, not a viscous melt flow."
+    ),
+    (
+        "ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes"
+        " independent, couple none) lags the imposed strain. The two lateral axes are"
+        " inequivalent (one transverse, one along the stems) and contract differently, so ν,"
+        " their mean, is not an isotropic Poisson ratio (per-axis lateral strains in"
+        " results.json)."
+    ),
+    (
+        "Stress is -(P_axis - p_atm) from the virial pressure tensor averaged over avg_ps;"
+        " the axes of one run start from the same snapshot, so their spread is not a full"
+        " independent-sample error."
+    ),
+]
+CRYSTAL_STEEPEST = (
+    "--fit steepest: E_app comes from the steepest window before the peak, which skips a"
+    " soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows"
+    " biases E_app up by about its noise."
+)
+CRYSTAL_Z = (
+    "Axis z (along the stems) was requested: it stretches the infinite covalent stems bonded"
+    " across the periodic boundary, a model artefact rather than a material property."
+)
+
+
+def is_crystal(system: str | None, systems: str | Path) -> bool | None:
+    """True for a crystal system (D59: the ``crystal`` block that `sepsim build crystal`
+    writes into ``<systems>/<system>/manifest.yaml``), False for any other system, None
+    when the manifest cannot be read."""
+    import yaml
+
+    if not system:
+        return None
+    try:
+        man = yaml.safe_load((Path(systems) / system / SYSTEM_MANIFEST).read_text())
+    except (OSError, yaml.YAMLError):
+        return None
+    return bool(isinstance(man, dict) and man.get("crystal"))
+
+
+def caveats_for(runs: list[dict], fit: str) -> list[str]:
+    """Melt caveats when no run is on a crystal system, crystal caveats when all are,
+    both (prefixed by the kind of system) for a mixed comparison."""
+    crystal = [r for r in runs if r.get("crystal")]
+    cry = list(CRYSTAL_CAVEATS)
+    if fit == "steepest":
+        cry.append(CRYSTAL_STEEPEST)
+    if any("z" in (a["axis"] for a in r["axes"]) for r in crystal):
+        cry.append(CRYSTAL_Z)
+    if not crystal:
+        return list(CAVEATS)
+    if len(crystal) == len(runs):
+        return cry
+    return [f"Amorphous systems: {c}" for c in CAVEATS] + [f"Crystal systems: {c}" for c in cry]
+
+
 class TensileError(ValueError):
     """A run directory cannot be analysed (no tensile deck, no data)."""
 
 
-def analyze_run(run_dir: Path, fit_max: float, fit: str = "origin") -> dict:
+def analyze_run(
+    run_dir: Path, fit_max: float, fit: str = "origin", systems: str | Path = "systems"
+) -> dict:
     """Per-axis results and the mean ± SD over axes of one tensile run directory."""
     deck = run_dir / DECK
     if not deck.is_file():
@@ -78,6 +159,7 @@ def analyze_run(run_dir: Path, fit_max: float, fit: str = "origin") -> dict:
         "stage": run_dir.resolve().name,
         "system": system,
         "resolution": res,
+        "crystal": is_crystal(system, systems),
         "status": manifest.get("status", "not started"),
         "node": manifest.get("hostname"),
         "t_c": float(params.get("t_c", "nan")),
@@ -88,6 +170,11 @@ def analyze_run(run_dir: Path, fit_max: float, fit: str = "origin") -> dict:
         "axes": [],
         "notes": [],
     }
+    if run["crystal"] is None:
+        run["notes"].append(
+            f"system manifest {Path(systems) / str(system) / SYSTEM_MANIFEST} not readable:"
+            " caveats assume an amorphous melt"
+        )
     for ax in axes:
         path = run_dir / f"tensile_{ax}.txt"
         if not path.is_file():
@@ -121,13 +208,14 @@ def analyze_tensile(
     fit_max: float = 0.02,
     plots: bool = True,
     fit: str = "origin",
+    systems: str | Path = "systems",
 ) -> tuple[dict, Path]:
     """Report dict and output directory for one or more tensile run directories."""
     if fit_max <= 0:
         raise TensileError("--fit-max must be > 0")
     if fit not in FITS:
         raise TensileError(f"--fit must be one of {', '.join(FITS)}")
-    runs = [analyze_run(Path(d), fit_max, fit) for d in run_dirs]
+    runs = [analyze_run(Path(d), fit_max, fit, systems) for d in run_dirs]
     systems = sorted({r["system"] for r in runs if r["system"]})
     if out is None:
         if len(systems) != 1:
@@ -158,7 +246,7 @@ def analyze_tensile(
         "flow_window": list(FLOW_WINDOW),
         "runs": runs,
         "pooled": pooled,
-        "caveats": CAVEATS,
+        "caveats": caveats_for(runs, fit),
         "plots": {},
     }
     if plots:

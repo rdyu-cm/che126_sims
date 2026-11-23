@@ -9,7 +9,13 @@ import pytest
 from sepsim import progress as pg
 from sepsim.analysis.mobility import msd
 from sepsim.analysis.tensile import ATM_MPA, analyze_axis, moving_average, read_ave_time
-from sepsim.analyze_tensile import analyze_tensile, render_markdown, write_results
+from sepsim.analyze_tensile import (
+    CAVEATS,
+    CRYSTAL_CAVEATS,
+    analyze_tensile,
+    render_markdown,
+    write_results,
+)
 from sepsim.cli import main
 from sepsim.lammps.render import (
     RenderError,
@@ -24,6 +30,7 @@ REPO = Path(__file__).resolve().parents[1]
 SYSTEMS = REPO / "systems"
 CG = SYSTEMS / "pe_cg_amorph_n40_c240_s1"
 UA = SYSTEMS / "pe_ua_amorph_n40_c240_s1"
+CG_CRYSTAL = SYSTEMS / "pe_cg_crystal_7x10x27_s1"
 HEAD = "   Step   Time   Temp   Density   Enthalpy   PotEng   CPU\n"
 
 
@@ -36,12 +43,14 @@ def commands(deck):
     return out
 
 
-def _deck(tmp_path, protocol, name, **kw):
-    run = tmp_path / "runs" / CG.name / name
+def _deck(tmp_path, protocol, name, system=CG, **kw):
+    run = tmp_path / "runs" / system.name / name
     run.mkdir(parents=True)
     deck = run / f"in.{protocol}"
     data = run / "../sweep/hold_25C.data"
-    deck.write_text(render_deck(protocol, CG, data=data, deck_dir=run, require_data=False, **kw))
+    deck.write_text(
+        render_deck(protocol, system, data=data, deck_dir=run, require_data=False, **kw)
+    )
     return run, deck
 
 
@@ -353,7 +362,7 @@ def test_analyze_tensile_report_and_cli(tmp_path, monkeypatch, capsys):
     eps = np.linspace(0.0005, 0.5, 1000)
     for k, (ax, e_mod) in enumerate((("x", 300.0), ("y", 400.0), ("z", 500.0))):
         _ave_file(run / f"tensile_{ax}.txt", ax, eps, e_mod * eps / (1 + 10 * eps), 0.4, seed=k)
-    report, out = analyze_tensile([run], fit_max=0.01)
+    report, out = analyze_tensile([run], fit_max=0.01, systems=SYSTEMS)
     assert out == Path("results/analysis") / CG.name / "tensile_25C"
     s = report["runs"][0]["summary"]
     assert s["E_MPa"]["n"] == 3 and s["E_MPa"]["mean"] == pytest.approx(400.0, rel=0.1)
@@ -381,3 +390,34 @@ def test_analyze_tensile_report_and_cli(tmp_path, monkeypatch, capsys):
     assert (tmp_path / "cmp" / "poisson.png").is_file()
     assert main(["analyze", "tensile", str(tmp_path)]) == 1
     assert "no in.tensile" in capsys.readouterr().err
+
+
+def test_tensile_caveats_follow_the_system(tmp_path, monkeypatch):
+    """Crystal systems (manifest block ``crystal``, D59) get the crystal caveats, melts keep
+    the melt caveats; a mixed comparison gets both, labelled."""
+    monkeypatch.chdir(tmp_path)
+    eps = np.linspace(0.0005, 0.5, 1000)
+    melt, _ = _deck(tmp_path, "tensile", "tensile_25C")
+    cry, _ = _deck(tmp_path, "tensile", "tensile_25C", system=CG_CRYSTAL)
+    for k, ax in enumerate("xyz"):
+        _ave_file(melt / f"tensile_{ax}.txt", ax, eps, 300.0 * eps / (1 + 10 * eps), 0.4, seed=k)
+    for k, ax in enumerate("xy"):  # crystal default axes: x, y
+        _ave_file(cry / f"tensile_{ax}.txt", ax, eps, 2000.0 * eps / (1 + 40 * eps), 0.2, seed=k)
+    r_melt, _ = analyze_tensile([melt], plots=False, systems=SYSTEMS)
+    r_cry, _ = analyze_tensile([cry], plots=False, systems=SYSTEMS)
+    assert r_melt["runs"][0]["crystal"] is False and r_cry["runs"][0]["crystal"] is True
+    assert r_melt["caveats"] == CAVEATS
+    assert r_cry["caveats"] == CRYSTAL_CAVEATS and not r_cry["runs"][0]["notes"]
+    md_melt, md_cry = render_markdown(r_melt), render_markdown(r_cry)
+    assert "amorphous melt above Tg" in md_melt and "single crystal" not in md_melt
+    assert "defect-free periodic single crystal" in md_cry and "transverse" in md_cry
+    assert "melt above Tg" not in md_cry and "ν = 0.5" not in md_cry
+    steep, _ = analyze_tensile([cry], plots=False, fit="steepest", systems=SYSTEMS)
+    assert len(steep["caveats"]) == len(CRYSTAL_CAVEATS) + 1 and "soft toe" in steep["caveats"][-1]
+    both, _ = analyze_tensile([melt, cry], out="cmp", plots=False, systems=SYSTEMS)
+    assert both["caveats"][0].startswith("Amorphous systems: The box is an amorphous melt")
+    assert both["caveats"][-1].startswith("Crystal systems: Stress is")
+    # no system manifest: melt caveats, with a note
+    none, _ = analyze_tensile([cry], plots=False, systems=tmp_path / "nowhere")
+    assert none["runs"][0]["crystal"] is None and none["caveats"] == CAVEATS
+    assert "caveats assume an amorphous melt" in none["runs"][0]["notes"][0]

@@ -459,6 +459,11 @@ def build_parser() -> argparse.ArgumentParser:
     te.add_argument(
         "--out", metavar="DIR", help="output directory (default results/analysis/<system>/<stage>)"
     )
+    te.add_argument(
+        "--systems",
+        default="systems",
+        help="system directories root, for the crystal/melt caveats (default %(default)s)",
+    )
     punct_help = (
         "Puncture runs (D57): force on the indenter F (nN) vs depth d (nm), contact, F_peak,"
         " d_peak, break-through (force drop and no material ahead of the tip), the work W"
@@ -798,7 +803,7 @@ def _analyze_tensile(args: argparse.Namespace) -> int:
 
     try:
         report, out_dir = analyze_tensile(
-            args.run_dirs, out=args.out, fit_max=args.fit_max, fit=args.fit
+            args.run_dirs, out=args.out, fit_max=args.fit_max, fit=args.fit, systems=args.systems
         )
         write_results(report, out_dir)
     except (TensileError, OSError) as exc:
