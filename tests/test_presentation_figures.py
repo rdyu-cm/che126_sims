@@ -302,7 +302,48 @@ def test_local_slope_helpers(pf, tmp_path):
     with path.open() as fh:
         head = fh.readline().strip().split(",")
     assert tuple(head) == pf.SLOPE_COLUMNS
-    assert {"t_lo", "t_hi", "sem_raw", "birge_scale", "segment_kinds"} <= set(head)
+    assert {"t_lo", "t_hi", "sem_raw", "birge_scale", "segment_kinds", "source"} <= set(head)
+
+
+def test_fine_holds_merge_with_sweep_holds(pf):
+    """fine_<T>C single holds join the sweep holds (steps dropped) for rho and kappa_T; the
+    sweep hold wins at a shared T; Rg is not taken from the fine holds."""
+
+    def hold(t, rho, kap):
+        seg = {"kind": "hold", "t_set_c": t, "stats": {"density": {"mean": rho, "sem": 1e-4}}}
+        h = {"t_c": t, "kappa": {"kappa_T_GPa": kap, "sem": 0.01}}
+        h["traj"] = {"available": True, "rg": {"rg2_A2": {"mean": 400.0, "sem": 1.0}}}
+        return seg, h
+
+    sweep = {"segments": [], "holds": [], "steps": []}
+    for t in (25.0, 90.0):
+        seg, h = hold(t, 0.9 - 1e-3 * t, 0.5)
+        sweep["segments"].append(seg)
+        sweep["holds"].append(h)
+    sweep["segments"].append(
+        {"kind": "step", "t_set_c": 50.0, "stats": {"density": {"mean": 0.5, "sem": 1e-4}}}
+    )
+    ana = {"sweep": sweep, "crystal_fine_a": {}, "fine_notC": {}}
+    for t in (50.0, 90.0):
+        seg, h = hold(t, 0.8 if t == 90.0 else 0.9 - 1e-3 * t, 0.7)
+        ana[f"fine_{t:g}C"] = {"segments": [seg], "holds": [h]}
+    data = {"analysis": {"pe_ua_amorph_n40_c240_s1": ana}}
+    fines = pf.fine_holds(data, "pe_ua_amorph_n40_c240_s1")
+    assert list(fines) == [50.0, 90.0]
+    pts = pf.hold_points(sweep, fines)
+    assert set(pts) == {"density", "kappa_T"}
+    rho = pts["density"]
+    assert [(p[0], p[3]) for p in rho] == [(25.0, "hold"), (50.0, "fine_hold"), (90.0, "hold")]
+    assert rho[1][1] == pytest.approx(0.85) and rho[2][1] == pytest.approx(0.81)  # not 0.5/0.8
+    assert [p[1] for p in pts["kappa_T"]] == [0.5, 0.7, 0.5]
+    s = pf.series_info("pe_ua_amorph_n40_c240_s1")
+    rows = pf.local_slope_rows(s, "density", rho)
+    vals = [r for r in rows if r["kind"] == "value"]
+    assert [r["source"] for r in vals] == ["sweep", "fine", "sweep"]
+    assert "fine-grid hold" in vals[1]["note"] and "no step" not in vals[0]["note"]
+    adj = [r for r in rows if r["kind"] == "slope_adjacent"]
+    assert [r["source"] for r in adj] == ["sweep+fine", "fine+sweep"]
+    assert all(r["value"] == pytest.approx(1e4 * 1e-3 / 0.85, rel=0.1) for r in adj)
 
 
 @pytest.mark.skipif(
@@ -332,6 +373,19 @@ def test_local_slopes_real_data(pf, tmp_path):
     assert v25 and all(r["segment_kinds"] == "hold" for r in v25)
     cap = pf.caption_fig9(info, data)
     assert "not equilibrium values" in cap and "5 / 2 / 1 ns" in cap and "Birge" in cap
+    if "UA PE C240" in info.get("fine", {}):  # fine_<T>C holds: rho/kappa_T from holds only
+        ua = [r for r in rows if r["system"] == "pe_ua_amorph_n40_c240_s1"]
+        rho = [r for r in ua if r["property"] == "density" and r["kind"] == "value"]
+        assert len(rho) == 15 and {r["segment_kinds"] for r in rho} == {"hold", "fine_hold"}
+        assert {r["source"] for r in rho if r["segment_kinds"] == "hold"} == {"sweep"}
+        assert sorted(float(r["t_c"]) for r in rho if r["source"] == "sweep") == [
+            25.0,
+            90.0,
+            130.0,
+            160.0,
+        ]
+        assert all(r["source"] == "sweep" for r in ua if r["property"] == "rg")
+        assert "fine-grid holds" in cap
 
 
 def test_summary_links_presentation(tmp_path):

@@ -27,8 +27,9 @@ caption per figure) into ``results/presentation/`` by default (appendix figures 
 - ``fig8_holes``: cylindrical-hole snapshots, R_eff(t), R(z), closure vs R/h (pending
   placeholders until ``sepsim analyze hole`` results exist);
 - ``fig9_local_slopes``: rho, alpha_V (adjacent-pair and 3-point slopes), kappa_T, Rg and
-  pore gamma at every sweep temperature with Birge-scaled errors, and the table
-  ``<out>/fig9_local_slopes.csv`` (values and both slopes).
+  pore gamma at every sweep temperature with Birge-scaled errors (rho and kappa_T from the
+  sweep holds plus the ``fine_<T>C`` holds where a system has them), and the table
+  ``<out>/fig9_local_slopes.csv`` (values, both slopes, source sweep / fine).
 
 Inputs: ``<analysis>/<system>/<stage>/results.json``, ``systems/*/manifest.yaml`` and
 ``data.lmp``, the run ``progress.json`` copies (``results/run_sidecars``,
@@ -4017,11 +4018,14 @@ SLOPE_COLUMNS = (
     "sem",
     "unit",
     "segment_kinds",
+    "source",
     "note",
 )
 BIRGE_DEG = 2  # quadratic y(T) for the Birge scale of the per-step SEMs (D55: lower bounds)
 RG_NOTE = "chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
 PORE_MARKER = {"rep222": "D", "rep441": "^"}  # fig9: CG pores told apart by marker
+FINE_STAGE = re.compile(r"fine_(\d+(?:\.\d+)?)C")  # <analysis>/<sid>/fine_<T>C/: one hold
+FINE_KIND = "fine_hold"
 
 
 def per_t_points(rows) -> list[tuple]:
@@ -4065,6 +4069,33 @@ def sweep_points(res: dict) -> dict[str, list[tuple]]:
         if g(x, "traj", "available")
     )
     out["rg"] = [(t, np.sqrt(y), e / (2 * np.sqrt(y)), k) for t, y, e, k in rg2]
+    return {k: v for k, v in out.items() if v}
+
+
+def fine_holds(data: dict, sid: str) -> dict[float, dict]:
+    """The fine-grid single-hold sweep analyses of ``sid`` (``<analysis>/<sid>/fine_<T>C/``),
+    by T."""
+    out = {}
+    for stage, res in (data["analysis"].get(sid) or {}).items():
+        m = FINE_STAGE.fullmatch(stage)
+        if m:
+            out[float(m.group(1))] = res
+    return dict(sorted(out.items()))
+
+
+def hold_points(sweep: dict, fines: dict[float, dict]) -> dict[str, list[tuple]]:
+    """Per-T density and kappa_T of the holds only: the sweep holds (kind ``hold``) merged
+    with the fine-grid holds (kind ``fine_hold``), sorted by T; at a T in both the sweep
+    hold is kept (it comes last, and ``per_t_points`` keeps the last non-step row)."""
+    srcs = [(r, FINE_KIND) for r in fines.values()] + [(sweep, "hold")]
+    dens, kap = [], []
+    for res, kind in srcs:
+        for x in hold_segments(res):
+            mean = g(x, "stats", "density", "mean")
+            dens.append((x["t_set_c"], mean, g(x, "stats", "density", "sem"), kind))
+        for x in res.get("holds") or []:
+            kap.append((x["t_c"], g(x, "kappa", "kappa_T_GPa"), g(x, "kappa", "sem"), kind))
+    out = {"density": per_t_points(dens), "kappa_T": per_t_points(kap)}
     return {k: v for k, v in out.items() if v}
 
 
@@ -4142,9 +4173,12 @@ def local_slope_rows(s: dict, prop: str, pts: list[tuple]) -> list[dict]:
     sb, chi2 = birge_scale(t, y, e)
     base = {"system": s["sid"], "polymer": s["polymer"], "resolution": s["res"]}
     note = RG_NOTE if prop == "rg" else ""
+    src = ["fine" if k == FINE_KIND else "sweep" for k in kinds]
     rows = []
     for k in range(len(t)):
-        extra = "hold (no step at this T)" if kinds[k] == "hold" else ""
+        extra = "hold (no step at this T)" if kinds[k] == "hold" and "step" in kinds else ""
+        if kinds[k] == FINE_KIND:
+            extra = f"10 ns fine-grid hold (fine_{t[k]:g}C)"
         fit = f"quadratic chi2_red {chi2:.3g}" if chi2 is not None else "too few points for a fit"
         rows.append(
             base
@@ -4160,6 +4194,7 @@ def local_slope_rows(s: dict, prop: str, pts: list[tuple]) -> list[dict]:
                 "sem": sb * e[k],
                 "unit": unit,
                 "segment_kinds": kinds[k],
+                "source": src[k],
                 "note": "; ".join(x for x in (extra, fit, note) if x),
             }
         )
@@ -4184,6 +4219,7 @@ def local_slope_rows(s: dict, prop: str, pts: list[tuple]) -> list[dict]:
                     "sem": sb * raw,
                     "unit": sunit,
                     "segment_kinds": f"{kinds[d['i'][k]]}+{kinds[d['j'][k]]}",
+                    "source": "+".join(dict.fromkeys((src[d["i"][k]], src[d["j"][k]]))),
                     "note": note,
                 }
             )
@@ -4287,6 +4323,7 @@ def _f9_values(ax, series, rows, prop, info) -> None:
         st = _f9_style(s)
         off = (i - (n - 1) / 2) * 0.9
         v = [r for r in rows if r["system"] == s["sid"] and r["property"] == prop]
+        fine = [r for r in v if r["source"] == "fine"]
         if v:
             ax.errorbar(
                 [r["t_c"] + off for r in v],
@@ -4299,6 +4336,18 @@ def _f9_values(ax, series, rows, prop, info) -> None:
                 capsize=1.5,
                 ls="-",
                 lw=1.2,
+                markevery=[k for k, r in enumerate(v) if r["source"] != "fine"] if fine else None,
+            )
+        if fine:  # fine-grid holds: small open markers on the same line
+            ax.plot(
+                [r["t_c"] + off for r in fine],
+                [r["value"] for r in fine],
+                st["marker"],
+                color=st["color"],
+                mfc="white",
+                ms=3.8,
+                mew=0.9,
+                zorder=3,
             )
             info.setdefault(prop, {})[s["label"]] = [(r["t_c"], r["value"]) for r in v]
     ax.set_xlabel("T (°C)")
@@ -4314,8 +4363,13 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
     pores = find_series(data, "pore", "pore")
     rows: list[dict] = []
     for s in sweeps:
-        for prop, pts in sweep_points(s["results"]["sweep"]).items():
-            rows += local_slope_rows(s, prop, pts)
+        pts = sweep_points(s["results"]["sweep"])
+        fines = fine_holds(data, s["sid"])
+        if fines:  # rho and kappa_T from the holds only; Rg stays from the sweep (D56)
+            pts |= hold_points(s["results"]["sweep"], fines)
+            info.setdefault("fine", {})[s["label"]] = list(fines)
+        for prop, p in pts.items():
+            rows += local_slope_rows(s, prop, p)
         segs = s["results"]["sweep"].get("segments") or []
         w = [g(x, "stats", "window_ps") for x in segs if x.get("kind") == "step"]
         if any(w):
@@ -4398,6 +4452,8 @@ def fig9_local_slopes(data: dict, out: Path) -> tuple[list[Path], dict]:
         _key("(b) filled + line: 3-point central slope at T", "o", "-"),
         _key("(b) small open: adjacent-pair slope at T$_{mid}$", "o", mfc="white", ms=3.8),
     ]
+    if info.get("fine"):
+        keys.append(_key("(a, c) small open: 10 ns fine-grid hold", "o", "-", mfc="white", ms=3.8))
     if fits_drawn:
         keys.append(
             Line2D([], [], color="0.3", lw=3.2, alpha=0.35, label="(b) results.json fit (window)")
@@ -5003,12 +5059,26 @@ def caption_fig9(info: dict, data: dict) -> str:
         sv = list((info.get("birge") or {}).get(prop, {}).values())
         if sv:
             birge.append(f"{name} {min(sv):.1f}–{max(sv):.1f}")
+    fine = info.get("fine") or {}
+    ftxt = ""
+    if fine:
+        tts = sorted({t for v in fine.values() for t in v})
+        ftxt = (
+            f" For {' and '.join(fine)}, ρ and κ<sub>T</sub> (and α<sub>V</sub>,"
+            " dκ<sub>T</sub>/dT) come from 10 ns NPT holds only, not from the steps: the sweep"
+            " holds at 25/90/130/160 °C plus fine-grid holds at"
+            f" {', '.join(f'{t:g}' for t in tts)} °C (small open markers in a, c), each"
+            " started from a sweep hold snapshot and analysed like the sweep holds (last 9 ns);"
+            " at a temperature with both, the sweep hold (same length) is kept. Their"
+            " R<sub>g</sub> stays the sweep values: chains do not relax within 10 ns, so"
+            " no fine-grid R<sub>g</sub> is reported."
+        )
     return (
         "**Figure 9. Properties at every sweep temperature.** One point per sweep"
         " temperature (25, 35, …, 85, 90, 100, …, 160 °C): the heating step's value where"
         " there is one, the hold otherwise (25 °C; the 4×4×1 pore has steps only at"
         " 90/130/160 °C). Steps are short non-equilibrium windows: 5 / 2 / 1 ns (CG / UA /"
-        f" AA), analysed over their second half ({wtxt}). (a) Density ρ; (b) α<sub>V</sub> ="
+        f" AA), analysed over their second half ({wtxt}).{ftxt} (a) Density ρ; (b) α<sub>V</sub> ="
         " −d ln ρ/dT by two estimators: small open = adjacent pair (ln ρ<sub>i+1</sub> −"
         " ln ρ<sub>i</sub>)/(T<sub>i+1</sub> − T<sub>i</sub>) at the midpoint, filled + line ="
         " 3-point central (ln ρ<sub>i+1</sub> − ln ρ<sub>i−1</sub>)/(T<sub>i+1</sub> −"
@@ -5029,7 +5099,7 @@ def caption_fig9(info: dict, data: dict) -> str:
         + "), propagated to slopes as independent points (relative errors for"
         " ln-derivatives). Table with the per-T values and both slopes of ρ (α<sub>V</sub>),"
         " κ<sub>T</sub> (dκ<sub>T</sub>/dT), R<sub>g</sub> (d ln R<sub>g</sub>/dT) and γ"
-        " (dγ/dT), raw SEM, s and scaled SEM:"
+        " (dγ/dT), raw SEM, s and scaled SEM, and the source of each point (sweep / fine):"
         f" [{info.get('csv', SLOPE_CSV)}]({info.get('csv', SLOPE_CSV)})."
     )
 
