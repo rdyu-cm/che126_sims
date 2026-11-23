@@ -508,3 +508,44 @@ def test_hold_and_tensile_rows(summ, tree):
     abbr = text.split("\n## Systems", 1)[1].split("\n### ", 1)[0]
     assert "**E<sub>app</sub>**" in abbr and "**SD**" in abbr and "**τ<sub>ee</sub>**" in abbr
     assert "**long hold (D53)**" in abbr
+
+
+def test_crystal_pipeline(summ, tree):
+    """D59 crystals (manifest `crystal` block): crystal holds and tensile runs, no 500 K melt."""
+    sid = "pe_cg_crystal_7x10x27_s1"
+    _manifest(tree["systems"], sid, crystal={"repeats": {"na": 7, "nb": 10, "nz": 27}})
+    _progress(tree["runs"], sid, "crystal")
+    _progress(tree["runs"], sid, "crystal_fine_a")
+    _progress(tree["runs"], sid, "tensile_25C")
+    hold = {"done": True, "stable": True, "order": {"fraction": {"mean": 0.999, "sd": 1e-4}}}
+    for stage, ts in (("crystal", (25.0, 160.0)), ("crystal_fine_a", (35.0,))):
+        d = tree["analysis"] / sid / stage
+        d.mkdir(parents=True)
+        holds = [
+            {**hold, "t_set_c": t, "cell": {"density": {"mean": 0.9 - t / 1e3, "sem": 3e-5}}}
+            for t in ts
+        ]
+        res = {"holds": holds, "expansion": {"holds": list(ts), "volume_A3": {"alpha_per_K": 6.1e-4, "se": 2e-5}}}  # fmt: skip
+        (d / "results.json").write_text(json.dumps(res))
+    ctx, text = _render(summ, tree)
+    eq = ctx["eq"][sid]
+    assert eq["accepted"] is True and eq["basis"] == "crystal"
+    assert eq["text"] == "crystal (no 500 K melt): 3/3 holds stable, 25–160 °C"
+    row = {r[0]: r for r in _overview_rows(text)}[sid]
+    assert row[3] == "crystal" and row[6] == "done"
+    pend = text.split("## Pending and known items", 1)[1].split("##", 1)[0]
+    assert sid not in pend  # no prep / sweep / 500 K verdict expected
+    sec = _system(text, sid)
+    assert "periodic crystal of straight stems (7×10×27 cell repeats, D59)" in sec
+    table = sec.split("<details>", 1)[0]
+    assert "| ρ (g/cm³) | 0.87500 ± 0.00003 | — | — | 0.74000 ± 0.00003 | 35 °C: 0.86500" in table
+    assert "500 K equilibration" not in table
+    assert "| 25 | yes | 0.999 | 0.87500 ± 0.00003 |" in sec
+    assert "Pore analysis" not in sec and "Sweep analysis: not analysed yet" not in sec
+    # an unstable hold: not accepted, named in the verdict
+    res = json.loads((tree["analysis"] / sid / "crystal" / "results.json").read_text())
+    res["holds"][1]["stable"] = False
+    (tree["analysis"] / sid / "crystal" / "results.json").write_text(json.dumps(res))
+    ctx, _ = _render(summ, tree)
+    assert ctx["eq"][sid]["accepted"] is False
+    assert ctx["eq"][sid]["text"].endswith("2/3 holds stable, 25–160 °C; unstable at 160 °C")

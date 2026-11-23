@@ -51,7 +51,9 @@ import validity
 ROOT = Path(__file__).resolve().parents[1]
 DASH = "—"
 
-STAGES = ("prep", "extend", "cool", "sweep", "pore_relax", "pore", "diffuse", "tensile", "hole")
+STAGES = (
+    "prep", "extend", "cool", "sweep", "pore_relax", "pore", "diffuse", "crystal", "tensile", "hole"
+)  # fmt: skip
 IGNORED_PREFIXES = ("bench", "smoke")
 SUPERSEDED_MARKERS = ("old", "cancel", "timeout")
 POLYMER_ORDER = {"pe": 0, "ipp": 1}
@@ -295,7 +297,16 @@ def meta(sid: str, man: dict | None) -> dict:
         category = 1
     else:
         category = 0
-    return {"polymer": pol, "resolution": res, "pore": pore, "hole": hole, "category": category}
+    # D59 crystals (`sepsim build crystal`): no 500 K melt; crystal holds, then tensile runs
+    crystal = isinstance(man.get("crystal"), dict)
+    return {
+        "polymer": pol,
+        "resolution": res,
+        "pore": pore,
+        "hole": hole,
+        "crystal": crystal,
+        "category": category,
+    }
 
 
 def sort_key(sid: str, m: dict, man: dict | None) -> tuple:
@@ -428,6 +439,8 @@ def equilibration(sid: str, ctx: dict, seen: frozenset = frozenset()) -> dict:
     own_ext = hold_checks(latest(runs, "extend"))
     own_prep = hold_checks(latest(runs, "prep"))
     long_cg = m["resolution"] == "cg" and (man.get("n_carbons") or 0) >= D47_EXEMPT_CG_CARBONS
+    if m["crystal"]:
+        return crystal_verdict(sid, ctx)
     if own_ext and own_ext.get("d47"):
         return _verdict("own", own_ext, long_cg, sid)
     src = source_info(man)
@@ -441,6 +454,32 @@ def equilibration(sid: str, ctx: dict, seen: frozenset = frozenset()) -> dict:
     if own_prep and own_prep.get("d47"):
         return _verdict("prep only", own_prep, long_cg, sid)
     return {"basis": None, "checks": own_ext or own_prep, "accepted": None, "text": DASH}
+
+
+def crystal_holds(sid: str, ctx: dict) -> list[tuple[str, dict]]:
+    """(stage, hold) of every analysed crystal hold (`crystal`, `crystal_fine_*`), by T."""
+    out = [
+        (stage, h)
+        for stage, res in ctx["analysis"].get(sid, {}).items()
+        if classify_stage(stage)[0] == "crystal"
+        for h in res.get("holds") or []
+    ]
+    return sorted(out, key=lambda x: x[1].get("t_set_c") or 0.0)
+
+
+def crystal_verdict(sid: str, ctx: dict) -> dict:
+    """A D59 crystal has no 500 K melt: accepted when every analysed hold stayed crystalline."""
+    holds = crystal_holds(sid, ctx)
+    if not holds:
+        text = "crystal holds not analysed"
+        return {"basis": None, "checks": None, "accepted": None, "text": text}
+    bad = [h for _, h in holds if not h.get("stable")]
+    ts = [h.get("t_set_c") for _, h in holds]
+    span = f"{fnum(min(ts), 'g')}–{fnum(max(ts), 'g')} °C" if None not in ts else DASH
+    text = f"crystal (no 500 K melt): {len(holds) - len(bad)}/{len(holds)} holds stable, {span}"
+    if bad:
+        text += "; unstable at " + ", ".join(f"{fnum(h.get('t_set_c'), 'g')} °C" for h in bad)
+    return {"basis": "crystal", "checks": None, "accepted": not bad, "text": text}
 
 
 def _verdict(basis: str, ch: dict, long_cg: bool, sid: str) -> dict:
@@ -661,6 +700,8 @@ OVERVIEW_ABBREVIATIONS = (
 
 
 def kind_label(m: dict) -> str:
+    if m.get("crystal"):
+        return "crystal"
     if m.get("hole"):
         h = m["hole"]
         return f"hole (R {fnum(h.get('radius_nm'), 'g')} nm, {fnum(h.get('t_c'), 'g')} °C)"
@@ -1077,6 +1118,8 @@ def expected_stages(sid: str, ctx: dict) -> list[str]:
         return ["hole"]
     if m["pore"]:
         return ["pore_relax"] if m["pore"].get("kind") == "wide" else ["pore"]
+    if m.get("crystal"):
+        return ["crystal", "tensile"]
     if man.get("replicate"):
         return ["extend"]
     if man.get("conversion"):
@@ -1133,7 +1176,7 @@ def pending_items(sid: str, ctx: dict) -> list[str]:
         items.append(f"{kind} not started" if r is None else f"{r['dir']}: {run_status(r)}")
     runs = current_runs(ctx["runs"].get(sid, {}))
     ana = ctx["analysis"].get(sid, {})
-    for kind in ("sweep", "pore"):
+    for kind in ("sweep", "pore", "crystal"):
         r = latest(runs, kind)
         if (
             r
@@ -1538,6 +1581,24 @@ def _pore_rows(rows: dict, stage: str, res: dict) -> None:
                  _fit_text(f.get("window_c"), v, f.get("chi2_red")), src)  # fmt: skip
 
 
+def _crystal_rows(rows: dict, sid: str, ctx: dict) -> None:
+    """Density and crystallinity of each crystal hold, α_V of each crystal analysis; no
+    validity key (the validity rules are for the amorphous boxes)."""
+    for stage, h in crystal_holds(sid, ctx):
+        t, src = h.get("t_set_c"), f"`{stage}`"
+        _put(rows, ("rho", 0), "ρ (g/cm³)", None, t, fpm(get(h, "cell", "density"), ".5f"), src,
+             f"{fnum(t, 'g')} °C")  # fmt: skip
+        _put(rows, ("cryst", 0), "crystallinity (ordered-site fraction)", None, t,
+             fpm(get(h, "order", "fraction"), ".3f"), src, f"{fnum(t, 'g')} °C")  # fmt: skip
+    for stage, res in sorted(ctx["analysis"].get(sid, {}).items()):
+        e = get(res, "expansion", "volume_A3") or {}
+        if classify_stage(stage)[0] == "crystal" and e.get("alpha_per_K") is not None:
+            ts = get(res, "expansion", "holds") or []
+            v = f"{fnum(e['alpha_per_K'] * 1e4, '.3f')} ± {fnum((e.get('se') or 0) * 1e4, '.3f')}"
+            _put(rows, ("alpha", 0), "α_V (10⁻⁴ K⁻¹)", None, None,
+                 _fit_text([min(ts), max(ts)] if ts else None, v, None), f"`{stage}`")  # fmt: skip
+
+
 def property_rows(sid: str, ctx: dict) -> tuple[dict, bool]:
     """{row key: row} of every property obtained from one system, and whether any of
     them is the system's own (not only the equilibration inherited from its source)."""
@@ -1545,7 +1606,9 @@ def property_rows(sid: str, ctx: dict) -> tuple[dict, bool]:
     eq = ctx["eq"][sid]
     ch = eq.get("checks") or {}
     inherited = eq.get("basis") == "inherited"
-    if eq.get("basis"):
+    if eq.get("basis") == "crystal":
+        _crystal_rows(rows, sid, ctx)
+    elif eq.get("basis"):
         src = f"`{ch.get('stage', DASH)}` progress"
         if inherited:
             src += f" of `{(eq.get('via') or [DASH])[-1]}`"
@@ -1627,6 +1690,10 @@ def kind_text(sid: str, ctx: dict) -> str:
         if m["pore"].get("kind") == "wide":
             return f"wide {w} nm slit pore made at 500 K"
         return f"{w} nm dry slit pore"
+    if m.get("crystal"):
+        rep = get(man, "crystal", "repeats") or {}
+        cells = "×".join(str(rep.get(k, DASH)) for k in ("na", "nb", "nz"))
+        return f"periodic crystal of straight stems ({cells} cell repeats, D59)"
     out = "bulk amorphous box"
     if man.get("replicate"):
         f = "×".join(str(x) for x in get(man, "replicate", "factors", default=[])) or DASH
@@ -1683,6 +1750,8 @@ def analysis_details(sid: str, stage: str, res: dict, ctx: dict) -> list[str]:
         return [f"**`{stage}` analysis**{mark}", "", *hold_section(res)]
     if kind == "tensile":
         return [f"**`{stage}` analysis**{mark}", "", *tensile_section(res)]
+    if kind == "crystal":
+        return [f"**`{stage}` analysis**{mark}", "", *crystal_section(res)]
     return [f"**`{stage}` analysis**{mark}", "", *pore_section(res)]
 
 
@@ -1702,6 +1771,42 @@ def hold_section(res: dict) -> list[str]:
     notes += list(get(res, "traj", "notes") or [])
     out += [f"- Note: {n}" for n in notes]
     return out + ([""] if notes else [])
+
+
+def crystal_section(res: dict) -> list[str]:
+    """Per-hold table of a crystal analysis (`sepsim analyze crystal`), and the caveats."""
+    out = [
+        (
+            f"`sepsim analyze crystal`, generated {utc(res.get('generated'))} on"
+            f" {res.get('generated_on', DASH)}, run {res.get('run_status', DASH)};"
+            f" crystallinity {get(res, 'settings', 'label') or DASH}."
+        ),
+        "",
+    ]
+    rows = [
+        [
+            fnum(h.get("t_set_c"), "g"),
+            "yes" if h.get("stable") else "no" if h.get("stable") is False else DASH,
+            fpm(get(h, "order", "fraction"), ".3f"),
+            fpm(get(h, "cell", "density"), ".5f"),
+            fpm(get(h, "cell", "a_A"), ".3f", ".1g"),
+            fpm(get(h, "cell", "b_A"), ".3f", ".1g"),
+            fpm(get(h, "cell", "c_A"), ".4f", ".1g"),
+            ", ".join(get(h, "cell", "drifting") or []) or DASH,
+        ]
+        for h in res.get("holds") or []
+    ]
+    out += table(
+        ["T (°C)", "stable", "crystallinity", "ρ (g/cm³)", "a (Å)", "b (Å)", "c (Å)", "drift"],
+        rows,
+    )
+    e = get(res, "expansion", "volume_A3") or {}
+    if e.get("alpha_per_K") is not None:
+        a, se = e["alpha_per_K"] * 1e4, (e.get("se") or 0) * 1e4
+        out += ["", f"- α_V {fnum(a, '.3f')} ± {fnum(se, '.3f')} × 10⁻⁴ K⁻¹ (from the volume)"]
+    notes = list(res.get("caveats") or []) + list(res.get("notes") or [])
+    out += ["", *(f"- Note: {n}" for n in notes)] if notes else []
+    return out + [""]
 
 
 def tensile_section(res: dict) -> list[str]:
@@ -1788,6 +1893,7 @@ def system_section(sid: str, ctx: dict) -> tuple[list[str], list[str]]:
         out += analysis_details(sid, stage, res, ctx)
     if (
         not m["pore"]
+        and not m["crystal"]
         and not is_superseded(sid, ctx)
         and not any(_is_sweep(k, v) for k, v in ana.items())
     ):

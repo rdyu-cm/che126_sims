@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-11-11 16:24 UTC
-- Git commit: 9191aea (dirty)
-- Inputs: runs `/home/rdyu/projects/che126_sims/results/runs`, `/home/rdyu/projects/che126_sims/results/run_sidecars`, `/home/rdyu/projects/che126_sims/results/progress/rdyu-rog`; analysis `/home/rdyu/projects/worktrees/aa-pe-sweep/results/analysis`; systems `/home/rdyu/projects/worktrees/aa-pe-sweep/systems`
+- Generated: 2026-11-23 17:16 UTC
+- Git commit: e55e0f9
+- Inputs: runs `/home/rdyu/projects/che126_sims/results/runs`, `/home/rdyu/projects/che126_sims/results/run_sidecars`, `/home/rdyu/projects/che126_sims/results/progress/rdyu-rog`; analysis `/home/rdyu/projects/worktrees/fix-summarize-crystal/results/analysis`; systems `/home/rdyu/projects/worktrees/fix-summarize-crystal/systems`
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -23,6 +23,7 @@
 
 | System | Res | Polymer | Kind | Chains × length | Sites | Stage now | Status | Equilibration (D47) | C<sub>n</sub> plateau (D37) | Analysis |
 |---|---|---|---|---|---|---|---|---|---|---|
+| `pe_cg_crystal_7x10x27_s1` | CG | PE | crystal | 140 × C81 | 3,780 beads | done | finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C`, `tensile_90C`, `tensile_130C`, `tensile_160C`, `tensile_75C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_85C`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_140C`, `tensile_150C` | crystal (no 500 K melt): 15/15 holds stable, 25–160 °C | — | crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
 | `pe_cg_amorph_n40_c240_s1` | CG | PE | bulk | 40 × C240 | 3,200 beads | done | finished: prep, extend, cool, sweep, `diffuse_25C` (interrupted, 92.5%), `diffuse_160C` (interrupted, 85.2%), `diffuse_90C` (interrupted, 58.7%), `diffuse_130C`, `tensile_160C_r1e9`, `tensile_90C_r1e9`, `tensile_25C_r1e9`, `tensile_130C_r1e9`, `tensile_25C`, `tensile_160C`, `tensile_90C`, `tensile_130C` | D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | `cavitation_compare`, `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C`, extend, sweep, `tensile_130C`, `tensile_130C_r1e9`, `tensile_160C`, `tensile_160C_r1e9`, `tensile_25C`, `tensile_25C_r1e9`, `tensile_90C`, `tensile_90C_r1e9` |
 | `pe_cg_amorph_n40_c1500_s1` | CG | PE | bulk | 40 × C1500 | 20,000 beads | done | finished: prep, extend, cool, sweep | D47 n/a (long CG chain); ACF 0.68 at 250.0 ns, MSD/⟨R<sub>g</sub>²⟩ 0.12; 500.0 ns at 500 K; no C<sub>n</sub> drift: accepted | 7.43 vs 6.7 (outside band, info); no drift (Δ +0.21 ± 0.30) | extend, sweep |
 | `pe_cg_amorph_n320_c240_s1_rep222` | CG | PE | bulk (derived) | 320 × C240 | 25,600 beads | done | finished: extend (stopped after D47 PASS) | D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | extend |
@@ -31,33 +32,34 @@
 | `pe_cg_pore_w5nm_n40_c240_s1` | CG | PE | pore (narrow, 5 nm) | 40 × C240 | 3,200 beads | done | finished: pore | from `pe_cg_pore500k_w10nm_n40_c240_s1` ← `pe_cg_amorph_n40_c240_s1`: D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | pore |
 | `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` | CG | PE | pore (wide, 10 nm) | 320 × C240 | 25,600 beads | done | finished: `pore_relax` | from `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
 | `pe_cg_hole_r2nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 2 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
-| `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 130 °C) | 320 × C240 | 25,600 beads | `hole_scaf_rel0_failed_20261102` | failed, 0.0% | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
-| `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free` (failed, 0.0%), `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
-| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 25 °C) | 320 × C240 | 25,600 beads | `hole_ramp_rel130` | running, 20.7% (1/20 segments, Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A); ETA 2026-11-12 02:56 UTC | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
-| `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 90 °C) | 320 × C240 | 25,600 beads | `hole_free_failed_20261102` | failed, 0.0% | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | no |
-| `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 4 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_gap5nm` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
+| `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 130 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free`, `hole_scaf_rel0` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free`, `hole_scaf_rel0` |
+| `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm`, `hole_free`, `hole_scaf_rel0` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free`, `hole_scaf_rel0` |
+| `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 25 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_ramp_rel130_failed_20261102` (failed, 0.0%), `hole_ramp_held_failed_20261102` (failed, 0.0%), `hole_free_failed_20261102` (failed, 0.0%), `hole_free`, `hole_ramp_rel130_d4`, `hole_ramp_rel130_col`, `hole_ramp_rel130`, `hole_ramp_held` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free`, `hole_ramp_held`, `hole_ramp_rel130`, `hole_ramp_rel130_col`, `hole_ramp_rel130_d4` |
+| `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | CG | PE | hole (R 3 nm, 90 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
+| `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | CG | PE | hole (R 4 nm, 160 °C) | 320 × C240 | 25,600 beads | done | finished: `hole_free_gap5nm`, `hole_free` | from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | `hole_free` |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | CG | PE | pore (narrow, 5 nm) | 320 × C240 | 25,600 beads | done | finished: pore | from `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | pore |
 | `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` | CG | PE | pore (wide, 12 nm) | 640 × C240 | 51,200 beads | done | finished: `pore_relax` | from `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_film_130C_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | pore | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_film_160C_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | pore | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_film_25C_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | pore | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
 | `pe_cg_film_90C_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | pore | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 2 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | running, 6.8% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-14 08:06 UTC | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 3 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | running, 86.1% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:00 UTC | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441` | CG | PE | hole (R 3 nm, 25 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 4 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | running, 32.8% (1/3 segments, Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 40 A); ETA 2026-11-15 12:43 UTC | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 5 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | running, 85.7% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:10 UTC | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441` | CG | PE | hole (R 5 nm, 25 °C) | 640 × C240 | 51,200 beads | hole | not started | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
-| `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 6 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | running, 82.3% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 22:33 UTC | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
+| `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 2 nm, 160 °C) | 640 × C240 | 51,200 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
+| `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 3 nm, 160 °C) | 640 × C240 | 51,200 beads | done | finished: `hole_free_gap5nm` (cancelled/killed?, 18.5%), `hole_free` | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | `hole_free` |
+| `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441` | CG | PE | hole (R 3 nm, 25 °C) | 640 × C240 | 51,200 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
+| `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 4 nm, 160 °C) | 640 × C240 | 51,200 beads | `hole_free` | cancelled/killed?, 77.2% | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
+| `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 5 nm, 160 °C) | 640 × C240 | 51,200 beads | done | finished: `hole_free_gap5nm` (cancelled/killed?, 18.3%), `hole_free` | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | `hole_free` |
+| `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441` | CG | PE | hole (R 5 nm, 25 °C) | 640 × C240 | 51,200 beads | done | finished: `hole_free` | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | no |
+| `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441` | CG | PE | hole (R 6 nm, 160 °C) | 640 × C240 | 51,200 beads | done | finished: `hole_free_gap5nm` (cancelled/killed?, 18.4%), `hole_free` | from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | `hole_free` |
 | `pe_cg_pore_w5nm_n640_c240_s1_rep441` | CG | PE | pore (narrow, 5 nm) | 640 × C240 | 51,200 beads | done | finished: pore | from `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted | 8.93 vs 6.7 (outside band, info); no drift (Δ -0.06 ± 0.08) | pore |
-| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | done | finished: prep, extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | extend, sweep |
+| `pe_ua_crystal_7x10x40_s1` | UA | PE | crystal | 140 × C80 | 11,200 | done | finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C_r1e9`, `tensile_90C_r1e9`, `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9` | crystal (no 500 K melt): 15/15 holds stable, 25–160 °C | — | crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
+| `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | done | finished: prep, extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | extend, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, sweep |
 | `pe_ua_pore500k_w10nm_n40_c240_s1` | UA | PE | pore (wide, 10 nm) | 40 × C240 | 9,600 | done | finished: `pore_relax` | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
 | `pe_ua_pore_w5nm_n40_c240_s1` | UA | PE | pore (narrow, 5 nm) | 40 × C240 | 9,600 | done | finished: pore | from `pe_ua_pore500k_w10nm_n40_c240_s1` ← `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | pore |
 | `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | done | finished: prep, `sweep_crashed_20261102` (cancelled/killed?, 0.1%), sweep | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | sweep |
-| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | done | finished: prep (cancelled/killed?, 60.8%), extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | extend, sweep |
+| `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | done | finished: prep (cancelled/killed?, 60.8%), extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | extend, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, sweep |
 | `ipp_ua_pore500k_w10nm_n40_c240_s1` | UA | iPP | pore (wide, 10 nm) | 40 × C240 | 12,760 | done | finished: `pore_relax` | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 | `ipp_ua_pore_w5nm_n40_c240_s1` | UA | iPP | pore (narrow, 5 nm) | 40 × C240 | 12,760 | done | finished: pore | from `ipp_ua_pore500k_w10nm_n40_c240_s1` ← `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | pore |
-| `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | `sweep_failed_20261102` | failed, 0.0% | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
+| `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | done | finished: prep, `sweep_failed_20261102` (failed, 0.0%), sweep | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 
 **Abbreviations:**
 
@@ -82,6 +84,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 
 | System | ρ(T) | α<sub>V</sub> | κ<sub>T</sub> | C<sub>p</sub> | R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K | R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T | P2, segment MSD | D<sub>COM</sub>, viscosity | γ, dγ/dT | film structure | tensile E/ν/yield | hole closure | puncture `F/d_break` | cavitation `σ_cav` |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `pe_cg_crystal_7x10x27_s1` | todo | todo | todo | no | todo | todo | todo | todo | n/a | n/a | trend | n/a | n/a | todo |
 | `pe_cg_amorph_n40_c240_s1` | comp | comp | comp | no | comp | trend | corr | corr | n/a | n/a | trend | n/a | n/a | trend |
 | `pe_cg_amorph_n40_c1500_s1` | comp | comp | comp | no | trend | trend | corr | todo | n/a | n/a | todo | n/a | n/a | todo |
 | `pe_cg_amorph_n320_c240_s1_rep222` | todo | todo | todo | no | comp | todo | todo | todo | n/a | n/a | todo | n/a | n/a | todo |
@@ -90,10 +93,10 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 | `pe_cg_pore_w5nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo | todo | n/a |
 | `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
 | `pe_cg_hole_r2nm_160C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
-| `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
+| `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
-| `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
+| `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_pore_w5nm_n320_c240_s1_rep222` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo | todo | n/a |
 | `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
@@ -101,14 +104,15 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 | `pe_cg_film_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
 | `pe_cg_film_25C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
 | `pe_cg_film_90C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
-| `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
-| `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
-| `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
+| `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
+| `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
+| `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
-| `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
-| `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
-| `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
+| `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
+| `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
+| `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_pore_w5nm_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo | todo | n/a |
+| `pe_ua_crystal_7x10x40_s1` | todo | todo | todo | no | todo | todo | todo | todo | n/a | n/a | trend | n/a | n/a | todo |
 | `pe_ua_amorph_n40_c240_s1` | comp | comp | comp | no | comp | trend | corr | todo | n/a | n/a | todo | n/a | n/a | todo |
 | `pe_ua_pore500k_w10nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
 | `pe_ua_pore_w5nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo | todo | n/a |
@@ -147,6 +151,13 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 
 <details><summary>Reasons per system</summary>
 
+- `pe_cg_crystal_7x10x27_s1`
+  - C<sub>p</sub>: **not meaningful**: CG removes all motion inside a 3-CH<sub>2</sub> bead (a bead keeps 3 of 27 atomic degrees of freedom): classical C<sub>p</sub> per gram far too low. No principled correction (a hybrid vibrational add-on is only approximate): use AA; vs experiment: CG PE classical C<sub>p</sub> ≈ 65% low (`docs/experiment_comparison.md`)
+  - tensile E/ν/yield: **trend**: not comparable to separator data (their stiffness/yield come from crystallinity; MD rates ~10⁹× faster): amorphous response, T and rate trends; vs experiment: amorphous: compare with G<sub>e</sub> ≈ 2.6 MPa (E ≈ 8 MPa), not separator GPa moduli (`docs/experiment_comparison.md`)
+  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then needs correction): no sweep run yet
+  - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K (then comparable): no 500 K hold checks yet
+  - not yet computed: D<sub>COM</sub>, viscosity (then needs correction): no sweep run yet; needs a long D53 diffuse hold
+  - not yet computed: cavitation `σ_cav` (then trend): no cavitation run (D58)
 - `pe_cg_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: CG removes all motion inside a 3-CH<sub>2</sub> bead (a bead keeps 3 of 27 atomic degrees of freedom): classical C<sub>p</sub> per gram far too low. No principled correction (a hybrid vibrational add-on is only approximate): use AA; vs experiment: CG PE classical C<sub>p</sub> ≈ 65% low (`docs/experiment_comparison.md`)
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.18–0.60 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); C<sub>n</sub> 9.11 is outside the melt band (6.7 ±10%): a property of the CG force field, not of the equilibration; vs experiment: CG PE chains too stiff: C<sub>n</sub> +25–45% (C240), ≈ +10% (C1500); R<sub>g</sub> ≈ +20% (C240) (`docs/experiment_comparison.md`); no principled correction for the offset (model property): compare our UA/AA values
@@ -201,9 +212,9 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` failed 0%, `hole_free_failed_20261102` failed 0%, `hole_scaf_rel0` failed 0%, `hole_scaf_rel0_failed_20261102` failed 0%
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222`
   - hole closure: **trend**: no direct experiment: closure mechanism and trends only
@@ -216,9 +227,9 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` failed 0%, `hole_free_failed_20261102` failed 0%
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222`
   - hole closure: **trend**: no direct experiment: closure mechanism and trends only
@@ -258,39 +269,39 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: hole closure (then trend): no hole run (D52)
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` running 7%
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` running 86%, `hole_free_gap5nm` cancelled/killed? 19%
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): no hole run (D52)
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` running 33%, `hole_free_gap5nm` cancelled/killed? 9%
+  - not yet computed: hole closure (then trend): hole runs `hole_free` cancelled/killed? 77%, `hole_free_gap5nm` cancelled/killed? 9%
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` running 86%, `hole_free_gap5nm` cancelled/killed? 18%
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): no hole run (D52)
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441`
+  - hole closure: **trend**: no direct experiment: closure mechanism and trends only
   - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then trend), P2, segment MSD (then needs correction), film structure (then trend): no pore analysis (D51) yet
   - not yet computed: γ, dγ/dT (then comparable): no pore run yet
-  - not yet computed: hole closure (then trend): hole runs `hole_free` running 82%, `hole_free_gap5nm` cancelled/killed? 18%
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
 - `pe_cg_pore_w5nm_n640_c240_s1_rep441`
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.07–0.24 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); C<sub>n</sub> 8.93 is outside the melt band (6.7 ±10%): a property of the CG force field, not of the equilibration; vs experiment: CG PE chains too stiff: C<sub>n</sub> +25–45% (C240), ≈ +10% (C1500); R<sub>g</sub> ≈ +20% (C240) (`docs/experiment_comparison.md`); no principled correction for the offset (model property): compare our UA/AA values
@@ -299,6 +310,13 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: hole closure (then trend): no hole run (D52)
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
   - **comparable**: γ, dγ/dT (vs experiment: CG PE γ within 1–3% at 25–160 °C; dγ/dT ≈ 20% shallower (`docs/experiment_comparison.md`))
+- `pe_ua_crystal_7x10x40_s1`
+  - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
+  - tensile E/ν/yield: **trend**: not comparable to separator data (their stiffness/yield come from crystallinity; MD rates ~10⁹× faster): amorphous response, T and rate trends
+  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then needs correction): no sweep run yet
+  - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K (then comparable): no 500 K hold checks yet
+  - not yet computed: D<sub>COM</sub>, viscosity (then needs correction): no sweep run yet; needs a long D53 diffuse hold
+  - not yet computed: cavitation `σ_cav` (then trend): no cavitation run (D58)
 - `pe_ua_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.01–0.14 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); C<sub>n</sub> 8.19 is outside the melt band (6.7 ±10%): a property of the UA force field, not of the equilibration; no principled correction for the offset (model property): compare our UA/AA values
@@ -349,8 +367,8 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - **comparable**: γ, dγ/dT
 - `ipp_aa_amorph_n40_c240_s1_from_ua`
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K: **trend**: ua2aa box: the chain conformations were equilibrated with the UA force field (D32/D47) and only relaxed locally in AA; compare the UA row
-  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep failed 0%, `sweep_failed_20261102` failed 0%)
-  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep failed 0%, `sweep_failed_20261102` failed 0%); needs a long D53 diffuse hold
+  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep finished 100%, `sweep_failed_20261102` failed 0%)
+  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep finished 100%, `sweep_failed_20261102` failed 0%); needs a long D53 diffuse hold
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
   - not yet computed: cavitation `σ_cav` (then trend): no cavitation run (D58)
 
@@ -358,21 +376,12 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 
 ## Pending and known items
 
-- `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222`: `hole_scaf_rel0_failed_20261102`: failed, 0.0%
-- `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`: `hole_ramp_rel130`: running, 20.7% (1/20 segments, Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A); ETA 2026-11-12 02:56 UTC
-- `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`: `hole_free_failed_20261102`: failed, 0.0%
 - `pe_cg_film_130C_n640_c240_s1_rep441`: pore not started
 - `pe_cg_film_160C_n640_c240_s1_rep441`: pore not started
 - `pe_cg_film_25C_n640_c240_s1_rep441`: pore not started
 - `pe_cg_film_90C_n640_c240_s1_rep441`: pore not started
-- `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441`: `hole_free`: running, 6.8% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-14 08:06 UTC
-- `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441`: `hole_free`: running, 86.1% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:00 UTC
-- `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441`: hole not started
-- `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`: `hole_free`: running, 32.8% (1/3 segments, Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 40 A); ETA 2026-11-15 12:43 UTC
-- `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441`: `hole_free`: running, 85.7% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:10 UTC
-- `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441`: hole not started
-- `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441`: `hole_free`: running, 82.3% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 22:33 UTC
-- `ipp_aa_amorph_n40_c240_s1_from_ua`: `sweep_failed_20261102`: failed, 0.0%
+- `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`: `hole_free`: cancelled/killed?, 77.2%
+- `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep analysis not run
 
 ## Superseded (kept, not used)
 
@@ -457,6 +466,394 @@ One subsection per system, in the overview order (superseded systems last). Each
   - **todo**: not yet computed
   - **n/a**: does not apply
   - **!**: flagged: the system's 500 K equilibration is not accepted
+
+### `pe_cg_crystal_7x10x27_s1`
+
+PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 chains × C81, 3,780 beads; provenance not recorded. Status: finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C`, `tensile_90C`, `tensile_130C`, `tensile_160C`, `tensile_75C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_85C`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_140C`, `tensile_150C`.
+
+| Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
+|---|---|---|---|---|---|---|---|
+| ρ (g/cm³) | 0.92695 ± 0.00003 | 0.89377 ± 0.00004 | 0.87145 ± 0.00004 | 0.85323 ± 0.00005 | 35 °C: 0.92208 ± 0.00003; 45 °C: 0.91713 ± 0.00003; 55 °C: 0.91211 ± 0.00003; 65 °C: 0.90702 ± 0.00004; 75 °C: 0.90179 ± 0.00003; 85 °C: 0.89654 ± 0.00004; 100 °C: 0.88838 ± 0.00004; 110 °C: 0.88290 ± 0.00004; 120 °C: 0.87719 ± 0.00004; 140 °C: 0.86552 ± 0.00005; 150 °C: 0.85944 ± 0.00005 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 6.106 ± 0.217; 35–65 °C: 5.482 ± 0.051; 75–110 °C: 6.064 ± 0.050; 120–150 °C: 6.810 ± 0.077 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| crystallinity (ordered-site fraction) | 1.000 | 0.999 | 0.996 | 0.987 | 35 °C: 1.000; 45 °C: 1.000; 55 °C: 1.000; 65 °C: 1.000; 75 °C: 1.000; 85 °C: 0.999; 100 °C: 0.999; 110 °C: 0.998; 120 °C: 0.997; 140 °C: 0.994; 150 °C: 0.991 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| E<sub>app</sub> (MPa), 10⁸ s⁻¹, mean ± SD | 1.91e+03 ± 18.6 | 1.1e+03 ± 6.15 | 885 ± 115 | 773 ± 235 | 1.13e+03 ± 185; 993 ± 498; 1.03e+03 ± 122; 1.09e+03 ± 16.1; 941 ± 181; 1.55e+03 ± 426; 1.56e+03 ± 236; 1.58e+03 ± 266; 1.22e+03 ± 419; 1.43e+03 ± 41.6; 1.4e+03 ± 104 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| ν, fit up to the E<sub>app</sub> strain, 10⁸ s⁻¹, mean ± SD | 0.18 ± 0.03 | 0.23 ± 0.03 | 0.22 ± 0.07 | 0.21 ± 0.08 | 0.21 ± 0.04; 0.25 ± 0.07; 0.19 ± 0.00; 0.20 ± 0.00; 0.22 ± 0.01; 0.21 ± 0.05; 0.20 ± 0.05; 0.20 ± 0.04; 0.23 ± 0.06; 0.19 ± 0.02; 0.19 ± 0.00 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| ν, whole run, 10⁸ s⁻¹, mean ± SD | 0.45 ± 0.00 | 0.44 ± 0.00 | 0.47 ± 0.01 | 0.44 ± 0.03 | 0.44 ± 0.00; 0.44 ± 0.00; 0.45 ± 0.00; 0.47 ± 0.02; 0.45 ± 0.03; 0.45 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| σ<sub>peak</sub> (MPa), 10⁸ s⁻¹, mean ± SD | 48 ± 1.6 | 40 ± 1.8 | 35 ± 1.4 | 30 ± 1.4 | 39 ± 1.7; 37 ± 1.5; 36 ± 1.6; 33 ± 2; 32 ± 1.6; 47 ± 2; 46 ± 1.7; 45 ± 1.7; 43 ± 1.8; 42 ± 1.8; 41 ± 2 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| ε<sub>peak</sub>, 10⁸ s⁻¹, mean ± SD | 0.368 ± 0.053 | 0.328 ± 0.011 | 0.321 ± 0.004 | 0.246 ± 0.024 | 0.349 ± 0.027; 0.359 ± 0.002; 0.336 ± 0.050; 0.295 ± 0.058; 0.288 ± 0.031; 0.331 ± 0.012; 0.374 ± 0.013; 0.336 ± 0.010; 0.365 ± 0.032; 0.358 ± 0.010; 0.327 ± 0.012 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| flow σ (MPa), 10⁸ s⁻¹, mean ± SD | 46 ± 2.1 | 38 ± 2.1 | 26 ± 0.35 | 10 ± 14 | 35 ± 1.9; 33 ± 0.51; 28 ± 0.84; 24 ± 2.3; 12 ± 6.4; 45 ± 2.1; 44 ± 1.9; 43 ± 1.9; 42 ± 1.9; 41 ± 2.1; 39 ± 1.9 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+
+<details><summary>Full analysis tables and checks</summary>
+
+**Provenance**
+
+- PE CG, 140 chains × C81 (C81H162), 3,780 atoms/beads, force field `sdk_cg`, box density 1.0493 g/cm³ (as built)
+
+**Equilibration**
+
+- Verdict: crystal (no 500 K melt): 15/15 holds stable, 25–160 °C
+- C<sub>n</sub> plateau (D37): —
+
+**Stages**
+
+- **crystal** (rdyu-rog): finished; started 2026-11-16 19:55 UTC, ended 2026-11-17 02:17 UTC; reads `systems/pe_cg_crystal_7x10x27_s1/data.lmp`
+- **`crystal_fine_a`** (rdyu-server): finished; started 2026-11-21 05:34 UTC, ended 2026-11-21 13:57 UTC; reads `systems/pe_cg_crystal_7x10x27_s1/data.lmp`
+- **`crystal_fine_b`** (rdyu-server): finished; started 2026-11-21 05:36 UTC, ended 2026-11-21 13:43 UTC; reads `systems/pe_cg_crystal_7x10x27_s1/data.lmp`
+- **`crystal_fine_c`** (rdyu-server): finished; started 2026-11-21 06:52 UTC, ended 2026-11-21 12:25 UTC; reads `systems/pe_cg_crystal_7x10x27_s1/data.lmp`
+  - monitor flags: drift seg 2
+- **`tensile_25C`** (rdyu-rog): finished; started 2026-11-17 02:17 UTC, ended 2026-11-17 04:59 UTC; reads `../crystal/hold_25C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_90C`** (rdyu-rog): finished; started 2026-11-17 04:59 UTC, ended 2026-11-17 07:37 UTC; reads `../crystal/hold_90C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_130C`** (rdyu-rog): finished; started 2026-11-17 07:37 UTC, ended 2026-11-17 10:09 UTC; reads `../crystal/hold_130C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_160C`** (rdyu-rog): finished; started 2026-11-17 10:09 UTC, ended 2026-11-17 12:39 UTC; reads `../crystal/hold_160C.data`
+  - monitor flags: drift seg 2
+- **`tensile_75C`** (rdyu-server): finished; started 2026-11-21 13:43 UTC, ended 2026-11-21 16:45 UTC; reads `../crystal_fine_b/hold_75C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_35C`** (rdyu-server): finished; started 2026-11-21 13:57 UTC, ended 2026-11-21 17:10 UTC; reads `../crystal_fine_a/hold_35C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_45C`** (rdyu-server): finished; started 2026-11-21 16:45 UTC, ended 2026-11-21 19:55 UTC; reads `../crystal_fine_a/hold_45C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_55C`** (rdyu-server): finished; started 2026-11-21 17:10 UTC, ended 2026-11-21 20:32 UTC; reads `../crystal_fine_a/hold_55C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_65C`** (rdyu-server): finished; started 2026-11-21 19:56 UTC, ended 2026-11-21 23:16 UTC; reads `../crystal_fine_a/hold_65C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_85C`** (rdyu-server): finished; started 2026-11-21 20:32 UTC, ended 2026-11-22 00:02 UTC; reads `../crystal_fine_b/hold_85C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_100C`** (rdyu-server): finished; started 2026-11-21 23:16 UTC, ended 2026-11-22 02:33 UTC; reads `../crystal_fine_b/hold_100C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_110C`** (rdyu-server): finished; started 2026-11-22 00:02 UTC, ended 2026-11-22 03:34 UTC; reads `../crystal_fine_b/hold_110C.data`
+  - monitor flags: drift seg 2
+- **`tensile_120C`** (rdyu-server): finished; started 2026-11-22 02:32 UTC, ended 2026-11-22 04:18 UTC; reads `../crystal_fine_c/hold_120C.data`
+- **`tensile_140C`** (rdyu-server): finished; started 2026-11-22 02:32 UTC, ended 2026-11-22 05:20 UTC; reads `../crystal_fine_c/hold_140C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_150C`** (rdyu-server): finished; started 2026-11-22 02:33 UTC, ended 2026-11-22 05:43 UTC; reads `../crystal_fine_c/hold_150C.data`
+  - monitor flags: drift seg 2
+
+**`crystal` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-17 07:24 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 25 | yes | 1.000 | 0.92695 ± 0.00003 | 8.668 ± 0.0003 | 5.005 ± 0.0002 | 3.4756 ± 8e-05 | `a_A`, `a_over_b` |
+| 90 | yes | 0.999 | 0.89377 ± 0.00004 | 8.876 ± 0.0007 | 5.123 ± 0.0004 | 3.4385 ± 0.0003 | — |
+| 130 | yes | 0.996 | 0.87145 ± 0.00004 | 9.028 ± 0.0008 | 5.211 ± 0.0004 | 3.4087 ± 0.0003 | — |
+| 160 | yes | 0.987 | 0.85323 ± 0.00005 | 9.160 ± 0.0007 | 5.286 ± 0.0005 | 3.3830 ± 0.0003 | `area_per_chain_A2` |
+
+- α<sub>V</sub> 6.106 ± 0.217 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`crystal_fine_a` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-22 16:03 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 35 | yes | 1.000 | 0.92208 ± 0.00003 | 8.697 ± 0.0004 | 5.021 ± 0.0002 | 3.4709 ± 0.0001 | `a_A`, `a_over_b` |
+| 45 | yes | 1.000 | 0.91713 ± 0.00003 | 8.728 ± 0.0003 | 5.038 ± 0.0002 | 3.4655 ± 0.0001 | — |
+| 55 | yes | 1.000 | 0.91211 ± 0.00003 | 8.759 ± 0.0004 | 5.056 ± 0.0003 | 3.4601 ± 0.0002 | — |
+| 65 | yes | 1.000 | 0.90702 ± 0.00004 | 8.791 ± 0.0005 | 5.074 ± 0.0003 | 3.4545 ± 0.0002 | — |
+
+- α<sub>V</sub> 5.482 ± 0.051 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`crystal_fine_b` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-22 16:03 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 75 | yes | 1.000 | 0.90179 ± 0.00003 | 8.824 ± 0.0005 | 5.093 ± 0.0002 | 3.4484 ± 0.0001 | `a_A`, `a_over_b` |
+| 85 | yes | 0.999 | 0.89654 ± 0.00004 | 8.858 ± 0.0004 | 5.113 ± 0.0003 | 3.4421 ± 0.0002 | — |
+| 100 | yes | 0.999 | 0.88838 ± 0.00004 | 8.911 ± 0.0005 | 5.144 ± 0.0003 | 3.4322 ± 0.0002 | — |
+| 110 | yes | 0.998 | 0.88290 ± 0.00004 | 8.947 ± 0.0006 | 5.166 ± 0.0004 | 3.4249 ± 0.0003 | — |
+
+- α<sub>V</sub> 6.064 ± 0.050 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`crystal_fine_c` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-22 16:03 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 120 | yes | 0.997 | 0.87719 ± 0.00004 | 8.987 ± 0.0006 | 5.188 ± 0.0004 | 3.4171 ± 0.0003 | — |
+| 140 | yes | 0.994 | 0.86552 ± 0.00005 | 9.069 ± 0.0006 | 5.235 ± 0.0005 | 3.4012 ± 0.0003 | `a_over_b` |
+| 150 | yes | 0.991 | 0.85944 ± 0.00005 | 9.114 ± 0.0006 | 5.260 ± 0.0005 | 3.3921 ± 0.0003 | — |
+
+- α<sub>V</sub> 6.810 ± 0.077 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`tensile_100C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+100 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1e+03 ± 68 | 0.24 | 0.44 | 40 | 0.330 | 37 | 373.2 |
+| y | 0.500 | 1.26e+03 ± 58 | 0.18 | 0.44 | 38 | 0.368 | 34 | 373.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_110C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+110 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.35e+03 ± 50 | 0.20 | 0.45 | 39 | 0.357 | 33 | 383.2 |
+| y | 0.500 | 640 ± 58 | 0.30 | 0.44 | 36 | 0.360 | 32 | 383.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_120C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+120 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.11e+03 ± 59 | 0.19 | 0.45 | 37 | 0.301 | 28 | 393.1 |
+| y | 0.500 | 942 ± 68 | 0.20 | 0.45 | 35 | 0.371 | 29 | 393.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_130C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+130 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 804 ± 63 | 0.27 | 0.47 | 36 | 0.324 | 25 | 403.2 |
+| y | 0.500 | 967 ± 66 | 0.17 | 0.46 | 34 | 0.318 | 26 | 403.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_140C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+140 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.1e+03 ± 63 | 0.20 | 0.45 | 35 | 0.336 | 25 | 413.2 |
+| y | 0.500 | 1.07e+03 ± 53 | 0.21 | 0.48 | 32 | 0.254 | 22 | 413.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_150C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+150 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 813 ± 62 | 0.23 | 0.43 | 33 | 0.310 | 7.2 | 423.2 |
+| y | 0.500 | 1.07e+03 ± 56 | 0.22 | 0.47 | 31 | 0.266 | 16 | 423.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_160C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+160 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 939 ± 60 | 0.16 | 0.46 | 31 | 0.263 | 20 | 433.2 |
+| y | 0.500 | 607 ± 62 | 0.27 | 0.42 | 29 | 0.229 | 0.83 | 433.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_25C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+25 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.92e+03 ± 52 | 0.16 | 0.44 | 49 | 0.330 | 48 | 298.2 |
+| y | 0.500 | 1.89e+03 ± 52 | 0.20 | 0.45 | 47 | 0.406 | 45 | 298.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_35C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+35 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.25e+03 ± 65 | 0.25 | 0.44 | 48 | 0.340 | 47 | 308.1 |
+| y | 0.500 | 1.85e+03 ± 50 | 0.17 | 0.45 | 45 | 0.323 | 44 | 308.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_45C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+45 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.39e+03 ± 58 | 0.24 | 0.44 | 47 | 0.383 | 45 | 318.1 |
+| y | 0.500 | 1.73e+03 ± 53 | 0.17 | 0.45 | 44 | 0.365 | 43 | 318.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_55C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+55 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.77e+03 ± 53 | 0.17 | 0.44 | 46 | 0.343 | 44 | 328.2 |
+| y | 0.500 | 1.4e+03 ± 56 | 0.23 | 0.44 | 43 | 0.329 | 42 | 328.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_65C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+65 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 928 ± 54 | 0.27 | 0.44 | 45 | 0.342 | 43 | 338.2 |
+| y | 0.500 | 1.52e+03 ± 61 | 0.19 | 0.44 | 42 | 0.387 | 40 | 338.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_75C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+75 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.46e+03 ± 54 | 0.20 | 0.44 | 43 | 0.351 | 42 | 348.1 |
+| y | 0.500 | 1.4e+03 ± 62 | 0.17 | 0.44 | 41 | 0.364 | 39 | 348.3 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_85C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+85 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.48e+03 ± 60 | 0.18 | 0.44 | 42 | 0.318 | 40 | 358.1 |
+| y | 0.500 | 1.33e+03 ± 55 | 0.19 | 0.44 | 39 | 0.335 | 38 | 358.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_90C` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+90 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.1e+03 ± 62 | 0.21 | 0.43 | 42 | 0.335 | 40 | 363.2 |
+| y | 0.500 | 1.09e+03 ± 69 | 0.26 | 0.44 | 39 | 0.320 | 37 | 363.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+</details>
 
 ### `pe_cg_amorph_n40_c240_s1`
 
@@ -2477,9 +2874,9 @@ Per segment:
 
 ### `pe_cg_hole_r3nm_130C_n320_c240_s1_rep222`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 130 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_130C.data`). Stage now: `hole_scaf_rel0_failed_20261102` (failed, 0.0%).
+PE CG, film with a 3 nm-radius cylindrical hole at 130 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_130C.data`). Status: finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free`, `hole_scaf_rel0`.
 
-No analysed properties yet; pending: `hole_scaf_rel0_failed_20261102`: failed, 0.0%. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -2497,22 +2894,2628 @@ No analysed properties yet; pending: `hole_scaf_rel0_failed_20261102`: failed, 0
 
 **Stages**
 
-- **`hole_free`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_130C_n320_c240_s1_rep222/data.lmp`
-- **`hole_scaf_rel0`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_scaf_rel0_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_130C_n320_c240_s1_rep222/data.lmp`
+- **`hole_free`** (rdyu-rog): finished; started 2026-11-12 14:02 UTC, ended 2026-11-12 18:20 UTC; reads `systems/pe_cg_hole_r3nm_130C_n320_c240_s1_rep222/data.lmp`
+- **`hole_scaf_rel0`** (rdyu-rog): finished; started 2026-11-12 23:27 UTC, ended 2026-11-13 04:34 UTC; reads `systems/pe_cg_hole_r3nm_130C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | `hole_scaf_rel0_failed_20261102`: failed, 0.0% | no |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free`, `hole_scaf_rel0` | `hole_free`, `hole_scaf_rel0` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
+
+**`hole_free` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 132.5
+- `free_shell.areal_density_ratio`: 0.8565
+- `free_shell.msd.1 ns`: 576.2
+- `free_shell.msd.10 ns`: 1517
+- `free_shell.msd.end`: 2181
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: none
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- T (°C): 130
+- `t_close_ns`: 0.12
+- `thickness_final`: 133.7
+- `thickness_t0`: 166
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 133 | — |
+| 133 | — |
+| 134 | — |
+| 133.1 | — |
+| 132.5 | — |
+| 132.1 | — |
+| 133.5 | — |
+| 133.4 | — |
+| 133.8 | — |
+| 132.7 | — |
+| 133.7 | — |
+| 133 | — |
+| 132.9 | — |
+| 132.5 | — |
+| 133 | — |
+| 133.2 | — |
+| 132.2 | — |
+| 133.5 | — |
+| 132.9 | — |
+| 132.5 | — |
+| 133.1 | — |
+| 132.8 | — |
+| 134.1 | — |
+| 132.9 | — |
+| 133.1 | — |
+| 133.9 | — |
+| 133.8 | — |
+| 133.2 | — |
+| 133.2 | — |
+| 134.4 | — |
+| 134.2 | — |
+| 134.6 | — |
+| 134.2 | — |
+| 134.2 | — |
+| 134 | — |
+| 134.6 | — |
+| 135.1 | — |
+| 134.8 | — |
+| 133.6 | — |
+| 133.9 | — |
+| 134.7 | — |
+| 134.8 | — |
+| 135.2 | — |
+| 134.1 | — |
+| 134.9 | — |
+| 135.9 | — |
+| 134.5 | — |
+| 135.4 | — |
+| 135.6 | — |
+| 135.2 | — |
+| 135.2 | — |
+| 134.5 | — |
+| 135.2 | — |
+| 134.6 | — |
+| 135.5 | — |
+| 134.7 | — |
+| 135.4 | — |
+| 136.3 | — |
+| 136.6 | — |
+| 136.2 | — |
+| 136.4 | — |
+| 136.2 | — |
+| 136.5 | — |
+| 135.8 | — |
+| 136 | — |
+| 136.6 | — |
+| 136.1 | — |
+| 136 | — |
+| 137.7 | — |
+| 136.8 | — |
+| 137.6 | — |
+| 137 | — |
+| 137.8 | — |
+| 137.3 | — |
+| 137.3 | — |
+| 137.2 | — |
+| 137.3 | — |
+| 138.2 | — |
+| 138.6 | — |
+| 138.7 | — |
+| 138.7 | — |
+| 140.3 | — |
+| 139.5 | — |
+| 138.5 | — |
+| 139.1 | — |
+| 139.7 | — |
+| 139.8 | — |
+| 138.9 | — |
+| 140.6 | — |
+| 140.8 | — |
+| 139.4 | — |
+| 140.6 | — |
+| 140.9 | — |
+| 140 | — |
+| 140.2 | — |
+| 140.8 | — |
+| 138.6 | — |
+| 140.5 | — |
+| 140.7 | — |
+| 141.3 | — |
+| 141.4 | — |
+| 141.4 | — |
+| 142.7 | — |
+| 142.4 | — |
+| 142.6 | — |
+| 141.7 | — |
+| 143.6 | — |
+| 142.5 | — |
+| 142.2 | — |
+| 141.9 | — |
+| 142.8 | — |
+| 142.5 | — |
+| 144 | — |
+| 143.6 | — |
+| 143.4 | — |
+| 143.8 | — |
+| 144.1 | — |
+| 143.4 | — |
+| 144.7 | — |
+| 144.2 | — |
+| 142.9 | — |
+| 144.4 | — |
+| 144.8 | — |
+| 145.9 | — |
+| 145.6 | — |
+| 146 | — |
+| 145.1 | — |
+| 145.5 | — |
+| 145.2 | — |
+| 145.5 | — |
+| 145.9 | — |
+| 147.5 | — |
+| 147.5 | — |
+| 146.5 | — |
+| 147.8 | — |
+| 148.3 | — |
+| 147.8 | — |
+| 148 | — |
+| 146.9 | — |
+| 148 | — |
+| 149.1 | — |
+| 149.2 | — |
+| 149 | — |
+| 149.4 | — |
+| 148.7 | — |
+| 149.5 | — |
+| 148.9 | — |
+| 151.1 | — |
+| 150.4 | — |
+| 149.9 | — |
+| 150.6 | — |
+| 151.3 | — |
+| 151 | — |
+| 151.6 | — |
+| 152.5 | — |
+| 152.5 | — |
+| 152.3 | — |
+| 151.6 | — |
+| 150.7 | — |
+| 151.9 | — |
+| 153.4 | — |
+| 153.6 | — |
+| 154.2 | — |
+| 153.8 | — |
+| 154.2 | — |
+| 152.1 | — |
+| 153.6 | — |
+| 153.9 | — |
+| 154.4 | — |
+| 155.1 | — |
+| 154.7 | — |
+| 155.1 | — |
+| 154.3 | — |
+| 157.1 | — |
+| 156.9 | — |
+| 157.7 | — |
+| 156.9 | — |
+| 157.2 | — |
+| 157.7 | — |
+| 157.2 | — |
+| 158 | — |
+| 158.5 | — |
+| 159.4 | — |
+| 159.2 | — |
+| 160.3 | — |
+| 160.2 | — |
+| 160.3 | — |
+| 161.5 | — |
+| 161.2 | — |
+| 162.2 | — |
+| 160.8 | — |
+| 160.5 | — |
+| 162.9 | — |
+| 163 | — |
+| 163.5 | — |
+| 163.9 | — |
+| 162.5 | — |
+| 164.1 | — |
+| 164.4 | — |
+| 163.8 | — |
+| 164.9 | — |
+| 164.6 | — |
+| 163.9 | — |
+| 165.6 | — |
+| 163.5 | — |
+| 164.3 | — |
+| 163.7 | — |
+| 164.8 | — |
+| 163.7 | — |
+| 166.4 | — |
+| 164.7 | — |
+| 164 | — |
+| 165.3 | — |
+| 165.3 | — |
+| 166 | — |
+| 164.4 | — |
+| 166.1 | — |
+| 163.9 | — |
+| 165 | — |
+| 165.1 | — |
+| 163.5 | — |
+| 164.9 | — |
+| 164.5 | — |
+| 165 | — |
+| 166.1 | — |
+| 165.1 | — |
+| 166.3 | — |
+| 164.4 | — |
+| 165.1 | — |
+| 164.7 | — |
+| 164.3 | — |
+| 164.5 | — |
+| 164.7 | — |
+| 166.1 | — |
+| 166.8 | — |
+| 167.2 | — |
+| 166.6 | — |
+| 166.5 | — |
+| 166.4 | — |
+| 165.8 | — |
+| 165.1 | — |
+| 164.8 | — |
+| 165.1 | — |
+| 166 | — |
+| 166.1 | — |
+| 164.8 | — |
+| 166.5 | — |
+| 165.6 | — |
+| 166.1 | — |
+| 166.9 | — |
+| 166.3 | — |
+| 165.4 | — |
+| 166.5 | — |
+| 165.4 | — |
+| 166.2 | — |
+| 166.4 | — |
+| 165.6 | — |
+| 164.5 | — |
+| 166.7 | — |
+| 165.9 | — |
+| 164.5 | — |
+| 165.5 | — |
+| 166.1 | — |
+| 164.5 | — |
+| 165.2 | — |
+| 166.6 | — |
+| 165.1 | — |
+| 164.9 | — |
+| 166.2 | — |
+| 166.4 | — |
+| 165.4 | — |
+| 163.6 | — |
+| 165.2 | — |
+| 165.2 | — |
+| 164.4 | — |
+| 166.4 | — |
+| 164.9 | — |
+| 165.9 | — |
+| 165.8 | — |
+| 165.5 | — |
+| 166 | — |
+| 166.1 | — |
+| 165.8 | — |
+| 166.1 | — |
+| 165.5 | — |
+| 164.2 | — |
+| 166.1 | — |
+| 165.5 | — |
+| 164.4 | — |
+| 165.8 | — |
+| 164.7 | — |
+| 167.1 | — |
+| 165.9 | — |
+| 166.2 | — |
+| 163.9 | — |
+| 163.8 | — |
+| 165.3 | — |
+| 164.8 | — |
+| 165.4 | — |
+| 165.1 | — |
+| 165.6 | — |
+| 165.5 | — |
+| 165.2 | — |
+| 166.2 | — |
+| 165.7 | — |
+| 164.2 | — |
+| 166.3 | — |
+| 166.1 | — |
+| 165.2 | — |
+| 166.5 | — |
+| 166.6 | — |
+| 165.7 | — |
+| 165.9 | — |
+| 165.9 | — |
+| 164.8 | — |
+| 165.5 | — |
+| 165.5 | — |
+| 167 | — |
+| 165.7 | — |
+| 166.8 | — |
+| 166.8 | — |
+| 164.5 | — |
+| 165.5 | — |
+| 166.4 | — |
+| 165.7 | — |
+| 166.9 | — |
+| 167.7 | — |
+| 166.7 | — |
+| 165.6 | — |
+| 166.2 | — |
+| 166.9 | — |
+| 167.2 | — |
+| 167.7 | — |
+| 166.7 | — |
+| 167.4 | — |
+| 166.8 | — |
+| 165.2 | — |
+| 167.1 | — |
+| 165.9 | — |
+| 167.4 | — |
+| 166.3 | — |
+| 166.6 | — |
+| 165.8 | — |
+| 166.3 | — |
+| 166.9 | — |
+| 167 | — |
+| 166.7 | — |
+| 166.2 | — |
+| 166 | — |
+| 166.7 | — |
+| 167.3 | — |
+| 166 | — |
+| 167.2 | — |
+| 165.9 | — |
+| 166.7 | — |
+| 167.6 | — |
+| 166.8 | — |
+| 165.1 | — |
+| 167.8 | — |
+| 165.4 | — |
+| 164.9 | — |
+| 165.4 | — |
+| 166.1 | — |
+| 166.1 | — |
+| 165.8 | — |
+| 166.1 | — |
+| 166.5 | — |
+| 165.4 | — |
+| 166.3 | — |
+| 167.5 | — |
+| 166.3 | — |
+| 165.7 | — |
+| 165.2 | — |
+| 165.6 | — |
+| 165.6 | — |
+| 165.3 | — |
+| 166.1 | — |
+| 166 | — |
+| 165.4 | — |
+| 164.4 | — |
+| 164.5 | — |
+| 165.7 | — |
+| 165 | — |
+| 166.1 | — |
+| 166.3 | — |
+| 166.2 | — |
+| 165.3 | — |
+| 165 | — |
+| 166 | — |
+| 165.4 | — |
+| 168.4 | — |
+| 167.1 | — |
+| 167.7 | — |
+| 166.9 | — |
+| 166.3 | — |
+| 166.5 | — |
+| 166.2 | — |
+| 165.2 | — |
+| 165.8 | — |
+| 167.8 | — |
+| 166 | 0 |
+| 165.8 | 16.99 |
+| 165.9 | 27.38 |
+| 164.5 | 37.95 |
+| 158.8 | 48.17 |
+| 157.6 | 61.8 |
+| 155.2 | 74.59 |
+| 154.3 | 83.33 |
+| 152.7 | 93.81 |
+| 152.2 | 102.4 |
+| 151.4 | 113.1 |
+| 150.1 | 123.5 |
+| 148.3 | 134.2 |
+| 147.8 | 140.8 |
+| 148.2 | 147.4 |
+| 147.3 | 154.7 |
+| 146.5 | 161.9 |
+| 145.9 | 169.2 |
+| 145.6 | 177.3 |
+| 145.4 | 186.6 |
+| 145.3 | 196.3 |
+| 144.2 | 203.9 |
+| 143.9 | 211.8 |
+| 144.3 | 218.5 |
+| 143.8 | 224.8 |
+| 143.3 | 231.9 |
+| 142.9 | 242.8 |
+| 141.3 | 250.2 |
+| 140.3 | 260.2 |
+| 139.7 | 271 |
+| 138.3 | 274.4 |
+| 138.8 | 276.8 |
+| 137.7 | 282 |
+| 138.5 | 286 |
+| 137.5 | 292.2 |
+| 136.6 | 295.7 |
+| 137 | 301.1 |
+| 136.5 | 304.5 |
+| 137 | 303 |
+| 137 | 303 |
+| 136.4 | 305.2 |
+| 136.4 | 309.5 |
+| 136.8 | 318.1 |
+| 137.3 | 319.6 |
+| 137 | 327.3 |
+| 137.2 | 332.9 |
+| 136.5 | 331.9 |
+| 137.5 | 332.6 |
+| 137 | 334 |
+| 137.1 | 337 |
+| 137.3 | 338.6 |
+| 137.3 | 341.1 |
+| 137.6 | 342.8 |
+| 138.1 | 347.1 |
+| 136.8 | 351.5 |
+| 136.8 | 355.1 |
+| 136.4 | 356.5 |
+| 136.7 | 362 |
+| 136.1 | 366 |
+| 135.7 | 368.6 |
+| 135.2 | 371.9 |
+| 134.8 | 376.3 |
+| 135.7 | 382.2 |
+| 135.2 | 384.6 |
+| 136.1 | 379.4 |
+| 135.7 | 380.9 |
+| 135.6 | 382.2 |
+| 135.9 | 384.7 |
+| 135.5 | 388.3 |
+| 135.7 | 392.3 |
+| 135.6 | 395.6 |
+| 134.5 | 398.8 |
+| 134.5 | 400.4 |
+| 135.6 | 402.5 |
+| 136.4 | 408.8 |
+| 135.4 | 409.5 |
+| 135.3 | 407.2 |
+| 135 | 405.3 |
+| 135.4 | 408.2 |
+| 135.4 | 410.2 |
+| 135.2 | 414.1 |
+| 134.6 | 416.9 |
+| 135.4 | 413.8 |
+| 135.1 | 413.8 |
+| 135.2 | 417.6 |
+| 136.2 | 419.7 |
+| 135.6 | 425.8 |
+| 136 | 424.7 |
+| 135 | 429.1 |
+| 135.3 | 432.4 |
+| 135.2 | 436.3 |
+| 135.8 | 433.7 |
+| 135 | 435.6 |
+| 135.4 | 441.6 |
+| 135.6 | 445.3 |
+| 134 | 446.2 |
+| 134.8 | 445.7 |
+| 135.9 | 442.9 |
+| 134.9 | 444.8 |
+| 135 | 449 |
+| 134.2 | 455.2 |
+| 133.9 | 454 |
+| 134.7 | 452.3 |
+| 135.1 | 449.4 |
+| 134.6 | 455.8 |
+| 134.8 | 456.1 |
+| 134.3 | 456.7 |
+| 135 | 454.9 |
+| 135.1 | 455.1 |
+| 134.1 | 462.2 |
+| 133.8 | 467.6 |
+| 133.7 | 467.6 |
+| 134.1 | 472.8 |
+| 135.1 | 472.6 |
+| 134.6 | 472.3 |
+| 134.1 | 475.5 |
+| 133.6 | 477.1 |
+| 135.3 | 477.9 |
+| 135.5 | 483.8 |
+| 135.5 | 482.8 |
+| 134.7 | 480.8 |
+| 135.2 | 484.8 |
+| 134.7 | 486.9 |
+| 134.2 | 489.1 |
+| 134.1 | 493.1 |
+| 134 | 485.9 |
+| 135.2 | 487.7 |
+| 135.2 | 488.6 |
+| 135.1 | 484.9 |
+| 134.9 | 489.7 |
+| 135 | 490.4 |
+| 134.7 | 486.3 |
+| 135.3 | 483.8 |
+| 134.9 | 488.8 |
+| 135.1 | 486.7 |
+| 134.7 | 491.5 |
+| 135.6 | 490.8 |
+| 134.5 | 497.9 |
+| 135.3 | 499.5 |
+| 134.3 | 502.2 |
+| 134.7 | 500.1 |
+| 134.9 | 495 |
+| 135.4 | 498.5 |
+| 135.7 | 499 |
+| 135.2 | 503.3 |
+| 135.5 | 504.8 |
+| 135.3 | 508 |
+| 135.3 | 513.2 |
+| 134.9 | 513.8 |
+| 134.6 | 511.3 |
+| 134.1 | 512.9 |
+| 134.2 | 517.3 |
+| 134.4 | 517.9 |
+| 135 | 521.6 |
+| 134.5 | 520.6 |
+| 134.1 | 523 |
+| 133.9 | 521.5 |
+| 133.9 | 523 |
+| 134.9 | 523 |
+| 134.6 | 524.6 |
+| 133.9 | 529.6 |
+| 133.6 | 529.3 |
+| 134 | 524.5 |
+| 135 | 524.5 |
+| 135.8 | 523 |
+| 134.9 | 524.7 |
+| 135 | 528.4 |
+| 134.9 | 530 |
+| 134.8 | 529.2 |
+| 134.7 | 531.5 |
+| 134.6 | 533.4 |
+| 134.5 | 537.3 |
+| 134.1 | 541.3 |
+| 133.9 | 540.9 |
+| 134.1 | 539.9 |
+| 134.6 | 543.3 |
+| 133.8 | 543.9 |
+| 134.6 | 546.5 |
+| 135 | 544.2 |
+| 134.3 | 548.4 |
+| 134.6 | 545.6 |
+| 134.2 | 546 |
+| 133.6 | 548 |
+| 133.7 | 551.7 |
+| 134 | 557.9 |
+| 134.7 | 555.5 |
+| 135.1 | 557.3 |
+| 134.6 | 563.6 |
+| 134.7 | 563.5 |
+| 134.2 | 566.4 |
+| 133 | 567 |
+| 133.6 | 568.1 |
+| 134.3 | 567.7 |
+| 134.2 | 566.6 |
+| 133.9 | 571 |
+| 134.2 | 569.5 |
+| 133.9 | 571.7 |
+| 134.3 | 572.9 |
+| 134.5 | 573.4 |
+| 134.3 | 575.2 |
+| 134.6 | 576.2 |
+| 134 | 581.3 |
+| 134.5 | 580.7 |
+| 133.6 | 577.8 |
+| 133.9 | 578.6 |
+| 134.3 | 580.3 |
+| 134.6 | 580.7 |
+| 134.4 | 582.9 |
+| 134 | 583.8 |
+| 133.6 | 585.1 |
+| 134 | 584.8 |
+| 133.5 | 585.1 |
+| 134.4 | 585.3 |
+| 134.4 | 583.3 |
+| 134.1 | 584.5 |
+| 133.7 | 587.5 |
+| 134.3 | 585.5 |
+| 133.9 | 589.9 |
+| 134 | 585.6 |
+| 134 | 588.5 |
+| 134.1 | 586.6 |
+| 134.5 | 589.8 |
+| 134.7 | 589.1 |
+| 134.2 | 585.3 |
+| 134.4 | 591 |
+| 134.4 | 593.4 |
+| 135.3 | 593 |
+| 134.2 | 595.1 |
+| 134.4 | 601.5 |
+| 134.6 | 598.7 |
+| 134.6 | 597.6 |
+| 134.8 | 599.4 |
+| 134.3 | 596.7 |
+| 133.7 | 594.4 |
+| 134 | 598.3 |
+| 135.2 | 602.1 |
+| 134.8 | 600.5 |
+| 134.2 | 602.3 |
+| 134.4 | 607.9 |
+| 134.2 | 607.7 |
+| 134.3 | 612.7 |
+| 133.9 | 613.3 |
+| 133.6 | 613.8 |
+| 134.8 | 610.1 |
+| 134.1 | 607.1 |
+| 133.8 | 609.9 |
+| 134 | 609.4 |
+| 133.7 | 608.9 |
+| 133.9 | 613 |
+| 135.2 | 613.5 |
+| 134.7 | 616.3 |
+| 134.3 | 622.9 |
+| 133.7 | 626 |
+| 134.1 | 628.3 |
+| 133.9 | 631.4 |
+| 134.1 | 630.1 |
+| 133.9 | 630.8 |
+| 134.4 | 629.2 |
+| 133.9 | 629.5 |
+| 134 | 629.2 |
+| 134.5 | 626.9 |
+| 135.2 | 628.3 |
+| 134.4 | 633.6 |
+| 134.1 | 634.2 |
+| 134.1 | 635.6 |
+| 133.8 | 634.4 |
+| 134 | 631.9 |
+| 134.6 | 634.9 |
+| 134.1 | 635.1 |
+| 132.9 | 638.9 |
+| 133 | 638.4 |
+| 133.9 | 643.5 |
+| 134.1 | 645.8 |
+| 134.5 | 646.8 |
+| 133.8 | 648 |
+| 133.3 | 647.6 |
+| 134.6 | 649.4 |
+| 134.7 | 650 |
+| 133 | 649.6 |
+| 134.1 | 649.4 |
+| 133.9 | 654.6 |
+| 133.8 | 656.7 |
+| 134.1 | 657.7 |
+| 135.5 | 662.7 |
+| 134.2 | 668.9 |
+| 134.5 | 666.7 |
+| 134.2 | 666.4 |
+| 133.8 | 668.5 |
+| 134.3 | 669.9 |
+| 133.9 | 669 |
+| 134.2 | 665.2 |
+| 133.7 | 663.2 |
+| 134.2 | 666 |
+| 133.2 | 665.5 |
+| 133.8 | 666.5 |
+| 134.1 | 667.6 |
+| 133.7 | 668.8 |
+| 133.8 | 666.4 |
+| 134.5 | 664.7 |
+| 134.9 | 660.8 |
+| 133.9 | 659.8 |
+| 134.1 | 662 |
+| 134.1 | 662.1 |
+| 134.5 | 664.7 |
+| 134.5 | 662 |
+| 134.4 | 664.8 |
+| 134.1 | 665.7 |
+| 134.5 | 664.1 |
+| 134.3 | 662.1 |
+| 134.4 | 665.2 |
+| 134 | 665.6 |
+| 133.5 | 666.2 |
+| 133.7 | 664.4 |
+| 133.8 | 662 |
+| 134.5 | 662.1 |
+| 133.7 | 661.1 |
+| 134.1 | 660.1 |
+| 133.8 | 658.2 |
+| 134 | 657.1 |
+| 134.6 | 660.9 |
+| 133.6 | 664.4 |
+| 134.2 | 668.1 |
+| 134.8 | 668.8 |
+| 134.3 | 674 |
+| 134 | 678.1 |
+| 133.2 | 680.8 |
+| 133.6 | 678.8 |
+| 133.8 | 678.9 |
+| 133.7 | 675.8 |
+| 134 | 679.6 |
+| 134.3 | 680 |
+| 134 | 673.5 |
+| 132.5 | 673.3 |
+| 133.3 | 668.7 |
+| 133.4 | 668.8 |
+| 134.7 | 664.8 |
+| 134.2 | 668.6 |
+| 134.3 | 667 |
+| 132.6 | 663.6 |
+| 133.2 | 664.1 |
+| 134.2 | 663.7 |
+| 134.4 | 660.3 |
+| 134.4 | 657.3 |
+| 134 | 662.9 |
+| 133.6 | 663 |
+| 133.5 | 661.2 |
+| 134.1 | 658.5 |
+| 134 | 665 |
+| 133.6 | 665.5 |
+| 133.3 | 665.8 |
+| 133.6 | 666.3 |
+| 133.6 | 667.9 |
+| 133.6 | 667.7 |
+| 133.7 | 668.3 |
+| 134.2 | 670.7 |
+| 133.1 | 668.9 |
+| 133.5 | 670.7 |
+| 133.8 | 674.6 |
+| 134 | 672.6 |
+| 133.7 | 672.1 |
+| 134.1 | 675.3 |
+| 134 | 675.3 |
+| 133.8 | 675.5 |
+| 132.6 | 674 |
+| 133.2 | 678.8 |
+| 133.7 | 680.5 |
+| 133.5 | 678.4 |
+| 133.6 | 687.4 |
+| 133.1 | 691.8 |
+| 133.9 | 690.9 |
+| 134.6 | 694.1 |
+| 133.7 | 694.4 |
+| 133.7 | 697 |
+| 133.5 | 704.2 |
+| 134 | 700.7 |
+| 134.2 | 700.5 |
+| 134.2 | 701 |
+| 133.7 | 705.4 |
+| 133.3 | 708.8 |
+| 133.7 | 707.9 |
+| 134.2 | 704.6 |
+| 134.1 | 704.2 |
+| 134.4 | 708.4 |
+| 134.2 | 709.7 |
+| 133.9 | 712.6 |
+| 133.4 | 712.2 |
+| 133.7 | 711.1 |
+| 133 | 709.6 |
+| 133.4 | 711.7 |
+| 133.2 | 715.8 |
+| 133.4 | 716.1 |
+| 133.5 | 718.3 |
+| 133.5 | 716.3 |
+| 134.2 | 715.9 |
+| 133.9 | 724 |
+| 134 | 729.7 |
+| 134.1 | 731.5 |
+| 133.7 | 733.5 |
+| 134.3 | 731.9 |
+| 134.5 | 735.3 |
+| 134.2 | 731.5 |
+| 133.1 | 747.9 |
+| 133.5 | 762.6 |
+| 133.3 | 765.2 |
+| 133.7 | 757.1 |
+| 133.8 | 764.6 |
+| 133.7 | 768.6 |
+| 133.4 | 775.5 |
+| 133.5 | 791 |
+| 133.8 | 791.7 |
+| 133.8 | 805 |
+| 134.1 | 807.5 |
+| 132.8 | 820.9 |
+| 132.5 | 834.1 |
+| 134.1 | 837 |
+| 133.9 | 847.3 |
+| 133 | 860 |
+| 132.8 | 871.8 |
+| 134.2 | 884.4 |
+| 133.7 | 907.8 |
+| 133.3 | 905.9 |
+| 133 | 889.1 |
+| 133.7 | 898.2 |
+| 133.4 | 911.5 |
+| 133.9 | 918.6 |
+| 133.5 | 940.3 |
+| 133.6 | 962 |
+| 133.3 | 964.6 |
+| 132 | 974.1 |
+| 133.5 | 973 |
+| 133.6 | 978 |
+| 133.6 | 967.2 |
+| 133.1 | 981 |
+| 133 | 980.3 |
+| 133.4 | 995.2 |
+| 133.2 | 1017 |
+| 132.5 | 1040 |
+| 132.6 | 1052 |
+| 132.9 | 1057 |
+| 132.6 | 1060 |
+| 133.8 | 1050 |
+| 134.4 | 1066 |
+| 133.8 | 1069 |
+| 133.4 | 1085 |
+| 133.2 | 1102 |
+| 133.4 | 1100 |
+| 133.3 | 1091 |
+| 132.2 | 1109 |
+| 132.7 | 1113 |
+| 134 | 1111 |
+| 133.3 | 1104 |
+| 132.9 | 1103 |
+| 133.4 | 1103 |
+| 132.5 | 1105 |
+| 133.3 | 1109 |
+| 133.7 | 1112 |
+| 133.6 | 1130 |
+| 133.5 | 1106 |
+| 132.5 | 1129 |
+| 133.5 | 1129 |
+| 133.7 | 1122 |
+| 133.5 | 1148 |
+| 133.5 | 1153 |
+| 133.1 | 1172 |
+| 132.6 | 1171 |
+| 132.8 | 1181 |
+| 133.3 | 1158 |
+| 132.6 | 1169 |
+| 133 | 1196 |
+| 133.2 | 1232 |
+| 132.6 | 1236 |
+| 133.3 | 1243 |
+| 133.3 | 1222 |
+| 133.2 | 1219 |
+| 132.6 | 1228 |
+| 132.9 | 1238 |
+| 133.4 | 1266 |
+| 132.7 | 1260 |
+| 133 | 1253 |
+| 132.3 | 1265 |
+| 133.3 | 1271 |
+| 132.3 | 1282 |
+| 132.6 | 1304 |
+| 133 | 1296 |
+| 133 | 1311 |
+| 132.5 | 1322 |
+| 133.1 | 1324 |
+| 132.7 | 1311 |
+| 132.3 | 1320 |
+| 132.6 | 1331 |
+| 132.6 | 1329 |
+| 133 | 1342 |
+| 133.3 | 1331 |
+| 133.4 | 1332 |
+| 132.7 | 1335 |
+| 133.2 | 1346 |
+| 132.7 | 1357 |
+| 133.5 | 1350 |
+| 131.7 | 1370 |
+| 132.7 | 1354 |
+| 133.1 | 1371 |
+| 133.1 | 1356 |
+| 132.5 | 1383 |
+| 133.5 | 1394 |
+| 132.7 | 1388 |
+| 133 | 1408 |
+| 132.5 | 1424 |
+| 132.8 | 1408 |
+| 133.1 | 1412 |
+| 133.5 | 1399 |
+| 132.8 | 1390 |
+| 133.5 | 1393 |
+| 133.6 | 1414 |
+| 133.5 | 1413 |
+| 132.8 | 1403 |
+| 132.4 | 1402 |
+| 132.3 | 1397 |
+| 133.4 | 1402 |
+| 133.6 | 1408 |
+| 132.5 | 1425 |
+| 134 | 1427 |
+| 133.5 | 1429 |
+| 133.3 | 1419 |
+| 133.2 | 1418 |
+| 133.3 | 1420 |
+| 132.6 | 1436 |
+| 133.4 | 1455 |
+| 133.2 | 1457 |
+| 133.6 | 1458 |
+| 133.1 | 1447 |
+| 133.6 | 1460 |
+| 132.9 | 1462 |
+| 132.9 | 1463 |
+| 133 | 1482 |
+| 133.7 | 1494 |
+| 132.8 | 1486 |
+| 132.7 | 1490 |
+| 133.3 | 1496 |
+| 133.5 | 1491 |
+| 133.4 | 1519 |
+| 133.9 | 1496 |
+| 133.4 | 1498 |
+| 133.6 | 1523 |
+| 133.6 | 1514 |
+| 133.6 | 1501 |
+| 133.3 | 1495 |
+| 132.2 | 1502 |
+| 133.4 | 1513 |
+| 132.7 | 1519 |
+| 133.3 | 1527 |
+| 132.5 | 1514 |
+| 133.4 | 1509 |
+| 133 | 1509 |
+| 133.5 | 1516 |
+| 132 | 1508 |
+| 133.8 | 1534 |
+| 133.5 | 1521 |
+| 132.7 | 1504 |
+| 132.3 | 1508 |
+| 132.8 | 1513 |
+| 133.7 | 1517 |
+| 133.3 | 1512 |
+| 132.6 | 1510 |
+| 132.6 | 1523 |
+| 133 | 1523 |
+| 133.2 | 1536 |
+| 133.4 | 1536 |
+| 133.3 | 1543 |
+| 133.1 | 1537 |
+| 133.5 | 1530 |
+| 133.3 | 1513 |
+| 133 | 1525 |
+| 133.5 | 1516 |
+| 132.9 | 1540 |
+| 133 | 1539 |
+| 133.4 | 1550 |
+| 133.2 | 1532 |
+| 133.2 | 1568 |
+| 133.3 | 1585 |
+| 133.3 | 1575 |
+| 133.5 | 1570 |
+| 133.3 | 1539 |
+| 133.7 | 1553 |
+| 132.2 | 1555 |
+| 133.4 | 1562 |
+| 133.2 | 1579 |
+| 133.5 | 1597 |
+| 132.9 | 1595 |
+| 132.9 | 1616 |
+| 133.4 | 1637 |
+| 134.2 | 1644 |
+| 133.4 | 1673 |
+| 133.1 | 1665 |
+| 132.6 | 1667 |
+| 133.3 | 1681 |
+| 133.2 | 1696 |
+| 133.1 | 1697 |
+| 133.9 | 1697 |
+| 133.3 | 1691 |
+| 133.8 | 1708 |
+| 132.6 | 1697 |
+| 133.7 | 1684 |
+| 133.7 | 1689 |
+| 133 | 1680 |
+| 132.9 | 1698 |
+| 133.2 | 1733 |
+| 133.3 | 1735 |
+| 132.8 | 1746 |
+| 134.2 | 1771 |
+| 134 | 1785 |
+| 133.1 | 1781 |
+| 133 | 1785 |
+| 133 | 1794 |
+| 133.2 | 1808 |
+| 132.6 | 1802 |
+| 132.4 | 1820 |
+| 132.3 | 1823 |
+| 133.1 | 1838 |
+| 133.3 | 1839 |
+| 133.1 | 1863 |
+| 134 | 1840 |
+| 133 | 1820 |
+| 132.3 | 1823 |
+| 133.6 | 1833 |
+| 132.8 | 1802 |
+| 133 | 1804 |
+| 132.7 | 1816 |
+| 133.3 | 1822 |
+| 132.9 | 1834 |
+| 133.3 | 1848 |
+| 133.3 | 1810 |
+| 133.6 | 1826 |
+| 133.2 | 1834 |
+| 132.9 | 1853 |
+| 133.1 | 1842 |
+| 132.7 | 1870 |
+| 132.2 | 1860 |
+| 132.5 | 1860 |
+| 132.3 | 1854 |
+| 133.1 | 1847 |
+| 132.8 | 1841 |
+| 133.2 | 1867 |
+| 133.2 | 1858 |
+| 133.2 | 1827 |
+| 133.9 | 1828 |
+| 132.4 | 1824 |
+| 133.1 | 1835 |
+| 133.2 | 1834 |
+| 132.7 | 1845 |
+| 132.9 | 1820 |
+| 132.2 | 1831 |
+| 131.6 | 1836 |
+| 132.8 | 1815 |
+| 133.2 | 1836 |
+| 133.5 | 1819 |
+| 133.3 | 1847 |
+| 133.2 | 1847 |
+| 133.1 | 1853 |
+| 133.4 | 1870 |
+| 132.7 | 1859 |
+| 133 | 1861 |
+| 132.8 | 1838 |
+| 133.4 | 1835 |
+| 133.9 | 1838 |
+| 133.3 | 1847 |
+| 133.5 | 1868 |
+| 133.8 | 1848 |
+| 133.4 | 1850 |
+| 133.6 | 1854 |
+| 132.5 | 1868 |
+| 133 | 1862 |
+| 133.2 | 1847 |
+| 132.9 | 1854 |
+| 132.9 | 1868 |
+| 133.1 | 1910 |
+| 133.1 | 1902 |
+| 132.5 | 1910 |
+| 133 | 1922 |
+| 132.6 | 1903 |
+| 133.2 | 1936 |
+| 133 | 1945 |
+| 133 | 1954 |
+| 133 | 1956 |
+| 133.5 | 1960 |
+| 133.7 | 1977 |
+| 133 | 1948 |
+| 133.7 | 1949 |
+| 133.5 | 1949 |
+| 133.2 | 1967 |
+| 133.1 | 1927 |
+| 133.9 | 1956 |
+| 133.4 | 1982 |
+| 133.4 | 1984 |
+| 133.5 | 1996 |
+| 133.4 | 2004 |
+| 133.4 | 2000 |
+| 133.5 | 1990 |
+| 133.1 | 1987 |
+| 133.1 | 1969 |
+| 133.4 | 1974 |
+| 133 | 1978 |
+| 132.6 | 1988 |
+| 132.6 | 1991 |
+| 132.4 | 1976 |
+| 133.1 | 1977 |
+| 132.2 | 1974 |
+| 132.5 | 1983 |
+| 132.9 | 1990 |
+| 132.1 | 1982 |
+| 133.2 | 1990 |
+| 132.2 | 1988 |
+| 133 | 2009 |
+| 132.7 | 1998 |
+| 132.5 | 2019 |
+| 133 | 1999 |
+| 132.1 | 1990 |
+| 133.2 | 1989 |
+| 133.4 | 2020 |
+| 133.2 | 1996 |
+| 132.8 | 2019 |
+| 132.6 | 2032 |
+| 132.4 | 2043 |
+| 133.2 | 2030 |
+| 132 | 2036 |
+| 133.4 | 2047 |
+| 133.6 | 2034 |
+| 133.3 | 2043 |
+| 133.8 | 2035 |
+| 132.8 | 2042 |
+| 133.4 | 2036 |
+| 132.4 | 2042 |
+| 132.9 | 2044 |
+| 133.4 | 2037 |
+| 133.4 | 2024 |
+| 132.5 | 2019 |
+| 132.4 | 2029 |
+| 133.1 | 2037 |
+| 132.7 | 2040 |
+| 132.8 | 2032 |
+| 131.9 | 2049 |
+| 133.7 | 2036 |
+| 132.9 | 2027 |
+| 133.4 | 2063 |
+| 132.5 | 2071 |
+| 132.2 | 2082 |
+| 133.2 | 2088 |
+| 133.4 | 2107 |
+| 132.7 | 2114 |
+| 132.3 | 2137 |
+| 132.7 | 2149 |
+| 132.9 | 2149 |
+| 133.8 | 2162 |
+| 133.3 | 2184 |
+| 133.6 | 2158 |
+| 133.2 | 2135 |
+| 133.3 | 2135 |
+| 133.5 | 2155 |
+| 132.1 | 2172 |
+| 133.6 | 2202 |
+| 132.9 | 2193 |
+| 133.7 | 2181 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 130 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 130 |
+
+
+**`hole_scaf_rel0` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 132.5
+- `free_shell.areal_density_ratio`: 0.7586
+- `free_shell.msd.1 ns`: 543.5
+- `free_shell.msd.10 ns`: 1358
+- `free_shell.msd.end`: 1951
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: 130
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 1e+04
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `scaffold.d_nm`: 2.5
+- `scaffold.nearest_tethered_r_held_min`: 53.65
+- `scaffold.nearest_tethered_r_t0`: 55
+- `scaffold.tethered_fraction`: 0.5829
+- T (°C): 130
+- `t_close_ns`: 0.05
+- `thickness_final`: 132.5
+- `thickness_t0`: 168.8
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 133 | — |
+| 133.5 | — |
+| 133.1 | — |
+| 133 | — |
+| 133.3 | — |
+| 133 | — |
+| 133.2 | — |
+| 133.4 | — |
+| 133.3 | — |
+| 132.8 | — |
+| 132 | — |
+| 133.5 | — |
+| 134.5 | — |
+| 133.1 | — |
+| 133.6 | — |
+| 133.9 | — |
+| 133.5 | — |
+| 133.8 | — |
+| 132.6 | — |
+| 133.2 | — |
+| 133.1 | — |
+| 133.7 | — |
+| 133 | — |
+| 133.6 | — |
+| 134 | — |
+| 133.5 | — |
+| 133.6 | — |
+| 133.7 | — |
+| 134.1 | — |
+| 133.4 | — |
+| 134.4 | — |
+| 133.6 | — |
+| 132.6 | — |
+| 134.1 | — |
+| 133.8 | — |
+| 134.5 | — |
+| 134.2 | — |
+| 134 | — |
+| 134.5 | — |
+| 134.6 | — |
+| 133.9 | — |
+| 134.2 | — |
+| 134.6 | — |
+| 134.4 | — |
+| 135.1 | — |
+| 134.5 | — |
+| 135.5 | — |
+| 135.4 | — |
+| 134.1 | — |
+| 135.6 | — |
+| 135 | — |
+| 135.7 | — |
+| 136.3 | — |
+| 135.2 | — |
+| 134.9 | — |
+| 134.7 | — |
+| 135.1 | — |
+| 134.4 | — |
+| 135.2 | — |
+| 136.4 | — |
+| 136.1 | — |
+| 136.9 | — |
+| 137.1 | — |
+| 136.5 | — |
+| 136.6 | — |
+| 136.5 | — |
+| 136.5 | — |
+| 137.4 | — |
+| 136.7 | — |
+| 136.8 | — |
+| 137.4 | — |
+| 137.4 | — |
+| 137.8 | — |
+| 137.6 | — |
+| 138.2 | — |
+| 137.7 | — |
+| 137.6 | — |
+| 138.3 | — |
+| 138.1 | — |
+| 138.5 | — |
+| 138.6 | — |
+| 140 | — |
+| 139.2 | — |
+| 139.9 | — |
+| 139.6 | — |
+| 139.7 | — |
+| 139.5 | — |
+| 139.8 | — |
+| 138.9 | — |
+| 139.6 | — |
+| 140.1 | — |
+| 139.5 | — |
+| 139.9 | — |
+| 140.8 | — |
+| 139.5 | — |
+| 140.4 | — |
+| 140.7 | — |
+| 140.4 | — |
+| 141 | — |
+| 141 | — |
+| 141.6 | — |
+| 140.1 | — |
+| 141.9 | — |
+| 141.5 | — |
+| 142.3 | — |
+| 141.2 | — |
+| 142.3 | — |
+| 142.4 | — |
+| 142.4 | — |
+| 143.1 | — |
+| 142.4 | — |
+| 142.9 | — |
+| 144.4 | — |
+| 144.6 | — |
+| 143.7 | — |
+| 143 | — |
+| 143.9 | — |
+| 144.8 | — |
+| 143.5 | — |
+| 145.4 | — |
+| 145.1 | — |
+| 144.1 | — |
+| 145.4 | — |
+| 145.6 | — |
+| 144.3 | — |
+| 146.4 | — |
+| 144.8 | — |
+| 146.4 | — |
+| 145.9 | — |
+| 145 | — |
+| 146.3 | — |
+| 146.1 | — |
+| 146.9 | — |
+| 147.2 | — |
+| 146.7 | — |
+| 147.9 | — |
+| 147.2 | — |
+| 147.9 | — |
+| 146.3 | — |
+| 147.6 | — |
+| 147.3 | — |
+| 148.8 | — |
+| 149 | — |
+| 149.3 | — |
+| 147.7 | — |
+| 149.8 | — |
+| 150.2 | — |
+| 151.5 | — |
+| 151.3 | — |
+| 151.1 | — |
+| 151.1 | — |
+| 152.1 | — |
+| 151.2 | — |
+| 150.2 | — |
+| 150.8 | — |
+| 151.3 | — |
+| 151.8 | — |
+| 151.3 | — |
+| 152.3 | — |
+| 152.8 | — |
+| 153.4 | — |
+| 152.5 | — |
+| 153.7 | — |
+| 153 | — |
+| 154.8 | — |
+| 154.7 | — |
+| 155.8 | — |
+| 154.8 | — |
+| 156.3 | — |
+| 154.8 | — |
+| 157.4 | — |
+| 157.3 | — |
+| 156.6 | — |
+| 157.5 | — |
+| 156.4 | — |
+| 155.9 | — |
+| 156.9 | — |
+| 157.2 | — |
+| 156.8 | — |
+| 157 | — |
+| 157.5 | — |
+| 158.5 | — |
+| 158.2 | — |
+| 159.8 | — |
+| 160.9 | — |
+| 160.4 | — |
+| 160.6 | — |
+| 160.4 | — |
+| 160.6 | — |
+| 160.6 | — |
+| 161.9 | — |
+| 160.7 | — |
+| 161.6 | — |
+| 162.9 | — |
+| 162.8 | — |
+| 161.8 | — |
+| 162.5 | — |
+| 163.9 | — |
+| 163.7 | — |
+| 164.8 | — |
+| 166 | — |
+| 165.3 | — |
+| 165.1 | — |
+| 165.4 | — |
+| 165.7 | — |
+| 165.5 | — |
+| 165.7 | — |
+| 165.3 | — |
+| 164.9 | — |
+| 165.6 | — |
+| 165 | — |
+| 166 | — |
+| 163.2 | — |
+| 165.3 | — |
+| 165 | — |
+| 165.9 | — |
+| 165.2 | — |
+| 164.1 | — |
+| 165.7 | — |
+| 164.7 | — |
+| 164.7 | — |
+| 164.7 | — |
+| 165.6 | — |
+| 165.1 | — |
+| 165.7 | — |
+| 165.4 | — |
+| 165.3 | — |
+| 164.3 | — |
+| 164.7 | — |
+| 164.6 | — |
+| 164.4 | — |
+| 164.5 | — |
+| 164.7 | — |
+| 164.1 | — |
+| 165.4 | — |
+| 165 | — |
+| 165.4 | — |
+| 164.5 | — |
+| 163.2 | — |
+| 163.6 | — |
+| 166.2 | — |
+| 165.6 | — |
+| 165.4 | — |
+| 165 | — |
+| 165.8 | — |
+| 165.7 | — |
+| 166.9 | — |
+| 165.6 | — |
+| 165.5 | — |
+| 166.4 | — |
+| 166 | — |
+| 165 | — |
+| 166.1 | — |
+| 166.8 | — |
+| 164.8 | — |
+| 165.1 | — |
+| 164.3 | — |
+| 166.2 | — |
+| 166.7 | — |
+| 165.9 | — |
+| 165 | — |
+| 165.6 | — |
+| 164.6 | — |
+| 165 | — |
+| 165.2 | — |
+| 165.9 | — |
+| 165.3 | — |
+| 166.3 | — |
+| 165.8 | — |
+| 165.1 | — |
+| 165.1 | — |
+| 165.7 | — |
+| 166.3 | — |
+| 164.3 | — |
+| 164.7 | — |
+| 164.6 | — |
+| 164.5 | — |
+| 165.2 | — |
+| 164.9 | — |
+| 166.1 | — |
+| 166.6 | — |
+| 167.8 | — |
+| 165.9 | — |
+| 165.9 | — |
+| 164.9 | — |
+| 165.8 | — |
+| 164.5 | — |
+| 165.1 | — |
+| 166 | — |
+| 168.4 | — |
+| 166.1 | — |
+| 164.8 | — |
+| 164.9 | — |
+| 165.4 | — |
+| 164.9 | — |
+| 164.9 | — |
+| 165.8 | — |
+| 165.8 | — |
+| 166.6 | — |
+| 165.3 | — |
+| 166 | — |
+| 166.7 | — |
+| 167.3 | — |
+| 166.9 | — |
+| 167.6 | — |
+| 167.5 | — |
+| 166.3 | — |
+| 166.6 | — |
+| 167.2 | — |
+| 167.2 | — |
+| 165.9 | — |
+| 167 | — |
+| 166.7 | — |
+| 168.4 | — |
+| 167.6 | — |
+| 167.9 | — |
+| 167.1 | — |
+| 167.6 | — |
+| 168.5 | — |
+| 167.9 | — |
+| 166.8 | — |
+| 168.1 | — |
+| 167.7 | — |
+| 166.6 | — |
+| 167.8 | — |
+| 166.6 | — |
+| 168.1 | — |
+| 168.2 | — |
+| 166 | — |
+| 166.1 | — |
+| 166 | — |
+| 167.9 | — |
+| 166.9 | — |
+| 166.4 | — |
+| 166.4 | — |
+| 165 | — |
+| 167.5 | — |
+| 167.1 | — |
+| 166.5 | — |
+| 164.8 | — |
+| 165.9 | — |
+| 166 | — |
+| 165.9 | — |
+| 164.9 | — |
+| 166.9 | — |
+| 165.8 | — |
+| 165.1 | — |
+| 166.4 | — |
+| 166.2 | — |
+| 167.3 | — |
+| 167.5 | — |
+| 167.7 | — |
+| 166.6 | — |
+| 166 | — |
+| 166.7 | — |
+| 166.1 | — |
+| 166.6 | — |
+| 166.4 | — |
+| 164.3 | — |
+| 165.4 | — |
+| 167 | — |
+| 167.2 | — |
+| 166.8 | — |
+| 165.1 | — |
+| 166.6 | — |
+| 166.6 | — |
+| 167.5 | — |
+| 167.3 | — |
+| 166.5 | — |
+| 167.7 | — |
+| 167.6 | — |
+| 168.1 | — |
+| 167.2 | — |
+| 167.7 | — |
+| 167.4 | — |
+| 168.1 | — |
+| 168 | — |
+| 167.5 | — |
+| 167.3 | — |
+| 166.9 | — |
+| 166.4 | — |
+| 168.1 | — |
+| 167.7 | — |
+| 166.5 | — |
+| 167.3 | — |
+| 167.1 | — |
+| 167.9 | — |
+| 167.8 | — |
+| 167.6 | — |
+| 167.7 | — |
+| 167.1 | — |
+| 169.2 | — |
+| 166.8 | — |
+| 167.2 | — |
+| 167 | — |
+| 165.9 | — |
+| 166.5 | — |
+| 167.3 | — |
+| 167.6 | — |
+| 168.3 | — |
+| 169.1 | — |
+| 168.6 | — |
+| 169.1 | — |
+| 169 | — |
+| 168.4 | — |
+| 169.2 | — |
+| 169.2 | — |
+| 168.9 | — |
+| 168.7 | — |
+| 168.9 | — |
+| 168.8 | — |
+| 169.1 | — |
+| 169 | — |
+| 168.7 | — |
+| 168.9 | — |
+| 169.3 | — |
+| 168.5 | — |
+| 168.8 | — |
+| 168.3 | — |
+| 169.2 | — |
+| 169.1 | — |
+| 168.8 | — |
+| 169.1 | — |
+| 168.9 | — |
+| 168.6 | — |
+| 168.9 | — |
+| 168.7 | — |
+| 169 | — |
+| 168.8 | — |
+| 169.2 | — |
+| 168.7 | — |
+| 168.9 | — |
+| 169 | — |
+| 168.6 | — |
+| 168.5 | — |
+| 169.1 | — |
+| 168.4 | — |
+| 168.4 | — |
+| 168.9 | — |
+| 168.6 | — |
+| 168.6 | — |
+| 169.2 | — |
+| 168.6 | — |
+| 168.6 | — |
+| 168.5 | — |
+| 168.9 | — |
+| 168.9 | — |
+| 169.1 | — |
+| 169.3 | — |
+| 169 | — |
+| 168.6 | — |
+| 169.1 | — |
+| 168.5 | — |
+| 168.6 | — |
+| 169 | — |
+| 168.7 | — |
+| 169.2 | — |
+| 169.2 | — |
+| 169.1 | — |
+| 168.9 | — |
+| 169.3 | — |
+| 169.3 | — |
+| 169.2 | — |
+| 169.3 | — |
+| 169 | — |
+| 169.3 | — |
+| 168.8 | — |
+| 169.2 | — |
+| 168.7 | — |
+| 169.4 | — |
+| 169.4 | — |
+| 168.9 | — |
+| 168.4 | — |
+| 169.2 | — |
+| 168.3 | — |
+| 168.7 | — |
+| 169.2 | — |
+| 169 | — |
+| 169.2 | — |
+| 168.7 | — |
+| 169 | — |
+| 169.2 | — |
+| 168.7 | — |
+| 168.8 | — |
+| 168.7 | — |
+| 168.8 | — |
+| 169.1 | — |
+| 168.5 | — |
+| 169.5 | — |
+| 168.7 | — |
+| 168.8 | — |
+| 168.7 | — |
+| 169 | — |
+| 169.2 | — |
+| 169.3 | — |
+| 169.1 | — |
+| 169 | — |
+| 169 | — |
+| 169.2 | — |
+| 169.2 | — |
+| 169.4 | — |
+| 168.7 | — |
+| 169 | — |
+| 169 | — |
+| 168.9 | — |
+| 169.1 | — |
+| 168.7 | — |
+| 169 | — |
+| 169.2 | — |
+| 169.5 | — |
+| 168.6 | — |
+| 168.5 | — |
+| 168.9 | — |
+| 168.3 | — |
+| 168.8 | — |
+| 168.8 | — |
+| 169.4 | — |
+| 168.9 | — |
+| 169 | — |
+| 168.9 | — |
+| 169.4 | — |
+| 169 | — |
+| 169 | — |
+| 169.2 | — |
+| 169.2 | — |
+| 169.1 | — |
+| 168.6 | — |
+| 168.5 | — |
+| 169.1 | — |
+| 168.9 | — |
+| 169.1 | — |
+| 168.8 | — |
+| 168.9 | — |
+| 168.8 | — |
+| 169.1 | — |
+| 168.8 | — |
+| 169 | — |
+| 169.1 | — |
+| 169.1 | — |
+| 169 | — |
+| 168.6 | — |
+| 169.1 | — |
+| 169.2 | — |
+| 169.1 | — |
+| 168.7 | — |
+| 168.9 | — |
+| 168.8 | — |
+| 168.3 | — |
+| 169.4 | — |
+| 169.2 | — |
+| 168.7 | — |
+| 169.3 | — |
+| 169.1 | — |
+| 169 | — |
+| 169.2 | — |
+| 168.5 | — |
+| 169 | — |
+| 169.3 | — |
+| 169.1 | — |
+| 169.2 | — |
+| 168.3 | — |
+| 168.6 | — |
+| 168.8 | — |
+| 168.3 | — |
+| 168.8 | — |
+| 169.1 | — |
+| 168.8 | — |
+| 169.2 | — |
+| 168.9 | — |
+| 169.2 | — |
+| 169 | — |
+| 168.8 | — |
+| 168.6 | — |
+| 168.7 | — |
+| 168.9 | — |
+| 169.3 | — |
+| 169.1 | — |
+| 169.1 | — |
+| 169.1 | — |
+| 168.6 | — |
+| 169 | — |
+| 169 | — |
+| 169.1 | — |
+| 169 | — |
+| 169 | — |
+| 169.1 | — |
+| 169.3 | — |
+| 169 | — |
+| 169.1 | — |
+| 169.3 | — |
+| 168.7 | — |
+| 169 | — |
+| 169.3 | — |
+| 168.7 | — |
+| 169.2 | — |
+| 169.1 | — |
+| 169.3 | — |
+| 168.6 | — |
+| 168.9 | — |
+| 169.1 | — |
+| 168.8 | 0 |
+| 167.8 | 16.54 |
+| 165.8 | 28.53 |
+| 161.5 | 39.68 |
+| 159.8 | 51.56 |
+| 156.9 | 64.65 |
+| 154.1 | 76.05 |
+| 152 | 83.25 |
+| 151.3 | 91.1 |
+| 150.3 | 101.4 |
+| 150 | 112 |
+| 149.7 | 120.4 |
+| 149.7 | 125.6 |
+| 149.5 | 134.3 |
+| 148.3 | 145.6 |
+| 146.8 | 157.1 |
+| 144.9 | 167.7 |
+| 144.3 | 173 |
+| 142.4 | 176.9 |
+| 142.9 | 182.9 |
+| 142.4 | 187 |
+| 142.6 | 188.6 |
+| 142.6 | 196.6 |
+| 141.9 | 203.7 |
+| 142 | 208.8 |
+| 140.8 | 211.8 |
+| 140.2 | 215.9 |
+| 140.9 | 217.4 |
+| 139.9 | 221.1 |
+| 140.8 | 225.9 |
+| 141 | 226.9 |
+| 140.6 | 230 |
+| 140.2 | 232 |
+| 139.6 | 235.3 |
+| 138.4 | 240.6 |
+| 139.2 | 245.5 |
+| 138.4 | 249.5 |
+| 138.1 | 255.9 |
+| 137.7 | 258.3 |
+| 137.9 | 261.3 |
+| 137.5 | 263.9 |
+| 137.6 | 268.7 |
+| 136.9 | 271.9 |
+| 137.1 | 274.9 |
+| 138.8 | 281.3 |
+| 137.6 | 285.5 |
+| 137.6 | 290.4 |
+| 136.2 | 293.1 |
+| 137.3 | 293.7 |
+| 136.8 | 291.7 |
+| 137.1 | 294.9 |
+| 137.2 | 296 |
+| 137.6 | 297.4 |
+| 137.8 | 300.7 |
+| 136.9 | 305.1 |
+| 136.3 | 309.1 |
+| 137.6 | 313.4 |
+| 136.4 | 319.3 |
+| 136.8 | 324.4 |
+| 136.1 | 321.5 |
+| 136.8 | 328.3 |
+| 137.2 | 330.5 |
+| 136.8 | 335.1 |
+| 136.5 | 337.5 |
+| 136.9 | 337.5 |
+| 136.6 | 338 |
+| 137.3 | 343.3 |
+| 136.1 | 345.4 |
+| 136.2 | 349.5 |
+| 136.4 | 351.9 |
+| 135.3 | 353.5 |
+| 135.6 | 354.8 |
+| 136.2 | 353 |
+| 136 | 351.5 |
+| 135.7 | 359.2 |
+| 135.7 | 362 |
+| 135.8 | 364 |
+| 136.6 | 365.5 |
+| 135.1 | 364.2 |
+| 134.5 | 367.9 |
+| 135.2 | 369.7 |
+| 135.4 | 372.6 |
+| 135.9 | 372.2 |
+| 135.7 | 378.9 |
+| 136.3 | 382.3 |
+| 134.9 | 384.1 |
+| 135.4 | 386.9 |
+| 135.5 | 388.5 |
+| 133.8 | 383.9 |
+| 135.1 | 387.3 |
+| 134.7 | 386.7 |
+| 134.6 | 388.1 |
+| 135.6 | 390.9 |
+| 134.9 | 395 |
+| 134.5 | 396.9 |
+| 134.9 | 393.8 |
+| 134.7 | 396.9 |
+| 134.8 | 399.7 |
+| 134.5 | 398 |
+| 134.6 | 395.9 |
+| 134.8 | 395.4 |
+| 135.4 | 394.6 |
+| 134.5 | 396.8 |
+| 134.7 | 397.1 |
+| 134.6 | 396.8 |
+| 135.5 | 397.8 |
+| 134.7 | 397.4 |
+| 135.1 | 394.9 |
+| 134.5 | 392.8 |
+| 135.7 | 395 |
+| 135.5 | 397.2 |
+| 134.6 | 400 |
+| 134.7 | 401.3 |
+| 134.7 | 404 |
+| 134 | 405.5 |
+| 134.5 | 409.9 |
+| 134.6 | 414 |
+| 135 | 413.5 |
+| 134.7 | 413.7 |
+| 134.8 | 418.1 |
+| 134.9 | 420.4 |
+| 135.8 | 421.7 |
+| 135.8 | 424.5 |
+| 136.1 | 427.1 |
+| 135 | 435.8 |
+| 134 | 439 |
+| 134.4 | 443.5 |
+| 134.4 | 444.5 |
+| 133.9 | 448.5 |
+| 134.2 | 446.3 |
+| 134.8 | 443 |
+| 134.8 | 439.5 |
+| 134.6 | 443.6 |
+| 133.7 | 444.2 |
+| 133.9 | 445.9 |
+| 134.9 | 446.5 |
+| 134.3 | 445.8 |
+| 133.9 | 447.4 |
+| 135.3 | 454 |
+| 134 | 456.6 |
+| 133.5 | 456.5 |
+| 133.4 | 457.4 |
+| 135.1 | 462.6 |
+| 134.6 | 465.5 |
+| 134.6 | 466.1 |
+| 133.4 | 471.6 |
+| 133.7 | 476.5 |
+| 134.9 | 479.6 |
+| 134.5 | 476.7 |
+| 134.8 | 475.5 |
+| 133.6 | 477.8 |
+| 133.2 | 479.1 |
+| 133.5 | 480.6 |
+| 134 | 477.8 |
+| 133.3 | 475.8 |
+| 133.4 | 478 |
+| 133.7 | 478 |
+| 134.2 | 481.4 |
+| 133.7 | 483.2 |
+| 132.7 | 483.9 |
+| 132.8 | 488.7 |
+| 133.1 | 486.9 |
+| 133.1 | 483.3 |
+| 133.4 | 479.5 |
+| 133.5 | 479.7 |
+| 134.2 | 481.4 |
+| 133.7 | 486.3 |
+| 133.1 | 487.2 |
+| 133.5 | 490.9 |
+| 133.3 | 491 |
+| 134.6 | 495.4 |
+| 134.5 | 494.2 |
+| 134.7 | 497.3 |
+| 135.1 | 499.9 |
+| 134.5 | 501.8 |
+| 133.4 | 500.9 |
+| 133.4 | 501.8 |
+| 133.6 | 506.2 |
+| 134.2 | 511.5 |
+| 133.5 | 508.5 |
+| 133.8 | 511.2 |
+| 133.3 | 511.1 |
+| 134.1 | 509.4 |
+| 133.4 | 512.1 |
+| 133.5 | 510.6 |
+| 133.2 | 512.2 |
+| 133.7 | 516.5 |
+| 133.8 | 517.2 |
+| 133.9 | 520.1 |
+| 133.5 | 526.1 |
+| 134 | 526 |
+| 133.5 | 528.4 |
+| 133.7 | 531.1 |
+| 133.3 | 536.3 |
+| 133.6 | 534.5 |
+| 133.6 | 536.1 |
+| 133.5 | 532.8 |
+| 133.3 | 533.1 |
+| 133.3 | 536.9 |
+| 133.5 | 540.6 |
+| 133.4 | 543.5 |
+| 134.1 | 543 |
+| 133.8 | 543.9 |
+| 133.8 | 541.6 |
+| 133.4 | 538.3 |
+| 133.4 | 536 |
+| 134.1 | 531.8 |
+| 134.1 | 530.3 |
+| 134 | 531.7 |
+| 133.7 | 534 |
+| 133.6 | 535.4 |
+| 133.7 | 532.1 |
+| 134.4 | 531.2 |
+| 133.8 | 536.9 |
+| 133.1 | 542.6 |
+| 133.3 | 543.8 |
+| 134.1 | 547.4 |
+| 134.1 | 547.9 |
+| 133.3 | 550.6 |
+| 133.3 | 548.6 |
+| 134 | 552.1 |
+| 133.4 | 551.1 |
+| 134.2 | 548.5 |
+| 134.3 | 548.7 |
+| 133.4 | 546.5 |
+| 133.4 | 548.7 |
+| 133.6 | 543.1 |
+| 134.2 | 545.8 |
+| 134.1 | 548.6 |
+| 134.4 | 547.4 |
+| 134 | 548.7 |
+| 133 | 545.1 |
+| 132.9 | 547 |
+| 133.8 | 543.5 |
+| 133.2 | 545.9 |
+| 133.5 | 546.1 |
+| 133.8 | 546.6 |
+| 132.9 | 546.1 |
+| 133.9 | 549 |
+| 134.1 | 546.5 |
+| 134.2 | 545.8 |
+| 134 | 549.6 |
+| 133.7 | 549.9 |
+| 133.3 | 547 |
+| 133.9 | 544.6 |
+| 133.9 | 546.3 |
+| 133.4 | 544.5 |
+| 134.4 | 543.9 |
+| 133.9 | 546 |
+| 133 | 549 |
+| 133.8 | 550.2 |
+| 133.7 | 556.1 |
+| 133.6 | 557.2 |
+| 133.4 | 558.6 |
+| 133.3 | 564.4 |
+| 133.1 | 565.4 |
+| 132.4 | 569.9 |
+| 133.4 | 573.1 |
+| 133.2 | 572.2 |
+| 132.6 | 570.1 |
+| 132.7 | 573.5 |
+| 133.6 | 571.5 |
+| 134 | 570.7 |
+| 133.4 | 573.2 |
+| 134.2 | 576.4 |
+| 133.9 | 575.8 |
+| 133.2 | 577.6 |
+| 132.9 | 577.4 |
+| 132.8 | 580.5 |
+| 133.4 | 586.4 |
+| 132.6 | 585.6 |
+| 132.7 | 589.5 |
+| 132.8 | 593.1 |
+| 133 | 595.4 |
+| 132.9 | 600.8 |
+| 133 | 598.8 |
+| 132.9 | 605.5 |
+| 132.9 | 605.4 |
+| 133.2 | 606.5 |
+| 133.1 | 606.5 |
+| 132.7 | 607.6 |
+| 132.5 | 606.3 |
+| 133.7 | 607.9 |
+| 133.2 | 610.9 |
+| 133.3 | 615.6 |
+| 132.8 | 619.4 |
+| 132.7 | 619.6 |
+| 132.9 | 622.7 |
+| 132.7 | 625 |
+| 132.6 | 628.2 |
+| 132.8 | 625.8 |
+| 132.3 | 629.9 |
+| 132.4 | 628.2 |
+| 133.8 | 631.1 |
+| 132.7 | 636.2 |
+| 132.9 | 635.5 |
+| 132.3 | 636.4 |
+| 132.4 | 636.9 |
+| 131.8 | 638.6 |
+| 132.3 | 644.2 |
+| 132.6 | 646.8 |
+| 133.2 | 646.4 |
+| 133.1 | 648.5 |
+| 132.6 | 645.7 |
+| 132.6 | 643.8 |
+| 132.1 | 647.1 |
+| 132.7 | 644.2 |
+| 132.5 | 642.2 |
+| 132.8 | 643.4 |
+| 132.7 | 643.6 |
+| 132.9 | 645.4 |
+| 132.7 | 643.1 |
+| 132.4 | 639.4 |
+| 132.8 | 642.1 |
+| 132.5 | 643.3 |
+| 132.7 | 645.7 |
+| 132.5 | 647.9 |
+| 132.6 | 646.6 |
+| 132.3 | 647.6 |
+| 133 | 652.4 |
+| 133.1 | 656 |
+| 132.4 | 658.3 |
+| 132.9 | 658 |
+| 133.2 | 661.5 |
+| 131.6 | 661.1 |
+| 132.1 | 663.7 |
+| 132.2 | 663.2 |
+| 132 | 658.2 |
+| 132.2 | 654.6 |
+| 132.6 | 653.6 |
+| 132 | 652.4 |
+| 132.4 | 654.3 |
+| 133 | 649 |
+| 132.8 | 653.1 |
+| 132.8 | 654.4 |
+| 133.3 | 658.1 |
+| 133.1 | 658.9 |
+| 133.2 | 654.4 |
+| 133.1 | 657.7 |
+| 132.8 | 656.3 |
+| 132.8 | 653 |
+| 132.4 | 654.7 |
+| 132.8 | 656.7 |
+| 132 | 657.3 |
+| 132.3 | 659.7 |
+| 133 | 658.3 |
+| 133.3 | 665.4 |
+| 132.8 | 660.6 |
+| 132 | 663.2 |
+| 132.6 | 672.2 |
+| 132.4 | 674 |
+| 132.3 | 677.7 |
+| 132.4 | 678 |
+| 132.1 | 678.3 |
+| 133.2 | 677.2 |
+| 132.9 | 675.6 |
+| 132.7 | 679.8 |
+| 132 | 683.2 |
+| 132.9 | 683.6 |
+| 132.7 | 680.3 |
+| 132.6 | 677 |
+| 132 | 678.1 |
+| 132.1 | 672.5 |
+| 132.8 | 669.3 |
+| 132.3 | 669.3 |
+| 133.1 | 667.7 |
+| 133 | 667 |
+| 133 | 667.6 |
+| 133.4 | 668.3 |
+| 133.3 | 666.9 |
+| 132.5 | 668 |
+| 134 | 669.4 |
+| 133.2 | 671.4 |
+| 132.8 | 671.4 |
+| 132.5 | 676.9 |
+| 133.2 | 676 |
+| 133.3 | 682.7 |
+| 133 | 686 |
+| 133.3 | 691.3 |
+| 133 | 694.1 |
+| 132.8 | 697 |
+| 132.5 | 692.9 |
+| 133.3 | 693.1 |
+| 132.9 | 694.1 |
+| 133.5 | 700.4 |
+| 133.1 | 700.9 |
+| 133.1 | 700.8 |
+| 132.8 | 698.8 |
+| 132.5 | 699.3 |
+| 133 | 697.6 |
+| 132.2 | 700.7 |
+| 132.8 | 704.7 |
+| 132.7 | 705.5 |
+| 133.3 | 704.5 |
+| 132.9 | 701 |
+| 133 | 701.8 |
+| 133.8 | 708.2 |
+| 133.3 | 709.5 |
+| 133.7 | 710.1 |
+| 133.6 | 706.8 |
+| 133.7 | 706.5 |
+| 133.2 | 691.5 |
+| 132.9 | 702.2 |
+| 133.6 | 706 |
+| 132.8 | 715.6 |
+| 133.6 | 719.3 |
+| 132.8 | 734.2 |
+| 132.8 | 746.6 |
+| 132.8 | 755.7 |
+| 133.3 | 744.3 |
+| 133 | 756.1 |
+| 133.2 | 743.8 |
+| 133.8 | 763 |
+| 133.6 | 757.8 |
+| 132.7 | 763.3 |
+| 133.9 | 765.5 |
+| 134.2 | 778.4 |
+| 134.1 | 778.2 |
+| 133.5 | 780.2 |
+| 133.4 | 778.4 |
+| 132.7 | 789.7 |
+| 133.9 | 800.2 |
+| 133.8 | 808.9 |
+| 133.7 | 827.1 |
+| 132.9 | 819.8 |
+| 133.1 | 823.7 |
+| 132.9 | 819.5 |
+| 133.8 | 828.6 |
+| 133.8 | 838.4 |
+| 133.7 | 812.6 |
+| 133.2 | 822.5 |
+| 133.5 | 831.3 |
+| 133.3 | 839.2 |
+| 133.4 | 867.7 |
+| 133.6 | 876.8 |
+| 132.4 | 872.2 |
+| 133 | 883.9 |
+| 132.8 | 905.7 |
+| 133.2 | 893 |
+| 133.3 | 891.1 |
+| 132.8 | 911 |
+| 133.8 | 918.5 |
+| 132.3 | 916.4 |
+| 132.5 | 919.3 |
+| 132.9 | 929.3 |
+| 132.8 | 938.1 |
+| 133.4 | 938 |
+| 133 | 942 |
+| 132.2 | 954.9 |
+| 133.7 | 962.8 |
+| 132.9 | 954.3 |
+| 133.3 | 968.5 |
+| 132.5 | 961.2 |
+| 132.7 | 978.7 |
+| 132.6 | 969.2 |
+| 132.2 | 975.7 |
+| 132 | 982.2 |
+| 132.5 | 992.4 |
+| 133.2 | 1012 |
+| 132.9 | 1023 |
+| 132.5 | 1013 |
+| 132.4 | 980.4 |
+| 132.6 | 993.8 |
+| 132.8 | 1035 |
+| 133.2 | 1026 |
+| 132.4 | 1030 |
+| 132 | 1048 |
+| 133.1 | 1041 |
+| 132.2 | 1053 |
+| 132.1 | 1062 |
+| 132.9 | 1048 |
+| 132.5 | 1058 |
+| 133.2 | 1048 |
+| 132.2 | 1064 |
+| 132.7 | 1061 |
+| 132.7 | 1064 |
+| 132.3 | 1063 |
+| 133.7 | 1072 |
+| 132.7 | 1097 |
+| 132.2 | 1102 |
+| 132.8 | 1110 |
+| 132.3 | 1113 |
+| 132.2 | 1117 |
+| 131.5 | 1110 |
+| 133.1 | 1113 |
+| 133.7 | 1120 |
+| 132.5 | 1133 |
+| 132.8 | 1133 |
+| 133 | 1112 |
+| 133.4 | 1124 |
+| 132.9 | 1144 |
+| 132.6 | 1161 |
+| 132.3 | 1161 |
+| 133.9 | 1159 |
+| 132.9 | 1170 |
+| 134 | 1194 |
+| 132.8 | 1198 |
+| 133.3 | 1200 |
+| 133.2 | 1208 |
+| 133.1 | 1207 |
+| 132.9 | 1223 |
+| 133.4 | 1217 |
+| 132.6 | 1234 |
+| 133.4 | 1232 |
+| 133.7 | 1248 |
+| 132.8 | 1245 |
+| 133.1 | 1233 |
+| 132.7 | 1251 |
+| 133.1 | 1250 |
+| 133 | 1265 |
+| 132.9 | 1254 |
+| 132.9 | 1279 |
+| 133.1 | 1253 |
+| 133.3 | 1262 |
+| 133.3 | 1260 |
+| 132.7 | 1246 |
+| 132.9 | 1236 |
+| 133.7 | 1256 |
+| 133.1 | 1268 |
+| 132.9 | 1261 |
+| 133.3 | 1286 |
+| 132.3 | 1288 |
+| 133.2 | 1295 |
+| 133.3 | 1302 |
+| 133.3 | 1308 |
+| 132.6 | 1317 |
+| 133.2 | 1329 |
+| 132.3 | 1320 |
+| 132.7 | 1308 |
+| 133.1 | 1311 |
+| 133.1 | 1314 |
+| 132.4 | 1284 |
+| 133.1 | 1292 |
+| 132.7 | 1313 |
+| 133.1 | 1313 |
+| 133.3 | 1321 |
+| 133 | 1297 |
+| 132.9 | 1311 |
+| 132.5 | 1317 |
+| 133.1 | 1313 |
+| 132.4 | 1310 |
+| 133.4 | 1317 |
+| 133.5 | 1321 |
+| 134 | 1324 |
+| 133.2 | 1316 |
+| 132.9 | 1328 |
+| 133.3 | 1325 |
+| 133.4 | 1327 |
+| 133 | 1323 |
+| 132.8 | 1337 |
+| 133.2 | 1339 |
+| 133.5 | 1342 |
+| 134.2 | 1334 |
+| 133.7 | 1331 |
+| 133.8 | 1347 |
+| 134.1 | 1346 |
+| 133.5 | 1356 |
+| 133.8 | 1345 |
+| 133.8 | 1344 |
+| 134.2 | 1352 |
+| 133.3 | 1358 |
+| 133.6 | 1366 |
+| 132.8 | 1386 |
+| 133.7 | 1392 |
+| 132.9 | 1396 |
+| 133.6 | 1418 |
+| 133.1 | 1415 |
+| 133.5 | 1400 |
+| 133.5 | 1404 |
+| 133.6 | 1427 |
+| 133.8 | 1437 |
+| 133.6 | 1445 |
+| 133.6 | 1439 |
+| 133.9 | 1416 |
+| 133.6 | 1410 |
+| 133.4 | 1407 |
+| 133.8 | 1414 |
+| 133.2 | 1425 |
+| 133.7 | 1436 |
+| 132.8 | 1440 |
+| 133.5 | 1434 |
+| 132.8 | 1438 |
+| 133.6 | 1430 |
+| 132.6 | 1438 |
+| 133.8 | 1462 |
+| 133.3 | 1475 |
+| 132.6 | 1480 |
+| 132.9 | 1486 |
+| 132.4 | 1478 |
+| 133.1 | 1483 |
+| 133.1 | 1478 |
+| 132.7 | 1486 |
+| 132.5 | 1495 |
+| 133 | 1479 |
+| 132.6 | 1466 |
+| 132.3 | 1485 |
+| 132.9 | 1488 |
+| 132.6 | 1496 |
+| 132.8 | 1484 |
+| 133.2 | 1503 |
+| 133 | 1510 |
+| 133.2 | 1526 |
+| 133.3 | 1531 |
+| 132.7 | 1529 |
+| 132.8 | 1542 |
+| 133 | 1549 |
+| 133.2 | 1576 |
+| 133.4 | 1571 |
+| 132.6 | 1560 |
+| 133 | 1553 |
+| 132.3 | 1554 |
+| 134 | 1558 |
+| 132.9 | 1573 |
+| 133.4 | 1556 |
+| 132.7 | 1548 |
+| 132.6 | 1548 |
+| 132.6 | 1541 |
+| 133.1 | 1553 |
+| 133.5 | 1587 |
+| 133 | 1605 |
+| 132.9 | 1593 |
+| 133.1 | 1620 |
+| 133.1 | 1626 |
+| 133 | 1623 |
+| 132.5 | 1634 |
+| 133.1 | 1613 |
+| 132.2 | 1625 |
+| 133.2 | 1631 |
+| 132.9 | 1647 |
+| 132.3 | 1635 |
+| 132.8 | 1633 |
+| 132.2 | 1646 |
+| 133.1 | 1637 |
+| 132.3 | 1650 |
+| 132.4 | 1651 |
+| 131.2 | 1667 |
+| 133.2 | 1659 |
+| 133.1 | 1641 |
+| 132.9 | 1660 |
+| 132.2 | 1649 |
+| 132.3 | 1653 |
+| 132.1 | 1650 |
+| 133.5 | 1667 |
+| 132.3 | 1665 |
+| 133.4 | 1672 |
+| 133 | 1669 |
+| 133.8 | 1682 |
+| 133.2 | 1689 |
+| 133 | 1686 |
+| 132.6 | 1671 |
+| 133.2 | 1702 |
+| 132.8 | 1692 |
+| 132.7 | 1704 |
+| 132.6 | 1702 |
+| 133.3 | 1708 |
+| 133 | 1742 |
+| 132.7 | 1757 |
+| 133.8 | 1767 |
+| 133.3 | 1763 |
+| 134 | 1772 |
+| 133.4 | 1778 |
+| 133 | 1781 |
+| 133.3 | 1785 |
+| 133 | 1792 |
+| 132.6 | 1799 |
+| 132.9 | 1782 |
+| 132.1 | 1768 |
+| 132.4 | 1779 |
+| 133.1 | 1785 |
+| 133 | 1784 |
+| 133.4 | 1788 |
+| 132.9 | 1781 |
+| 132.4 | 1763 |
+| 133 | 1760 |
+| 133.2 | 1764 |
+| 133.9 | 1776 |
+| 132.8 | 1796 |
+| 133.5 | 1781 |
+| 133.8 | 1803 |
+| 133.4 | 1778 |
+| 133.8 | 1798 |
+| 133.6 | 1807 |
+| 133.1 | 1798 |
+| 132.7 | 1795 |
+| 132.8 | 1801 |
+| 132.3 | 1813 |
+| 132.9 | 1825 |
+| 133 | 1844 |
+| 133.3 | 1834 |
+| 133.5 | 1849 |
+| 133.4 | 1850 |
+| 133.8 | 1850 |
+| 133.1 | 1852 |
+| 133.1 | 1843 |
+| 133.5 | 1843 |
+| 133.4 | 1840 |
+| 134 | 1840 |
+| 133.9 | 1857 |
+| 132.7 | 1878 |
+| 132.5 | 1864 |
+| 133.5 | 1868 |
+| 132.4 | 1859 |
+| 133.7 | 1874 |
+| 133.4 | 1857 |
+| 133.5 | 1872 |
+| 133 | 1871 |
+| 132.8 | 1870 |
+| 133.4 | 1877 |
+| 132.6 | 1893 |
+| 133.2 | 1887 |
+| 132.7 | 1877 |
+| 132.8 | 1896 |
+| 133.2 | 1880 |
+| 133.3 | 1867 |
+| 133.4 | 1875 |
+| 133.4 | 1887 |
+| 133.4 | 1891 |
+| 133.3 | 1901 |
+| 133 | 1898 |
+| 132.7 | 1886 |
+| 133.9 | 1907 |
+| 133.1 | 1926 |
+| 133.9 | 1935 |
+| 133.9 | 1903 |
+| 133.1 | 1905 |
+| 133.3 | 1918 |
+| 133.1 | 1923 |
+| 133.1 | 1930 |
+| 134.1 | 1916 |
+| 134.2 | 1898 |
+| 133.6 | 1902 |
+| 133.7 | 1913 |
+| 133 | 1924 |
+| 132.6 | 1920 |
+| 133 | 1911 |
+| 132.7 | 1895 |
+| 132.7 | 1926 |
+| 133 | 1944 |
+| 133.7 | 1930 |
+| 133.2 | 1907 |
+| 132.3 | 1912 |
+| 133.1 | 1916 |
+| 132.7 | 1934 |
+| 133 | 1931 |
+| 133.3 | 1934 |
+| 132.1 | 1946 |
+| 133 | 1927 |
+| 132.7 | 1936 |
+| 132.6 | 1953 |
+| 133.8 | 1947 |
+| 132.8 | 1943 |
+| 133.7 | 1925 |
+| 133.2 | 1907 |
+| 132.9 | 1936 |
+| 133.5 | 1931 |
+| 133.1 | 1940 |
+| 133.4 | 1951 |
+| 132 | 1947 |
+| 133.1 | 1951 |
+| 133.1 | 1949 |
+| 132.5 | 1951 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 130 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 130 |
+
 
 </details>
 
 ### `pe_cg_hole_r3nm_160C_n320_c240_s1_rep222`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free` (failed, 0.0%), `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm`.
+PE CG, film with a 3 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm`, `hole_free`, `hole_scaf_rel0`.
 
 No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
@@ -2532,15 +5535,15 @@ No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_re
 
 **Stages**
 
-- **`hole_free`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
-- **`hole_scaf_rel0`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_scaf_rel0_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
 - **`hole_free_gap5nm`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-05 05:32 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
+- **`hole_free`** (rdyu-server): finished; started 2026-11-12 02:42 UTC, ended 2026-11-14 15:51 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
+- **`hole_scaf_rel0`** (rdyu-rog): finished; started 2026-11-12 18:21 UTC, ended 2026-11-12 23:27 UTC; reads `systems/pe_cg_hole_r3nm_160C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free` (failed, 0.0%), `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm` | `hole_free` |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_scaf_rel0_failed_20261102` (failed, 0.0%), `hole_free_gap5nm`, `hole_free`, `hole_scaf_rel0` | `hole_free`, `hole_scaf_rel0` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -3745,13 +6748,1418 @@ Per segment:
 | 20 | 160 |
 
 
+**`hole_scaf_rel0` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 133.5
+- `free_shell.areal_density_ratio`: 0.7649
+- `free_shell.msd.1 ns`: 597.9
+- `free_shell.msd.10 ns`: 1476
+- `free_shell.msd.end`: 2282
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: 160
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 1e+04
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `scaffold.d_nm`: 2.5
+- `scaffold.nearest_tethered_r_held_min`: 53.12
+- `scaffold.nearest_tethered_r_t0`: 55
+- `scaffold.tethered_fraction`: 0.5852
+- T (°C): 160
+- `t_close_ns`: 0.05
+- `thickness_final`: 134.5
+- `thickness_t0`: 166.9
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 134.5 | — |
+| 134.7 | — |
+| 133.8 | — |
+| 133.8 | — |
+| 134.1 | — |
+| 134.2 | — |
+| 133.8 | — |
+| 134.4 | — |
+| 133.9 | — |
+| 133.5 | — |
+| 134.4 | — |
+| 134.5 | — |
+| 134.7 | — |
+| 134.2 | — |
+| 134.1 | — |
+| 135.3 | — |
+| 134.5 | — |
+| 134.8 | — |
+| 134.3 | — |
+| 134.4 | — |
+| 134.5 | — |
+| 134.1 | — |
+| 134.7 | — |
+| 134 | — |
+| 134.1 | — |
+| 134.7 | — |
+| 134.8 | — |
+| 134.2 | — |
+| 134 | — |
+| 134.7 | — |
+| 134.6 | — |
+| 134.6 | — |
+| 134.7 | — |
+| 134.2 | — |
+| 133.7 | — |
+| 134.9 | — |
+| 134.9 | — |
+| 134.9 | — |
+| 135.5 | — |
+| 135.8 | — |
+| 135.3 | — |
+| 135 | — |
+| 135.3 | — |
+| 136.1 | — |
+| 134.9 | — |
+| 135.9 | — |
+| 135.3 | — |
+| 135.5 | — |
+| 135.9 | — |
+| 135.5 | — |
+| 136.1 | — |
+| 135.8 | — |
+| 135.9 | — |
+| 136.9 | — |
+| 136.4 | — |
+| 136.1 | — |
+| 136.6 | — |
+| 136.8 | — |
+| 137.3 | — |
+| 136.8 | — |
+| 137 | — |
+| 137.1 | — |
+| 137.1 | — |
+| 136.9 | — |
+| 136.6 | — |
+| 137.5 | — |
+| 136.8 | — |
+| 138.2 | — |
+| 137.5 | — |
+| 136.6 | — |
+| 139.4 | — |
+| 137.8 | — |
+| 138 | — |
+| 138.4 | — |
+| 138.8 | — |
+| 138.1 | — |
+| 138.3 | — |
+| 139 | — |
+| 139.7 | — |
+| 139.7 | — |
+| 139.4 | — |
+| 139.1 | — |
+| 139 | — |
+| 140 | — |
+| 139.6 | — |
+| 140.6 | — |
+| 139.5 | — |
+| 138.9 | — |
+| 140 | — |
+| 139.6 | — |
+| 140.9 | — |
+| 140.9 | — |
+| 140 | — |
+| 140.1 | — |
+| 141 | — |
+| 141.4 | — |
+| 141.1 | — |
+| 141.9 | — |
+| 142.1 | — |
+| 143 | — |
+| 142.9 | — |
+| 142.8 | — |
+| 142.3 | — |
+| 142.7 | — |
+| 142.4 | — |
+| 144 | — |
+| 143.5 | — |
+| 143.7 | — |
+| 144.7 | — |
+| 144.9 | — |
+| 144 | — |
+| 143.4 | — |
+| 143.8 | — |
+| 144.3 | — |
+| 145.1 | — |
+| 145.2 | — |
+| 144.9 | — |
+| 144.9 | — |
+| 145.3 | — |
+| 144.7 | — |
+| 145.9 | — |
+| 145.9 | — |
+| 146.9 | — |
+| 145.5 | — |
+| 146 | — |
+| 146.5 | — |
+| 146.6 | — |
+| 147 | — |
+| 147.4 | — |
+| 146.4 | — |
+| 147.3 | — |
+| 148.3 | — |
+| 147.5 | — |
+| 148.6 | — |
+| 147.9 | — |
+| 148.3 | — |
+| 147.7 | — |
+| 147.6 | — |
+| 148.9 | — |
+| 149 | — |
+| 149.8 | — |
+| 148.6 | — |
+| 150.2 | — |
+| 149.5 | — |
+| 150.1 | — |
+| 151.5 | — |
+| 150.2 | — |
+| 150.3 | — |
+| 151.8 | — |
+| 151 | — |
+| 152.5 | — |
+| 153.7 | — |
+| 152.2 | — |
+| 153.3 | — |
+| 154.5 | — |
+| 153.3 | — |
+| 153.6 | — |
+| 154.5 | — |
+| 154.9 | — |
+| 154.2 | — |
+| 155.7 | — |
+| 154.4 | — |
+| 154.6 | — |
+| 154.8 | — |
+| 154.3 | — |
+| 155.3 | — |
+| 156.6 | — |
+| 157.1 | — |
+| 157.8 | — |
+| 157.4 | — |
+| 157.6 | — |
+| 158.8 | — |
+| 157.6 | — |
+| 158.3 | — |
+| 157.6 | — |
+| 159.1 | — |
+| 159.6 | — |
+| 158 | — |
+| 159.8 | — |
+| 161 | — |
+| 159.8 | — |
+| 161.6 | — |
+| 161.1 | — |
+| 160.8 | — |
+| 161.2 | — |
+| 159.7 | — |
+| 163.5 | — |
+| 160.5 | — |
+| 162.1 | — |
+| 161.6 | — |
+| 162.2 | — |
+| 162 | — |
+| 163.4 | — |
+| 166 | — |
+| 165.3 | — |
+| 164.4 | — |
+| 165.5 | — |
+| 164.4 | — |
+| 166.5 | — |
+| 165.8 | — |
+| 164.9 | — |
+| 167.7 | — |
+| 166.4 | — |
+| 165.8 | — |
+| 166.4 | — |
+| 165.3 | — |
+| 165.6 | — |
+| 166.4 | — |
+| 166.6 | — |
+| 166.3 | — |
+| 166.9 | — |
+| 167.5 | — |
+| 165.3 | — |
+| 167.6 | — |
+| 167.2 | — |
+| 166.4 | — |
+| 165 | — |
+| 165.9 | — |
+| 166.5 | — |
+| 167 | — |
+| 167.8 | — |
+| 168.3 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 167.6 | — |
+| 167.6 | — |
+| 166.6 | — |
+| 167.6 | — |
+| 166.7 | — |
+| 166.2 | — |
+| 165.8 | — |
+| 166.9 | — |
+| 166.7 | — |
+| 166.5 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 168.7 | — |
+| 169.3 | — |
+| 166.3 | — |
+| 165.9 | — |
+| 166.4 | — |
+| 166.7 | — |
+| 166 | — |
+| 167.6 | — |
+| 167.3 | — |
+| 164.8 | — |
+| 167.3 | — |
+| 166.3 | — |
+| 166 | — |
+| 166.8 | — |
+| 166 | — |
+| 166.5 | — |
+| 167.3 | — |
+| 167.7 | — |
+| 167.8 | — |
+| 166.5 | — |
+| 167.6 | — |
+| 167 | — |
+| 167 | — |
+| 167.4 | — |
+| 167.9 | — |
+| 168.6 | — |
+| 166.9 | — |
+| 166 | — |
+| 167.6 | — |
+| 167.3 | — |
+| 167.4 | — |
+| 165.8 | — |
+| 167.9 | — |
+| 166.4 | — |
+| 167.9 | — |
+| 167 | — |
+| 167 | — |
+| 167.1 | — |
+| 167.6 | — |
+| 167.2 | — |
+| 168 | — |
+| 166.4 | — |
+| 166.7 | — |
+| 167.4 | — |
+| 167 | — |
+| 167.5 | — |
+| 167.6 | — |
+| 167.3 | — |
+| 166 | — |
+| 167.3 | — |
+| 167.6 | — |
+| 167.6 | — |
+| 165.9 | — |
+| 167.8 | — |
+| 166.9 | — |
+| 169 | — |
+| 168.3 | — |
+| 167.7 | — |
+| 167.8 | — |
+| 169.2 | — |
+| 169 | — |
+| 168.8 | — |
+| 167.9 | — |
+| 167.7 | — |
+| 167.6 | — |
+| 169 | — |
+| 166.8 | — |
+| 167.9 | — |
+| 169.4 | — |
+| 167.5 | — |
+| 167.3 | — |
+| 168.7 | — |
+| 165.5 | — |
+| 166.5 | — |
+| 167 | — |
+| 165.6 | — |
+| 165.9 | — |
+| 167.4 | — |
+| 167 | — |
+| 166.5 | — |
+| 166.9 | — |
+| 167 | — |
+| 167.4 | — |
+| 167.3 | — |
+| 166.7 | — |
+| 166.6 | — |
+| 166.6 | — |
+| 167.1 | — |
+| 165.2 | — |
+| 167.3 | — |
+| 167 | — |
+| 168.4 | — |
+| 168 | — |
+| 167.7 | — |
+| 167.9 | — |
+| 168.3 | — |
+| 167.8 | — |
+| 167.7 | — |
+| 166.7 | — |
+| 167 | — |
+| 167.1 | — |
+| 165.9 | — |
+| 168.6 | — |
+| 167.8 | — |
+| 167.7 | — |
+| 166.9 | — |
+| 167.8 | — |
+| 167 | — |
+| 167.8 | — |
+| 168.3 | — |
+| 166.2 | — |
+| 167.8 | — |
+| 168.2 | — |
+| 167.1 | — |
+| 166 | — |
+| 166.8 | — |
+| 166.7 | — |
+| 168.2 | — |
+| 166.1 | — |
+| 167.2 | — |
+| 167.5 | — |
+| 167 | — |
+| 167.2 | — |
+| 164.9 | — |
+| 168.4 | — |
+| 166.5 | — |
+| 166.6 | — |
+| 168.5 | — |
+| 167.8 | — |
+| 167.2 | — |
+| 166.7 | — |
+| 167.2 | — |
+| 167 | — |
+| 166.2 | — |
+| 168 | — |
+| 167.9 | — |
+| 167.1 | — |
+| 169.4 | — |
+| 168.2 | — |
+| 168.2 | — |
+| 168 | — |
+| 168.1 | — |
+| 168.2 | — |
+| 168.4 | — |
+| 167.7 | — |
+| 168.4 | — |
+| 168 | — |
+| 168.4 | — |
+| 168.7 | — |
+| 167.9 | — |
+| 167.4 | — |
+| 167.6 | — |
+| 165.9 | — |
+| 165.7 | — |
+| 167.6 | — |
+| 168.7 | — |
+| 167.7 | — |
+| 168.6 | — |
+| 168.5 | — |
+| 169.8 | — |
+| 169 | — |
+| 168.6 | — |
+| 168.9 | — |
+| 167.8 | — |
+| 166.9 | — |
+| 166.7 | — |
+| 166.8 | — |
+| 166.9 | — |
+| 167.4 | — |
+| 167 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 166.6 | — |
+| 166.9 | — |
+| 166.6 | — |
+| 167.2 | — |
+| 167.2 | — |
+| 167.1 | — |
+| 167 | — |
+| 166.8 | — |
+| 167 | — |
+| 166.7 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.6 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167 | — |
+| 167.2 | — |
+| 167.1 | — |
+| 167.1 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.7 | — |
+| 166.7 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 166.7 | — |
+| 166.8 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.2 | — |
+| 167 | — |
+| 166.6 | — |
+| 167 | — |
+| 167.1 | — |
+| 167.4 | — |
+| 167 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 166.8 | — |
+| 166.7 | — |
+| 167.1 | — |
+| 167 | — |
+| 166.6 | — |
+| 166.8 | — |
+| 166.6 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.2 | — |
+| 166.8 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 167 | — |
+| 166.6 | — |
+| 166.6 | — |
+| 166.8 | — |
+| 166.8 | — |
+| 166.5 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.8 | — |
+| 166.6 | — |
+| 166.7 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.8 | — |
+| 166.9 | — |
+| 167 | — |
+| 166.9 | — |
+| 167.2 | — |
+| 166.9 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.7 | — |
+| 167.1 | — |
+| 167 | — |
+| 167 | — |
+| 167.4 | — |
+| 167.2 | — |
+| 167.1 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 166.8 | — |
+| 167 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 166.8 | — |
+| 166.9 | — |
+| 167.4 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.8 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.3 | — |
+| 167 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 167.1 | — |
+| 167.1 | — |
+| 167.2 | — |
+| 167 | — |
+| 166.9 | — |
+| 166.7 | — |
+| 166.8 | — |
+| 167 | — |
+| 167.2 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 166.7 | — |
+| 166.7 | — |
+| 167.1 | — |
+| 167.2 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 167.2 | — |
+| 166.9 | — |
+| 166.5 | — |
+| 167 | — |
+| 167 | — |
+| 166.9 | — |
+| 167.3 | — |
+| 167.3 | — |
+| 167.3 | — |
+| 167.2 | — |
+| 167 | — |
+| 167 | — |
+| 167.1 | — |
+| 167 | — |
+| 167.1 | — |
+| 166.8 | — |
+| 167 | — |
+| 167 | — |
+| 167 | — |
+| 167.1 | — |
+| 167 | — |
+| 166.8 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 167.2 | — |
+| 167.3 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 167.1 | — |
+| 167.3 | — |
+| 167 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 166.9 | — |
+| 167.1 | — |
+| 166.6 | — |
+| 167 | — |
+| 167 | — |
+| 166.9 | — |
+| 167 | — |
+| 167.1 | — |
+| 167.2 | — |
+| 166.8 | — |
+| 166.8 | — |
+| 166.8 | — |
+| 167.3 | — |
+| 167.2 | — |
+| 166.6 | — |
+| 166.8 | — |
+| 166.6 | — |
+| 166.8 | — |
+| 166.9 | — |
+| 167 | — |
+| 166.8 | — |
+| 166.8 | — |
+| 166.8 | — |
+| 167 | — |
+| 166.6 | — |
+| 167.1 | — |
+| 167.2 | — |
+| 166.9 | 0 |
+| 165.8 | 19.86 |
+| 163.8 | 33.97 |
+| 160.7 | 45.77 |
+| 157.3 | 57.88 |
+| 156.7 | 69.93 |
+| 155 | 82.51 |
+| 153.8 | 93.86 |
+| 152.8 | 106.2 |
+| 150.9 | 115.3 |
+| 149.4 | 126.4 |
+| 148.8 | 137.1 |
+| 147 | 149.9 |
+| 144.8 | 161.9 |
+| 144.5 | 170.6 |
+| 143.5 | 181.1 |
+| 142.4 | 184.9 |
+| 141.8 | 195.5 |
+| 140.1 | 203.2 |
+| 141.3 | 213.2 |
+| 139.9 | 221 |
+| 138.7 | 226.2 |
+| 140.1 | 228.8 |
+| 139.6 | 232.8 |
+| 140.4 | 238.2 |
+| 140.2 | 245.3 |
+| 138.5 | 251.2 |
+| 139.9 | 256.7 |
+| 139.8 | 261.2 |
+| 139.1 | 261.4 |
+| 140.6 | 261.8 |
+| 138.7 | 260.5 |
+| 138.9 | 265.9 |
+| 139 | 269 |
+| 138.1 | 277 |
+| 138.2 | 286.2 |
+| 138.4 | 293.6 |
+| 138.8 | 294.8 |
+| 138.8 | 297.2 |
+| 138.1 | 302.7 |
+| 138.4 | 308.1 |
+| 137.9 | 312.2 |
+| 139.1 | 315 |
+| 138.9 | 319.1 |
+| 137.9 | 321 |
+| 137.7 | 323 |
+| 137.1 | 326 |
+| 138.1 | 325.7 |
+| 137.4 | 324.6 |
+| 138.5 | 327.2 |
+| 137.3 | 329.9 |
+| 138.4 | 334.2 |
+| 138.3 | 338.2 |
+| 138.4 | 341.2 |
+| 137.3 | 339 |
+| 137.6 | 342.1 |
+| 136.6 | 348.7 |
+| 137.1 | 350.9 |
+| 137.9 | 352.9 |
+| 137.7 | 353.7 |
+| 137.9 | 353.9 |
+| 137.7 | 356.2 |
+| 137.9 | 357.4 |
+| 138 | 354.8 |
+| 138 | 352.8 |
+| 138.3 | 357.8 |
+| 137.2 | 362 |
+| 137.1 | 368.2 |
+| 138.2 | 374.7 |
+| 137.6 | 378.4 |
+| 137.1 | 378.3 |
+| 136.9 | 382.2 |
+| 136.7 | 384.8 |
+| 136.7 | 387.5 |
+| 137.3 | 388.5 |
+| 136.9 | 389.2 |
+| 137.1 | 392.6 |
+| 137.4 | 401.3 |
+| 136.1 | 405.2 |
+| 137.1 | 405.8 |
+| 137.5 | 405.4 |
+| 137.5 | 410 |
+| 138 | 412.5 |
+| 137.6 | 416.2 |
+| 138.1 | 421.2 |
+| 138.3 | 423 |
+| 137.4 | 423.6 |
+| 137 | 421.4 |
+| 136.8 | 422.1 |
+| 136 | 421 |
+| 136.9 | 421.6 |
+| 136.7 | 424.7 |
+| 137 | 429.4 |
+| 136.7 | 430.8 |
+| 136.7 | 433.9 |
+| 136.8 | 435.7 |
+| 135.8 | 439.6 |
+| 136 | 442.5 |
+| 136.8 | 447.5 |
+| 136.6 | 450.6 |
+| 136.2 | 448.7 |
+| 137.1 | 451.1 |
+| 136.3 | 453.3 |
+| 135.9 | 456 |
+| 136.6 | 453.7 |
+| 137 | 455.5 |
+| 136.7 | 458.3 |
+| 137.1 | 463.3 |
+| 136.9 | 461.7 |
+| 136.3 | 467 |
+| 136 | 467.7 |
+| 136.5 | 469 |
+| 137.6 | 469.6 |
+| 137 | 473.1 |
+| 136.5 | 472.3 |
+| 137 | 476.7 |
+| 136 | 482.5 |
+| 135.4 | 490.3 |
+| 135.9 | 491.6 |
+| 135.3 | 487.1 |
+| 136 | 489.4 |
+| 136 | 490.4 |
+| 135.6 | 493.6 |
+| 135.3 | 492.7 |
+| 137.1 | 495.3 |
+| 137.2 | 496.1 |
+| 137.1 | 493.8 |
+| 135.8 | 492.6 |
+| 135.7 | 489.7 |
+| 136.7 | 491.1 |
+| 135.6 | 488.8 |
+| 135.9 | 484.9 |
+| 136.2 | 490.9 |
+| 135.7 | 485.5 |
+| 135.9 | 482.4 |
+| 135.3 | 485 |
+| 135.6 | 482.8 |
+| 136.2 | 485.2 |
+| 136.7 | 484.7 |
+| 135.9 | 483.3 |
+| 135.5 | 490.8 |
+| 134.4 | 492.5 |
+| 134 | 493.8 |
+| 134.6 | 494.5 |
+| 134.9 | 499 |
+| 136.3 | 497.7 |
+| 136.5 | 497.7 |
+| 136.6 | 499.9 |
+| 136.6 | 500.5 |
+| 136.2 | 506.5 |
+| 136.5 | 511 |
+| 136.7 | 513.3 |
+| 136 | 521.6 |
+| 136.2 | 523.4 |
+| 135.9 | 523.7 |
+| 135.8 | 527.9 |
+| 136.2 | 528.8 |
+| 136.7 | 529.9 |
+| 136.6 | 531 |
+| 136 | 533.3 |
+| 136.5 | 530.6 |
+| 137 | 533.2 |
+| 136.2 | 535.8 |
+| 135 | 538.1 |
+| 135.4 | 542 |
+| 136.4 | 544.3 |
+| 135.3 | 548.7 |
+| 135.2 | 548.1 |
+| 135.9 | 555.5 |
+| 134.8 | 562.6 |
+| 135.8 | 566.4 |
+| 136.2 | 570.3 |
+| 135.7 | 566.9 |
+| 134.9 | 566.7 |
+| 134.8 | 564.2 |
+| 134.8 | 568.5 |
+| 135.2 | 573.3 |
+| 136.1 | 573.9 |
+| 135.5 | 571.6 |
+| 135.9 | 577.8 |
+| 135.2 | 578.1 |
+| 135.9 | 577.7 |
+| 136.1 | 578.1 |
+| 136.5 | 574.4 |
+| 136 | 574.1 |
+| 135.3 | 573.3 |
+| 136.4 | 573.2 |
+| 137 | 575.2 |
+| 136.2 | 578.7 |
+| 135.5 | 579.3 |
+| 135.7 | 580.1 |
+| 135.9 | 580.9 |
+| 136 | 583.1 |
+| 135.4 | 585.2 |
+| 134 | 585.1 |
+| 135.2 | 589.5 |
+| 135.8 | 591.9 |
+| 136.2 | 588.6 |
+| 136.1 | 590.9 |
+| 135 | 594.4 |
+| 136 | 597.9 |
+| 135.2 | 604 |
+| 135.5 | 606.5 |
+| 135.9 | 612 |
+| 136.3 | 613.9 |
+| 135.4 | 610.2 |
+| 135.5 | 613.2 |
+| 136.4 | 617.7 |
+| 135.7 | 625.3 |
+| 135.7 | 622.6 |
+| 134.9 | 620.1 |
+| 133.8 | 619.6 |
+| 135.6 | 616.8 |
+| 136.4 | 618.2 |
+| 134.8 | 617.7 |
+| 134.7 | 616.4 |
+| 134.7 | 614.7 |
+| 136.1 | 609.6 |
+| 136.2 | 609.1 |
+| 135.7 | 605.6 |
+| 135.3 | 607.6 |
+| 135.4 | 603.6 |
+| 134.6 | 606.7 |
+| 135.2 | 610.5 |
+| 135.7 | 610.6 |
+| 135.3 | 618.9 |
+| 135.3 | 620.8 |
+| 134.9 | 620.6 |
+| 135.1 | 624.1 |
+| 134.8 | 629.2 |
+| 135.1 | 632.8 |
+| 135.3 | 631 |
+| 135.3 | 631.3 |
+| 134.9 | 626.2 |
+| 135.6 | 627 |
+| 135.5 | 629.1 |
+| 136 | 629.3 |
+| 134.8 | 637.1 |
+| 135.3 | 641.9 |
+| 135.1 | 640.3 |
+| 134.7 | 635.4 |
+| 135.6 | 634.5 |
+| 136 | 631.5 |
+| 135.4 | 631 |
+| 135.5 | 633.8 |
+| 135.4 | 635.8 |
+| 135.7 | 640.4 |
+| 135.2 | 641.1 |
+| 135.1 | 639.6 |
+| 135.8 | 638.4 |
+| 135.1 | 639.7 |
+| 135.1 | 641.7 |
+| 135.7 | 648.1 |
+| 135.9 | 646.8 |
+| 135.4 | 649.2 |
+| 135.3 | 649.4 |
+| 135 | 652.4 |
+| 135.4 | 652.7 |
+| 135.4 | 653 |
+| 135.4 | 651.3 |
+| 134.9 | 653.7 |
+| 135 | 654.4 |
+| 134.8 | 654.1 |
+| 135.9 | 651.1 |
+| 135.2 | 647.3 |
+| 135.5 | 645.5 |
+| 135 | 643.2 |
+| 134.7 | 646 |
+| 134.8 | 648 |
+| 135.1 | 649.7 |
+| 135.1 | 652.1 |
+| 135.4 | 655.9 |
+| 135.2 | 657.5 |
+| 134.3 | 656.4 |
+| 134.5 | 658.7 |
+| 135.2 | 662.7 |
+| 134.6 | 663.7 |
+| 135.1 | 660.3 |
+| 135 | 657.6 |
+| 135.9 | 656.4 |
+| 135.9 | 654.9 |
+| 135.4 | 656.9 |
+| 134.8 | 663 |
+| 135.5 | 662.9 |
+| 134.8 | 664.4 |
+| 134.3 | 665.3 |
+| 135.8 | 666 |
+| 135.5 | 674.5 |
+| 134.7 | 673.1 |
+| 135.3 | 675.6 |
+| 135.1 | 681.1 |
+| 135.1 | 683.5 |
+| 134.9 | 683.4 |
+| 134.8 | 683.2 |
+| 134.4 | 684 |
+| 134.6 | 685 |
+| 135 | 688.1 |
+| 134.2 | 687 |
+| 135 | 686.3 |
+| 134.3 | 684.1 |
+| 135.2 | 680 |
+| 135 | 676.5 |
+| 135.3 | 672.2 |
+| 134.4 | 674.4 |
+| 134.7 | 677.3 |
+| 135.1 | 677.3 |
+| 135.2 | 673.9 |
+| 134.9 | 675.7 |
+| 134.9 | 672 |
+| 134.6 | 670.8 |
+| 135.4 | 672.6 |
+| 134.8 | 669.7 |
+| 134.9 | 672.3 |
+| 135.2 | 668 |
+| 135.5 | 667.7 |
+| 135.3 | 671.4 |
+| 134.5 | 673.6 |
+| 134.4 | 673.8 |
+| 135.1 | 670.7 |
+| 135.8 | 668 |
+| 134.8 | 665.3 |
+| 134.1 | 666.4 |
+| 134.4 | 665.8 |
+| 134.7 | 669 |
+| 135.2 | 672.1 |
+| 133.7 | 670.7 |
+| 134.3 | 675 |
+| 134.3 | 672.7 |
+| 133.5 | 676.5 |
+| 135.1 | 679.9 |
+| 134.6 | 677.2 |
+| 134.4 | 677.1 |
+| 134.3 | 677.6 |
+| 134 | 675.2 |
+| 134.1 | 677.4 |
+| 133.8 | 679.1 |
+| 133.6 | 687.7 |
+| 133.8 | 687.9 |
+| 134.8 | 689.1 |
+| 134.1 | 684 |
+| 134.7 | 686.7 |
+| 134.9 | 681.7 |
+| 134.6 | 681.7 |
+| 134.8 | 680.4 |
+| 134.9 | 679.2 |
+| 134.7 | 679.3 |
+| 134.6 | 680.5 |
+| 134.5 | 679.8 |
+| 134.6 | 682.9 |
+| 134.2 | 687.3 |
+| 134.5 | 690.1 |
+| 134.9 | 689.6 |
+| 134.1 | 688.8 |
+| 134.5 | 688.5 |
+| 134.1 | 689.7 |
+| 133.5 | 691.5 |
+| 132.3 | 691.4 |
+| 133.4 | 689.9 |
+| 133.7 | 692.9 |
+| 134.4 | 691 |
+| 134 | 696.6 |
+| 133.3 | 694.5 |
+| 133.8 | 694.6 |
+| 132.9 | 695.5 |
+| 132.5 | 696.3 |
+| 133.6 | 695.4 |
+| 134.1 | 695.1 |
+| 134.5 | 699.2 |
+| 133.5 | 703.2 |
+| 133.3 | 707.3 |
+| 133.2 | 708.4 |
+| 133.7 | 707 |
+| 133.9 | 708.2 |
+| 134 | 705.4 |
+| 133.7 | 708.1 |
+| 132.8 | 709.6 |
+| 133.1 | 715.5 |
+| 133.5 | 716.3 |
+| 134.3 | 719.3 |
+| 134.6 | 720.1 |
+| 133.9 | 720.9 |
+| 133.4 | 715.9 |
+| 134 | 713.1 |
+| 134.4 | 711.4 |
+| 133.9 | 713.3 |
+| 133.8 | 718.2 |
+| 134.5 | 720.9 |
+| 134.2 | 725.2 |
+| 135.2 | 730.2 |
+| 134.5 | 728 |
+| 135 | 729.7 |
+| 134.8 | 728.3 |
+| 134.2 | 732 |
+| 134.4 | 733.4 |
+| 134.3 | 734.8 |
+| 134.7 | 734.7 |
+| 134.8 | 734.2 |
+| 134.3 | 732.6 |
+| 134.5 | 732.7 |
+| 133.7 | 740.9 |
+| 134.3 | 740 |
+| 133.2 | 748.3 |
+| 133.9 | 734.4 |
+| 133.5 | 719.2 |
+| 133.2 | 736.8 |
+| 134.3 | 742.8 |
+| 134.2 | 761.9 |
+| 134.4 | 778.4 |
+| 133.5 | 784.4 |
+| 133.3 | 796 |
+| 133.3 | 815.1 |
+| 133.5 | 816.2 |
+| 132.6 | 825.7 |
+| 133.2 | 824.1 |
+| 133.6 | 824.5 |
+| 133.6 | 834 |
+| 133.3 | 812.8 |
+| 132.8 | 828 |
+| 133 | 832.2 |
+| 133.6 | 840.1 |
+| 132.8 | 840.5 |
+| 133.4 | 852.9 |
+| 133.6 | 849.8 |
+| 132.8 | 836.8 |
+| 134.8 | 840.8 |
+| 132.8 | 871.8 |
+| 133.6 | 867.6 |
+| 132.6 | 887.3 |
+| 133.3 | 902.8 |
+| 134 | 901.1 |
+| 132.8 | 904.1 |
+| 133.8 | 920.6 |
+| 133.7 | 920 |
+| 133 | 922.8 |
+| 133.9 | 935.4 |
+| 133.7 | 929.9 |
+| 133.4 | 936.4 |
+| 133.6 | 951.7 |
+| 133 | 956 |
+| 133 | 955.5 |
+| 133.4 | 974.4 |
+| 133.5 | 997.2 |
+| 133.9 | 995.8 |
+| 133.7 | 1006 |
+| 133.2 | 992.6 |
+| 133.8 | 1004 |
+| 133.8 | 996 |
+| 132.1 | 1003 |
+| 132.3 | 1005 |
+| 133 | 1022 |
+| 133.5 | 1007 |
+| 134.1 | 1019 |
+| 134 | 1015 |
+| 133.2 | 1024 |
+| 134.1 | 1038 |
+| 133.5 | 1067 |
+| 133.8 | 1065 |
+| 134.2 | 1084 |
+| 133.3 | 1101 |
+| 133.2 | 1100 |
+| 134.2 | 1109 |
+| 134.4 | 1111 |
+| 134.4 | 1112 |
+| 133.5 | 1118 |
+| 134.1 | 1128 |
+| 134.3 | 1122 |
+| 133.4 | 1120 |
+| 133.8 | 1148 |
+| 133.9 | 1168 |
+| 133.9 | 1185 |
+| 134.6 | 1177 |
+| 133.4 | 1183 |
+| 134.9 | 1195 |
+| 134.3 | 1183 |
+| 134.5 | 1172 |
+| 135.1 | 1184 |
+| 133.8 | 1208 |
+| 134.3 | 1200 |
+| 133.5 | 1197 |
+| 134.2 | 1212 |
+| 133 | 1217 |
+| 134.3 | 1214 |
+| 133.9 | 1215 |
+| 134.6 | 1221 |
+| 134.4 | 1228 |
+| 134.3 | 1222 |
+| 134.2 | 1229 |
+| 134.4 | 1223 |
+| 134 | 1236 |
+| 134.4 | 1238 |
+| 134.6 | 1251 |
+| 134.4 | 1244 |
+| 134.1 | 1261 |
+| 134.2 | 1270 |
+| 134.8 | 1277 |
+| 133 | 1292 |
+| 134.3 | 1293 |
+| 134.6 | 1301 |
+| 134.2 | 1321 |
+| 134.4 | 1306 |
+| 133.7 | 1334 |
+| 133.8 | 1326 |
+| 133.7 | 1327 |
+| 134.3 | 1327 |
+| 134.4 | 1328 |
+| 134.1 | 1330 |
+| 134.8 | 1352 |
+| 134.7 | 1319 |
+| 134.4 | 1334 |
+| 134.3 | 1362 |
+| 134.8 | 1354 |
+| 134.5 | 1353 |
+| 134 | 1348 |
+| 133.8 | 1360 |
+| 134.1 | 1346 |
+| 134.2 | 1339 |
+| 134.4 | 1340 |
+| 134.4 | 1353 |
+| 134 | 1341 |
+| 134.6 | 1337 |
+| 133.6 | 1362 |
+| 134.3 | 1340 |
+| 134.9 | 1322 |
+| 134.9 | 1340 |
+| 134.7 | 1333 |
+| 133.9 | 1357 |
+| 134.4 | 1360 |
+| 133.8 | 1358 |
+| 133.7 | 1369 |
+| 134.3 | 1378 |
+| 134.3 | 1371 |
+| 134.5 | 1352 |
+| 134.9 | 1352 |
+| 133.7 | 1369 |
+| 133.7 | 1383 |
+| 133.1 | 1409 |
+| 133.6 | 1413 |
+| 133.8 | 1427 |
+| 133.8 | 1416 |
+| 134 | 1416 |
+| 133.5 | 1395 |
+| 134 | 1397 |
+| 134.7 | 1387 |
+| 133.9 | 1391 |
+| 134.7 | 1418 |
+| 134.1 | 1405 |
+| 133.4 | 1434 |
+| 133.6 | 1447 |
+| 133.4 | 1467 |
+| 134 | 1466 |
+| 134.5 | 1468 |
+| 134.3 | 1496 |
+| 133.8 | 1492 |
+| 134 | 1475 |
+| 133.6 | 1487 |
+| 134.1 | 1494 |
+| 133.8 | 1479 |
+| 134.3 | 1473 |
+| 134.5 | 1472 |
+| 134 | 1484 |
+| 132.8 | 1476 |
+| 134 | 1451 |
+| 134.3 | 1440 |
+| 134.1 | 1468 |
+| 132.6 | 1472 |
+| 134.6 | 1476 |
+| 133.9 | 1491 |
+| 133.9 | 1513 |
+| 133.8 | 1504 |
+| 133.6 | 1494 |
+| 134.2 | 1462 |
+| 134 | 1466 |
+| 133.6 | 1480 |
+| 133.5 | 1489 |
+| 134.1 | 1485 |
+| 134.4 | 1480 |
+| 134.5 | 1483 |
+| 134.1 | 1482 |
+| 134.2 | 1477 |
+| 133.3 | 1488 |
+| 133.5 | 1500 |
+| 133.7 | 1528 |
+| 134.3 | 1505 |
+| 133.9 | 1499 |
+| 133.6 | 1499 |
+| 133.9 | 1487 |
+| 133.2 | 1479 |
+| 133.9 | 1492 |
+| 133.7 | 1504 |
+| 133.8 | 1518 |
+| 133.1 | 1523 |
+| 133.3 | 1516 |
+| 133.6 | 1513 |
+| 133.6 | 1507 |
+| 134.8 | 1532 |
+| 133.7 | 1535 |
+| 133.2 | 1534 |
+| 133.3 | 1543 |
+| 132.9 | 1565 |
+| 133.7 | 1558 |
+| 133.7 | 1560 |
+| 134.2 | 1572 |
+| 133.7 | 1569 |
+| 134.3 | 1583 |
+| 134.4 | 1603 |
+| 134.2 | 1606 |
+| 133.5 | 1632 |
+| 134.1 | 1629 |
+| 133.7 | 1641 |
+| 133 | 1659 |
+| 134.3 | 1653 |
+| 133.9 | 1651 |
+| 133.4 | 1674 |
+| 133.5 | 1672 |
+| 133.9 | 1679 |
+| 133.8 | 1678 |
+| 134 | 1692 |
+| 133.8 | 1687 |
+| 133.2 | 1677 |
+| 133.3 | 1697 |
+| 134 | 1701 |
+| 134.2 | 1702 |
+| 133.4 | 1732 |
+| 133.3 | 1728 |
+| 133.9 | 1711 |
+| 134.1 | 1742 |
+| 134.6 | 1749 |
+| 133.9 | 1776 |
+| 134 | 1779 |
+| 134.4 | 1781 |
+| 133.6 | 1776 |
+| 134.5 | 1777 |
+| 134.1 | 1808 |
+| 134.5 | 1790 |
+| 134.9 | 1784 |
+| 134 | 1783 |
+| 133.8 | 1790 |
+| 134 | 1782 |
+| 135 | 1800 |
+| 134.3 | 1799 |
+| 134.4 | 1810 |
+| 133.9 | 1821 |
+| 134.1 | 1814 |
+| 133.7 | 1821 |
+| 134.8 | 1789 |
+| 134.1 | 1811 |
+| 133.7 | 1794 |
+| 133.4 | 1805 |
+| 132.7 | 1819 |
+| 133.7 | 1816 |
+| 134.2 | 1825 |
+| 135.1 | 1794 |
+| 134.1 | 1805 |
+| 134.1 | 1815 |
+| 134.9 | 1822 |
+| 134.5 | 1824 |
+| 133.9 | 1853 |
+| 133.1 | 1846 |
+| 134.2 | 1855 |
+| 133.7 | 1869 |
+| 133.5 | 1876 |
+| 133.6 | 1868 |
+| 133.5 | 1856 |
+| 135.5 | 1859 |
+| 133.9 | 1845 |
+| 133.9 | 1862 |
+| 134.5 | 1895 |
+| 134.5 | 1882 |
+| 134.3 | 1913 |
+| 133.9 | 1888 |
+| 133.1 | 1899 |
+| 134.4 | 1909 |
+| 134.1 | 1899 |
+| 133.6 | 1895 |
+| 133.3 | 1907 |
+| 134.2 | 1922 |
+| 134.5 | 1909 |
+| 134.2 | 1912 |
+| 134 | 1917 |
+| 134.2 | 1930 |
+| 133.4 | 1959 |
+| 134.7 | 1980 |
+| 133.9 | 1961 |
+| 133.8 | 1952 |
+| 133.3 | 1962 |
+| 134.2 | 1970 |
+| 134.2 | 1960 |
+| 133.4 | 1982 |
+| 134.3 | 1968 |
+| 134.2 | 1976 |
+| 133.7 | 1969 |
+| 133.5 | 1981 |
+| 134.3 | 1988 |
+| 134.8 | 1995 |
+| 134 | 2022 |
+| 134.8 | 2045 |
+| 134.3 | 2051 |
+| 134.9 | 2081 |
+| 134.7 | 2057 |
+| 134.3 | 2074 |
+| 134.6 | 2053 |
+| 133.5 | 2047 |
+| 134.2 | 2052 |
+| 134.7 | 2044 |
+| 134.6 | 2050 |
+| 134.3 | 2024 |
+| 133.9 | 2031 |
+| 133.6 | 2043 |
+| 133.7 | 2060 |
+| 134.3 | 2031 |
+| 134.3 | 2041 |
+| 133.6 | 2041 |
+| 133.8 | 2039 |
+| 133.5 | 2036 |
+| 133.7 | 2048 |
+| 134.7 | 2057 |
+| 134.5 | 2040 |
+| 132.5 | 2045 |
+| 133.6 | 2051 |
+| 133.5 | 2042 |
+| 134.5 | 2074 |
+| 134.2 | 2090 |
+| 133.7 | 2070 |
+| 132.8 | 2075 |
+| 134.1 | 2093 |
+| 133.3 | 2096 |
+| 134.5 | 2104 |
+| 133.4 | 2094 |
+| 134.1 | 2101 |
+| 133.3 | 2081 |
+| 133.7 | 2072 |
+| 132.8 | 2087 |
+| 133.8 | 2118 |
+| 134 | 2110 |
+| 134 | 2116 |
+| 134.5 | 2116 |
+| 134 | 2098 |
+| 134.3 | 2109 |
+| 134.2 | 2108 |
+| 133.3 | 2086 |
+| 134.2 | 2098 |
+| 134.6 | 2132 |
+| 134 | 2144 |
+| 133.5 | 2144 |
+| 133.7 | 2178 |
+| 134.5 | 2172 |
+| 134.7 | 2172 |
+| 134.1 | 2166 |
+| 134.3 | 2169 |
+| 133.4 | 2158 |
+| 133.4 | 2150 |
+| 133.7 | 2139 |
+| 133.6 | 2156 |
+| 133.8 | 2162 |
+| 134.2 | 2179 |
+| 134.6 | 2176 |
+| 134.3 | 2212 |
+| 133.4 | 2236 |
+| 135.2 | 2253 |
+| 134.4 | 2267 |
+| 134.5 | 2282 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
+
 </details>
 
 ### `pe_cg_hole_r3nm_25C_n320_c240_s1_rep222`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_25C.data`). Stage now: `hole_ramp_rel130` (running, 20.7% (1/20 segments, Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A); ETA 2026-11-12 02:56 UTC).
+PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_25C.data`). Status: finished: `hole_ramp_rel130_failed_20261102` (failed, 0.0%), `hole_ramp_held_failed_20261102` (failed, 0.0%), `hole_free_failed_20261102` (failed, 0.0%), `hole_free`, `hole_ramp_rel130_d4`, `hole_ramp_rel130_col`, `hole_ramp_rel130`, `hole_ramp_held`.
 
-No analysed properties yet; pending: `hole_ramp_rel130`: running, 20.7% (1/20 segments, Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A); ETA 2026-11-12 02:56 UTC. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -3770,17 +8178,17 @@ No analysed properties yet; pending: `hole_ramp_rel130`: running, 20.7% (1/20 se
 **Stages**
 
 - **`hole_ramp_rel130_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_held`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_ramp_held_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 - **`hole_free`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-07 06:28 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_rel130_d4`** (rdyu-server): running, 91.2% (19/20 segments, Stage 20: hold at 160 C); ETA 2026-11-12 02:37 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_rel130_col`** (rdyu-server): running, 91.7% (19/20 segments, Stage 20: hold at 160 C); ETA 2026-11-12 01:59 UTC; started 2026-11-06 14:44 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
-- **`hole_ramp_rel130`** (rdyu-rog): running, 20.7% (1/20 segments, Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A); ETA 2026-11-12 02:56 UTC; started 2026-11-11 13:28 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_rel130_d4`** (rdyu-server): finished; started 2026-11-06 14:44 UTC, ended 2026-11-12 02:42 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_rel130_col`** (rdyu-server): finished; started 2026-11-06 14:44 UTC, ended 2026-11-12 02:03 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_rel130`** (rdyu-rog): finished; started 2026-11-11 13:28 UTC, ended 2026-11-11 23:38 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
+- **`hole_ramp_held`** (rdyu-rog): finished; started 2026-11-11 23:38 UTC, ended 2026-11-12 09:41 UTC; reads `systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | `hole_ramp_rel130`: running, 20.7% (1/20 segments, Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A); ETA 2026-11-12 02:56 UTC | `hole_free` |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_ramp_rel130_failed_20261102` (failed, 0.0%), `hole_ramp_held_failed_20261102` (failed, 0.0%), `hole_free_failed_20261102` (failed, 0.0%), `hole_free`, `hole_ramp_rel130_d4`, `hole_ramp_rel130_col`, `hole_ramp_rel130`, `hole_ramp_held` | `hole_free`, `hole_ramp_held`, `hole_ramp_rel130`, `hole_ramp_rel130_col`, `hole_ramp_rel130_d4` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -4985,13 +9393,10685 @@ Per segment:
 | 20 | 25 |
 
 
+**`hole_ramp_held` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 129.4
+- `free_shell.areal_density_ratio`: 0.889
+- `free_shell.msd.1 ns`: 66.83
+- `free_shell.msd.10 ns`: 273.8
+- `free_shell.msd.end`: 845
+- `free_shell.msd.end_ns`: 68
+- `params.hole_hold_ps`: 1e+04
+- `params.release_t_c`: none
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `scaffold.d_nm`: 2.5
+- `scaffold.nearest_tethered_r_held_min`: 53.08
+- `scaffold.nearest_tethered_r_t0`: 55
+- `scaffold.tethered_fraction`: 0.5394
+- T (°C): 25
+- `t_close_ns`: 25.6
+- `thickness_final`: 162.3
+- `thickness_t0`: 162.4
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 129.8 | — |
+| 129.3 | — |
+| 129.7 | — |
+| 129.7 | — |
+| 129.8 | — |
+| 129.8 | — |
+| 130 | — |
+| 129.8 | — |
+| 130.2 | — |
+| 129.9 | — |
+| 129.5 | — |
+| 130.3 | — |
+| 129.9 | — |
+| 130.1 | — |
+| 130.1 | — |
+| 129.6 | — |
+| 129.7 | — |
+| 129.7 | — |
+| 129.9 | — |
+| 129.9 | — |
+| 129.7 | — |
+| 129.9 | — |
+| 130.2 | — |
+| 129.8 | — |
+| 129.9 | — |
+| 129.7 | — |
+| 129.5 | — |
+| 129.4 | — |
+| 128.9 | — |
+| 129.2 | — |
+| 130.2 | — |
+| 129.6 | — |
+| 129.3 | — |
+| 130 | — |
+| 129.4 | — |
+| 129.8 | — |
+| 129.4 | — |
+| 129.7 | — |
+| 129.7 | — |
+| 129.7 | — |
+| 129.9 | — |
+| 129.3 | — |
+| 129.5 | — |
+| 130.2 | — |
+| 129.5 | — |
+| 129.8 | — |
+| 129.3 | — |
+| 129.2 | — |
+| 129.4 | — |
+| 129.6 | — |
+| 129.9 | — |
+| 130 | — |
+| 129.8 | — |
+| 129.3 | — |
+| 129.9 | — |
+| 129.7 | — |
+| 129.5 | — |
+| 130.1 | — |
+| 129.8 | — |
+| 129.5 | — |
+| 130.4 | — |
+| 129.9 | — |
+| 130 | — |
+| 129.8 | — |
+| 129.9 | — |
+| 130.2 | — |
+| 129.9 | — |
+| 129.9 | — |
+| 130.1 | — |
+| 129.5 | — |
+| 130.5 | — |
+| 129.9 | — |
+| 130.5 | — |
+| 130.3 | — |
+| 130.5 | — |
+| 129.9 | — |
+| 130.5 | — |
+| 131.2 | — |
+| 130.5 | — |
+| 130.4 | — |
+| 130.5 | — |
+| 130.5 | — |
+| 131.1 | — |
+| 131.3 | — |
+| 131.5 | — |
+| 130.2 | — |
+| 130.6 | — |
+| 130.8 | — |
+| 131.4 | — |
+| 131.4 | — |
+| 131.5 | — |
+| 131.4 | — |
+| 131 | — |
+| 131.8 | — |
+| 131.2 | — |
+| 131.2 | — |
+| 131.3 | — |
+| 131.8 | — |
+| 131.7 | — |
+| 132 | — |
+| 131.7 | — |
+| 131.6 | — |
+| 131.6 | — |
+| 131.8 | — |
+| 131.9 | — |
+| 132.2 | — |
+| 132.4 | — |
+| 131.7 | — |
+| 132 | — |
+| 132.6 | — |
+| 132.5 | — |
+| 132.9 | — |
+| 132.2 | — |
+| 132.7 | — |
+| 132.3 | — |
+| 132.4 | — |
+| 132.5 | — |
+| 132.3 | — |
+| 132.2 | — |
+| 132.7 | — |
+| 132.1 | — |
+| 132 | — |
+| 133 | — |
+| 132 | — |
+| 132.5 | — |
+| 132.9 | — |
+| 133 | — |
+| 132.7 | — |
+| 132.4 | — |
+| 132.8 | — |
+| 132.9 | — |
+| 133.6 | — |
+| 133 | — |
+| 133.4 | — |
+| 133.4 | — |
+| 133.7 | — |
+| 133.4 | — |
+| 133.8 | — |
+| 133.3 | — |
+| 133.9 | — |
+| 133.7 | — |
+| 134.2 | — |
+| 134 | — |
+| 133.8 | — |
+| 133.7 | — |
+| 133.6 | — |
+| 133.6 | — |
+| 134.7 | — |
+| 133.8 | — |
+| 134.6 | — |
+| 134.2 | — |
+| 134.5 | — |
+| 133.4 | — |
+| 134.1 | — |
+| 133.9 | — |
+| 134 | — |
+| 133.9 | — |
+| 134.5 | — |
+| 135 | — |
+| 134.6 | — |
+| 134.1 | — |
+| 134.9 | — |
+| 135.4 | — |
+| 135 | — |
+| 135.2 | — |
+| 135.5 | — |
+| 135.8 | — |
+| 135.1 | — |
+| 134.6 | — |
+| 135.5 | — |
+| 135.3 | — |
+| 135.7 | — |
+| 134.9 | — |
+| 135.1 | — |
+| 136.1 | — |
+| 136.1 | — |
+| 136 | — |
+| 135.3 | — |
+| 135.4 | — |
+| 136.1 | — |
+| 136.9 | — |
+| 136.8 | — |
+| 136.1 | — |
+| 136.7 | — |
+| 136.5 | — |
+| 136.9 | — |
+| 137.1 | — |
+| 137 | — |
+| 136.5 | — |
+| 137.1 | — |
+| 137.3 | — |
+| 137.2 | — |
+| 137.1 | — |
+| 137.3 | — |
+| 136.7 | — |
+| 137 | — |
+| 137.2 | — |
+| 137.2 | — |
+| 136.6 | — |
+| 137.9 | — |
+| 137.2 | — |
+| 137.5 | — |
+| 137.1 | — |
+| 137.6 | — |
+| 138.2 | — |
+| 137.7 | — |
+| 138.5 | — |
+| 138.3 | — |
+| 138.8 | — |
+| 137.9 | — |
+| 138.1 | — |
+| 138.2 | — |
+| 138.1 | — |
+| 138.4 | — |
+| 139.4 | — |
+| 139.4 | — |
+| 139.2 | — |
+| 138.6 | — |
+| 139 | — |
+| 139.4 | — |
+| 139.1 | — |
+| 139.2 | — |
+| 139.9 | — |
+| 139.1 | — |
+| 139 | — |
+| 139.4 | — |
+| 140.1 | — |
+| 140.1 | — |
+| 139.1 | — |
+| 140.2 | — |
+| 141 | — |
+| 140.9 | — |
+| 141 | — |
+| 140.8 | — |
+| 140.5 | — |
+| 140.1 | — |
+| 140.9 | — |
+| 140.9 | — |
+| 140.6 | — |
+| 140.6 | — |
+| 140.4 | — |
+| 141.6 | — |
+| 140.9 | — |
+| 142.2 | — |
+| 141 | — |
+| 141.3 | — |
+| 140.9 | — |
+| 141.5 | — |
+| 140.8 | — |
+| 141.6 | — |
+| 141.1 | — |
+| 141.8 | — |
+| 142.2 | — |
+| 141.9 | — |
+| 142.7 | — |
+| 141.8 | — |
+| 142.1 | — |
+| 142.4 | — |
+| 143.2 | — |
+| 141.6 | — |
+| 141.3 | — |
+| 142.1 | — |
+| 142.5 | — |
+| 141.8 | — |
+| 142.5 | — |
+| 143.3 | — |
+| 143.6 | — |
+| 143.6 | — |
+| 144.3 | — |
+| 144.3 | — |
+| 144.1 | — |
+| 143.5 | — |
+| 144.4 | — |
+| 143.9 | — |
+| 144.5 | — |
+| 144.3 | — |
+| 144.9 | — |
+| 144.8 | — |
+| 144.3 | — |
+| 144.4 | — |
+| 145.6 | — |
+| 145.3 | — |
+| 144.6 | — |
+| 145.5 | — |
+| 145.4 | — |
+| 145.7 | — |
+| 145.4 | — |
+| 145.7 | — |
+| 146.6 | — |
+| 146.6 | — |
+| 146.5 | — |
+| 146.8 | — |
+| 146.4 | — |
+| 147.5 | — |
+| 146.7 | — |
+| 146.3 | — |
+| 147.1 | — |
+| 147.8 | — |
+| 148 | — |
+| 147.6 | — |
+| 147.5 | — |
+| 147.9 | — |
+| 148.3 | — |
+| 148.3 | — |
+| 148.3 | — |
+| 148.9 | — |
+| 148.5 | — |
+| 148.6 | — |
+| 148.5 | — |
+| 147.9 | — |
+| 148.8 | — |
+| 147.9 | — |
+| 148.7 | — |
+| 148.8 | — |
+| 148.7 | — |
+| 149.2 | — |
+| 149.6 | — |
+| 149.6 | — |
+| 149.4 | — |
+| 149.4 | — |
+| 149.3 | — |
+| 149.1 | — |
+| 150.1 | — |
+| 149.7 | — |
+| 150 | — |
+| 150.7 | — |
+| 150.1 | — |
+| 150.9 | — |
+| 150.7 | — |
+| 150.3 | — |
+| 151.6 | — |
+| 151.8 | — |
+| 151.8 | — |
+| 151.6 | — |
+| 152.7 | — |
+| 152.6 | — |
+| 152.2 | — |
+| 153 | — |
+| 153.2 | — |
+| 153.3 | — |
+| 153.5 | — |
+| 153.2 | — |
+| 153 | — |
+| 152.5 | — |
+| 154 | — |
+| 153.9 | — |
+| 152.8 | — |
+| 153.6 | — |
+| 154.3 | — |
+| 154.2 | — |
+| 153.9 | — |
+| 153.4 | — |
+| 154.2 | — |
+| 154.1 | — |
+| 154.7 | — |
+| 154.7 | — |
+| 154.5 | — |
+| 155 | — |
+| 155.3 | — |
+| 154.9 | — |
+| 155.9 | — |
+| 155.3 | — |
+| 155 | — |
+| 155.7 | — |
+| 155 | — |
+| 156.8 | — |
+| 156.2 | — |
+| 157 | — |
+| 155.9 | — |
+| 156.6 | — |
+| 156.9 | — |
+| 156 | — |
+| 156.4 | — |
+| 155.9 | — |
+| 156.6 | — |
+| 157.3 | — |
+| 157.3 | — |
+| 158.2 | — |
+| 158.3 | — |
+| 158.2 | — |
+| 158.5 | — |
+| 159 | — |
+| 157.7 | — |
+| 158.6 | — |
+| 158.8 | — |
+| 160.5 | — |
+| 159.1 | — |
+| 159.5 | — |
+| 159.9 | — |
+| 159.4 | — |
+| 159.4 | — |
+| 160.5 | — |
+| 159.2 | — |
+| 160 | — |
+| 160.2 | — |
+| 161 | — |
+| 159.9 | — |
+| 162.8 | — |
+| 161.7 | — |
+| 161.7 | — |
+| 160.9 | — |
+| 161 | — |
+| 161.6 | — |
+| 162.5 | — |
+| 162.1 | — |
+| 161.8 | — |
+| 162.1 | — |
+| 162.8 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 162.4 | — |
+| 162.1 | — |
+| 161 | — |
+| 161.8 | — |
+| 161.8 | — |
+| 161.9 | — |
+| 161.1 | — |
+| 161.2 | — |
+| 160.1 | — |
+| 160.5 | — |
+| 160.9 | — |
+| 161.2 | — |
+| 160.4 | — |
+| 160.4 | — |
+| 162.1 | — |
+| 161.5 | — |
+| 161.7 | — |
+| 162 | — |
+| 162.6 | — |
+| 163.1 | — |
+| 162.6 | — |
+| 162.5 | — |
+| 162 | — |
+| 161.6 | — |
+| 160.8 | — |
+| 161.6 | — |
+| 161.3 | — |
+| 161.2 | — |
+| 162.3 | — |
+| 161.6 | — |
+| 162.6 | — |
+| 161 | — |
+| 162.1 | — |
+| 161.3 | — |
+| 161.5 | — |
+| 161.8 | — |
+| 161.5 | — |
+| 162 | — |
+| 161.4 | — |
+| 162.3 | — |
+| 161.7 | — |
+| 161.4 | — |
+| 161.9 | — |
+| 162.3 | — |
+| 162.8 | — |
+| 162.1 | — |
+| 161.8 | — |
+| 162.2 | — |
+| 162.7 | — |
+| 162.6 | — |
+| 163.3 | — |
+| 161.9 | — |
+| 162.7 | — |
+| 161.1 | — |
+| 161.6 | — |
+| 161.5 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 162.2 | — |
+| 162.5 | — |
+| 161.1 | — |
+| 162.1 | — |
+| 160.8 | — |
+| 163.3 | — |
+| 161.6 | — |
+| 162 | — |
+| 161.8 | — |
+| 162.4 | — |
+| 161.5 | — |
+| 162.5 | — |
+| 161.8 | — |
+| 162.6 | — |
+| 162.7 | — |
+| 163.1 | — |
+| 162.4 | — |
+| 162.8 | — |
+| 163.4 | — |
+| 163.2 | — |
+| 162 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 162 | — |
+| 162.2 | — |
+| 163 | — |
+| 163.1 | — |
+| 162.1 | — |
+| 161.6 | — |
+| 163.9 | — |
+| 163.7 | — |
+| 162.4 | — |
+| 163 | — |
+| 163.3 | — |
+| 162 | — |
+| 162 | — |
+| 161.2 | — |
+| 160.9 | — |
+| 161.3 | — |
+| 161.8 | — |
+| 162.7 | — |
+| 163.3 | — |
+| 163.1 | — |
+| 161.6 | — |
+| 163.1 | — |
+| 161.8 | — |
+| 162.8 | — |
+| 162.9 | — |
+| 163.3 | — |
+| 162 | — |
+| 163.3 | — |
+| 162.4 | — |
+| 161.9 | — |
+| 162.7 | — |
+| 161.6 | — |
+| 161.5 | — |
+| 161.5 | — |
+| 162 | — |
+| 163 | — |
+| 162.2 | — |
+| 161.4 | — |
+| 164.4 | — |
+| 163.5 | — |
+| 161.3 | — |
+| 162.8 | — |
+| 161.7 | — |
+| 163 | — |
+| 162.6 | — |
+| 162.1 | — |
+| 161.8 | — |
+| 162.7 | — |
+| 161.9 | — |
+| 161.3 | — |
+| 161.9 | — |
+| 161.7 | — |
+| 160.6 | — |
+| 162 | — |
+| 162.1 | — |
+| 163.1 | — |
+| 162.5 | — |
+| 161.6 | — |
+| 162.2 | — |
+| 162 | — |
+| 161.8 | — |
+| 163 | — |
+| 161.9 | — |
+| 162.8 | — |
+| 161.9 | — |
+| 161.7 | — |
+| 162.7 | — |
+| 161.4 | — |
+| 161.9 | — |
+| 161.8 | — |
+| 161.4 | — |
+| 161.3 | — |
+| 161.4 | — |
+| 161.3 | — |
+| 161.1 | — |
+| 161 | — |
+| 162.4 | — |
+| 161.7 | — |
+| 161.6 | — |
+| 161.9 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 162 | — |
+| 162.1 | — |
+| 161.2 | — |
+| 161.9 | — |
+| 161.6 | — |
+| 161.5 | — |
+| 161.3 | — |
+| 161.4 | — |
+| 160.9 | — |
+| 161.5 | — |
+| 161.3 | — |
+| 161.2 | — |
+| 160.9 | — |
+| 162.2 | — |
+| 160.9 | — |
+| 161.7 | — |
+| 161.5 | — |
+| 161.7 | — |
+| 160.4 | — |
+| 163.6 | — |
+| 162.6 | — |
+| 161.9 | — |
+| 161.9 | — |
+| 162.2 | — |
+| 161.8 | — |
+| 161.6 | — |
+| 162.3 | — |
+| 162.4 | 0 |
+| 162.3 | 6.914 |
+| 162 | 9.561 |
+| 161.9 | 10.64 |
+| 162 | 11.84 |
+| 162.1 | 12.02 |
+| 162 | 12.63 |
+| 162.2 | 13.71 |
+| 162.2 | 15.32 |
+| 162.3 | 15.79 |
+| 162 | 16.74 |
+| 162.2 | 17.45 |
+| 162 | 18.26 |
+| 162.1 | 19.57 |
+| 162.1 | 19.69 |
+| 161.9 | 19.93 |
+| 162.4 | 20.32 |
+| 161.9 | 20.94 |
+| 162.3 | 21.5 |
+| 162.2 | 22.76 |
+| 162.3 | 23.41 |
+| 162 | 24.1 |
+| 161.9 | 24.65 |
+| 161.8 | 25.12 |
+| 161.7 | 26.29 |
+| 162.3 | 26.76 |
+| 161.8 | 27.08 |
+| 162 | 27.41 |
+| 162.2 | 27.83 |
+| 162.1 | 28.22 |
+| 161.8 | 28.63 |
+| 161.9 | 29.91 |
+| 162 | 30.52 |
+| 161.8 | 30.83 |
+| 162 | 31.96 |
+| 162.3 | 31.28 |
+| 161.8 | 32.51 |
+| 162 | 32.25 |
+| 162 | 31.74 |
+| 162 | 31.44 |
+| 162.2 | 31.67 |
+| 162.2 | 32.55 |
+| 161.9 | 32.24 |
+| 162.1 | 32.71 |
+| 161.9 | 33.14 |
+| 161.9 | 33.93 |
+| 162.1 | 34.12 |
+| 162.2 | 33.87 |
+| 162.3 | 33.56 |
+| 161.9 | 33.61 |
+| 161.7 | 33.01 |
+| 162 | 33.58 |
+| 162.2 | 34.24 |
+| 161.7 | 34.05 |
+| 162 | 34.57 |
+| 161.5 | 34.84 |
+| 161.9 | 34.76 |
+| 162.1 | 35.6 |
+| 162 | 35.32 |
+| 161.7 | 34.97 |
+| 162 | 35.64 |
+| 161.8 | 35.92 |
+| 162.1 | 35.87 |
+| 162 | 36.21 |
+| 162 | 35.84 |
+| 161.9 | 35.45 |
+| 162.2 | 35.76 |
+| 162.2 | 36.43 |
+| 161.9 | 37.24 |
+| 162 | 37.69 |
+| 162 | 37.79 |
+| 162.4 | 38.65 |
+| 162.1 | 38.5 |
+| 162.2 | 38.68 |
+| 162 | 38.18 |
+| 161.8 | 39.73 |
+| 162 | 39.79 |
+| 162.1 | 39.56 |
+| 162.1 | 39.55 |
+| 161.9 | 40.04 |
+| 162.3 | 39.45 |
+| 162.1 | 39.12 |
+| 162.1 | 38.77 |
+| 161.9 | 39.15 |
+| 162.4 | 39.15 |
+| 162 | 40.05 |
+| 162 | 40.76 |
+| 162.1 | 40.77 |
+| 161.9 | 39.97 |
+| 162 | 40.54 |
+| 161.9 | 41.46 |
+| 161.9 | 42.99 |
+| 162.2 | 43.53 |
+| 162 | 44.01 |
+| 161.9 | 43.64 |
+| 162.1 | 43.1 |
+| 162.3 | 42.77 |
+| 162 | 41.93 |
+| 161.8 | 42.27 |
+| 161.8 | 43.09 |
+| 162.4 | 44.48 |
+| 161.9 | 44.34 |
+| 161.8 | 44.75 |
+| 162.1 | 45.62 |
+| 162.2 | 47.05 |
+| 162 | 48.79 |
+| 161.5 | 49.12 |
+| 162 | 49.74 |
+| 161.6 | 48.79 |
+| 162.1 | 49.68 |
+| 161.9 | 49.21 |
+| 161.7 | 49.45 |
+| 161.8 | 49.26 |
+| 161.9 | 49.83 |
+| 162 | 48.48 |
+| 162.1 | 49.34 |
+| 161.8 | 49.46 |
+| 161.6 | 50.09 |
+| 161.7 | 50.13 |
+| 161.8 | 51.01 |
+| 161.7 | 50.28 |
+| 161.8 | 50.8 |
+| 161.6 | 50.42 |
+| 162 | 50.61 |
+| 161.8 | 51.9 |
+| 161.8 | 51.34 |
+| 161.7 | 52.98 |
+| 161.7 | 52.98 |
+| 161.9 | 53.24 |
+| 162 | 54.71 |
+| 161.5 | 53.92 |
+| 161.7 | 53.31 |
+| 161.5 | 52.99 |
+| 161.7 | 54.38 |
+| 161.6 | 54.39 |
+| 162.1 | 55.07 |
+| 162.1 | 54.98 |
+| 162 | 54.51 |
+| 162.1 | 54.49 |
+| 161.8 | 54.01 |
+| 162.2 | 54.06 |
+| 161.9 | 52.91 |
+| 161.8 | 52.54 |
+| 161.9 | 52.15 |
+| 162 | 52.65 |
+| 161.8 | 52.35 |
+| 161.8 | 53.58 |
+| 161.6 | 54.06 |
+| 161.8 | 54.07 |
+| 161.6 | 53.71 |
+| 161.4 | 54.09 |
+| 161.8 | 53.74 |
+| 161.8 | 54.19 |
+| 161.9 | 54.08 |
+| 161.8 | 53.66 |
+| 161.9 | 54.35 |
+| 161.5 | 55.34 |
+| 161.8 | 55.76 |
+| 161.7 | 54.59 |
+| 161.8 | 53.93 |
+| 161.9 | 54.97 |
+| 162 | 55.17 |
+| 161.9 | 55.02 |
+| 162.4 | 55.13 |
+| 161.8 | 55.92 |
+| 161.5 | 55.36 |
+| 161.9 | 54.58 |
+| 161.9 | 54.55 |
+| 161.9 | 56.61 |
+| 161.7 | 57.25 |
+| 161.9 | 57.96 |
+| 162.1 | 59.04 |
+| 161.8 | 57.93 |
+| 161.8 | 56.76 |
+| 161.7 | 56.39 |
+| 162 | 57.5 |
+| 161.8 | 57.79 |
+| 161.8 | 57.69 |
+| 161.9 | 57.89 |
+| 161.5 | 59.02 |
+| 161.7 | 59.84 |
+| 161.9 | 60.81 |
+| 162 | 60.87 |
+| 162.1 | 61.05 |
+| 162.2 | 60.84 |
+| 161.9 | 60.92 |
+| 161.9 | 61.95 |
+| 161.5 | 62.49 |
+| 161.8 | 62.32 |
+| 161.8 | 63.55 |
+| 161.5 | 64.01 |
+| 161.8 | 63.56 |
+| 161.7 | 64.32 |
+| 161.7 | 64.73 |
+| 161.6 | 65.54 |
+| 161.6 | 65.78 |
+| 161.6 | 66.6 |
+| 161.7 | 65.98 |
+| 161.7 | 65.95 |
+| 161.9 | 66.75 |
+| 161.8 | 66.83 |
+| 161.7 | 65.13 |
+| 161.8 | 67.08 |
+| 161.7 | 66.42 |
+| 162 | 66.7 |
+| 161.7 | 67.81 |
+| 161.8 | 69.55 |
+| 161.9 | 69.83 |
+| 161.6 | 71.49 |
+| 161.8 | 71.53 |
+| 161.4 | 69.85 |
+| 161.8 | 70.4 |
+| 161.9 | 69.95 |
+| 161.7 | 70.42 |
+| 161.7 | 72.55 |
+| 161.6 | 70.81 |
+| 161.8 | 69.64 |
+| 161.4 | 69.31 |
+| 161.7 | 69.46 |
+| 161.6 | 69.63 |
+| 161.6 | 69.39 |
+| 161.9 | 68.77 |
+| 161.6 | 70.28 |
+| 162.1 | 70.93 |
+| 162 | 71.21 |
+| 161.6 | 70.38 |
+| 161.8 | 70.64 |
+| 161.8 | 71.35 |
+| 161.8 | 70.76 |
+| 161.8 | 69.84 |
+| 161.9 | 70.54 |
+| 161.6 | 69.32 |
+| 161.6 | 68.15 |
+| 161.7 | 70.38 |
+| 161.6 | 70.31 |
+| 161.7 | 72.14 |
+| 161.6 | 72.62 |
+| 161.7 | 72.67 |
+| 161.9 | 72.25 |
+| 162 | 73 |
+| 162 | 72.84 |
+| 161.8 | 72.47 |
+| 161.6 | 71.91 |
+| 161.6 | 72.49 |
+| 161.8 | 72.98 |
+| 162.2 | 73.13 |
+| 161.7 | 74 |
+| 161.7 | 74.26 |
+| 161.9 | 74.53 |
+| 162 | 74.96 |
+| 161.6 | 73.63 |
+| 161.9 | 75.08 |
+| 162 | 74.21 |
+| 161.6 | 74.69 |
+| 161.8 | 74.92 |
+| 161.9 | 75.61 |
+| 161.9 | 76.47 |
+| 161.6 | 75.61 |
+| 162.1 | 75.36 |
+| 161.5 | 75.87 |
+| 161.9 | 76.44 |
+| 161.6 | 76.38 |
+| 161.8 | 77.22 |
+| 162 | 78.21 |
+| 161.7 | 79.06 |
+| 161.9 | 77.57 |
+| 161.7 | 77.61 |
+| 161.9 | 78.39 |
+| 161.6 | 78.74 |
+| 161.8 | 78.5 |
+| 161.4 | 78.56 |
+| 161.7 | 79.81 |
+| 161.8 | 80.31 |
+| 161.9 | 79.44 |
+| 162 | 80 |
+| 162 | 80.82 |
+| 162 | 82.13 |
+| 162.1 | 82.5 |
+| 161.9 | 81.83 |
+| 161.7 | 81.21 |
+| 161.6 | 81.17 |
+| 161.9 | 81.09 |
+| 161.8 | 80.45 |
+| 161.5 | 79.63 |
+| 161.9 | 78.03 |
+| 162.1 | 77.8 |
+| 161.6 | 79.68 |
+| 161.7 | 79.55 |
+| 161.5 | 77.66 |
+| 161.5 | 76.12 |
+| 161.5 | 75.92 |
+| 161.7 | 77.5 |
+| 161.9 | 79.57 |
+| 161.6 | 80.14 |
+| 162 | 80.09 |
+| 161.4 | 79.81 |
+| 162.2 | 79.77 |
+| 162 | 80.53 |
+| 161.7 | 81.17 |
+| 161.6 | 81.35 |
+| 161.8 | 81 |
+| 161.7 | 81.53 |
+| 162 | 83.23 |
+| 161.8 | 83.92 |
+| 161.8 | 84.01 |
+| 161.8 | 82.6 |
+| 161.6 | 82.06 |
+| 161.8 | 82.69 |
+| 161.7 | 83.96 |
+| 161.6 | 85.54 |
+| 161.6 | 86.68 |
+| 161.9 | 88.31 |
+| 162 | 88.04 |
+| 162 | 88.4 |
+| 161.8 | 89.76 |
+| 161.8 | 88.87 |
+| 161.6 | 88.48 |
+| 161.9 | 88.13 |
+| 162 | 88.43 |
+| 161.7 | 89.68 |
+| 161.9 | 93.12 |
+| 161.8 | 94.07 |
+| 161.8 | 92.82 |
+| 161.7 | 92.8 |
+| 162 | 93.81 |
+| 162.1 | 93.88 |
+| 161.9 | 93.43 |
+| 161.8 | 92.92 |
+| 161.9 | 93.07 |
+| 162.1 | 92.97 |
+| 161.6 | 93.33 |
+| 161.9 | 92.95 |
+| 161.7 | 92.96 |
+| 161.9 | 93.83 |
+| 162 | 93.45 |
+| 161.6 | 94.8 |
+| 161.6 | 95.28 |
+| 161.7 | 94.55 |
+| 161.8 | 94.9 |
+| 161.9 | 95.15 |
+| 162.1 | 95.36 |
+| 162.1 | 96.63 |
+| 161.8 | 96.55 |
+| 161.3 | 98.32 |
+| 161.7 | 99.05 |
+| 161.8 | 99.38 |
+| 162 | 99.45 |
+| 162.1 | 100.5 |
+| 161.9 | 100.9 |
+| 161.8 | 100.8 |
+| 161.6 | 98.82 |
+| 161.8 | 100.9 |
+| 161.9 | 101.4 |
+| 161.6 | 101.6 |
+| 161.9 | 101 |
+| 161.8 | 101.1 |
+| 161.9 | 103.1 |
+| 161.9 | 102.1 |
+| 162.1 | 103.3 |
+| 161.8 | 104.8 |
+| 161.9 | 105.6 |
+| 162 | 104.3 |
+| 162 | 105.7 |
+| 161.7 | 105 |
+| 161.8 | 104 |
+| 161.7 | 104.7 |
+| 161.6 | 105.5 |
+| 162.1 | 106.4 |
+| 162.1 | 104.4 |
+| 161.3 | 104.2 |
+| 161.8 | 104.1 |
+| 161.6 | 105 |
+| 161.8 | 106.3 |
+| 162 | 107.7 |
+| 161.7 | 107.4 |
+| 162 | 108.8 |
+| 161.5 | 107.8 |
+| 161.6 | 106.9 |
+| 161.9 | 106.2 |
+| 161.9 | 106.3 |
+| 161.6 | 104.8 |
+| 161.9 | 106.1 |
+| 161.6 | 107.6 |
+| 162 | 107.3 |
+| 161.9 | 105.9 |
+| 161.5 | 106.9 |
+| 161.7 | 106 |
+| 161.8 | 106.6 |
+| 161.8 | 107.9 |
+| 161.8 | 107 |
+| 161.9 | 107.3 |
+| 161.9 | 107.2 |
+| 161.9 | 106.7 |
+| 162 | 106.3 |
+| 161.9 | 104.9 |
+| 161.4 | 104.7 |
+| 161.9 | 105.7 |
+| 161.3 | 108 |
+| 161.7 | 108.3 |
+| 161.8 | 107.7 |
+| 162.1 | 110 |
+| 162.3 | 112.8 |
+| 161.9 | 117.4 |
+| 161.6 | 121.8 |
+| 161.6 | 122.6 |
+| 161.6 | 121.7 |
+| 161.6 | 123.7 |
+| 161.7 | 128.9 |
+| 161.8 | 133.2 |
+| 161.8 | 138.2 |
+| 161.8 | 138.3 |
+| 161.7 | 137.8 |
+| 162 | 135.6 |
+| 161.7 | 136.9 |
+| 161.9 | 137.1 |
+| 161.8 | 138.5 |
+| 161.9 | 138 |
+| 162.1 | 139.3 |
+| 162.1 | 139.5 |
+| 162.2 | 139.7 |
+| 162 | 145.3 |
+| 162 | 144.2 |
+| 161.8 | 146.6 |
+| 161.9 | 144.8 |
+| 161.6 | 148.4 |
+| 161.7 | 148.9 |
+| 161.9 | 151 |
+| 161.9 | 149.5 |
+| 161.8 | 151.6 |
+| 161.8 | 150.5 |
+| 161.9 | 149.2 |
+| 161.8 | 148.7 |
+| 162 | 147.9 |
+| 162.1 | 151.1 |
+| 161.7 | 152.2 |
+| 161.8 | 152.1 |
+| 162.1 | 151.5 |
+| 161.5 | 155.5 |
+| 161.9 | 157 |
+| 162.1 | 160.7 |
+| 161.9 | 157.9 |
+| 162 | 157.7 |
+| 161.9 | 159.7 |
+| 161.7 | 164.6 |
+| 161.7 | 161.3 |
+| 162.4 | 167.2 |
+| 161.9 | 163.5 |
+| 161.8 | 167.2 |
+| 162 | 172.7 |
+| 162 | 174.9 |
+| 161.6 | 175.5 |
+| 161.8 | 176.6 |
+| 161.8 | 172.9 |
+| 162.1 | 175.9 |
+| 161.9 | 176.6 |
+| 161.8 | 178.6 |
+| 161.7 | 183.1 |
+| 161.9 | 182.3 |
+| 162 | 182 |
+| 162 | 184.9 |
+| 161.9 | 184.3 |
+| 161.7 | 192.5 |
+| 162.3 | 186.3 |
+| 162 | 187.5 |
+| 162 | 189.7 |
+| 162.1 | 190.5 |
+| 162 | 192.7 |
+| 162 | 196.4 |
+| 162.1 | 197.7 |
+| 161.8 | 199.3 |
+| 161.1 | 199.1 |
+| 161.9 | 200.1 |
+| 162 | 206.4 |
+| 162.1 | 208 |
+| 161.9 | 213.4 |
+| 161.9 | 208.4 |
+| 161.8 | 210.7 |
+| 161.9 | 211.7 |
+| 161.9 | 210.1 |
+| 161.9 | 212 |
+| 161.7 | 216 |
+| 161.5 | 216.5 |
+| 161.9 | 225.1 |
+| 161.8 | 226.6 |
+| 162 | 228.7 |
+| 161.7 | 223.8 |
+| 162.3 | 231.2 |
+| 161.8 | 229.4 |
+| 161.7 | 227.6 |
+| 161.9 | 224.1 |
+| 161.9 | 227.9 |
+| 162.1 | 228.7 |
+| 162 | 227.3 |
+| 162.1 | 231 |
+| 161.8 | 236.5 |
+| 162.1 | 235.6 |
+| 162.2 | 231.6 |
+| 161.8 | 238.6 |
+| 161.7 | 233 |
+| 162.4 | 236.8 |
+| 162.1 | 230 |
+| 161.6 | 233.9 |
+| 162 | 234.5 |
+| 161.7 | 237.9 |
+| 162.1 | 240.5 |
+| 162.4 | 241.3 |
+| 162 | 239.6 |
+| 161.7 | 236.5 |
+| 161.6 | 239.4 |
+| 161.8 | 236.9 |
+| 162.4 | 238.2 |
+| 161.9 | 241.3 |
+| 161.8 | 237.8 |
+| 162 | 240.5 |
+| 161.8 | 241.1 |
+| 162.1 | 245.4 |
+| 161.8 | 241.2 |
+| 162.1 | 245.2 |
+| 161.5 | 251.6 |
+| 161.9 | 256.2 |
+| 161.6 | 258.3 |
+| 161.7 | 262.4 |
+| 162 | 265 |
+| 161.9 | 268.2 |
+| 161.7 | 265.6 |
+| 161.6 | 268.9 |
+| 161.9 | 267.6 |
+| 161.6 | 262.7 |
+| 161.8 | 264.9 |
+| 162.1 | 266.7 |
+| 161.1 | 262.9 |
+| 162.1 | 267.8 |
+| 161.8 | 265.6 |
+| 161.8 | 265.4 |
+| 161.8 | 269.9 |
+| 162.1 | 270.2 |
+| 162.2 | 269 |
+| 162.1 | 273.8 |
+| 161.8 | 275 |
+| 162 | 273.6 |
+| 161.8 | 274.9 |
+| 161.9 | 272.7 |
+| 161.9 | 274.6 |
+| 161.9 | 266.1 |
+| 162.1 | 273.4 |
+| 161.9 | 270.9 |
+| 161.9 | 273.3 |
+| 161.9 | 273.3 |
+| 162 | 273.7 |
+| 162 | 270.4 |
+| 162.2 | 273.3 |
+| 162 | 278.7 |
+| 161.8 | 278.4 |
+| 162.2 | 284 |
+| 161.8 | 280 |
+| 161.9 | 273.6 |
+| 161.9 | 272.9 |
+| 161.8 | 273.2 |
+| 162 | 274.2 |
+| 162 | 273.7 |
+| 162 | 273.8 |
+| 161.9 | 276.6 |
+| 161.8 | 274.6 |
+| 161.8 | 273.2 |
+| 162 | 278.4 |
+| 162 | 282.3 |
+| 161.8 | 276.3 |
+| 161.9 | 279.9 |
+| 162.4 | 282.4 |
+| 161.9 | 280.7 |
+| 161.9 | 287.5 |
+| 161.7 | 289.4 |
+| 162 | 296.5 |
+| 162 | 294.4 |
+| 162 | 301.1 |
+| 161.9 | 294.2 |
+| 161.7 | 296.4 |
+| 161.8 | 298.5 |
+| 162 | 297.9 |
+| 161.9 | 301.2 |
+| 161.9 | 301.8 |
+| 161.5 | 304.6 |
+| 161.3 | 301.2 |
+| 161.9 | 303.4 |
+| 162 | 314.7 |
+| 161.4 | 307.5 |
+| 161.9 | 303.9 |
+| 161.6 | 303.8 |
+| 161.6 | 305.4 |
+| 161.8 | 306.1 |
+| 161.9 | 301.5 |
+| 161.2 | 300.4 |
+| 162 | 310 |
+| 161.1 | 311.1 |
+| 161.8 | 308.8 |
+| 161.8 | 308.2 |
+| 161.6 | 305.4 |
+| 161.8 | 306 |
+| 162.3 | 305.7 |
+| 161.8 | 307.9 |
+| 161.6 | 308.7 |
+| 161.6 | 307.6 |
+| 161.4 | 307.3 |
+| 161.6 | 314.1 |
+| 162.1 | 312.5 |
+| 161.7 | 308.4 |
+| 161.5 | 314.2 |
+| 161.9 | 318 |
+| 161.7 | 310.7 |
+| 162.2 | 313.3 |
+| 161.8 | 316.5 |
+| 161.8 | 314.6 |
+| 161.8 | 321.8 |
+| 162.1 | 316.3 |
+| 161.8 | 321.3 |
+| 162 | 321.3 |
+| 161.8 | 321.1 |
+| 161.5 | 319 |
+| 161.8 | 319.4 |
+| 161.8 | 321 |
+| 161.9 | 319.9 |
+| 162.1 | 325.2 |
+| 162 | 330.1 |
+| 161.7 | 336.1 |
+| 161.7 | 330.1 |
+| 162.1 | 319.7 |
+| 161.4 | 320.5 |
+| 161.9 | 322 |
+| 161.5 | 320.9 |
+| 161.8 | 322.7 |
+| 161.5 | 323.1 |
+| 161.7 | 322 |
+| 161.7 | 325 |
+| 161.7 | 320.3 |
+| 161.6 | 327.6 |
+| 161.9 | 329.5 |
+| 161.4 | 338.6 |
+| 161.9 | 344.2 |
+| 161.5 | 339.5 |
+| 161.7 | 338 |
+| 161.3 | 341.4 |
+| 161.4 | 341.3 |
+| 161.6 | 346 |
+| 161.3 | 347.4 |
+| 161.4 | 351.7 |
+| 161.6 | 356.3 |
+| 161.5 | 359.5 |
+| 161.5 | 355.7 |
+| 161.5 | 355.9 |
+| 161.8 | 363.5 |
+| 161.6 | 366.4 |
+| 162.1 | 368.7 |
+| 161.8 | 368.5 |
+| 161.9 | 365.9 |
+| 161.4 | 383.3 |
+| 162 | 383.4 |
+| 162.4 | 379.4 |
+| 161.9 | 377.8 |
+| 162 | 381.2 |
+| 161.9 | 376.1 |
+| 161.5 | 373.5 |
+| 161.6 | 373.1 |
+| 161.5 | 368 |
+| 161.8 | 371.1 |
+| 161.6 | 370.8 |
+| 161.7 | 371.8 |
+| 161.4 | 370.3 |
+| 161.6 | 365.8 |
+| 161.4 | 369.3 |
+| 161.3 | 368 |
+| 161.7 | 371.3 |
+| 161.6 | 367.4 |
+| 161.6 | 365.8 |
+| 161.6 | 368.5 |
+| 161.6 | 371.5 |
+| 161.3 | 372.3 |
+| 161.1 | 378 |
+| 161.6 | 377.3 |
+| 161.6 | 379.1 |
+| 161.5 | 373.6 |
+| 161.6 | 364.8 |
+| 161.8 | 371.8 |
+| 161.3 | 370.1 |
+| 161.6 | 373.9 |
+| 161.7 | 376.1 |
+| 161.5 | 376.8 |
+| 161.5 | 380.7 |
+| 161.7 | 378 |
+| 161.3 | 381.9 |
+| 161.6 | 383 |
+| 161.4 | 378.2 |
+| 161.4 | 386 |
+| 161.1 | 385.8 |
+| 161.4 | 384 |
+| 161.7 | 377.8 |
+| 161.8 | 380 |
+| 161.6 | 378.4 |
+| 160.9 | 378.3 |
+| 161.6 | 379.1 |
+| 161.7 | 384.4 |
+| 162.1 | 387.9 |
+| 161.8 | 385.6 |
+| 161.4 | 380.7 |
+| 161.9 | 372.9 |
+| 161.9 | 379.7 |
+| 161.5 | 382 |
+| 161.9 | 382.7 |
+| 161.4 | 380.2 |
+| 161.6 | 374.4 |
+| 161.4 | 381.1 |
+| 161.6 | 381.1 |
+| 161.5 | 382.2 |
+| 160.9 | 385.3 |
+| 161.6 | 382 |
+| 161.4 | 382.8 |
+| 161.4 | 380.6 |
+| 161.4 | 383.8 |
+| 161.6 | 392.6 |
+| 161.8 | 393.5 |
+| 161.7 | 403 |
+| 162.3 | 402.2 |
+| 161.5 | 401 |
+| 161.8 | 393.5 |
+| 161.5 | 394.9 |
+| 161.5 | 395.4 |
+| 161.7 | 397.5 |
+| 161.3 | 391.5 |
+| 161.6 | 395.1 |
+| 161.4 | 392.9 |
+| 161.5 | 394.2 |
+| 161.6 | 398 |
+| 161.4 | 401.4 |
+| 161.6 | 397.4 |
+| 161.9 | 396.8 |
+| 161.9 | 394.3 |
+| 161.6 | 393.4 |
+| 161.7 | 388.9 |
+| 161 | 393.4 |
+| 161.7 | 399.6 |
+| 161.6 | 391.9 |
+| 161.6 | 393 |
+| 161.9 | 393.6 |
+| 161.5 | 398.8 |
+| 162 | 399.3 |
+| 161.3 | 410.1 |
+| 161.9 | 407.2 |
+| 161.9 | 409.2 |
+| 161.6 | 409.4 |
+| 161.4 | 408.7 |
+| 162 | 413.6 |
+| 161.7 | 411.5 |
+| 161.7 | 407.4 |
+| 161.5 | 408 |
+| 161.8 | 408.7 |
+| 161.9 | 411.7 |
+| 162.1 | 413 |
+| 161.4 | 415 |
+| 161.9 | 419.2 |
+| 161.9 | 421.2 |
+| 161.7 | 417.3 |
+| 162 | 419.4 |
+| 161.5 | 418.9 |
+| 161.8 | 424.1 |
+| 161.3 | 415.6 |
+| 161.7 | 409.6 |
+| 161.7 | 414.8 |
+| 161.6 | 417.3 |
+| 161.7 | 421.5 |
+| 161.7 | 418.6 |
+| 161.9 | 417.5 |
+| 161.5 | 418.2 |
+| 161.3 | 419.6 |
+| 161.1 | 418.5 |
+| 161.6 | 421.4 |
+| 161.6 | 418.3 |
+| 161.6 | 425.3 |
+| 161.3 | 420.7 |
+| 161.5 | 424.8 |
+| 161.7 | 423.8 |
+| 162.2 | 417.3 |
+| 161.4 | 423.1 |
+| 161.9 | 426 |
+| 161 | 425.2 |
+| 161.6 | 429.3 |
+| 161.4 | 431 |
+| 161.5 | 424.9 |
+| 161.1 | 426.7 |
+| 161.2 | 426.5 |
+| 161.6 | 429.3 |
+| 161.3 | 429.5 |
+| 161.5 | 444.2 |
+| 161 | 439.5 |
+| 161.4 | 437.7 |
+| 161.5 | 435.1 |
+| 161.5 | 442.7 |
+| 161.2 | 439.9 |
+| 161.3 | 445.5 |
+| 160.9 | 443 |
+| 161.5 | 435.2 |
+| 160.8 | 445.3 |
+| 161.5 | 434.4 |
+| 161.4 | 433.8 |
+| 161.8 | 439.9 |
+| 161.8 | 443.6 |
+| 161.6 | 445.4 |
+| 161.6 | 440.6 |
+| 161.5 | 447.8 |
+| 161.7 | 454.1 |
+| 161.8 | 450.6 |
+| 161.6 | 458.1 |
+| 161.7 | 458.6 |
+| 161.3 | 452 |
+| 161.8 | 452.1 |
+| 161.5 | 456.2 |
+| 161.2 | 450.7 |
+| 161.5 | 448.7 |
+| 161.7 | 451.8 |
+| 161.9 | 454.1 |
+| 161.6 | 454.2 |
+| 162 | 453.2 |
+| 161.8 | 457.8 |
+| 161.8 | 457.8 |
+| 162.1 | 452.8 |
+| 161.9 | 456.8 |
+| 161.8 | 461 |
+| 161.5 | 459.8 |
+| 162.1 | 463.1 |
+| 161.5 | 462 |
+| 162.1 | 467.6 |
+| 162 | 469.2 |
+| 161.9 | 467.8 |
+| 161.6 | 464.4 |
+| 161.7 | 465.6 |
+| 161.9 | 470.4 |
+| 162 | 467.6 |
+| 161.9 | 461.3 |
+| 161.8 | 464.1 |
+| 161.8 | 473.8 |
+| 162.2 | 477.5 |
+| 161.9 | 479.8 |
+| 161.4 | 479.7 |
+| 161.7 | 482.1 |
+| 162 | 480.3 |
+| 161.8 | 475.9 |
+| 161.8 | 479.5 |
+| 161.5 | 485.9 |
+| 161.7 | 491 |
+| 161.5 | 485.8 |
+| 161.8 | 480.7 |
+| 161.6 | 477.2 |
+| 161.5 | 479.5 |
+| 161.8 | 485.6 |
+| 162.3 | 490.4 |
+| 161.6 | 485.6 |
+| 161.9 | 491.5 |
+| 161.7 | 490.5 |
+| 161.9 | 489.9 |
+| 161.9 | 493.7 |
+| 162.3 | 494.8 |
+| 161.5 | 493.8 |
+| 161.8 | 493.8 |
+| 161.9 | 487.9 |
+| 161.8 | 498 |
+| 162 | 490.6 |
+| 161.9 | 491.8 |
+| 162 | 494 |
+| 161.8 | 484.7 |
+| 161.9 | 491.5 |
+| 162 | 490.2 |
+| 162.5 | 495.8 |
+| 161.6 | 494.7 |
+| 161.9 | 494.3 |
+| 162.3 | 498 |
+| 162.1 | 508.3 |
+| 162 | 514.6 |
+| 162.2 | 511.1 |
+| 162.3 | 522.5 |
+| 162.4 | 520.3 |
+| 162.2 | 514 |
+| 162 | 531.4 |
+| 162.4 | 527.2 |
+| 162.3 | 523.2 |
+| 162.6 | 518 |
+| 162.5 | 515.9 |
+| 162.2 | 527.8 |
+| 162 | 523.1 |
+| 162.1 | 525 |
+| 162.1 | 522.5 |
+| 162.4 | 528.3 |
+| 162.3 | 525 |
+| 162.3 | 526.2 |
+| 162.1 | 531.1 |
+| 162.3 | 530.7 |
+| 162.4 | 529 |
+| 162.3 | 534.1 |
+| 162.2 | 540 |
+| 162.1 | 540.6 |
+| 162.2 | 539.6 |
+| 162.2 | 541 |
+| 162 | 548.9 |
+| 162.5 | 551.5 |
+| 162.4 | 545.3 |
+| 162.1 | 548.3 |
+| 162.3 | 546.1 |
+| 162.2 | 539.7 |
+| 162.1 | 545.1 |
+| 162.1 | 554.7 |
+| 162.2 | 553.3 |
+| 162.3 | 556.3 |
+| 162.6 | 554.1 |
+| 162.4 | 564.3 |
+| 162 | 564.9 |
+| 162.4 | 564.8 |
+| 162.3 | 574.6 |
+| 162.4 | 568.6 |
+| 162.3 | 566.3 |
+| 162.5 | 571.5 |
+| 162.1 | 575.4 |
+| 162.3 | 562.4 |
+| 162.5 | 568.4 |
+| 162.3 | 577.7 |
+| 162.5 | 580.5 |
+| 162.4 | 583.3 |
+| 162.4 | 584.6 |
+| 162.2 | 583.6 |
+| 162.2 | 582.1 |
+| 162.5 | 581.8 |
+| 162.2 | 585.2 |
+| 162.4 | 591.8 |
+| 162.6 | 596.7 |
+| 162.1 | 591.6 |
+| 162.1 | 597.5 |
+| 162.1 | 594.2 |
+| 162.4 | 597.9 |
+| 162.3 | 603.2 |
+| 162.6 | 593.1 |
+| 162.2 | 597.6 |
+| 162.7 | 599.5 |
+| 162.6 | 599.1 |
+| 162.2 | 586.6 |
+| 162.6 | 599.3 |
+| 162.2 | 596.5 |
+| 162.3 | 590.3 |
+| 162.5 | 589.3 |
+| 162 | 596.7 |
+| 162.3 | 590.6 |
+| 162.4 | 589 |
+| 162.4 | 591.6 |
+| 162.5 | 596.9 |
+| 162.3 | 594.1 |
+| 162.5 | 590.4 |
+| 162.5 | 591.6 |
+| 162.2 | 590.7 |
+| 162.1 | 592.6 |
+| 162.3 | 597.2 |
+| 162.5 | 603.7 |
+| 162.4 | 585.6 |
+| 162.3 | 576.7 |
+| 162.2 | 572.3 |
+| 162.4 | 572.7 |
+| 162.4 | 580.2 |
+| 162.6 | 583.7 |
+| 162.2 | 578.3 |
+| 162.3 | 575.5 |
+| 162.4 | 588.2 |
+| 162.2 | 583.8 |
+| 162.4 | 592.2 |
+| 162.3 | 584.2 |
+| 162.6 | 578.4 |
+| 162.2 | 583.7 |
+| 162.4 | 585.4 |
+| 162.5 | 582.4 |
+| 162.4 | 580.1 |
+| 162.7 | 578.1 |
+| 162.3 | 581.5 |
+| 162.6 | 581.2 |
+| 162.7 | 578.3 |
+| 162.4 | 581.9 |
+| 162.3 | 586.4 |
+| 162.4 | 587.4 |
+| 162.5 | 585.8 |
+| 162.5 | 590 |
+| 162.4 | 585.8 |
+| 162.7 | 585.6 |
+| 162.5 | 588.5 |
+| 162.2 | 577.9 |
+| 162.3 | 588.8 |
+| 162.4 | 591.9 |
+| 162.3 | 589.6 |
+| 162.5 | 586.2 |
+| 162.3 | 585.8 |
+| 162.3 | 578 |
+| 162.6 | 577.2 |
+| 162.9 | 577.6 |
+| 162.7 | 579.8 |
+| 163 | 581.4 |
+| 162.7 | 581.1 |
+| 162.4 | 572.4 |
+| 162.2 | 576.9 |
+| 162.7 | 573.8 |
+| 162.4 | 569.5 |
+| 162.5 | 574.5 |
+| 162.9 | 580.9 |
+| 162.4 | 586.6 |
+| 162.8 | 583.4 |
+| 162.7 | 583.4 |
+| 162.6 | 583.9 |
+| 162.9 | 593.5 |
+| 162.7 | 594 |
+| 162.6 | 590.4 |
+| 162.4 | 591.2 |
+| 162.3 | 586.7 |
+| 162.6 | 582.4 |
+| 162.6 | 575.3 |
+| 162.3 | 574.8 |
+| 162.7 | 580.7 |
+| 162.9 | 585.4 |
+| 162.2 | 589.9 |
+| 162.7 | 591.2 |
+| 162.8 | 590.1 |
+| 162.7 | 589.4 |
+| 162.4 | 581 |
+| 162.5 | 577.2 |
+| 162.3 | 577.2 |
+| 162.4 | 581.7 |
+| 162.5 | 583.1 |
+| 162.6 | 588.6 |
+| 162.6 | 592.5 |
+| 162.4 | 584.2 |
+| 162.6 | 586.4 |
+| 162.3 | 584.7 |
+| 162.1 | 583.9 |
+| 162.4 | 578.1 |
+| 162.5 | 577.4 |
+| 162.3 | 576.8 |
+| 162.2 | 575.3 |
+| 162.8 | 568.8 |
+| 162.4 | 578.8 |
+| 162.8 | 584.7 |
+| 162.5 | 578.3 |
+| 162 | 581 |
+| 162.3 | 579.8 |
+| 162.1 | 578.8 |
+| 162.1 | 581.8 |
+| 162.3 | 593.6 |
+| 162.3 | 584.3 |
+| 162.1 | 577.3 |
+| 162.2 | 595.3 |
+| 162.2 | 596.5 |
+| 162.3 | 603.3 |
+| 162.4 | 608.1 |
+| 162 | 609.5 |
+| 162.5 | 604.1 |
+| 162.4 | 600.1 |
+| 162.8 | 596.8 |
+| 162 | 601.6 |
+| 162.3 | 596.3 |
+| 162.2 | 601.7 |
+| 162.4 | 592.1 |
+| 162.3 | 595.8 |
+| 162.4 | 587.4 |
+| 161.9 | 585.4 |
+| 162.3 | 594.4 |
+| 162.4 | 591.2 |
+| 162.3 | 598.9 |
+| 162.3 | 598.7 |
+| 162.9 | 605.1 |
+| 162.2 | 604.6 |
+| 162.1 | 602.3 |
+| 162.4 | 602.5 |
+| 162.4 | 609.2 |
+| 162.3 | 608.3 |
+| 162 | 615.1 |
+| 162.5 | 610.8 |
+| 162.4 | 607.8 |
+| 162.2 | 606 |
+| 162.2 | 613.8 |
+| 162.5 | 612.7 |
+| 162.4 | 609.3 |
+| 162.3 | 613.7 |
+| 162.3 | 615.4 |
+| 162.7 | 601.8 |
+| 162.7 | 608.4 |
+| 162.5 | 600.9 |
+| 162.5 | 609.1 |
+| 162.4 | 617.1 |
+| 162.6 | 614.9 |
+| 162.4 | 607.1 |
+| 162.3 | 604.1 |
+| 162.4 | 605.9 |
+| 162 | 610.2 |
+| 162.3 | 611.2 |
+| 162.4 | 612.1 |
+| 162.2 | 612.9 |
+| 162.7 | 612.5 |
+| 162.3 | 617.8 |
+| 162.3 | 625.9 |
+| 162.8 | 612.7 |
+| 162.4 | 612.2 |
+| 162 | 617 |
+| 162.6 | 612.9 |
+| 162.4 | 612.2 |
+| 162.3 | 616.4 |
+| 162.5 | 618.5 |
+| 162.6 | 617.6 |
+| 162.6 | 620 |
+| 162.3 | 619.4 |
+| 162.8 | 621.3 |
+| 162.8 | 615.4 |
+| 162.1 | 621.3 |
+| 162.2 | 624.4 |
+| 162.1 | 618.4 |
+| 162.3 | 615.2 |
+| 162.1 | 617.7 |
+| 162.5 | 617.6 |
+| 162.2 | 621.7 |
+| 162.3 | 626.6 |
+| 162.3 | 617.7 |
+| 162.6 | 623.3 |
+| 162.5 | 626 |
+| 162.8 | 632.1 |
+| 162.8 | 631.9 |
+| 163.1 | 634.9 |
+| 162.7 | 629.2 |
+| 162.9 | 638.1 |
+| 162.6 | 641.2 |
+| 162.4 | 641.2 |
+| 162.6 | 648 |
+| 162.6 | 652.6 |
+| 162.9 | 642.6 |
+| 163.1 | 645.9 |
+| 162.5 | 641.8 |
+| 162.4 | 646.3 |
+| 162.5 | 653.4 |
+| 162.4 | 650.9 |
+| 162.6 | 648.4 |
+| 162.6 | 647.9 |
+| 162.6 | 644.2 |
+| 162.5 | 649.2 |
+| 162.6 | 645.9 |
+| 162.7 | 635.3 |
+| 162.5 | 641.5 |
+| 162.3 | 650.4 |
+| 162.7 | 653.8 |
+| 162.4 | 644.1 |
+| 162.6 | 653.2 |
+| 162.3 | 646.1 |
+| 162.8 | 653 |
+| 162.7 | 651.1 |
+| 162.4 | 653.1 |
+| 162.4 | 662.6 |
+| 163 | 665 |
+| 162.8 | 655.7 |
+| 162.4 | 655.9 |
+| 162.3 | 652.4 |
+| 162.5 | 656.2 |
+| 162.6 | 656.7 |
+| 162.2 | 663.5 |
+| 162.8 | 660.5 |
+| 162.6 | 660.5 |
+| 162.4 | 665.6 |
+| 163 | 661.4 |
+| 162.6 | 674.7 |
+| 162.5 | 665.6 |
+| 162.7 | 657.1 |
+| 162.3 | 655.1 |
+| 162.1 | 651.4 |
+| 162.3 | 657.3 |
+| 162.4 | 657.9 |
+| 162.6 | 670.8 |
+| 162.4 | 669.4 |
+| 162.5 | 660.5 |
+| 162.3 | 664 |
+| 162.4 | 674 |
+| 162.5 | 670 |
+| 162 | 671.1 |
+| 162.7 | 665.7 |
+| 162.7 | 670.8 |
+| 163 | 664 |
+| 162.4 | 663 |
+| 162.2 | 676.3 |
+| 162.3 | 666 |
+| 162.7 | 666.4 |
+| 162.2 | 661.7 |
+| 162.1 | 660.6 |
+| 162.7 | 654.7 |
+| 162.4 | 666.1 |
+| 162.9 | 666 |
+| 162.2 | 670.4 |
+| 162.7 | 662.2 |
+| 162.5 | 662.6 |
+| 162.6 | 660.2 |
+| 162.3 | 663.3 |
+| 162.6 | 676.7 |
+| 162.6 | 668.1 |
+| 162.7 | 663.6 |
+| 163.4 | 668.3 |
+| 162.2 | 653.6 |
+| 162.7 | 653.2 |
+| 163.2 | 668.6 |
+| 162.6 | 676.8 |
+| 162.5 | 675 |
+| 162.6 | 676.4 |
+| 162.2 | 675.2 |
+| 162.1 | 679.5 |
+| 162.1 | 679.8 |
+| 161.9 | 683.6 |
+| 162.3 | 690.6 |
+| 162.3 | 683.7 |
+| 162.4 | 679.9 |
+| 162.3 | 673.6 |
+| 162.3 | 673.6 |
+| 162.3 | 675.6 |
+| 162.4 | 680.3 |
+| 162.5 | 667.5 |
+| 162.1 | 669.7 |
+| 162.4 | 670.9 |
+| 162.4 | 687.5 |
+| 162.3 | 677.2 |
+| 162.3 | 684.9 |
+| 162.3 | 697 |
+| 162.5 | 701.7 |
+| 162.1 | 694.7 |
+| 162.6 | 702.4 |
+| 162.3 | 698.6 |
+| 162.2 | 703.6 |
+| 162.1 | 712 |
+| 162.4 | 704.5 |
+| 162.7 | 712.5 |
+| 162.2 | 692.8 |
+| 162.5 | 699.2 |
+| 162.3 | 696.4 |
+| 162.4 | 696.6 |
+| 162.5 | 704.2 |
+| 162.4 | 709.6 |
+| 162.4 | 709.6 |
+| 162.3 | 706.7 |
+| 162.3 | 714.3 |
+| 162.2 | 708.4 |
+| 162.3 | 709.7 |
+| 162 | 699.1 |
+| 162.9 | 706.1 |
+| 162 | 712.8 |
+| 162.3 | 709.7 |
+| 162.1 | 704.8 |
+| 162.4 | 699.9 |
+| 162.1 | 700.2 |
+| 162.2 | 685.8 |
+| 162.2 | 695.1 |
+| 162.5 | 701 |
+| 162.2 | 697.9 |
+| 162.3 | 714.1 |
+| 162.3 | 710.3 |
+| 162.2 | 712.9 |
+| 162.4 | 716.4 |
+| 162.8 | 715 |
+| 162.3 | 708.9 |
+| 162.7 | 709.7 |
+| 162.8 | 707.5 |
+| 162.1 | 725.5 |
+| 162.6 | 729 |
+| 162.5 | 727 |
+| 162.7 | 731.1 |
+| 162.5 | 711.9 |
+| 162.8 | 711.6 |
+| 162.3 | 707 |
+| 162.3 | 712.6 |
+| 163.2 | 699.6 |
+| 162.4 | 696.6 |
+| 162.2 | 689.3 |
+| 162.4 | 686.2 |
+| 162.8 | 682.9 |
+| 162.4 | 688.7 |
+| 162.4 | 697.9 |
+| 162.5 | 699.1 |
+| 162.2 | 688.1 |
+| 162.5 | 685 |
+| 162.8 | 694.5 |
+| 162.5 | 690.7 |
+| 162.3 | 699.9 |
+| 162.2 | 700 |
+| 162.1 | 701.4 |
+| 162.1 | 692 |
+| 162.4 | 690.6 |
+| 162.4 | 681.1 |
+| 162 | 671 |
+| 162.3 | 668.9 |
+| 162.5 | 668 |
+| 161.9 | 667.9 |
+| 162 | 667.9 |
+| 162.4 | 675 |
+| 162.1 | 677.6 |
+| 162.5 | 671.3 |
+| 162.3 | 674.5 |
+| 162.3 | 678.2 |
+| 162.5 | 676.2 |
+| 162.2 | 672.3 |
+| 162.8 | 677.1 |
+| 162.5 | 683.2 |
+| 162.1 | 687.9 |
+| 162.3 | 709.4 |
+| 162 | 703.8 |
+| 162.4 | 699.1 |
+| 162.6 | 694.2 |
+| 162.7 | 692.7 |
+| 162.8 | 698.3 |
+| 162.4 | 702.8 |
+| 162.7 | 705.5 |
+| 162.1 | 715 |
+| 162.5 | 710.6 |
+| 163 | 710.5 |
+| 162.4 | 706.7 |
+| 162.7 | 715.5 |
+| 163 | 705 |
+| 162.6 | 711.5 |
+| 162.6 | 700 |
+| 162.3 | 693.9 |
+| 162.2 | 701.2 |
+| 161.9 | 698.4 |
+| 162.7 | 715.4 |
+| 162.1 | 709.5 |
+| 162.5 | 702.5 |
+| 162.4 | 701.1 |
+| 162.4 | 702.9 |
+| 162.3 | 701.7 |
+| 162 | 698.8 |
+| 162.8 | 706.1 |
+| 162.4 | 715.1 |
+| 162.4 | 708 |
+| 162.7 | 708.9 |
+| 162.4 | 716.5 |
+| 162.4 | 700.5 |
+| 162.1 | 705 |
+| 162.1 | 704.1 |
+| 162.4 | 708.7 |
+| 162.3 | 707.2 |
+| 162.3 | 705 |
+| 162.2 | 700.8 |
+| 162.3 | 708.4 |
+| 162.5 | 703.4 |
+| 162.7 | 705.8 |
+| 162.2 | 698.7 |
+| 162.7 | 694.7 |
+| 162.5 | 704.3 |
+| 161.9 | 699.3 |
+| 162.5 | 705.8 |
+| 161.9 | 716.1 |
+| 162.5 | 705 |
+| 162.3 | 710.5 |
+| 162.3 | 705.4 |
+| 162.1 | 713.8 |
+| 162 | 711.2 |
+| 162.9 | 707.4 |
+| 162.6 | 713.4 |
+| 162.4 | 702.1 |
+| 162.3 | 706.4 |
+| 162.3 | 701.6 |
+| 162.2 | 701.1 |
+| 162.2 | 693.3 |
+| 162.3 | 696.9 |
+| 162.2 | 689.4 |
+| 162.3 | 696.2 |
+| 162.5 | 687.1 |
+| 162.2 | 704.4 |
+| 162.3 | 714.3 |
+| 161.7 | 719.2 |
+| 162.1 | 723.1 |
+| 162.2 | 716.6 |
+| 162.5 | 719.5 |
+| 162.1 | 733.3 |
+| 162.3 | 730.2 |
+| 162.1 | 726.4 |
+| 162.1 | 721.1 |
+| 162.4 | 733.2 |
+| 162 | 726.7 |
+| 162.5 | 727.4 |
+| 162.4 | 731.2 |
+| 162.6 | 732.9 |
+| 162.6 | 728.3 |
+| 162.7 | 737.6 |
+| 162.4 | 753.2 |
+| 162 | 758.6 |
+| 162.1 | 760.4 |
+| 162.4 | 765.9 |
+| 162.1 | 743.7 |
+| 162.3 | 751.6 |
+| 162.3 | 745.5 |
+| 162 | 747.5 |
+| 162.3 | 746 |
+| 162.4 | 744.6 |
+| 162.5 | 747.4 |
+| 162.2 | 737 |
+| 162.5 | 762.8 |
+| 162.6 | 764.6 |
+| 162.6 | 762 |
+| 162.2 | 760.6 |
+| 162.3 | 763.4 |
+| 162.3 | 758.8 |
+| 162.7 | 750.4 |
+| 162.2 | 758.1 |
+| 162.2 | 754 |
+| 162.2 | 747.5 |
+| 162 | 753.5 |
+| 162 | 759.8 |
+| 162.1 | 760 |
+| 162.2 | 762.4 |
+| 162.1 | 765 |
+| 162.3 | 754.6 |
+| 162.3 | 757.7 |
+| 162.7 | 758.9 |
+| 162.9 | 752.3 |
+| 162.2 | 760.8 |
+| 162.7 | 747.9 |
+| 162.4 | 766.7 |
+| 162.4 | 757.6 |
+| 162.3 | 753.4 |
+| 162.7 | 751.4 |
+| 162.3 | 749 |
+| 162.6 | 748.8 |
+| 162.1 | 744.5 |
+| 162.1 | 744 |
+| 162.5 | 742.9 |
+| 162.1 | 746.1 |
+| 162.4 | 745.9 |
+| 162.2 | 757.9 |
+| 162.3 | 749.6 |
+| 161.7 | 757.7 |
+| 162.5 | 756.7 |
+| 162.9 | 745.2 |
+| 162.4 | 743.6 |
+| 162 | 735.8 |
+| 162.6 | 746.1 |
+| 162.3 | 749.7 |
+| 162.4 | 741.9 |
+| 162.2 | 734.3 |
+| 162.3 | 738 |
+| 162.2 | 742.1 |
+| 162.2 | 741.1 |
+| 163 | 742.8 |
+| 162.4 | 737.9 |
+| 162.8 | 739.8 |
+| 162.5 | 730.7 |
+| 162.3 | 736.4 |
+| 162.4 | 731.2 |
+| 162.6 | 732.7 |
+| 162.5 | 734.6 |
+| 162.7 | 730.9 |
+| 162.5 | 728.8 |
+| 162.7 | 730.3 |
+| 162.6 | 725.6 |
+| 163.1 | 736.4 |
+| 162.3 | 730.9 |
+| 162.3 | 729.3 |
+| 162.5 | 723.7 |
+| 162.2 | 732.8 |
+| 162.3 | 741.2 |
+| 162.3 | 734.2 |
+| 162.4 | 724.6 |
+| 162.2 | 721.3 |
+| 162.5 | 728.9 |
+| 162.2 | 730.6 |
+| 162.1 | 728.6 |
+| 162.3 | 724.1 |
+| 162.2 | 725.3 |
+| 162.6 | 733.8 |
+| 163 | 728.2 |
+| 162.7 | 723.6 |
+| 161.9 | 723.8 |
+| 162.4 | 749.1 |
+| 162.4 | 750.1 |
+| 162.3 | 739.3 |
+| 162.3 | 751.8 |
+| 162.2 | 746.4 |
+| 162.5 | 743 |
+| 162.2 | 744.8 |
+| 162.4 | 741.4 |
+| 162.5 | 746.7 |
+| 162.4 | 740.4 |
+| 162.3 | 750.9 |
+| 162.1 | 741.2 |
+| 162 | 740.7 |
+| 162.6 | 746.6 |
+| 161.9 | 755.5 |
+| 162.3 | 758.2 |
+| 161.9 | 753.5 |
+| 163 | 750.2 |
+| 162.5 | 733.3 |
+| 162.6 | 734.9 |
+| 162.5 | 740.9 |
+| 162.4 | 747.9 |
+| 162.4 | 746.2 |
+| 162.2 | 738.3 |
+| 162 | 744.2 |
+| 162.1 | 753.1 |
+| 162.2 | 750.4 |
+| 162.2 | 750 |
+| 162.3 | 746.5 |
+| 162.3 | 747.6 |
+| 162.3 | 752.8 |
+| 162.1 | 766.3 |
+| 162.2 | 771.5 |
+| 162.4 | 765.9 |
+| 162.8 | 771.6 |
+| 162.4 | 771.6 |
+| 162.3 | 764.3 |
+| 162 | 772.6 |
+| 162 | 759.5 |
+| 162.3 | 754.5 |
+| 162.3 | 751.3 |
+| 162.8 | 752.2 |
+| 162.3 | 767.8 |
+| 162.4 | 770.1 |
+| 162.1 | 777 |
+| 162 | 788.4 |
+| 162 | 779.6 |
+| 163 | 770.4 |
+| 162.3 | 764.2 |
+| 162.2 | 770.3 |
+| 162.5 | 760.8 |
+| 162.9 | 771.9 |
+| 162.9 | 778.1 |
+| 162.5 | 774.8 |
+| 162.8 | 776.8 |
+| 162.6 | 777.5 |
+| 162.1 | 774.2 |
+| 162.3 | 776.6 |
+| 162.4 | 778.8 |
+| 161.9 | 778.4 |
+| 162.2 | 766.8 |
+| 162.5 | 773.7 |
+| 162.7 | 774.4 |
+| 162.4 | 778.9 |
+| 162.4 | 772.4 |
+| 162.1 | 775.1 |
+| 162.3 | 781.2 |
+| 162.3 | 780 |
+| 162.2 | 790.1 |
+| 162.6 | 795.9 |
+| 162.5 | 783.9 |
+| 162.2 | 786.7 |
+| 162.3 | 789.1 |
+| 162.5 | 787 |
+| 162.5 | 780.6 |
+| 162.4 | 774.6 |
+| 162.3 | 771.9 |
+| 162.1 | 775 |
+| 162.6 | 766.9 |
+| 162.4 | 775.7 |
+| 162.2 | 781.8 |
+| 162.8 | 779.4 |
+| 162.4 | 767.6 |
+| 162.6 | 764.7 |
+| 162.6 | 763 |
+| 163 | 764.6 |
+| 162.7 | 770.6 |
+| 162.5 | 781.6 |
+| 162.5 | 780.6 |
+| 162.4 | 787.2 |
+| 162.1 | 794.8 |
+| 162.3 | 799 |
+| 162.2 | 796.9 |
+| 162.6 | 801.2 |
+| 162.4 | 798.7 |
+| 163.2 | 796.9 |
+| 162.6 | 796.2 |
+| 162.1 | 791.2 |
+| 162.8 | 794.9 |
+| 162.7 | 791.5 |
+| 162.2 | 786.1 |
+| 163.1 | 788.1 |
+| 162.4 | 790.1 |
+| 162.6 | 793.8 |
+| 162.1 | 794.4 |
+| 162.7 | 784.8 |
+| 163 | 796.8 |
+| 162.6 | 792.9 |
+| 163.4 | 791.5 |
+| 163.3 | 792.9 |
+| 162.7 | 794.7 |
+| 162.3 | 784.2 |
+| 162.6 | 785.9 |
+| 162.4 | 783.6 |
+| 162.7 | 779.4 |
+| 162.9 | 791.6 |
+| 163 | 798 |
+| 163 | 806.9 |
+| 162.5 | 810.7 |
+| 162.5 | 814.5 |
+| 162.6 | 815.4 |
+| 162.5 | 811.3 |
+| 162.8 | 811.4 |
+| 162.5 | 812.9 |
+| 162.2 | 815.4 |
+| 162.7 | 804.7 |
+| 162.6 | 800.8 |
+| 162.8 | 809.2 |
+| 163.1 | 805 |
+| 163.1 | 807.5 |
+| 162.7 | 814.5 |
+| 162.2 | 809.9 |
+| 162.2 | 805.6 |
+| 162.1 | 802.3 |
+| 162 | 815.5 |
+| 162.3 | 799.1 |
+| 162.3 | 798.3 |
+| 162.1 | 811 |
+| 162.5 | 810.3 |
+| 161.9 | 804.2 |
+| 162.3 | 803 |
+| 162.4 | 805 |
+| 162.2 | 817.8 |
+| 162.3 | 824.1 |
+| 162.3 | 814.3 |
+| 162.2 | 815.5 |
+| 162.4 | 811.8 |
+| 162.4 | 812.2 |
+| 162 | 804 |
+| 161.7 | 819.5 |
+| 162.5 | 805.5 |
+| 162.5 | 830.5 |
+| 162.1 | 821.3 |
+| 162.1 | 814.1 |
+| 162.2 | 803.4 |
+| 162.3 | 800.6 |
+| 162.7 | 812.6 |
+| 162.5 | 813.5 |
+| 162.1 | 804.1 |
+| 162.1 | 811.7 |
+| 162 | 809.5 |
+| 162.5 | 813.8 |
+| 163.1 | 818 |
+| 162.4 | 817.1 |
+| 162.6 | 808.4 |
+| 162.5 | 805.4 |
+| 162.2 | 818.6 |
+| 162.2 | 828.5 |
+| 162.2 | 831.9 |
+| 162.1 | 838 |
+| 162.4 | 835.4 |
+| 162.4 | 825.1 |
+| 162.5 | 834.6 |
+| 162.7 | 839.9 |
+| 162 | 832.5 |
+| 162.7 | 819.2 |
+| 162.8 | 820.9 |
+| 162.1 | 829.8 |
+| 162.4 | 826.4 |
+| 162.4 | 824.1 |
+| 162.4 | 817.2 |
+| 162.8 | 813.2 |
+| 162.2 | 821.8 |
+| 162.5 | 817.3 |
+| 162.5 | 819.2 |
+| 162.3 | 824.1 |
+| 162.7 | 827.7 |
+| 162.5 | 830.7 |
+| 162.1 | 830.5 |
+| 163 | 827.5 |
+| 162.2 | 828.9 |
+| 162.3 | 824.5 |
+| 161.9 | 832.8 |
+| 162.2 | 833.5 |
+| 162.5 | 819.3 |
+| 162.2 | 823 |
+| 162.3 | 813.6 |
+| 162.4 | 812.4 |
+| 162.2 | 807.4 |
+| 162.3 | 811 |
+| 162.4 | 798.8 |
+| 162.3 | 795.5 |
+| 162.5 | 796.2 |
+| 162.5 | 809.4 |
+| 162.5 | 809.5 |
+| 162.5 | 816.5 |
+| 162.4 | 831.7 |
+| 162.8 | 829.2 |
+| 162 | 827.6 |
+| 161.9 | 837.2 |
+| 162.2 | 829.7 |
+| 162.2 | 833.8 |
+| 162.2 | 827.4 |
+| 162.7 | 831.2 |
+| 162.3 | 831.3 |
+| 162.2 | 831.7 |
+| 162.2 | 830.7 |
+| 162.7 | 835.2 |
+| 162.7 | 838.3 |
+| 162.4 | 834.4 |
+| 162 | 839.4 |
+| 162.4 | 835.6 |
+| 162.7 | 828.9 |
+| 162.7 | 832.1 |
+| 162.4 | 824.1 |
+| 162.7 | 822.8 |
+| 162.3 | 819.1 |
+| 162.2 | 824.6 |
+| 162 | 830.9 |
+| 162.4 | 827.6 |
+| 162.4 | 816.6 |
+| 161.7 | 816.3 |
+| 161.8 | 815.1 |
+| 162.8 | 812.1 |
+| 162.4 | 809.6 |
+| 162.6 | 816 |
+| 162.1 | 816.8 |
+| 162.1 | 827.9 |
+| 162.1 | 826.8 |
+| 162.1 | 821.3 |
+| 162.8 | 820.4 |
+| 162.2 | 823.3 |
+| 162.5 | 829.6 |
+| 162.5 | 814.6 |
+| 162.4 | 820.3 |
+| 162 | 837.9 |
+| 162.2 | 834.9 |
+| 161.9 | 841.4 |
+| 161.9 | 848.4 |
+| 162.4 | 839.5 |
+| 162.1 | 844.5 |
+| 162 | 846.3 |
+| 162.3 | 845 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+
+**`hole_ramp_rel130` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 129.4
+- `free_shell.areal_density_ratio`: 0.876
+- `free_shell.msd.1 ns`: 57.53
+- `free_shell.msd.10 ns`: 221
+- `free_shell.msd.end`: 3159
+- `free_shell.msd.end_ns`: 68
+- `params.hole_hold_ps`: 1e+04
+- `params.release_t_c`: 130
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `scaffold.d_nm`: 2.5
+- `scaffold.nearest_tethered_r_held_min`: 53.1
+- `scaffold.nearest_tethered_r_t0`: 55
+- `scaffold.tethered_fraction`: 0.5436
+- T (°C): 25
+- `t_close_ns`: 33.25
+- `thickness_final`: 134.2
+- `thickness_t0`: 163.4
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 129.8 | — |
+| 129.8 | — |
+| 130 | — |
+| 129.9 | — |
+| 130.2 | — |
+| 130.4 | — |
+| 130 | — |
+| 129.7 | — |
+| 130 | — |
+| 130.3 | — |
+| 129.9 | — |
+| 129.6 | — |
+| 129.8 | — |
+| 129.6 | — |
+| 130.1 | — |
+| 130.2 | — |
+| 129.7 | — |
+| 130.3 | — |
+| 130.3 | — |
+| 129.9 | — |
+| 129.6 | — |
+| 129.7 | — |
+| 129.9 | — |
+| 129.6 | — |
+| 130 | — |
+| 130.1 | — |
+| 129.8 | — |
+| 129.8 | — |
+| 129.8 | — |
+| 130.1 | — |
+| 130.2 | — |
+| 129.8 | — |
+| 129.9 | — |
+| 130 | — |
+| 130.4 | — |
+| 130.2 | — |
+| 129.8 | — |
+| 130.3 | — |
+| 130.3 | — |
+| 130.1 | — |
+| 129.9 | — |
+| 130.2 | — |
+| 129.9 | — |
+| 130.2 | — |
+| 130.1 | — |
+| 130.4 | — |
+| 130.3 | — |
+| 130.1 | — |
+| 129.6 | — |
+| 129.9 | — |
+| 129.9 | — |
+| 130 | — |
+| 129.6 | — |
+| 129.9 | — |
+| 129.7 | — |
+| 130.2 | — |
+| 130 | — |
+| 129.3 | — |
+| 129.8 | — |
+| 129.8 | — |
+| 129.9 | — |
+| 130.2 | — |
+| 130.2 | — |
+| 130.1 | — |
+| 130.1 | — |
+| 130.4 | — |
+| 130.1 | — |
+| 130.7 | — |
+| 130.6 | — |
+| 130.1 | — |
+| 130.4 | — |
+| 130.8 | — |
+| 130.6 | — |
+| 130.2 | — |
+| 131.2 | — |
+| 130 | — |
+| 130.7 | — |
+| 130.4 | — |
+| 130.6 | — |
+| 131.2 | — |
+| 131.1 | — |
+| 130.3 | — |
+| 130.2 | — |
+| 130.5 | — |
+| 129.8 | — |
+| 130.7 | — |
+| 130.9 | — |
+| 131 | — |
+| 131.5 | — |
+| 130.7 | — |
+| 131 | — |
+| 131.7 | — |
+| 131.3 | — |
+| 131.7 | — |
+| 130.7 | — |
+| 131.9 | — |
+| 131.5 | — |
+| 131.5 | — |
+| 131 | — |
+| 131.6 | — |
+| 131.6 | — |
+| 132 | — |
+| 131.8 | — |
+| 131.9 | — |
+| 132.2 | — |
+| 131.7 | — |
+| 131.9 | — |
+| 131.4 | — |
+| 131.7 | — |
+| 131.4 | — |
+| 132.2 | — |
+| 131.3 | — |
+| 131.8 | — |
+| 131.8 | — |
+| 132.1 | — |
+| 132.4 | — |
+| 133 | — |
+| 132.2 | — |
+| 132.6 | — |
+| 132.8 | — |
+| 132.6 | — |
+| 133 | — |
+| 132.9 | — |
+| 132.9 | — |
+| 133.4 | — |
+| 133.1 | — |
+| 132.9 | — |
+| 133 | — |
+| 133.4 | — |
+| 133.4 | — |
+| 133.5 | — |
+| 133.1 | — |
+| 133.3 | — |
+| 133.5 | — |
+| 133.3 | — |
+| 133.5 | — |
+| 133.5 | — |
+| 133.5 | — |
+| 133.3 | — |
+| 133.5 | — |
+| 134.2 | — |
+| 133.3 | — |
+| 133.6 | — |
+| 133.9 | — |
+| 133.8 | — |
+| 134.1 | — |
+| 134.6 | — |
+| 134.1 | — |
+| 133.8 | — |
+| 134.3 | — |
+| 134 | — |
+| 134.1 | — |
+| 135.7 | — |
+| 135.6 | — |
+| 134.7 | — |
+| 135.1 | — |
+| 135 | — |
+| 135.6 | — |
+| 135.1 | — |
+| 135.5 | — |
+| 134.7 | — |
+| 134.7 | — |
+| 134.9 | — |
+| 135.9 | — |
+| 134.8 | — |
+| 134.6 | — |
+| 135.1 | — |
+| 135.3 | — |
+| 135.6 | — |
+| 135.3 | — |
+| 136 | — |
+| 136.2 | — |
+| 136 | — |
+| 135.2 | — |
+| 135.9 | — |
+| 136.2 | — |
+| 135.7 | — |
+| 136.3 | — |
+| 136.5 | — |
+| 136.2 | — |
+| 136.1 | — |
+| 136.7 | — |
+| 137.7 | — |
+| 136.3 | — |
+| 137.7 | — |
+| 137.3 | — |
+| 136.6 | — |
+| 136.7 | — |
+| 136.3 | — |
+| 136.7 | — |
+| 136.6 | — |
+| 136.5 | — |
+| 137.1 | — |
+| 137 | — |
+| 136.9 | — |
+| 137.4 | — |
+| 137.2 | — |
+| 138.1 | — |
+| 137.4 | — |
+| 137.1 | — |
+| 137.6 | — |
+| 137.9 | — |
+| 137.7 | — |
+| 138.1 | — |
+| 137.6 | — |
+| 137.7 | — |
+| 137.7 | — |
+| 137.9 | — |
+| 138.1 | — |
+| 138.4 | — |
+| 139.5 | — |
+| 138.4 | — |
+| 139.8 | — |
+| 138.4 | — |
+| 138.6 | — |
+| 139.3 | — |
+| 139.1 | — |
+| 139.3 | — |
+| 139.9 | — |
+| 138.6 | — |
+| 139.4 | — |
+| 139.6 | — |
+| 139.6 | — |
+| 140.3 | — |
+| 140.6 | — |
+| 139.9 | — |
+| 139.9 | — |
+| 139.7 | — |
+| 140.4 | — |
+| 140.7 | — |
+| 140.7 | — |
+| 141.1 | — |
+| 140.2 | — |
+| 140.3 | — |
+| 141.1 | — |
+| 140.6 | — |
+| 141.1 | — |
+| 141.3 | — |
+| 141.6 | — |
+| 141.9 | — |
+| 142.2 | — |
+| 141.7 | — |
+| 141.4 | — |
+| 141.8 | — |
+| 141.8 | — |
+| 142.9 | — |
+| 142.9 | — |
+| 143.1 | — |
+| 142.4 | — |
+| 142.6 | — |
+| 143.4 | — |
+| 142.5 | — |
+| 144.2 | — |
+| 142.7 | — |
+| 142.6 | — |
+| 143.4 | — |
+| 143.3 | — |
+| 143.6 | — |
+| 144.1 | — |
+| 144.3 | — |
+| 144.5 | — |
+| 143.6 | — |
+| 144.4 | — |
+| 144.1 | — |
+| 144 | — |
+| 143.7 | — |
+| 144.5 | — |
+| 144.8 | — |
+| 144.8 | — |
+| 144.6 | — |
+| 144.2 | — |
+| 144 | — |
+| 144.9 | — |
+| 145.4 | — |
+| 144.9 | — |
+| 145.2 | — |
+| 143.9 | — |
+| 144.2 | — |
+| 145.4 | — |
+| 145.8 | — |
+| 145.4 | — |
+| 146 | — |
+| 146 | — |
+| 145.8 | — |
+| 146.7 | — |
+| 146.3 | — |
+| 145.8 | — |
+| 146.3 | — |
+| 147.5 | — |
+| 146.7 | — |
+| 146.2 | — |
+| 146.7 | — |
+| 147.3 | — |
+| 146.9 | — |
+| 146.8 | — |
+| 147.4 | — |
+| 147.4 | — |
+| 146.9 | — |
+| 147 | — |
+| 146.7 | — |
+| 147.1 | — |
+| 148.3 | — |
+| 148.3 | — |
+| 148.1 | — |
+| 148.4 | — |
+| 148.8 | — |
+| 148.1 | — |
+| 148.3 | — |
+| 148.2 | — |
+| 149 | — |
+| 148.5 | — |
+| 149.7 | — |
+| 148.8 | — |
+| 148.4 | — |
+| 149.3 | — |
+| 149.1 | — |
+| 149.5 | — |
+| 150.4 | — |
+| 150 | — |
+| 151 | — |
+| 150.3 | — |
+| 150 | — |
+| 150 | — |
+| 150.4 | — |
+| 150.8 | — |
+| 149.5 | — |
+| 150 | — |
+| 150.2 | — |
+| 151.1 | — |
+| 151.1 | — |
+| 151.3 | — |
+| 151.1 | — |
+| 150.2 | — |
+| 151.3 | — |
+| 152.9 | — |
+| 152 | — |
+| 152.1 | — |
+| 152.7 | — |
+| 151.3 | — |
+| 152.2 | — |
+| 154.1 | — |
+| 153.3 | — |
+| 152.2 | — |
+| 152.9 | — |
+| 152.2 | — |
+| 153.1 | — |
+| 153.1 | — |
+| 153.2 | — |
+| 153.4 | — |
+| 154.9 | — |
+| 153.4 | — |
+| 153.5 | — |
+| 153.4 | — |
+| 153.8 | — |
+| 154 | — |
+| 154 | — |
+| 154.7 | — |
+| 155.4 | — |
+| 154.5 | — |
+| 155.2 | — |
+| 154.9 | — |
+| 155.6 | — |
+| 155.4 | — |
+| 155.7 | — |
+| 155.8 | — |
+| 156.9 | — |
+| 156.9 | — |
+| 156.2 | — |
+| 155.3 | — |
+| 156.1 | — |
+| 157.1 | — |
+| 158.1 | — |
+| 158.1 | — |
+| 157.1 | — |
+| 157.3 | — |
+| 157.1 | — |
+| 157.9 | — |
+| 158.5 | — |
+| 158.3 | — |
+| 158 | — |
+| 158.9 | — |
+| 158.9 | — |
+| 160.4 | — |
+| 159.6 | — |
+| 159.9 | — |
+| 160 | — |
+| 158.4 | — |
+| 160.3 | — |
+| 160.3 | — |
+| 160 | — |
+| 159.3 | — |
+| 159.3 | — |
+| 160.7 | — |
+| 159.7 | — |
+| 160.9 | — |
+| 161.3 | — |
+| 162.4 | — |
+| 161.9 | — |
+| 162.2 | — |
+| 161.8 | — |
+| 162 | — |
+| 161.9 | — |
+| 163 | — |
+| 162.8 | — |
+| 162 | — |
+| 161.8 | — |
+| 162.7 | — |
+| 161.4 | — |
+| 162.2 | — |
+| 161.7 | — |
+| 162.3 | — |
+| 162.1 | — |
+| 161.3 | — |
+| 162.8 | — |
+| 161.3 | — |
+| 161.1 | — |
+| 163.1 | — |
+| 162 | — |
+| 161.8 | — |
+| 162.3 | — |
+| 163.1 | — |
+| 162.1 | — |
+| 161.9 | — |
+| 161.4 | — |
+| 162 | — |
+| 162 | — |
+| 162.6 | — |
+| 162.4 | — |
+| 162.5 | — |
+| 163.6 | — |
+| 162 | — |
+| 162.7 | — |
+| 161.9 | — |
+| 162 | — |
+| 161.5 | — |
+| 162.6 | — |
+| 162.6 | — |
+| 162.2 | — |
+| 162.2 | — |
+| 161.4 | — |
+| 161.5 | — |
+| 162.2 | — |
+| 161 | — |
+| 161.7 | — |
+| 162.8 | — |
+| 161.5 | — |
+| 160.8 | — |
+| 161.4 | — |
+| 163 | — |
+| 162.5 | — |
+| 161.8 | — |
+| 161.5 | — |
+| 161.4 | — |
+| 161 | — |
+| 161.7 | — |
+| 162.3 | — |
+| 161.8 | — |
+| 163.5 | — |
+| 162.6 | — |
+| 160.7 | — |
+| 161.6 | — |
+| 160.6 | — |
+| 161.9 | — |
+| 160.8 | — |
+| 161.1 | — |
+| 161.4 | — |
+| 161.8 | — |
+| 160.3 | — |
+| 162 | — |
+| 160.8 | — |
+| 161.6 | — |
+| 161.6 | — |
+| 161.7 | — |
+| 162.3 | — |
+| 162.3 | — |
+| 162 | — |
+| 162.8 | — |
+| 162.9 | — |
+| 161.6 | — |
+| 161.6 | — |
+| 162 | — |
+| 162.8 | — |
+| 162 | — |
+| 160.8 | — |
+| 161 | — |
+| 161.5 | — |
+| 162.7 | — |
+| 161.7 | — |
+| 162.1 | — |
+| 160.4 | — |
+| 162.3 | — |
+| 160.4 | — |
+| 161.7 | — |
+| 161.5 | — |
+| 161.8 | — |
+| 161 | — |
+| 161.3 | — |
+| 161.6 | — |
+| 161.7 | — |
+| 161.3 | — |
+| 161.7 | — |
+| 162.4 | — |
+| 162.2 | — |
+| 162.2 | — |
+| 163.7 | — |
+| 162.5 | — |
+| 161.8 | — |
+| 162.1 | — |
+| 162.7 | — |
+| 162.9 | — |
+| 160.6 | — |
+| 162.2 | — |
+| 161.9 | — |
+| 162.6 | — |
+| 163 | — |
+| 162.8 | — |
+| 161.9 | — |
+| 162.4 | — |
+| 162.6 | — |
+| 162.8 | — |
+| 162.1 | — |
+| 161.8 | — |
+| 162.3 | — |
+| 162.4 | — |
+| 161.1 | — |
+| 160.8 | — |
+| 161.7 | — |
+| 162.7 | — |
+| 160.5 | — |
+| 161.5 | — |
+| 161 | — |
+| 161.9 | — |
+| 161.1 | — |
+| 162.1 | — |
+| 161.3 | — |
+| 162 | — |
+| 161.8 | — |
+| 161.3 | — |
+| 162.4 | — |
+| 161.9 | — |
+| 162 | — |
+| 162.3 | — |
+| 161.9 | — |
+| 162.8 | — |
+| 161.6 | — |
+| 162 | — |
+| 163.3 | — |
+| 162.8 | — |
+| 164.2 | — |
+| 162.6 | — |
+| 162.1 | — |
+| 163.3 | — |
+| 162.8 | — |
+| 162.3 | — |
+| 162.5 | — |
+| 163.1 | — |
+| 161.3 | — |
+| 162.6 | — |
+| 162.4 | — |
+| 163.4 | — |
+| 163.2 | — |
+| 162 | — |
+| 161.8 | — |
+| 162 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 162.6 | — |
+| 162.1 | — |
+| 162.9 | — |
+| 162.1 | — |
+| 163.4 | — |
+| 162.6 | — |
+| 162 | — |
+| 162.9 | — |
+| 161.6 | — |
+| 161.3 | — |
+| 162.2 | — |
+| 161.5 | — |
+| 162 | — |
+| 161.9 | — |
+| 162.4 | — |
+| 162.1 | — |
+| 162.4 | — |
+| 162.3 | — |
+| 162.5 | — |
+| 161.8 | — |
+| 161.9 | — |
+| 160.8 | — |
+| 162.4 | — |
+| 162.2 | — |
+| 162.1 | — |
+| 161.7 | — |
+| 161.6 | — |
+| 162.6 | — |
+| 161.6 | — |
+| 161.8 | — |
+| 162 | — |
+| 162.9 | — |
+| 163.1 | — |
+| 162.2 | — |
+| 163.4 | 0 |
+| 163.3 | 6.892 |
+| 163 | 9.627 |
+| 163.1 | 11.22 |
+| 162.9 | 12.91 |
+| 163.7 | 13.47 |
+| 163.2 | 14.98 |
+| 163.1 | 15.32 |
+| 163.4 | 15.29 |
+| 163.2 | 15.66 |
+| 163 | 16.09 |
+| 163.5 | 17.3 |
+| 163.3 | 17.48 |
+| 163.1 | 18.36 |
+| 163.3 | 18.63 |
+| 163.3 | 19.49 |
+| 163.5 | 19.9 |
+| 163.3 | 20.36 |
+| 163.3 | 20.38 |
+| 162.9 | 20.79 |
+| 163.3 | 21.04 |
+| 163.1 | 21.91 |
+| 162.9 | 22.7 |
+| 163.1 | 22.33 |
+| 163.3 | 22.47 |
+| 163.3 | 23.15 |
+| 163.1 | 24.25 |
+| 163 | 24.57 |
+| 162.5 | 24.52 |
+| 162.9 | 25.83 |
+| 162.9 | 25.38 |
+| 163 | 25.36 |
+| 163.2 | 25.97 |
+| 162.8 | 27.06 |
+| 163.4 | 28.08 |
+| 163 | 27.69 |
+| 163.1 | 27.91 |
+| 163.1 | 28.3 |
+| 163 | 28.82 |
+| 162.8 | 28.02 |
+| 163.3 | 27.92 |
+| 162.7 | 28.45 |
+| 163 | 28.86 |
+| 163.2 | 29.48 |
+| 163.4 | 29.73 |
+| 162.9 | 29.8 |
+| 163.4 | 30.09 |
+| 163.4 | 31.24 |
+| 163.4 | 30.62 |
+| 163.2 | 30.28 |
+| 162.9 | 29.94 |
+| 163.2 | 29.94 |
+| 162.8 | 30.68 |
+| 163.4 | 31.05 |
+| 163.2 | 30.81 |
+| 162.9 | 32.07 |
+| 163.2 | 32.95 |
+| 163.1 | 34.08 |
+| 163.2 | 34.51 |
+| 163.3 | 33.97 |
+| 163 | 33.89 |
+| 163.3 | 32.89 |
+| 163.2 | 33.68 |
+| 163.1 | 34.97 |
+| 163.1 | 35.69 |
+| 163.1 | 36 |
+| 163.4 | 35.9 |
+| 163.1 | 35.86 |
+| 163 | 35.87 |
+| 163.3 | 36.37 |
+| 162.8 | 37.03 |
+| 163 | 35.84 |
+| 163.2 | 36.25 |
+| 163.3 | 36.98 |
+| 163 | 36.77 |
+| 163 | 37.97 |
+| 163 | 37.11 |
+| 163 | 37.3 |
+| 163.1 | 37.15 |
+| 162.9 | 37.23 |
+| 162.9 | 37.58 |
+| 163 | 36.93 |
+| 163.3 | 38.46 |
+| 162.8 | 37.48 |
+| 162.8 | 38.03 |
+| 163.4 | 38.21 |
+| 162.9 | 38.78 |
+| 163.4 | 39.62 |
+| 163.1 | 39.9 |
+| 163.2 | 39.98 |
+| 163.1 | 39.87 |
+| 162.9 | 38.59 |
+| 163.2 | 38.23 |
+| 163.1 | 38.09 |
+| 163.1 | 39.11 |
+| 163.1 | 40.86 |
+| 163 | 42.69 |
+| 163 | 42.1 |
+| 162.9 | 42.75 |
+| 163.4 | 43.4 |
+| 163.2 | 42.92 |
+| 162.9 | 42.6 |
+| 162.9 | 44.15 |
+| 163.4 | 45.19 |
+| 162.7 | 45.6 |
+| 162.8 | 45.91 |
+| 163.4 | 45.3 |
+| 162.9 | 45.97 |
+| 163.2 | 46 |
+| 163.1 | 45.88 |
+| 163.1 | 45.45 |
+| 163.1 | 45.64 |
+| 162.8 | 44.75 |
+| 162.8 | 44.97 |
+| 162.8 | 44.94 |
+| 163.2 | 44.84 |
+| 162.4 | 44.05 |
+| 163.3 | 44.67 |
+| 163.3 | 45.87 |
+| 163.4 | 46.67 |
+| 162.6 | 46.88 |
+| 163 | 47.33 |
+| 162.9 | 46.98 |
+| 163.3 | 45.95 |
+| 163.1 | 45.16 |
+| 163.3 | 45.47 |
+| 163.1 | 46.57 |
+| 163 | 45.62 |
+| 163.1 | 46.03 |
+| 162.9 | 46.23 |
+| 163.5 | 46.84 |
+| 163 | 45.79 |
+| 162.7 | 46.87 |
+| 162.8 | 46.85 |
+| 162.9 | 48.87 |
+| 162.7 | 48.81 |
+| 163.1 | 48.86 |
+| 162.8 | 48.59 |
+| 162.8 | 48.08 |
+| 162.8 | 47.06 |
+| 163.1 | 46.76 |
+| 162.7 | 45.91 |
+| 163 | 44.54 |
+| 163.1 | 45.9 |
+| 163 | 48.29 |
+| 163.2 | 48.39 |
+| 163.1 | 47.88 |
+| 162.9 | 48.43 |
+| 163.4 | 47.98 |
+| 162.5 | 47.81 |
+| 162.9 | 47.67 |
+| 163 | 48.35 |
+| 163 | 48.65 |
+| 162.6 | 47.86 |
+| 162.7 | 48.3 |
+| 162.8 | 48.14 |
+| 162.9 | 48.18 |
+| 162.8 | 49.11 |
+| 163 | 49.5 |
+| 163.1 | 49.6 |
+| 162.9 | 49.38 |
+| 162.9 | 49.53 |
+| 162.9 | 49.62 |
+| 162.9 | 50.55 |
+| 163 | 51.46 |
+| 162.9 | 51.33 |
+| 163 | 50.27 |
+| 163.1 | 51.39 |
+| 162.9 | 53.03 |
+| 162.8 | 53.62 |
+| 163.1 | 53.17 |
+| 162.8 | 53.06 |
+| 162.9 | 53.18 |
+| 162.8 | 52.93 |
+| 163.1 | 52.29 |
+| 163.2 | 51.7 |
+| 162.9 | 51.44 |
+| 162.8 | 51.58 |
+| 162.8 | 52.84 |
+| 162.8 | 52.85 |
+| 162.6 | 53.07 |
+| 162.8 | 54.05 |
+| 162.6 | 55.12 |
+| 163 | 54.48 |
+| 163.1 | 54.66 |
+| 162.8 | 54.84 |
+| 162.8 | 54.48 |
+| 163.1 | 56.21 |
+| 162.9 | 56.63 |
+| 162.9 | 55.48 |
+| 163 | 55.67 |
+| 162.7 | 56.02 |
+| 163.2 | 56.59 |
+| 162.8 | 56.75 |
+| 163.3 | 56.77 |
+| 162.7 | 58.33 |
+| 162.6 | 58.27 |
+| 162.8 | 58.79 |
+| 162.9 | 56.66 |
+| 162.8 | 57.07 |
+| 162.8 | 57.53 |
+| 163.1 | 57.5 |
+| 163 | 57.32 |
+| 162.7 | 57.53 |
+| 162.8 | 56.87 |
+| 163.2 | 57.6 |
+| 162.9 | 57.91 |
+| 163 | 57.82 |
+| 162.9 | 58.11 |
+| 162.7 | 57.98 |
+| 162.6 | 59.34 |
+| 162.9 | 59.36 |
+| 162.8 | 58.93 |
+| 163 | 58.04 |
+| 163 | 60.4 |
+| 162.6 | 59.87 |
+| 162.7 | 59.81 |
+| 162.9 | 59.7 |
+| 162.8 | 59.25 |
+| 162.9 | 57.56 |
+| 162.9 | 57.71 |
+| 162.7 | 59.19 |
+| 162.8 | 59.26 |
+| 162.7 | 58.82 |
+| 162.7 | 59.53 |
+| 162.8 | 59.39 |
+| 163.1 | 59.55 |
+| 162.9 | 60.6 |
+| 163.3 | 60.68 |
+| 163.1 | 61.47 |
+| 163.2 | 60.7 |
+| 162.6 | 60.82 |
+| 162.5 | 59.65 |
+| 162.8 | 58.99 |
+| 162.9 | 59.11 |
+| 162.9 | 59.85 |
+| 162.9 | 61.53 |
+| 163 | 61.57 |
+| 163.2 | 60.79 |
+| 163.1 | 61.19 |
+| 162.8 | 61.89 |
+| 163.1 | 64.16 |
+| 163.2 | 62.45 |
+| 163.1 | 62.48 |
+| 162.7 | 61.43 |
+| 163.1 | 61.91 |
+| 162.9 | 64.05 |
+| 162.9 | 63.43 |
+| 162.9 | 64.43 |
+| 162.7 | 64.26 |
+| 163.2 | 63.6 |
+| 163 | 64.04 |
+| 163 | 63.81 |
+| 162.8 | 65.7 |
+| 162.7 | 66.9 |
+| 162.8 | 66.43 |
+| 162.9 | 65.34 |
+| 163 | 65.57 |
+| 163.1 | 65.63 |
+| 162.5 | 66.35 |
+| 162.7 | 65.71 |
+| 162.8 | 65.13 |
+| 162.9 | 65.07 |
+| 163.1 | 65.03 |
+| 163.1 | 65.75 |
+| 162.8 | 66.69 |
+| 162.5 | 66.88 |
+| 162.8 | 66.75 |
+| 162.8 | 66.26 |
+| 163.1 | 66.31 |
+| 163.1 | 66.11 |
+| 162.7 | 66.18 |
+| 162.9 | 67.79 |
+| 162.8 | 69.19 |
+| 163 | 67.86 |
+| 163.4 | 68.46 |
+| 163 | 70.44 |
+| 162.7 | 68.22 |
+| 162.8 | 69.4 |
+| 163.1 | 70.31 |
+| 162.9 | 69.08 |
+| 162.8 | 68.11 |
+| 163.1 | 69.45 |
+| 162.6 | 69.15 |
+| 162.8 | 69.44 |
+| 163 | 69.67 |
+| 162.8 | 70.76 |
+| 162.9 | 70.38 |
+| 162.6 | 69.7 |
+| 162.6 | 71.85 |
+| 162.9 | 71.55 |
+| 163.1 | 71.82 |
+| 162.8 | 71.6 |
+| 163 | 71.63 |
+| 163.1 | 71.88 |
+| 162.7 | 72.78 |
+| 162.6 | 72.53 |
+| 162.7 | 71.39 |
+| 162.8 | 72.06 |
+| 162.7 | 72.46 |
+| 163 | 72.71 |
+| 163.1 | 73.76 |
+| 162.9 | 74.25 |
+| 162.6 | 74.09 |
+| 162.7 | 74.46 |
+| 163.1 | 75.39 |
+| 162.8 | 76.27 |
+| 162.7 | 76.78 |
+| 162.7 | 76.39 |
+| 162.6 | 75.49 |
+| 162.9 | 75.16 |
+| 163 | 76.05 |
+| 162.9 | 75.23 |
+| 162.6 | 75.54 |
+| 162.9 | 75.6 |
+| 162.8 | 76.85 |
+| 162.8 | 75.98 |
+| 162.6 | 76.93 |
+| 163.4 | 77.35 |
+| 162.7 | 78.7 |
+| 163.1 | 78.79 |
+| 162.7 | 79.15 |
+| 162.8 | 78.73 |
+| 162.7 | 77.77 |
+| 163.2 | 79.2 |
+| 162.8 | 79.63 |
+| 163.2 | 78.85 |
+| 163 | 80.32 |
+| 162.8 | 79.75 |
+| 163.2 | 79 |
+| 162.8 | 79.64 |
+| 162.9 | 79.92 |
+| 162.7 | 79.88 |
+| 162.7 | 79.68 |
+| 163.2 | 80.35 |
+| 162.9 | 80.37 |
+| 162.9 | 80.23 |
+| 163 | 80.75 |
+| 163.2 | 81.24 |
+| 163 | 79.78 |
+| 162.2 | 79.52 |
+| 162.9 | 80.61 |
+| 162.9 | 80.34 |
+| 162.5 | 82.63 |
+| 162.9 | 84.1 |
+| 162.8 | 83.1 |
+| 162.7 | 83.84 |
+| 162.6 | 83.28 |
+| 163.1 | 83.05 |
+| 163 | 82.69 |
+| 162.9 | 81.55 |
+| 162.8 | 81.55 |
+| 162.8 | 83.76 |
+| 163.2 | 83.69 |
+| 162.9 | 82.93 |
+| 162.8 | 81.58 |
+| 163 | 82 |
+| 163 | 83.65 |
+| 163 | 84.57 |
+| 163.2 | 84 |
+| 162.6 | 83.91 |
+| 162.7 | 83.96 |
+| 162.8 | 82.68 |
+| 163 | 82.65 |
+| 162.8 | 82.15 |
+| 162.8 | 82.49 |
+| 162.9 | 82.13 |
+| 163 | 82.3 |
+| 162.9 | 83.48 |
+| 162.8 | 85.22 |
+| 163 | 84.68 |
+| 163 | 84.09 |
+| 163.1 | 83.67 |
+| 162.9 | 84.01 |
+| 162.8 | 84.22 |
+| 163 | 84.04 |
+| 162.9 | 84.33 |
+| 162.5 | 84.23 |
+| 162.8 | 85.62 |
+| 163 | 84.55 |
+| 162.7 | 83.89 |
+| 162.8 | 83.66 |
+| 162.9 | 82.89 |
+| 163 | 82.63 |
+| 162.8 | 82.73 |
+| 163.1 | 83.12 |
+| 162.5 | 83.63 |
+| 163.1 | 84.19 |
+| 163.2 | 83.79 |
+| 162.7 | 82.89 |
+| 162.8 | 83.17 |
+| 162.7 | 84.82 |
+| 162.7 | 84.82 |
+| 162.8 | 85.12 |
+| 163 | 86.07 |
+| 162.9 | 86.03 |
+| 162.9 | 86.6 |
+| 162.9 | 86.87 |
+| 163.1 | 87.07 |
+| 162.9 | 85.88 |
+| 162.9 | 87.22 |
+| 162.9 | 86.33 |
+| 162.8 | 89.37 |
+| 163 | 89.86 |
+| 162.6 | 92.55 |
+| 162.7 | 96.59 |
+| 162.9 | 95.63 |
+| 162.7 | 96.5 |
+| 162.8 | 96.44 |
+| 162.6 | 101.9 |
+| 162.8 | 100.5 |
+| 162.9 | 102.7 |
+| 163.1 | 100.8 |
+| 162.9 | 101.3 |
+| 162.9 | 104.3 |
+| 162.6 | 107.8 |
+| 162.7 | 108.2 |
+| 162.9 | 104.8 |
+| 162.8 | 106.5 |
+| 162.6 | 106.4 |
+| 163.1 | 111.1 |
+| 163.1 | 110.7 |
+| 162.9 | 112.8 |
+| 163.1 | 116.6 |
+| 163 | 115.8 |
+| 163.4 | 116.5 |
+| 162.9 | 117.6 |
+| 163.1 | 116.5 |
+| 162.6 | 117.1 |
+| 162.6 | 119.1 |
+| 163.1 | 120.2 |
+| 163 | 122.3 |
+| 162.7 | 121 |
+| 162.8 | 122.9 |
+| 163.4 | 121 |
+| 163 | 121.8 |
+| 162.7 | 125.1 |
+| 162.8 | 127.3 |
+| 162.8 | 124.5 |
+| 163.1 | 126.6 |
+| 162.8 | 128.7 |
+| 162.6 | 129 |
+| 162.5 | 128.5 |
+| 162.6 | 129.6 |
+| 163 | 133.9 |
+| 162.8 | 127 |
+| 163.1 | 127.4 |
+| 162.9 | 128.8 |
+| 162.9 | 129.2 |
+| 162.8 | 130.9 |
+| 163 | 130.5 |
+| 162.9 | 129.6 |
+| 162.9 | 131.4 |
+| 162.9 | 131.9 |
+| 163.1 | 129.5 |
+| 162.9 | 134.8 |
+| 163 | 133.5 |
+| 162.9 | 133.2 |
+| 162.9 | 134 |
+| 163.1 | 132.5 |
+| 162.7 | 131.9 |
+| 162.9 | 134.2 |
+| 162.7 | 137.1 |
+| 162.6 | 137.3 |
+| 163.1 | 136.4 |
+| 163.1 | 139 |
+| 162.9 | 137.7 |
+| 162.8 | 139.6 |
+| 163.2 | 143.5 |
+| 162.7 | 145.5 |
+| 162.8 | 147.1 |
+| 163.1 | 150.1 |
+| 162.8 | 142.8 |
+| 162.8 | 144.8 |
+| 162.9 | 144.7 |
+| 162.6 | 148.1 |
+| 162.8 | 144.9 |
+| 162.8 | 146.4 |
+| 162.7 | 147.7 |
+| 162.5 | 146.9 |
+| 163 | 152.5 |
+| 162.6 | 152.7 |
+| 162.9 | 148.6 |
+| 162.8 | 149.2 |
+| 162.7 | 151.1 |
+| 162.9 | 145.3 |
+| 163 | 152.1 |
+| 162.9 | 149.9 |
+| 162.9 | 151.9 |
+| 162.8 | 148.5 |
+| 162.5 | 152.8 |
+| 162.8 | 152.9 |
+| 162.8 | 152.3 |
+| 162.8 | 154.3 |
+| 162.8 | 154.8 |
+| 163 | 158.2 |
+| 162.8 | 160.4 |
+| 162.9 | 161.6 |
+| 163.4 | 164 |
+| 162.9 | 162.2 |
+| 163 | 164.2 |
+| 162.7 | 167.7 |
+| 163.1 | 166.4 |
+| 163 | 167 |
+| 163 | 167.4 |
+| 162.9 | 165.9 |
+| 163.1 | 172.3 |
+| 162.5 | 172.6 |
+| 163 | 171.7 |
+| 162.7 | 172.4 |
+| 162.6 | 171.4 |
+| 162.4 | 177.3 |
+| 163 | 172.9 |
+| 162.8 | 178.5 |
+| 163.2 | 181.5 |
+| 162.8 | 184.1 |
+| 162.6 | 184.9 |
+| 163.1 | 185.9 |
+| 162.8 | 187.8 |
+| 162.9 | 186.6 |
+| 162.5 | 186.5 |
+| 163 | 189.7 |
+| 162.6 | 182.7 |
+| 162.5 | 184.5 |
+| 162.8 | 185.4 |
+| 162.8 | 184.1 |
+| 163 | 186.9 |
+| 162.6 | 191.2 |
+| 163 | 193.9 |
+| 163.1 | 194.3 |
+| 162.8 | 194.4 |
+| 162.7 | 193.5 |
+| 162.6 | 196.1 |
+| 162.7 | 197.2 |
+| 162.9 | 192.6 |
+| 163.1 | 193.8 |
+| 162.6 | 195.6 |
+| 162.6 | 197.4 |
+| 162.9 | 197.8 |
+| 162.9 | 196.1 |
+| 163 | 197.1 |
+| 162.7 | 197.6 |
+| 162.9 | 204 |
+| 162.9 | 204.5 |
+| 162.8 | 203.6 |
+| 162.2 | 207.9 |
+| 162.9 | 210.6 |
+| 162.9 | 211.3 |
+| 162.6 | 209.3 |
+| 162.7 | 206.3 |
+| 162.5 | 211.8 |
+| 162.4 | 212 |
+| 162.4 | 212 |
+| 162.6 | 211.9 |
+| 163 | 217 |
+| 162.5 | 216.5 |
+| 162.6 | 218.1 |
+| 162.8 | 215.8 |
+| 162.6 | 220.7 |
+| 162.4 | 225.1 |
+| 162.9 | 221 |
+| 162.7 | 220.5 |
+| 162.6 | 218.4 |
+| 163 | 215.2 |
+| 162.5 | 218.9 |
+| 162.4 | 219.6 |
+| 162.9 | 220.3 |
+| 163 | 224.2 |
+| 162.9 | 226.2 |
+| 162.5 | 228.7 |
+| 162.8 | 231.2 |
+| 162.8 | 240.1 |
+| 163 | 237.7 |
+| 162.8 | 244.3 |
+| 162.7 | 244.3 |
+| 162.5 | 240.9 |
+| 163.2 | 244.7 |
+| 162.5 | 247.7 |
+| 162.8 | 248 |
+| 162.9 | 246.9 |
+| 162.7 | 241.8 |
+| 162.5 | 244.6 |
+| 162.6 | 246 |
+| 162.5 | 243.9 |
+| 162.6 | 242.8 |
+| 163 | 246 |
+| 162.9 | 246.1 |
+| 162.9 | 244.6 |
+| 162.5 | 247.6 |
+| 163 | 251.4 |
+| 163.4 | 248.3 |
+| 162.6 | 252.4 |
+| 162.9 | 252.6 |
+| 162.7 | 251.3 |
+| 161.9 | 248.7 |
+| 162.9 | 252 |
+| 162.7 | 246.6 |
+| 162.7 | 247 |
+| 162.7 | 251.5 |
+| 162.7 | 248.9 |
+| 162.9 | 254.1 |
+| 162.7 | 255.2 |
+| 162.6 | 259.6 |
+| 162.8 | 260 |
+| 162.6 | 256.6 |
+| 163 | 252 |
+| 163 | 258.1 |
+| 163 | 255.7 |
+| 162.9 | 255.1 |
+| 162.8 | 257.2 |
+| 162.7 | 258.1 |
+| 162.9 | 264.3 |
+| 163.2 | 260.4 |
+| 163 | 263.1 |
+| 162.8 | 264.1 |
+| 162.6 | 263.6 |
+| 163 | 260.9 |
+| 162.8 | 258.5 |
+| 162.9 | 264.9 |
+| 163 | 260.7 |
+| 163.2 | 267.5 |
+| 163.2 | 266.8 |
+| 162.9 | 260.7 |
+| 162.9 | 261.9 |
+| 162.8 | 258.8 |
+| 162.8 | 258 |
+| 162.8 | 261.4 |
+| 162.4 | 263.2 |
+| 162.9 | 266.9 |
+| 162.4 | 271.8 |
+| 163.1 | 275.3 |
+| 162.8 | 274 |
+| 162.8 | 278 |
+| 162.5 | 271.9 |
+| 162.7 | 271.5 |
+| 162.1 | 278.1 |
+| 162.5 | 281 |
+| 163.2 | 280.2 |
+| 163 | 280.7 |
+| 162.8 | 279.3 |
+| 162.7 | 282.3 |
+| 162.8 | 286.4 |
+| 162.9 | 289.8 |
+| 162.6 | 283.6 |
+| 162.8 | 289 |
+| 162.8 | 291.4 |
+| 162.7 | 296.2 |
+| 162.8 | 292 |
+| 162.9 | 289.4 |
+| 162.9 | 289.1 |
+| 162.8 | 285.1 |
+| 162.5 | 285.4 |
+| 163.1 | 285.2 |
+| 162.8 | 288.8 |
+| 162.7 | 288.9 |
+| 162.6 | 286 |
+| 162.8 | 290.1 |
+| 162.7 | 288 |
+| 162.7 | 290.7 |
+| 162.7 | 295.8 |
+| 162.6 | 297.3 |
+| 162.7 | 298.1 |
+| 162.9 | 298.9 |
+| 162.6 | 299.1 |
+| 162.7 | 303.5 |
+| 162.5 | 305.1 |
+| 162.9 | 308.2 |
+| 162.7 | 309.7 |
+| 163 | 309.5 |
+| 162.6 | 305.6 |
+| 162.9 | 310.9 |
+| 162.5 | 310.9 |
+| 162.9 | 311.5 |
+| 163.1 | 309.6 |
+| 162.8 | 311.9 |
+| 162.6 | 316.2 |
+| 162.5 | 315.1 |
+| 162.7 | 319.1 |
+| 162.6 | 310.7 |
+| 162.8 | 314.6 |
+| 162.5 | 312.9 |
+| 162.8 | 316.3 |
+| 162.6 | 317.9 |
+| 162.7 | 313.6 |
+| 162.6 | 315.8 |
+| 162.7 | 316.2 |
+| 162.8 | 314.2 |
+| 162.9 | 318.8 |
+| 163.1 | 321.1 |
+| 162.8 | 322 |
+| 162.1 | 318.5 |
+| 162.8 | 324.1 |
+| 162.5 | 323.8 |
+| 162.7 | 326.2 |
+| 162.7 | 319.5 |
+| 162.8 | 320.6 |
+| 162.8 | 322.2 |
+| 162.7 | 325.9 |
+| 162.7 | 327.3 |
+| 163.1 | 322.8 |
+| 162.9 | 324.3 |
+| 162.8 | 327.2 |
+| 162.7 | 324.6 |
+| 163 | 328.3 |
+| 162.7 | 322.9 |
+| 162.3 | 313.8 |
+| 162.7 | 318 |
+| 162.6 | 316.3 |
+| 162.7 | 315.4 |
+| 162.4 | 317.9 |
+| 162.7 | 328.3 |
+| 162.6 | 323.9 |
+| 163.1 | 327.6 |
+| 162.8 | 326.7 |
+| 162.5 | 326.7 |
+| 162.8 | 329.4 |
+| 162.8 | 329.5 |
+| 163 | 327.6 |
+| 162.8 | 331.3 |
+| 162.1 | 337.9 |
+| 162.9 | 339.7 |
+| 163 | 341.2 |
+| 162.7 | 339 |
+| 163 | 340 |
+| 162.8 | 337.8 |
+| 163.2 | 341.5 |
+| 163 | 340.4 |
+| 162.8 | 344.5 |
+| 162.9 | 341.5 |
+| 163.5 | 343.3 |
+| 162.7 | 345.2 |
+| 163.2 | 342.7 |
+| 163.1 | 346.1 |
+| 163.1 | 349.3 |
+| 162.8 | 348.3 |
+| 163.1 | 352.3 |
+| 163.1 | 355.6 |
+| 162.9 | 355 |
+| 162.8 | 352.7 |
+| 162.8 | 353.6 |
+| 162.8 | 356.1 |
+| 162.8 | 354.1 |
+| 163 | 358.3 |
+| 162.4 | 357.2 |
+| 162.7 | 351.7 |
+| 162.5 | 356.2 |
+| 162.5 | 359.1 |
+| 162.9 | 357.2 |
+| 162.9 | 354.1 |
+| 162.6 | 356.4 |
+| 163.2 | 353.5 |
+| 162.9 | 352 |
+| 162.6 | 352.1 |
+| 162.7 | 361.7 |
+| 162.6 | 361.2 |
+| 163 | 360.1 |
+| 163 | 362 |
+| 163.1 | 356.6 |
+| 162.9 | 365.1 |
+| 162.9 | 360.7 |
+| 162.8 | 359 |
+| 163 | 357.2 |
+| 163.2 | 361.6 |
+| 162.9 | 359.5 |
+| 162.9 | 353.5 |
+| 163 | 363.3 |
+| 162.8 | 360.1 |
+| 163 | 358 |
+| 163.1 | 359.5 |
+| 162.9 | 362.8 |
+| 163 | 362.2 |
+| 162.9 | 359 |
+| 163 | 360.4 |
+| 163.6 | 357.2 |
+| 163 | 373.8 |
+| 163.1 | 367 |
+| 163.1 | 372.1 |
+| 163 | 375.8 |
+| 163.3 | 377.7 |
+| 163.2 | 371.6 |
+| 163 | 378.6 |
+| 163.1 | 376.8 |
+| 163.1 | 371.7 |
+| 163.3 | 374 |
+| 163.4 | 374.4 |
+| 163.1 | 379.7 |
+| 162.9 | 383.7 |
+| 163.1 | 379.3 |
+| 163.3 | 378.7 |
+| 162.9 | 378.7 |
+| 163 | 385.6 |
+| 162.4 | 394 |
+| 163.1 | 391.4 |
+| 163.3 | 401.7 |
+| 163.1 | 404.5 |
+| 163.2 | 400.9 |
+| 163 | 403.9 |
+| 162.9 | 398.8 |
+| 162.9 | 390.4 |
+| 162.9 | 391.6 |
+| 163 | 397.2 |
+| 162.7 | 400.2 |
+| 163.1 | 402.3 |
+| 163.1 | 401.8 |
+| 163 | 405.3 |
+| 163.5 | 408.1 |
+| 163.4 | 416.4 |
+| 163.3 | 423.3 |
+| 163.6 | 425.5 |
+| 163 | 422.7 |
+| 163.5 | 423.5 |
+| 163.1 | 415.3 |
+| 163.1 | 415.3 |
+| 163 | 409.4 |
+| 162.8 | 413.4 |
+| 162.5 | 412.5 |
+| 162.6 | 415.9 |
+| 162.6 | 419.7 |
+| 162.5 | 418.7 |
+| 162.8 | 412.6 |
+| 162.9 | 419.7 |
+| 162.9 | 419.8 |
+| 162.9 | 415.2 |
+| 163.1 | 416.5 |
+| 162.9 | 420.9 |
+| 163 | 420.8 |
+| 162.9 | 414.2 |
+| 163 | 420.1 |
+| 162.9 | 414.8 |
+| 162.9 | 402.6 |
+| 162.5 | 413.2 |
+| 163 | 424.3 |
+| 162.8 | 426.6 |
+| 163.1 | 425.1 |
+| 162.6 | 415.9 |
+| 162.8 | 413.2 |
+| 162.9 | 412.6 |
+| 162.8 | 410.8 |
+| 162.6 | 407.4 |
+| 162.4 | 409.9 |
+| 162.5 | 408.5 |
+| 162.8 | 410.6 |
+| 163 | 407.3 |
+| 162.7 | 410.5 |
+| 162.6 | 407.7 |
+| 162.7 | 410.4 |
+| 162.8 | 411.4 |
+| 162.9 | 408.9 |
+| 162.7 | 407.5 |
+| 162.8 | 403.8 |
+| 162.7 | 407.6 |
+| 162.6 | 417.4 |
+| 162.6 | 416.3 |
+| 163.1 | 421.7 |
+| 162.7 | 426.4 |
+| 162.9 | 426.7 |
+| 163.2 | 435.4 |
+| 163.2 | 435.6 |
+| 163.4 | 435.1 |
+| 163.1 | 439.9 |
+| 162.9 | 441.9 |
+| 163.4 | 440 |
+| 163 | 433.7 |
+| 162.7 | 440.3 |
+| 163.2 | 441.9 |
+| 162.9 | 447.9 |
+| 163.3 | 451.7 |
+| 162.5 | 449 |
+| 162.4 | 440.5 |
+| 163.1 | 450.3 |
+| 162.9 | 449.6 |
+| 162.5 | 449.2 |
+| 162.6 | 436.8 |
+| 163 | 441.8 |
+| 163 | 439.9 |
+| 163.1 | 436.5 |
+| 163 | 432.6 |
+| 162.2 | 428.9 |
+| 162.8 | 435.2 |
+| 162.8 | 439.8 |
+| 163 | 450.2 |
+| 162.5 | 453 |
+| 162.6 | 456.5 |
+| 162.9 | 451.4 |
+| 162.9 | 447.9 |
+| 163.1 | 458.9 |
+| 162.5 | 447.6 |
+| 162.9 | 447.3 |
+| 162.7 | 452.7 |
+| 163 | 448.8 |
+| 162.7 | 447.4 |
+| 162.8 | 448.5 |
+| 163 | 446.6 |
+| 163.1 | 457 |
+| 162.9 | 452.6 |
+| 162.7 | 453.5 |
+| 163.2 | 455.2 |
+| 163 | 453.4 |
+| 162.8 | 456.6 |
+| 162.9 | 447 |
+| 163.2 | 449.8 |
+| 163 | 457.1 |
+| 163.2 | 455.9 |
+| 162.6 | 450 |
+| 162.9 | 453.2 |
+| 162.7 | 454.2 |
+| 163 | 454.3 |
+| 162.7 | 450.6 |
+| 163.2 | 448.3 |
+| 163.2 | 444.4 |
+| 162.9 | 450.1 |
+| 163 | 441.7 |
+| 162.9 | 435.7 |
+| 163.4 | 436.5 |
+| 163.2 | 435.3 |
+| 163 | 438.9 |
+| 162.9 | 437.9 |
+| 163.3 | 446 |
+| 163.1 | 441.7 |
+| 163.4 | 438.8 |
+| 162.6 | 440.2 |
+| 162.5 | 442.8 |
+| 162.8 | 437.3 |
+| 162.9 | 433.8 |
+| 162.9 | 435.9 |
+| 162.8 | 439.1 |
+| 163.2 | 436.1 |
+| 162.9 | 441.8 |
+| 163 | 444 |
+| 163 | 446.5 |
+| 162.7 | 446.7 |
+| 163 | 445.1 |
+| 163 | 443.7 |
+| 163.2 | 450.5 |
+| 163.1 | 454.2 |
+| 162.9 | 453.8 |
+| 163.3 | 454.8 |
+| 163.2 | 453.3 |
+| 163.1 | 453.7 |
+| 163 | 451.9 |
+| 163.1 | 455.4 |
+| 162.7 | 461.2 |
+| 162.9 | 461.3 |
+| 162.9 | 455 |
+| 162.9 | 467.1 |
+| 163 | 468 |
+| 162.5 | 467.6 |
+| 163.1 | 471.3 |
+| 162.9 | 472 |
+| 162.8 | 472.1 |
+| 163 | 472.5 |
+| 162.6 | 473.3 |
+| 162.5 | 469.3 |
+| 162.6 | 473.3 |
+| 162.8 | 477.3 |
+| 163 | 472.2 |
+| 163.1 | 477.1 |
+| 162.7 | 471.7 |
+| 163 | 474.9 |
+| 163.1 | 478.2 |
+| 162.9 | 472.3 |
+| 162.8 | 476.5 |
+| 163.4 | 475.5 |
+| 162.6 | 479.4 |
+| 162.9 | 482 |
+| 163.3 | 486.8 |
+| 163.3 | 486.3 |
+| 163 | 487.6 |
+| 163 | 488.1 |
+| 163 | 493.9 |
+| 163.3 | 484.5 |
+| 163.4 | 489.1 |
+| 163 | 495.4 |
+| 163 | 491.5 |
+| 163.1 | 500.1 |
+| 163.3 | 500.5 |
+| 163.3 | 492.1 |
+| 163.3 | 492.1 |
+| 163.3 | 491 |
+| 163.4 | 486.1 |
+| 163.2 | 499.8 |
+| 163.3 | 504.6 |
+| 163.3 | 497.7 |
+| 163.3 | 501.3 |
+| 162.8 | 505.1 |
+| 163.3 | 492.6 |
+| 163.2 | 490.8 |
+| 163.2 | 495.8 |
+| 163 | 501.1 |
+| 163.4 | 500.8 |
+| 163.1 | 494.7 |
+| 163 | 487.1 |
+| 163.4 | 488.5 |
+| 162.9 | 489 |
+| 162.8 | 486.6 |
+| 162.9 | 485.6 |
+| 163.2 | 483.9 |
+| 163 | 491 |
+| 163.3 | 495 |
+| 162.6 | 498.3 |
+| 162.6 | 497.1 |
+| 162.7 | 499.5 |
+| 163 | 507.1 |
+| 163.1 | 502 |
+| 163.3 | 503.7 |
+| 163.4 | 498.2 |
+| 163.4 | 497.4 |
+| 163.2 | 496.4 |
+| 163 | 493.3 |
+| 162.5 | 489.4 |
+| 163.4 | 491.2 |
+| 163.1 | 483.4 |
+| 162.9 | 492.4 |
+| 163.3 | 500.8 |
+| 163 | 502 |
+| 162.7 | 500.6 |
+| 163.1 | 509.9 |
+| 163.5 | 509.9 |
+| 163.3 | 509 |
+| 163.2 | 504.5 |
+| 163.1 | 498.4 |
+| 163.2 | 503.9 |
+| 163.1 | 514.1 |
+| 163.4 | 504.8 |
+| 163.2 | 505.8 |
+| 163.1 | 512.7 |
+| 163.1 | 511.1 |
+| 163.3 | 509.9 |
+| 163.7 | 514.3 |
+| 164.1 | 518.2 |
+| 163.5 | 513.3 |
+| 163.5 | 520.1 |
+| 163.9 | 524.6 |
+| 163.7 | 519.9 |
+| 164 | 518.6 |
+| 164.4 | 518.9 |
+| 163.4 | 518.9 |
+| 163.6 | 526.5 |
+| 163.6 | 515.8 |
+| 163.4 | 520.7 |
+| 163.7 | 528.8 |
+| 163.9 | 533.1 |
+| 163.5 | 534 |
+| 163.8 | 535.3 |
+| 164 | 534.4 |
+| 163.8 | 538 |
+| 164 | 530.7 |
+| 164 | 526.8 |
+| 163.6 | 532.4 |
+| 164.2 | 532.6 |
+| 164 | 539.3 |
+| 164 | 543.5 |
+| 163.9 | 542.9 |
+| 163.4 | 541.7 |
+| 163.7 | 549.3 |
+| 163.9 | 544.5 |
+| 163.9 | 547.8 |
+| 163.9 | 541.3 |
+| 163.5 | 551.6 |
+| 163.6 | 557 |
+| 163.9 | 551.8 |
+| 164.2 | 551.8 |
+| 164 | 546.1 |
+| 163.9 | 550 |
+| 163.8 | 555.2 |
+| 163.8 | 555 |
+| 163.8 | 549.1 |
+| 163.7 | 546.9 |
+| 163.8 | 544.7 |
+| 164.1 | 551.1 |
+| 163.9 | 549.8 |
+| 164.1 | 560.3 |
+| 164.3 | 557.3 |
+| 163.8 | 557.1 |
+| 164 | 562 |
+| 163.8 | 566.5 |
+| 164.1 | 566.6 |
+| 163.4 | 567.1 |
+| 164 | 572.3 |
+| 164.2 | 562.5 |
+| 164 | 560 |
+| 164 | 565.8 |
+| 164.3 | 570.2 |
+| 164.2 | 565.6 |
+| 164.4 | 569.1 |
+| 163.8 | 565.2 |
+| 164.1 | 583.5 |
+| 164.5 | 579.2 |
+| 163.8 | 586.5 |
+| 164.1 | 593.1 |
+| 164 | 581.4 |
+| 164 | 586.9 |
+| 164 | 586 |
+| 164.2 | 585.3 |
+| 164.1 | 585.7 |
+| 163.5 | 597.6 |
+| 164.1 | 596.9 |
+| 163.8 | 588.3 |
+| 164 | 583 |
+| 164.1 | 590.4 |
+| 163.8 | 583.4 |
+| 163.9 | 584.1 |
+| 164.1 | 587 |
+| 163.8 | 581.9 |
+| 164.3 | 578 |
+| 163.8 | 586 |
+| 164.3 | 586.6 |
+| 163.9 | 589.2 |
+| 164.1 | 591 |
+| 163.8 | 585.2 |
+| 163.8 | 593.6 |
+| 163.8 | 597.2 |
+| 163.8 | 602.3 |
+| 163.7 | 600.8 |
+| 163.9 | 599.8 |
+| 163.7 | 604.8 |
+| 163.8 | 602.5 |
+| 163.8 | 601.4 |
+| 164 | 603.5 |
+| 163.8 | 596.5 |
+| 163.8 | 601.8 |
+| 164 | 598.8 |
+| 164.2 | 603.6 |
+| 163.9 | 602.7 |
+| 163.6 | 604.5 |
+| 163.7 | 603.5 |
+| 163.8 | 605.9 |
+| 164.2 | 600.1 |
+| 163.5 | 604.9 |
+| 164.2 | 602.6 |
+| 163.7 | 596.4 |
+| 163.5 | 597.4 |
+| 163.5 | 592.6 |
+| 163.6 | 589.5 |
+| 163.4 | 594.2 |
+| 163.9 | 603.1 |
+| 163.9 | 612.6 |
+| 163.9 | 623.2 |
+| 163.7 | 617.7 |
+| 164 | 613.7 |
+| 163.8 | 606.2 |
+| 163.6 | 603.4 |
+| 164.3 | 607.7 |
+| 163.8 | 619.4 |
+| 163.8 | 616.7 |
+| 164.1 | 619.8 |
+| 163.8 | 623.4 |
+| 163.7 | 615.9 |
+| 163.8 | 631.9 |
+| 164 | 622.2 |
+| 163.7 | 617.5 |
+| 163.9 | 613.1 |
+| 164 | 617.3 |
+| 163.9 | 614.1 |
+| 164 | 615.3 |
+| 164 | 612 |
+| 164.3 | 616.8 |
+| 164 | 607.1 |
+| 163.8 | 618.6 |
+| 163.5 | 618.3 |
+| 163.9 | 613.9 |
+| 162.3 | 617.1 |
+| 157.3 | 619.6 |
+| 153.5 | 619.6 |
+| 150.6 | 627.4 |
+| 149.1 | 631.8 |
+| 149.7 | 638.7 |
+| 148.1 | 640.2 |
+| 146.1 | 646.4 |
+| 144.9 | 649.9 |
+| 145.3 | 653.2 |
+| 143.1 | 655.7 |
+| 143.6 | 657.9 |
+| 142.3 | 664.1 |
+| 142.1 | 666.7 |
+| 140.8 | 669 |
+| 141.2 | 673.2 |
+| 141.9 | 675.7 |
+| 141.4 | 678.8 |
+| 139.8 | 682.7 |
+| 140.3 | 689.7 |
+| 139.5 | 692.4 |
+| 139.7 | 698.3 |
+| 139.8 | 697.6 |
+| 139.1 | 697.7 |
+| 138.5 | 699 |
+| 138.9 | 700.2 |
+| 138.4 | 700.5 |
+| 138.2 | 701.8 |
+| 138.7 | 702.5 |
+| 138.5 | 699.8 |
+| 138.3 | 711.7 |
+| 138 | 717.7 |
+| 137.6 | 723 |
+| 137.9 | 725.2 |
+| 138.4 | 721.3 |
+| 138.2 | 724.9 |
+| 138.7 | 720.9 |
+| 138 | 720.9 |
+| 137.5 | 720.7 |
+| 137.6 | 716.4 |
+| 137.4 | 724.3 |
+| 137.5 | 727.2 |
+| 137 | 734.5 |
+| 137 | 735.7 |
+| 136.5 | 737.2 |
+| 137.2 | 736.8 |
+| 137.1 | 736 |
+| 136.4 | 734.8 |
+| 136.6 | 737.2 |
+| 136.9 | 739.9 |
+| 135.2 | 740 |
+| 137.2 | 742.7 |
+| 137.1 | 740.1 |
+| 136.8 | 742.2 |
+| 136.6 | 746.6 |
+| 136.4 | 742.6 |
+| 137 | 743 |
+| 136.6 | 742.9 |
+| 136.9 | 748.6 |
+| 136 | 749.6 |
+| 135.7 | 748.5 |
+| 135.5 | 753.3 |
+| 135.7 | 754.1 |
+| 135.1 | 758.1 |
+| 135.1 | 760.3 |
+| 135.1 | 758.4 |
+| 135.3 | 759.4 |
+| 135.3 | 760 |
+| 135 | 759 |
+| 135.7 | 757.4 |
+| 135.2 | 760.6 |
+| 135 | 762.1 |
+| 135.8 | 762.2 |
+| 134.4 | 764.8 |
+| 134.4 | 763.9 |
+| 134.1 | 758.5 |
+| 135.7 | 757.9 |
+| 135.5 | 758.1 |
+| 134.7 | 763.5 |
+| 134.8 | 763.1 |
+| 134.9 | 763.9 |
+| 135.3 | 766.7 |
+| 135.1 | 769.9 |
+| 134.8 | 769.9 |
+| 135 | 776.7 |
+| 134.1 | 779.2 |
+| 134.2 | 777.8 |
+| 134.4 | 780.8 |
+| 134 | 780.3 |
+| 134.7 | 781.1 |
+| 134.7 | 779.2 |
+| 134.4 | 785.7 |
+| 133.2 | 791.3 |
+| 134.6 | 794.6 |
+| 134.4 | 796.5 |
+| 134.4 | 798.9 |
+| 134.4 | 804.6 |
+| 134.7 | 808.1 |
+| 133.4 | 814.3 |
+| 134 | 811.3 |
+| 132.9 | 815.3 |
+| 134.3 | 821.7 |
+| 133.9 | 824.2 |
+| 133.2 | 825.5 |
+| 133.9 | 828.9 |
+| 133.2 | 829.5 |
+| 135.1 | 830.1 |
+| 134.2 | 832.3 |
+| 133.9 | 835.5 |
+| 133.8 | 837.2 |
+| 133.1 | 837.2 |
+| 133 | 840.3 |
+| 134.2 | 845.7 |
+| 133.7 | 845.2 |
+| 133.8 | 844.3 |
+| 134 | 845.1 |
+| 132.9 | 849.4 |
+| 134.7 | 847.4 |
+| 133.8 | 847.1 |
+| 133.6 | 848.6 |
+| 134.4 | 847.2 |
+| 134.2 | 852.9 |
+| 134 | 854.4 |
+| 134.1 | 855 |
+| 133.8 | 848.1 |
+| 134 | 845.8 |
+| 133.7 | 846.7 |
+| 134.2 | 847.4 |
+| 134.5 | 845.2 |
+| 134.1 | 847.9 |
+| 134.7 | 845 |
+| 134 | 844.4 |
+| 133.7 | 839.7 |
+| 133.8 | 836.6 |
+| 134.2 | 836.8 |
+| 134 | 841.8 |
+| 133.6 | 847.5 |
+| 132.6 | 850.4 |
+| 133.9 | 853.6 |
+| 133.8 | 855.4 |
+| 134.1 | 849.7 |
+| 133.8 | 857 |
+| 134.3 | 853.9 |
+| 134.5 | 860.3 |
+| 133.7 | 863.3 |
+| 134.2 | 864.6 |
+| 134.1 | 864.3 |
+| 134.7 | 858.2 |
+| 134.8 | 859.2 |
+| 134.2 | 860.7 |
+| 133.6 | 864 |
+| 133.4 | 870.3 |
+| 133.6 | 872.3 |
+| 133.6 | 874.6 |
+| 132.9 | 873.1 |
+| 132.9 | 875.2 |
+| 133.8 | 880.2 |
+| 133.1 | 878.7 |
+| 132.8 | 879.7 |
+| 133.5 | 884.2 |
+| 133.8 | 883.5 |
+| 133.7 | 879.2 |
+| 133 | 879.5 |
+| 133.4 | 880.6 |
+| 133.5 | 878 |
+| 133.5 | 873.3 |
+| 134.8 | 869.2 |
+| 133.5 | 871.4 |
+| 133.4 | 878.2 |
+| 132.9 | 877.4 |
+| 133.6 | 884.1 |
+| 133.1 | 884.6 |
+| 132.9 | 886.1 |
+| 133.2 | 880.9 |
+| 132.7 | 877.3 |
+| 133 | 882.9 |
+| 134.2 | 883.8 |
+| 133.9 | 882.9 |
+| 133.8 | 885.7 |
+| 134.9 | 889.4 |
+| 133.5 | 894.1 |
+| 133.5 | 900 |
+| 133.4 | 908.3 |
+| 133.3 | 911 |
+| 133.8 | 908.1 |
+| 133.4 | 905.2 |
+| 133.8 | 903.2 |
+| 132.9 | 901.3 |
+| 133.9 | 898 |
+| 134.2 | 897.6 |
+| 134.2 | 897.1 |
+| 133.7 | 899.7 |
+| 133.4 | 906.6 |
+| 133.8 | 910.8 |
+| 133.5 | 914.9 |
+| 133.1 | 914.3 |
+| 133.9 | 918.7 |
+| 133.5 | 919.2 |
+| 133.8 | 920 |
+| 134.7 | 919.3 |
+| 133.8 | 917.5 |
+| 134.1 | 919.5 |
+| 133.4 | 921.7 |
+| 133.1 | 921 |
+| 133.3 | 915.7 |
+| 133.7 | 909.6 |
+| 134.3 | 911.3 |
+| 133.1 | 915.8 |
+| 133.5 | 913.6 |
+| 133.9 | 911.4 |
+| 133 | 914.3 |
+| 133 | 917.8 |
+| 133.3 | 915.3 |
+| 134.1 | 916.6 |
+| 133.2 | 914.8 |
+| 132.5 | 915.7 |
+| 133.4 | 919 |
+| 133.1 | 916.3 |
+| 134.4 | 914.4 |
+| 133.2 | 921.1 |
+| 133.2 | 925.1 |
+| 132.6 | 928.6 |
+| 133.1 | 924.8 |
+| 132.9 | 931.1 |
+| 134 | 933.7 |
+| 132.6 | 934.1 |
+| 132.5 | 935.1 |
+| 133 | 934.2 |
+| 132.9 | 939.6 |
+| 132.7 | 940.8 |
+| 132.2 | 939.4 |
+| 133.6 | 937.5 |
+| 133.4 | 934.1 |
+| 133.7 | 935.3 |
+| 133 | 935.6 |
+| 132.7 | 937 |
+| 133.2 | 933.9 |
+| 133 | 934.3 |
+| 132.5 | 937.7 |
+| 132.6 | 936.3 |
+| 133.1 | 936.3 |
+| 133.7 | 936.6 |
+| 134 | 936.4 |
+| 133.6 | 937.2 |
+| 132.5 | 928.9 |
+| 133 | 932 |
+| 132.9 | 932.7 |
+| 133.5 | 932.9 |
+| 133.4 | 930.6 |
+| 132.3 | 936 |
+| 133.6 | 933.9 |
+| 133.4 | 942.4 |
+| 133.6 | 949.9 |
+| 132.9 | 954.9 |
+| 133.2 | 953.8 |
+| 132.1 | 952.7 |
+| 132.4 | 955 |
+| 132.2 | 953.2 |
+| 132.4 | 959.8 |
+| 132.4 | 967.6 |
+| 132.7 | 963.1 |
+| 132.6 | 960.2 |
+| 133.1 | 965.8 |
+| 133.7 | 966.1 |
+| 132.2 | 966.5 |
+| 132.8 | 964.6 |
+| 133 | 971.9 |
+| 132.7 | 976.3 |
+| 132.2 | 972.2 |
+| 132.7 | 974 |
+| 132.8 | 975.6 |
+| 132 | 976.6 |
+| 132.6 | 974.5 |
+| 132.7 | 974.4 |
+| 132.5 | 973.8 |
+| 132.3 | 975.7 |
+| 133.1 | 976.1 |
+| 132.5 | 980.5 |
+| 132.9 | 986.1 |
+| 132.6 | 989.4 |
+| 133 | 986.9 |
+| 133.6 | 989.2 |
+| 133.3 | 989.6 |
+| 133.4 | 991.6 |
+| 133.2 | 990.5 |
+| 132.7 | 992.5 |
+| 133.1 | 996.7 |
+| 133.3 | 999.1 |
+| 132.8 | 1002 |
+| 132.1 | 1005 |
+| 132.8 | 1007 |
+| 132.4 | 1007 |
+| 132.8 | 1009 |
+| 132.9 | 1007 |
+| 132.2 | 1009 |
+| 132.7 | 1000 |
+| 133.1 | 1002 |
+| 133.3 | 999.3 |
+| 132.1 | 1003 |
+| 132.5 | 1008 |
+| 132.6 | 1011 |
+| 133 | 1016 |
+| 132.8 | 1014 |
+| 132.1 | 1009 |
+| 132.5 | 1009 |
+| 132 | 1009 |
+| 132.1 | 1010 |
+| 132.5 | 1011 |
+| 132.6 | 1015 |
+| 132.2 | 1018 |
+| 132 | 1015 |
+| 131.8 | 1017 |
+| 132.1 | 1013 |
+| 133.2 | 1015 |
+| 132.3 | 1011 |
+| 133 | 1017 |
+| 133.5 | 1016 |
+| 132.7 | 1024 |
+| 132.7 | 1021 |
+| 132.5 | 1017 |
+| 133.3 | 1012 |
+| 133.6 | 1010 |
+| 132.7 | 1012 |
+| 132.1 | 1013 |
+| 132.1 | 1015 |
+| 132.9 | 1010 |
+| 132.8 | 1012 |
+| 133.4 | 1014 |
+| 133 | 1013 |
+| 132.4 | 1013 |
+| 132.1 | 1015 |
+| 133.1 | 1012 |
+| 133 | 1011 |
+| 132.7 | 1009 |
+| 131.9 | 1011 |
+| 132.2 | 1008 |
+| 132.3 | 1007 |
+| 132.8 | 1008 |
+| 133.5 | 1011 |
+| 132.9 | 1013 |
+| 132.8 | 1010 |
+| 133.7 | 1009 |
+| 133.3 | 1009 |
+| 133.1 | 1018 |
+| 133 | 1018 |
+| 132.5 | 1020 |
+| 132.8 | 1027 |
+| 133 | 1030 |
+| 132.6 | 1028 |
+| 133.4 | 1031 |
+| 133.3 | 1031 |
+| 132.6 | 1028 |
+| 132.1 | 1026 |
+| 132.8 | 1029 |
+| 133.1 | 1029 |
+| 132.8 | 1028 |
+| 131.4 | 1026 |
+| 132.1 | 1028 |
+| 132.3 | 1031 |
+| 133.3 | 1026 |
+| 132.5 | 1034 |
+| 132.5 | 1038 |
+| 132.8 | 1040 |
+| 133.1 | 1043 |
+| 133.8 | 1044 |
+| 133.9 | 1041 |
+| 133 | 1042 |
+| 133.2 | 1047 |
+| 134 | 1045 |
+| 134.2 | 1043 |
+| 134.4 | 1044 |
+| 133.6 | 1047 |
+| 133.8 | 1043 |
+| 133.5 | 1047 |
+| 133.1 | 1044 |
+| 133.4 | 1047 |
+| 133.5 | 1049 |
+| 133.4 | 1054 |
+| 133.2 | 1053 |
+| 132.1 | 1056 |
+| 133.4 | 1055 |
+| 133 | 1050 |
+| 132.6 | 1051 |
+| 132.7 | 1047 |
+| 132.1 | 1049 |
+| 132.8 | 1052 |
+| 133.3 | 1053 |
+| 133.3 | 1057 |
+| 133 | 1055 |
+| 132.7 | 1057 |
+| 133.2 | 1062 |
+| 133 | 1067 |
+| 132.7 | 1066 |
+| 133.1 | 1060 |
+| 133.1 | 1056 |
+| 133 | 1059 |
+| 132.8 | 1062 |
+| 133.2 | 1061 |
+| 134.2 | 1051 |
+| 133.6 | 1051 |
+| 133.5 | 1068 |
+| 132.3 | 1070 |
+| 132.6 | 1080 |
+| 133.7 | 1104 |
+| 132.7 | 1118 |
+| 133.3 | 1104 |
+| 133.2 | 1114 |
+| 133 | 1128 |
+| 133.3 | 1140 |
+| 132.7 | 1131 |
+| 133.2 | 1160 |
+| 133.2 | 1174 |
+| 133.7 | 1197 |
+| 133.8 | 1209 |
+| 133.3 | 1212 |
+| 132.7 | 1211 |
+| 132.7 | 1228 |
+| 133.8 | 1233 |
+| 133.4 | 1242 |
+| 132.7 | 1256 |
+| 133 | 1274 |
+| 133.1 | 1267 |
+| 133.5 | 1247 |
+| 132.5 | 1260 |
+| 133.4 | 1277 |
+| 134.2 | 1286 |
+| 133.6 | 1297 |
+| 133.5 | 1315 |
+| 134.1 | 1330 |
+| 133.7 | 1322 |
+| 133.3 | 1338 |
+| 133 | 1350 |
+| 133.2 | 1348 |
+| 133.4 | 1355 |
+| 133.1 | 1361 |
+| 133 | 1360 |
+| 132.7 | 1374 |
+| 132.6 | 1382 |
+| 132.7 | 1411 |
+| 133.2 | 1408 |
+| 133.1 | 1406 |
+| 133.1 | 1402 |
+| 132.3 | 1415 |
+| 132.8 | 1419 |
+| 132.9 | 1423 |
+| 132.7 | 1435 |
+| 133 | 1425 |
+| 133.3 | 1430 |
+| 133.3 | 1426 |
+| 132.9 | 1428 |
+| 133 | 1425 |
+| 133.8 | 1429 |
+| 132.8 | 1429 |
+| 133.5 | 1431 |
+| 133.3 | 1421 |
+| 132.9 | 1441 |
+| 133.1 | 1446 |
+| 133.2 | 1475 |
+| 133.6 | 1487 |
+| 133.6 | 1474 |
+| 133.5 | 1485 |
+| 132.6 | 1489 |
+| 131.8 | 1483 |
+| 132.8 | 1480 |
+| 132.9 | 1498 |
+| 133.8 | 1520 |
+| 132.8 | 1521 |
+| 133.9 | 1531 |
+| 133.8 | 1562 |
+| 133.6 | 1575 |
+| 133.1 | 1580 |
+| 133.2 | 1584 |
+| 132.5 | 1589 |
+| 133.2 | 1585 |
+| 133 | 1590 |
+| 134.4 | 1617 |
+| 133.3 | 1637 |
+| 132.8 | 1647 |
+| 133.4 | 1655 |
+| 133 | 1651 |
+| 132.7 | 1648 |
+| 132.8 | 1628 |
+| 133 | 1618 |
+| 133.3 | 1609 |
+| 132.8 | 1623 |
+| 132.8 | 1618 |
+| 133.9 | 1639 |
+| 134 | 1653 |
+| 133 | 1670 |
+| 132.7 | 1695 |
+| 133.5 | 1707 |
+| 134.2 | 1715 |
+| 133.6 | 1713 |
+| 133.3 | 1709 |
+| 134 | 1706 |
+| 133.6 | 1716 |
+| 132.9 | 1720 |
+| 133.3 | 1716 |
+| 133.8 | 1723 |
+| 133.3 | 1751 |
+| 133.1 | 1756 |
+| 133.2 | 1736 |
+| 133.3 | 1742 |
+| 133.5 | 1754 |
+| 132.8 | 1747 |
+| 133.2 | 1767 |
+| 133.1 | 1785 |
+| 133.7 | 1772 |
+| 132.8 | 1775 |
+| 133.8 | 1781 |
+| 133.7 | 1795 |
+| 134.1 | 1779 |
+| 134.3 | 1785 |
+| 133.7 | 1779 |
+| 133.3 | 1775 |
+| 133.2 | 1776 |
+| 132.7 | 1791 |
+| 133.1 | 1780 |
+| 133.5 | 1801 |
+| 133.4 | 1798 |
+| 133.1 | 1806 |
+| 133.8 | 1792 |
+| 133.5 | 1798 |
+| 133 | 1812 |
+| 132.8 | 1834 |
+| 133.1 | 1851 |
+| 132.6 | 1854 |
+| 133.9 | 1882 |
+| 133 | 1879 |
+| 133 | 1873 |
+| 133.4 | 1850 |
+| 132.9 | 1851 |
+| 132.6 | 1840 |
+| 133.3 | 1855 |
+| 133 | 1872 |
+| 133.5 | 1863 |
+| 132.7 | 1861 |
+| 132.8 | 1891 |
+| 132.6 | 1901 |
+| 133.8 | 1898 |
+| 133.2 | 1884 |
+| 133.3 | 1905 |
+| 133.1 | 1898 |
+| 133.7 | 1914 |
+| 134 | 1897 |
+| 133.6 | 1909 |
+| 133.7 | 1918 |
+| 132.7 | 1940 |
+| 132.9 | 1952 |
+| 133 | 1960 |
+| 133.7 | 1966 |
+| 132.9 | 1955 |
+| 133.1 | 1968 |
+| 133.2 | 1993 |
+| 133.4 | 1980 |
+| 133.1 | 1976 |
+| 132.9 | 1986 |
+| 132.9 | 1991 |
+| 133.2 | 2001 |
+| 133.2 | 2029 |
+| 133.7 | 2015 |
+| 133.3 | 2009 |
+| 133 | 2015 |
+| 132.8 | 2007 |
+| 132.4 | 2001 |
+| 133.8 | 2014 |
+| 133.3 | 2026 |
+| 133.7 | 2039 |
+| 133.1 | 2052 |
+| 132.3 | 2052 |
+| 132.8 | 2044 |
+| 132.7 | 2028 |
+| 132.8 | 2071 |
+| 133.2 | 2066 |
+| 133.5 | 2079 |
+| 133.2 | 2084 |
+| 132.9 | 2095 |
+| 133.4 | 2096 |
+| 132.3 | 2077 |
+| 133.2 | 2086 |
+| 132.9 | 2071 |
+| 133 | 2088 |
+| 132.6 | 2091 |
+| 133.1 | 2102 |
+| 133.8 | 2091 |
+| 133 | 2106 |
+| 133.8 | 2090 |
+| 133.4 | 2100 |
+| 132.9 | 2083 |
+| 134.2 | 2103 |
+| 133.2 | 2106 |
+| 133 | 2106 |
+| 133.3 | 2100 |
+| 133.8 | 2115 |
+| 133.8 | 2116 |
+| 133 | 2129 |
+| 133.1 | 2133 |
+| 133.7 | 2132 |
+| 133.3 | 2140 |
+| 132.2 | 2146 |
+| 133.3 | 2152 |
+| 133.3 | 2167 |
+| 133.1 | 2189 |
+| 133.3 | 2183 |
+| 132.4 | 2190 |
+| 133.2 | 2188 |
+| 133.5 | 2211 |
+| 133 | 2214 |
+| 132.7 | 2256 |
+| 133.4 | 2246 |
+| 132.8 | 2232 |
+| 133.8 | 2217 |
+| 133.8 | 2187 |
+| 133.3 | 2173 |
+| 133.6 | 2169 |
+| 133.7 | 2163 |
+| 132.6 | 2177 |
+| 132.6 | 2183 |
+| 133.5 | 2188 |
+| 132.6 | 2209 |
+| 133.2 | 2232 |
+| 133.6 | 2226 |
+| 132.8 | 2246 |
+| 133.9 | 2224 |
+| 133.3 | 2227 |
+| 133.1 | 2231 |
+| 133.2 | 2222 |
+| 133.4 | 2230 |
+| 133.6 | 2229 |
+| 133.4 | 2252 |
+| 133.9 | 2242 |
+| 133.6 | 2220 |
+| 134.2 | 2237 |
+| 134.1 | 2208 |
+| 133.5 | 2231 |
+| 133.7 | 2218 |
+| 133.3 | 2219 |
+| 133.9 | 2211 |
+| 133.5 | 2208 |
+| 133.4 | 2219 |
+| 134.5 | 2235 |
+| 133.5 | 2226 |
+| 133.3 | 2242 |
+| 133.9 | 2230 |
+| 133.8 | 2243 |
+| 134 | 2251 |
+| 132.8 | 2267 |
+| 133.8 | 2257 |
+| 132.5 | 2271 |
+| 133.7 | 2254 |
+| 133 | 2249 |
+| 133.8 | 2255 |
+| 132.8 | 2249 |
+| 133.7 | 2247 |
+| 133.8 | 2245 |
+| 134.1 | 2273 |
+| 134.1 | 2269 |
+| 133.3 | 2285 |
+| 133.2 | 2286 |
+| 134.4 | 2281 |
+| 133.8 | 2282 |
+| 133.5 | 2279 |
+| 134.7 | 2299 |
+| 134.1 | 2304 |
+| 134.5 | 2304 |
+| 133.8 | 2321 |
+| 133.9 | 2329 |
+| 133.4 | 2343 |
+| 134.1 | 2330 |
+| 133.5 | 2333 |
+| 133.6 | 2323 |
+| 133.8 | 2327 |
+| 133.9 | 2333 |
+| 133.3 | 2328 |
+| 133.2 | 2318 |
+| 132.7 | 2327 |
+| 132.9 | 2334 |
+| 132.9 | 2338 |
+| 133.1 | 2333 |
+| 133.4 | 2324 |
+| 133.7 | 2360 |
+| 133.3 | 2357 |
+| 134.1 | 2348 |
+| 134.1 | 2374 |
+| 134 | 2381 |
+| 134.5 | 2372 |
+| 134.1 | 2386 |
+| 134.3 | 2394 |
+| 133.9 | 2395 |
+| 133.3 | 2377 |
+| 133.2 | 2377 |
+| 133.5 | 2389 |
+| 133.4 | 2407 |
+| 133.3 | 2420 |
+| 133.8 | 2405 |
+| 134.1 | 2407 |
+| 133.6 | 2394 |
+| 134.7 | 2403 |
+| 134 | 2405 |
+| 133.6 | 2409 |
+| 133.3 | 2444 |
+| 133.6 | 2453 |
+| 133.2 | 2448 |
+| 133.6 | 2457 |
+| 133.5 | 2468 |
+| 134.3 | 2470 |
+| 133.6 | 2454 |
+| 134.5 | 2454 |
+| 132.9 | 2450 |
+| 133.5 | 2484 |
+| 134.5 | 2465 |
+| 134.1 | 2455 |
+| 133.6 | 2487 |
+| 134.7 | 2491 |
+| 134.7 | 2487 |
+| 133.7 | 2492 |
+| 134.8 | 2510 |
+| 135.1 | 2523 |
+| 133.4 | 2517 |
+| 134.2 | 2511 |
+| 133.6 | 2534 |
+| 133.9 | 2510 |
+| 135 | 2522 |
+| 133.4 | 2532 |
+| 134.3 | 2537 |
+| 134.4 | 2553 |
+| 133.9 | 2544 |
+| 134.5 | 2564 |
+| 134.3 | 2554 |
+| 134.4 | 2557 |
+| 134.3 | 2586 |
+| 135.9 | 2573 |
+| 134.8 | 2551 |
+| 134.3 | 2579 |
+| 133.8 | 2582 |
+| 134.5 | 2603 |
+| 134.4 | 2596 |
+| 133.3 | 2587 |
+| 134.2 | 2597 |
+| 134.4 | 2577 |
+| 132.9 | 2611 |
+| 133.8 | 2620 |
+| 134.1 | 2626 |
+| 133.8 | 2647 |
+| 133.6 | 2651 |
+| 134.6 | 2653 |
+| 133.8 | 2646 |
+| 133 | 2646 |
+| 134.1 | 2647 |
+| 134 | 2633 |
+| 134 | 2645 |
+| 133.6 | 2647 |
+| 134.1 | 2643 |
+| 134.3 | 2612 |
+| 133.8 | 2628 |
+| 134 | 2645 |
+| 134.3 | 2636 |
+| 134.6 | 2656 |
+| 133.8 | 2644 |
+| 134.1 | 2659 |
+| 134.7 | 2657 |
+| 134.1 | 2631 |
+| 133.9 | 2600 |
+| 135.2 | 2614 |
+| 133.4 | 2663 |
+| 133.1 | 2661 |
+| 134 | 2664 |
+| 133.3 | 2671 |
+| 134.5 | 2666 |
+| 134.1 | 2680 |
+| 134.3 | 2665 |
+| 133.3 | 2649 |
+| 133.7 | 2655 |
+| 134.9 | 2686 |
+| 135.5 | 2684 |
+| 134 | 2653 |
+| 134.2 | 2645 |
+| 134 | 2624 |
+| 135.3 | 2642 |
+| 134.6 | 2655 |
+| 133.6 | 2670 |
+| 134.5 | 2645 |
+| 134.7 | 2647 |
+| 134.6 | 2666 |
+| 133.6 | 2707 |
+| 133.1 | 2687 |
+| 134.2 | 2705 |
+| 134.5 | 2707 |
+| 133.7 | 2718 |
+| 134 | 2701 |
+| 134 | 2703 |
+| 134 | 2710 |
+| 134.4 | 2727 |
+| 134.1 | 2725 |
+| 134.5 | 2719 |
+| 134.2 | 2733 |
+| 134.6 | 2728 |
+| 133.5 | 2719 |
+| 133.9 | 2734 |
+| 134.5 | 2737 |
+| 133.1 | 2743 |
+| 134.2 | 2772 |
+| 134 | 2769 |
+| 135.3 | 2789 |
+| 133.6 | 2820 |
+| 134 | 2840 |
+| 133.5 | 2837 |
+| 133.7 | 2839 |
+| 133.3 | 2877 |
+| 134.3 | 2886 |
+| 133.9 | 2856 |
+| 133.7 | 2835 |
+| 133.9 | 2856 |
+| 133.7 | 2876 |
+| 134.1 | 2849 |
+| 135.3 | 2842 |
+| 134.5 | 2855 |
+| 134.4 | 2878 |
+| 135.1 | 2896 |
+| 134.7 | 2876 |
+| 133.3 | 2884 |
+| 133.4 | 2882 |
+| 133.9 | 2895 |
+| 134.3 | 2905 |
+| 133.1 | 2912 |
+| 133.3 | 2921 |
+| 133.7 | 2911 |
+| 134.3 | 2896 |
+| 134.4 | 2926 |
+| 134 | 2908 |
+| 134.3 | 2913 |
+| 134.7 | 2913 |
+| 135.1 | 2893 |
+| 134.9 | 2911 |
+| 134.6 | 2912 |
+| 134.4 | 2913 |
+| 134.7 | 2932 |
+| 134.8 | 2928 |
+| 134.5 | 2920 |
+| 133.8 | 2948 |
+| 133.9 | 2932 |
+| 133 | 2953 |
+| 134.9 | 2961 |
+| 133.7 | 2970 |
+| 133.6 | 2982 |
+| 134.4 | 2962 |
+| 133.9 | 2965 |
+| 134.3 | 2982 |
+| 133.9 | 2990 |
+| 133.7 | 3021 |
+| 133.3 | 3002 |
+| 133.7 | 3009 |
+| 134.2 | 2999 |
+| 134.6 | 3034 |
+| 133.8 | 3038 |
+| 134.2 | 3020 |
+| 135.5 | 3025 |
+| 134.3 | 3046 |
+| 134.5 | 3040 |
+| 133.6 | 3032 |
+| 133.4 | 3017 |
+| 133.7 | 3037 |
+| 133.8 | 3040 |
+| 133.6 | 3038 |
+| 134.4 | 3047 |
+| 133.8 | 3015 |
+| 133.4 | 3024 |
+| 134.6 | 3045 |
+| 133.9 | 3040 |
+| 134.8 | 3020 |
+| 134 | 3041 |
+| 134.3 | 3031 |
+| 134.8 | 3048 |
+| 134.2 | 3023 |
+| 134.7 | 3044 |
+| 133.6 | 3059 |
+| 134.4 | 3053 |
+| 134.1 | 3024 |
+| 133.4 | 3016 |
+| 133.6 | 2985 |
+| 134.5 | 3001 |
+| 134.3 | 3001 |
+| 134.8 | 3025 |
+| 134.6 | 3063 |
+| 135.1 | 3080 |
+| 134.7 | 3102 |
+| 133.9 | 3100 |
+| 134.5 | 3098 |
+| 134.4 | 3105 |
+| 133.7 | 3123 |
+| 134.9 | 3094 |
+| 133.6 | 3131 |
+| 134.4 | 3088 |
+| 133.9 | 3092 |
+| 134.7 | 3097 |
+| 134.3 | 3092 |
+| 134.4 | 3068 |
+| 134.2 | 3067 |
+| 133.9 | 3076 |
+| 134.7 | 3128 |
+| 134.1 | 3116 |
+| 134.4 | 3113 |
+| 134.3 | 3118 |
+| 134.3 | 3125 |
+| 135 | 3138 |
+| 133.7 | 3146 |
+| 134 | 3129 |
+| 133.3 | 3150 |
+| 134.3 | 3128 |
+| 133.8 | 3125 |
+| 134.5 | 3128 |
+| 134 | 3100 |
+| 134.9 | 3122 |
+| 134 | 3104 |
+| 134.8 | 3098 |
+| 134 | 3091 |
+| 134.5 | 3114 |
+| 134.2 | 3104 |
+| 134.7 | 3114 |
+| 134.2 | 3159 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+
+**`hole_ramp_rel130_col` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 129.4
+- `free_shell.areal_density_ratio`: 0.8913
+- `free_shell.msd.1 ns`: 189.9
+- `free_shell.msd.10 ns`: 649.5
+- `free_shell.msd.end`: 3166
+- `free_shell.msd.end_ns`: 68
+- `params.hole_hold_ps`: 1e+04
+- `params.release_t_c`: 130
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `scaffold.d_nm`: 2.5
+- `scaffold.nearest_tethered_r_held_min`: 52.11
+- `scaffold.nearest_tethered_r_t0`: 53.84
+- `scaffold.tethered_fraction`: 0.1159
+- T (°C): 25
+- `t_close_ns`: 1.37
+- `thickness_final`: 134.7
+- `thickness_t0`: 161.4
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 129.8 | — |
+| 129.8 | — |
+| 129.5 | — |
+| 129.6 | — |
+| 129.2 | — |
+| 129.9 | — |
+| 129.7 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.7 | — |
+| 129.6 | — |
+| 129.8 | — |
+| 129.6 | — |
+| 131.1 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.5 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.6 | — |
+| 129.3 | — |
+| 129.9 | — |
+| 128.8 | — |
+| 129.4 | — |
+| 129.8 | — |
+| 129.3 | — |
+| 129.9 | — |
+| 129.5 | — |
+| 129.8 | — |
+| 130 | — |
+| 129.5 | — |
+| 130.4 | — |
+| 129.5 | — |
+| 129.9 | — |
+| 130.1 | — |
+| 129.8 | — |
+| 130 | — |
+| 129.9 | — |
+| 129.8 | — |
+| 129.5 | — |
+| 130 | — |
+| 129.3 | — |
+| 129.3 | — |
+| 129.4 | — |
+| 129.1 | — |
+| 129.6 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.8 | — |
+| 129.8 | — |
+| 131 | — |
+| 129.8 | — |
+| 129.9 | — |
+| 129.5 | — |
+| 130 | — |
+| 130.4 | — |
+| 130.2 | — |
+| 130.2 | — |
+| 129.4 | — |
+| 129.7 | — |
+| 130 | — |
+| 130.3 | — |
+| 130.4 | — |
+| 130.2 | — |
+| 130.3 | — |
+| 130.2 | — |
+| 129.6 | — |
+| 130.2 | — |
+| 130.1 | — |
+| 130 | — |
+| 130.3 | — |
+| 129.8 | — |
+| 130.5 | — |
+| 130.1 | — |
+| 130.6 | — |
+| 130.3 | — |
+| 130.4 | — |
+| 130.6 | — |
+| 130.6 | — |
+| 130.7 | — |
+| 130.7 | — |
+| 131.5 | — |
+| 130.5 | — |
+| 130.6 | — |
+| 131.9 | — |
+| 131.1 | — |
+| 131.1 | — |
+| 131.2 | — |
+| 130.3 | — |
+| 131.6 | — |
+| 131.7 | — |
+| 131.7 | — |
+| 131.1 | — |
+| 131.4 | — |
+| 131.5 | — |
+| 131.5 | — |
+| 131.3 | — |
+| 131.8 | — |
+| 131.6 | — |
+| 132.1 | — |
+| 131.5 | — |
+| 131.6 | — |
+| 131.6 | — |
+| 132.1 | — |
+| 132 | — |
+| 131.9 | — |
+| 132 | — |
+| 131.6 | — |
+| 132.4 | — |
+| 132.2 | — |
+| 131.9 | — |
+| 131.8 | — |
+| 132.3 | — |
+| 132.7 | — |
+| 132.4 | — |
+| 132.3 | — |
+| 132.5 | — |
+| 132.9 | — |
+| 131.8 | — |
+| 131.9 | — |
+| 132.5 | — |
+| 132.4 | — |
+| 133.1 | — |
+| 132.8 | — |
+| 133 | — |
+| 133.3 | — |
+| 133.3 | — |
+| 133.4 | — |
+| 134.1 | — |
+| 133.3 | — |
+| 133.3 | — |
+| 133.1 | — |
+| 133.4 | — |
+| 133.6 | — |
+| 133.5 | — |
+| 133.9 | — |
+| 133.9 | — |
+| 134 | — |
+| 133 | — |
+| 133.5 | — |
+| 134.1 | — |
+| 134 | — |
+| 133.7 | — |
+| 134 | — |
+| 133.6 | — |
+| 133.8 | — |
+| 133.4 | — |
+| 133.4 | — |
+| 134 | — |
+| 134.5 | — |
+| 133.8 | — |
+| 133.7 | — |
+| 133.6 | — |
+| 134.2 | — |
+| 133.7 | — |
+| 134 | — |
+| 134.6 | — |
+| 134.4 | — |
+| 134.8 | — |
+| 134.3 | — |
+| 134.6 | — |
+| 134.3 | — |
+| 134.1 | — |
+| 134.3 | — |
+| 134.2 | — |
+| 134.9 | — |
+| 135.1 | — |
+| 135.1 | — |
+| 134.8 | — |
+| 134.6 | — |
+| 135 | — |
+| 135.9 | — |
+| 136.3 | — |
+| 135.3 | — |
+| 135 | — |
+| 136 | — |
+| 135.8 | — |
+| 135.9 | — |
+| 136.2 | — |
+| 135.5 | — |
+| 136.5 | — |
+| 136.4 | — |
+| 136 | — |
+| 135.9 | — |
+| 135.8 | — |
+| 136.8 | — |
+| 136.7 | — |
+| 136.8 | — |
+| 136.8 | — |
+| 136.7 | — |
+| 137 | — |
+| 137.1 | — |
+| 137.6 | — |
+| 137.9 | — |
+| 137.4 | — |
+| 137.8 | — |
+| 136.8 | — |
+| 137.8 | — |
+| 137.8 | — |
+| 137.6 | — |
+| 138.3 | — |
+| 138.9 | — |
+| 138.1 | — |
+| 138.2 | — |
+| 137.5 | — |
+| 137.9 | — |
+| 138.2 | — |
+| 138.6 | — |
+| 138.5 | — |
+| 137.8 | — |
+| 137.6 | — |
+| 138.3 | — |
+| 138.5 | — |
+| 138.8 | — |
+| 138.2 | — |
+| 138.5 | — |
+| 138.4 | — |
+| 139.3 | — |
+| 139.1 | — |
+| 138.2 | — |
+| 138.8 | — |
+| 139.6 | — |
+| 139.8 | — |
+| 140.4 | — |
+| 140.4 | — |
+| 140.7 | — |
+| 140.2 | — |
+| 140.1 | — |
+| 140 | — |
+| 140.5 | — |
+| 140.1 | — |
+| 140.5 | — |
+| 140.1 | — |
+| 140.1 | — |
+| 140.1 | — |
+| 141.1 | — |
+| 140.1 | — |
+| 140.8 | — |
+| 141.2 | — |
+| 141.5 | — |
+| 141.7 | — |
+| 140.7 | — |
+| 141 | — |
+| 141.9 | — |
+| 141.7 | — |
+| 142.3 | — |
+| 141.8 | — |
+| 140.9 | — |
+| 141.2 | — |
+| 140.8 | — |
+| 142.1 | — |
+| 142.1 | — |
+| 141.1 | — |
+| 142.1 | — |
+| 141.9 | — |
+| 142.3 | — |
+| 142.3 | — |
+| 142.3 | — |
+| 142.5 | — |
+| 142.5 | — |
+| 142.5 | — |
+| 142 | — |
+| 142.7 | — |
+| 143.2 | — |
+| 142.6 | — |
+| 144.2 | — |
+| 143.9 | — |
+| 143 | — |
+| 143.9 | — |
+| 143.6 | — |
+| 144.1 | — |
+| 143.7 | — |
+| 144.1 | — |
+| 144.2 | — |
+| 144.3 | — |
+| 143.9 | — |
+| 144.8 | — |
+| 145.4 | — |
+| 145.4 | — |
+| 145.4 | — |
+| 145.4 | — |
+| 145.3 | — |
+| 145.7 | — |
+| 145.2 | — |
+| 145.4 | — |
+| 144.6 | — |
+| 145.2 | — |
+| 145.9 | — |
+| 145.7 | — |
+| 145.1 | — |
+| 146.3 | — |
+| 146.2 | — |
+| 146.6 | — |
+| 147.3 | — |
+| 146.8 | — |
+| 147.4 | — |
+| 146.6 | — |
+| 147.8 | — |
+| 146.9 | — |
+| 147.4 | — |
+| 147.9 | — |
+| 147.2 | — |
+| 148.3 | — |
+| 148.3 | — |
+| 147.5 | — |
+| 147.4 | — |
+| 148.7 | — |
+| 149 | — |
+| 147.5 | — |
+| 147.6 | — |
+| 147.8 | — |
+| 147.9 | — |
+| 147.8 | — |
+| 149.1 | — |
+| 148.4 | — |
+| 148 | — |
+| 148.4 | — |
+| 148.9 | — |
+| 149.1 | — |
+| 149.1 | — |
+| 149.4 | — |
+| 148.9 | — |
+| 150 | — |
+| 149.4 | — |
+| 149.7 | — |
+| 149.3 | — |
+| 150.5 | — |
+| 149.4 | — |
+| 150.1 | — |
+| 150.4 | — |
+| 151.4 | — |
+| 151.3 | — |
+| 150.3 | — |
+| 150.6 | — |
+| 151.3 | — |
+| 151.6 | — |
+| 151.8 | — |
+| 152.2 | — |
+| 152.1 | — |
+| 151.5 | — |
+| 152 | — |
+| 152.3 | — |
+| 152.5 | — |
+| 152.5 | — |
+| 153 | — |
+| 152.9 | — |
+| 153.3 | — |
+| 152.9 | — |
+| 153.4 | — |
+| 152.8 | — |
+| 152 | — |
+| 152.9 | — |
+| 153 | — |
+| 153.6 | — |
+| 153.9 | — |
+| 153.1 | — |
+| 153.7 | — |
+| 154.2 | — |
+| 153.7 | — |
+| 154.5 | — |
+| 154.5 | — |
+| 154.5 | — |
+| 154 | — |
+| 154.2 | — |
+| 155.2 | — |
+| 154.1 | — |
+| 155.2 | — |
+| 156 | — |
+| 155.6 | — |
+| 156.7 | — |
+| 156.5 | — |
+| 156.5 | — |
+| 156.7 | — |
+| 156.3 | — |
+| 156.4 | — |
+| 157.1 | — |
+| 156.6 | — |
+| 156.9 | — |
+| 156.8 | — |
+| 158.6 | — |
+| 158.3 | — |
+| 158.1 | — |
+| 158.2 | — |
+| 158.4 | — |
+| 158.3 | — |
+| 158.9 | — |
+| 159.9 | — |
+| 159.1 | — |
+| 159 | — |
+| 160.3 | — |
+| 159.3 | — |
+| 159.7 | — |
+| 160.8 | — |
+| 161.1 | — |
+| 160.7 | — |
+| 159.3 | — |
+| 160.2 | — |
+| 160.3 | — |
+| 160.3 | — |
+| 160.4 | — |
+| 161.3 | — |
+| 160.6 | — |
+| 160.9 | — |
+| 161.6 | — |
+| 161.8 | — |
+| 161.5 | — |
+| 161 | — |
+| 160.6 | — |
+| 160.7 | — |
+| 161.6 | — |
+| 161.7 | — |
+| 162.8 | — |
+| 162.5 | — |
+| 162.4 | — |
+| 162.7 | — |
+| 161.4 | — |
+| 160 | — |
+| 160.4 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 160.5 | — |
+| 161.2 | — |
+| 160.3 | — |
+| 162 | — |
+| 160.8 | — |
+| 161.2 | — |
+| 160.7 | — |
+| 161.2 | — |
+| 160.4 | — |
+| 161.3 | — |
+| 161.1 | — |
+| 160.1 | — |
+| 161.1 | — |
+| 161.8 | — |
+| 161.3 | — |
+| 161.2 | — |
+| 160.2 | — |
+| 161.4 | — |
+| 161.6 | — |
+| 162.3 | — |
+| 161.9 | — |
+| 163 | — |
+| 161.4 | — |
+| 163.5 | — |
+| 162.6 | — |
+| 161.6 | — |
+| 162 | — |
+| 161 | — |
+| 162.9 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 163.1 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 161.8 | — |
+| 161.8 | — |
+| 160.3 | — |
+| 162.5 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 161.6 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 161.5 | — |
+| 162.1 | — |
+| 161.4 | — |
+| 160.9 | — |
+| 161.4 | — |
+| 162.2 | — |
+| 161.3 | — |
+| 162.2 | — |
+| 161.5 | — |
+| 162 | — |
+| 161.7 | — |
+| 162.7 | — |
+| 162.1 | — |
+| 162.3 | — |
+| 160.7 | — |
+| 161.4 | — |
+| 162.7 | — |
+| 162.3 | — |
+| 161.9 | — |
+| 161.3 | — |
+| 163.3 | — |
+| 162.3 | — |
+| 160.8 | — |
+| 160.9 | — |
+| 161.1 | — |
+| 162.6 | — |
+| 161.4 | — |
+| 160.5 | — |
+| 161.1 | — |
+| 162.6 | — |
+| 161.7 | — |
+| 161.4 | — |
+| 161.9 | — |
+| 163.1 | — |
+| 163.4 | — |
+| 163 | — |
+| 162.9 | — |
+| 164.2 | — |
+| 163 | — |
+| 162.4 | — |
+| 162 | — |
+| 161.3 | — |
+| 160.9 | — |
+| 162.8 | — |
+| 162.3 | — |
+| 163 | — |
+| 162.1 | — |
+| 162 | — |
+| 162.1 | — |
+| 161.9 | — |
+| 161 | — |
+| 161.7 | — |
+| 161.4 | — |
+| 162 | — |
+| 161.5 | — |
+| 162 | — |
+| 161.2 | — |
+| 161.7 | — |
+| 161.3 | — |
+| 161.7 | — |
+| 161.8 | — |
+| 162.2 | — |
+| 161.7 | — |
+| 161.7 | — |
+| 162 | — |
+| 162.3 | — |
+| 162.3 | — |
+| 161.2 | — |
+| 161.4 | — |
+| 162.2 | — |
+| 162.3 | — |
+| 161.7 | — |
+| 161.7 | — |
+| 162.4 | — |
+| 161.9 | — |
+| 161.9 | — |
+| 161.5 | — |
+| 162 | — |
+| 162.6 | — |
+| 163.7 | — |
+| 161.9 | — |
+| 161.9 | — |
+| 162.8 | — |
+| 163 | — |
+| 162.5 | — |
+| 161.8 | — |
+| 161.1 | — |
+| 162 | — |
+| 161.8 | — |
+| 162 | — |
+| 161.6 | — |
+| 162.6 | — |
+| 162 | — |
+| 161.5 | — |
+| 161.5 | — |
+| 161.9 | — |
+| 162.2 | — |
+| 163.4 | — |
+| 161.2 | — |
+| 161.2 | — |
+| 162.3 | — |
+| 162.5 | — |
+| 162.8 | — |
+| 162.8 | — |
+| 161.4 | — |
+| 163.4 | — |
+| 163.1 | — |
+| 162.2 | — |
+| 162 | — |
+| 162.5 | — |
+| 161.2 | — |
+| 162.1 | — |
+| 160.5 | — |
+| 161.3 | — |
+| 162 | — |
+| 162.4 | — |
+| 162.2 | — |
+| 161.8 | — |
+| 163.5 | — |
+| 163.1 | — |
+| 161.8 | — |
+| 162.6 | — |
+| 162.9 | — |
+| 162.4 | — |
+| 162 | — |
+| 161.9 | — |
+| 161.5 | — |
+| 161.9 | — |
+| 161.7 | — |
+| 162.4 | — |
+| 163.8 | — |
+| 161.7 | — |
+| 163.6 | — |
+| 162.4 | — |
+| 162.8 | — |
+| 163.5 | — |
+| 162.2 | — |
+| 161.4 | 0 |
+| 161.3 | 8.062 |
+| 160.6 | 12.66 |
+| 159.6 | 15.48 |
+| 159.7 | 17.13 |
+| 160 | 18.93 |
+| 159.4 | 21.73 |
+| 159.1 | 23.81 |
+| 159.5 | 25.5 |
+| 159.8 | 27.24 |
+| 159.6 | 29.07 |
+| 159.1 | 29.69 |
+| 158.3 | 31.59 |
+| 159 | 33.53 |
+| 159 | 34.48 |
+| 159.1 | 35.3 |
+| 158.4 | 36.36 |
+| 158.6 | 38.83 |
+| 158.2 | 40.77 |
+| 157.9 | 43.42 |
+| 158.3 | 44.59 |
+| 157.7 | 44.63 |
+| 158 | 44.51 |
+| 157 | 46.67 |
+| 157.1 | 49.16 |
+| 157.7 | 50.51 |
+| 157 | 51.82 |
+| 157.3 | 53.37 |
+| 157.6 | 54.07 |
+| 156.9 | 54.81 |
+| 157.1 | 55.32 |
+| 158.3 | 57.19 |
+| 157.3 | 58.36 |
+| 157 | 57.69 |
+| 157.4 | 58.85 |
+| 157 | 59.78 |
+| 156.9 | 61.09 |
+| 157.2 | 63.37 |
+| 157.4 | 63.72 |
+| 157.6 | 62.77 |
+| 156.8 | 64.6 |
+| 156 | 66.35 |
+| 157.4 | 67.74 |
+| 157.7 | 67.99 |
+| 157.2 | 69.25 |
+| 156.4 | 70.56 |
+| 156.8 | 72.71 |
+| 156.9 | 74.69 |
+| 157.3 | 74.33 |
+| 156.9 | 74.76 |
+| 156.5 | 75.9 |
+| 156.7 | 77.92 |
+| 156.5 | 79.04 |
+| 155.9 | 80.48 |
+| 156.3 | 80.66 |
+| 156.6 | 79.55 |
+| 156.5 | 79.1 |
+| 156.1 | 81.25 |
+| 156.5 | 82.19 |
+| 156.2 | 82.21 |
+| 156.5 | 81.86 |
+| 156.3 | 82.08 |
+| 156.3 | 82.93 |
+| 156.5 | 84.43 |
+| 156.4 | 84.89 |
+| 155.6 | 88.37 |
+| 155.8 | 89.32 |
+| 156 | 88.9 |
+| 155.2 | 89.99 |
+| 155.9 | 91.21 |
+| 155.8 | 92.15 |
+| 155.9 | 94.06 |
+| 155.7 | 95.96 |
+| 156.2 | 96.06 |
+| 156.5 | 96.39 |
+| 156.4 | 96.33 |
+| 156.5 | 97.02 |
+| 156.3 | 99.29 |
+| 155.4 | 100.7 |
+| 155.5 | 102.4 |
+| 155.3 | 101.9 |
+| 154.2 | 101 |
+| 156 | 101.9 |
+| 155.6 | 101.9 |
+| 156.5 | 102.9 |
+| 155.7 | 103.4 |
+| 156.2 | 104.5 |
+| 155.3 | 105.5 |
+| 154.4 | 106.8 |
+| 155.1 | 108.6 |
+| 155.4 | 107.3 |
+| 156 | 108.2 |
+| 155.8 | 105.5 |
+| 155.4 | 106.6 |
+| 155.8 | 109 |
+| 156 | 109.2 |
+| 156.2 | 111.1 |
+| 155.2 | 111.6 |
+| 155.8 | 111.2 |
+| 155.5 | 113.3 |
+| 155.8 | 115.4 |
+| 155.2 | 115.8 |
+| 155.3 | 115.2 |
+| 155.5 | 117.6 |
+| 155.1 | 119.2 |
+| 155.4 | 120.6 |
+| 155.9 | 121.6 |
+| 156.4 | 121.2 |
+| 155.7 | 122.1 |
+| 155.5 | 124.5 |
+| 154.7 | 126.6 |
+| 155.1 | 126.1 |
+| 155.2 | 126.3 |
+| 155.6 | 127.2 |
+| 155.8 | 129.5 |
+| 156 | 128 |
+| 155.7 | 128 |
+| 156.1 | 128.8 |
+| 155.8 | 129.1 |
+| 155.8 | 131 |
+| 155.4 | 133.6 |
+| 156.6 | 131.8 |
+| 155.7 | 133.3 |
+| 155.8 | 134.9 |
+| 155.1 | 135.2 |
+| 155.2 | 139.3 |
+| 155.1 | 139.4 |
+| 154 | 139.3 |
+| 155.2 | 138 |
+| 155.4 | 137.3 |
+| 155.6 | 138.5 |
+| 154.7 | 139.1 |
+| 154.2 | 140.5 |
+| 154.7 | 142.9 |
+| 154.7 | 144.7 |
+| 155.5 | 143 |
+| 155 | 141.9 |
+| 155.3 | 142.4 |
+| 154.9 | 142 |
+| 154.8 | 142.4 |
+| 154.7 | 142.8 |
+| 154.8 | 144.7 |
+| 154.6 | 144.3 |
+| 153.9 | 146.1 |
+| 153.7 | 145.5 |
+| 154 | 147.4 |
+| 154.6 | 147.5 |
+| 153.7 | 149.4 |
+| 154.4 | 151.7 |
+| 154.4 | 153.3 |
+| 154 | 152 |
+| 153.7 | 154.2 |
+| 153.8 | 155.1 |
+| 154.5 | 154.6 |
+| 154 | 158 |
+| 154.2 | 157.8 |
+| 153.5 | 158.6 |
+| 153.8 | 158.1 |
+| 153 | 157.6 |
+| 153.8 | 157.6 |
+| 154.3 | 159.9 |
+| 153.3 | 159 |
+| 153.8 | 163.8 |
+| 153.6 | 162 |
+| 154.8 | 162 |
+| 154 | 162.6 |
+| 153.7 | 164.2 |
+| 153.8 | 164.5 |
+| 153.9 | 164.3 |
+| 153.2 | 166.6 |
+| 154.2 | 168.9 |
+| 153.1 | 169.6 |
+| 152.9 | 172.7 |
+| 153.4 | 175.5 |
+| 152.8 | 178.1 |
+| 152.8 | 177.7 |
+| 153 | 178 |
+| 154.4 | 176.4 |
+| 153.7 | 175.5 |
+| 153.8 | 176.1 |
+| 153 | 179.9 |
+| 153.7 | 183.1 |
+| 152.9 | 186.7 |
+| 152.6 | 184.4 |
+| 152.6 | 183.7 |
+| 152.9 | 181.3 |
+| 153.5 | 180.9 |
+| 152.7 | 184 |
+| 152.4 | 184.5 |
+| 152 | 186.5 |
+| 153.2 | 186.7 |
+| 154 | 185.7 |
+| 152.4 | 184.5 |
+| 153.3 | 185.1 |
+| 153.3 | 184.4 |
+| 152.3 | 183.2 |
+| 152.7 | 186.7 |
+| 152.4 | 189.5 |
+| 152.4 | 188.8 |
+| 151.8 | 189.1 |
+| 152.6 | 189.9 |
+| 152.1 | 188.5 |
+| 152 | 192.5 |
+| 151.9 | 195.1 |
+| 152.2 | 196.8 |
+| 152 | 195.3 |
+| 152.8 | 194.5 |
+| 152.8 | 196.3 |
+| 151.4 | 197.2 |
+| 152 | 198.6 |
+| 152.1 | 201 |
+| 151.2 | 203.1 |
+| 152.2 | 205.7 |
+| 152.4 | 204.7 |
+| 151.9 | 203.8 |
+| 149.7 | 203.7 |
+| 151.5 | 202.8 |
+| 151.3 | 202 |
+| 151.3 | 200.1 |
+| 151.7 | 204 |
+| 150.8 | 205.3 |
+| 151.3 | 209.1 |
+| 151.5 | 209.3 |
+| 150.8 | 208.4 |
+| 151 | 208.2 |
+| 150.3 | 207.7 |
+| 151.3 | 207.1 |
+| 151.8 | 210.4 |
+| 150.1 | 210.1 |
+| 150.7 | 214.9 |
+| 151 | 215.9 |
+| 151.3 | 213.6 |
+| 152.6 | 212.9 |
+| 151.9 | 212.2 |
+| 151.6 | 210 |
+| 152.5 | 212 |
+| 151 | 211.8 |
+| 152.5 | 212.7 |
+| 152.7 | 210.6 |
+| 152.3 | 211.4 |
+| 151 | 213.6 |
+| 150.5 | 215.2 |
+| 152 | 216.4 |
+| 152.6 | 215.9 |
+| 151.7 | 217 |
+| 151.5 | 214.3 |
+| 150.9 | 212.6 |
+| 150.7 | 214.7 |
+| 151.2 | 215.5 |
+| 150.6 | 218.4 |
+| 150.8 | 221.1 |
+| 151.8 | 222.1 |
+| 151.7 | 221.2 |
+| 151 | 220.6 |
+| 152.1 | 222.2 |
+| 151.6 | 222.7 |
+| 152.4 | 225.5 |
+| 151.1 | 225.4 |
+| 151.1 | 224.1 |
+| 152 | 225.7 |
+| 151.6 | 227.5 |
+| 151.1 | 228.3 |
+| 151.2 | 227.6 |
+| 152.2 | 228.5 |
+| 151.6 | 228.9 |
+| 152.2 | 229.3 |
+| 150.1 | 231 |
+| 149.8 | 236.2 |
+| 150 | 238.1 |
+| 150.7 | 237.3 |
+| 151 | 239.9 |
+| 150.5 | 241.6 |
+| 150.1 | 239.5 |
+| 149.6 | 241.1 |
+| 149.7 | 241.9 |
+| 149.3 | 248.5 |
+| 149.1 | 253 |
+| 148.8 | 253.3 |
+| 150.5 | 256.4 |
+| 149.8 | 261.4 |
+| 149.6 | 263 |
+| 149.5 | 261 |
+| 148.3 | 263.3 |
+| 149.4 | 265.6 |
+| 148.8 | 268.4 |
+| 148.1 | 270.4 |
+| 147.6 | 270.9 |
+| 148.6 | 273.4 |
+| 147.5 | 275.9 |
+| 147.4 | 274.6 |
+| 146.9 | 273.9 |
+| 148.6 | 278.4 |
+| 147.4 | 280.7 |
+| 146.6 | 279.4 |
+| 147.4 | 281.4 |
+| 146.3 | 282 |
+| 146.8 | 282.9 |
+| 146.1 | 283.9 |
+| 146.5 | 280.9 |
+| 146.5 | 284.7 |
+| 147.3 | 285.4 |
+| 147.5 | 284.1 |
+| 147.2 | 287 |
+| 147.8 | 285.8 |
+| 148.2 | 288.2 |
+| 146.7 | 291.2 |
+| 147.3 | 291.9 |
+| 147.7 | 291.1 |
+| 147 | 292.6 |
+| 147.9 | 293.3 |
+| 146.9 | 296.3 |
+| 146.9 | 295.8 |
+| 147.6 | 293.8 |
+| 147.5 | 294.9 |
+| 147.7 | 295.9 |
+| 148.1 | 298.9 |
+| 147.7 | 296.8 |
+| 148.2 | 298.8 |
+| 146.4 | 304.9 |
+| 147.5 | 310.4 |
+| 147.7 | 309.6 |
+| 147.6 | 306.9 |
+| 147.6 | 305.8 |
+| 147.5 | 308.4 |
+| 147.2 | 311.8 |
+| 148.1 | 310.6 |
+| 147.3 | 311 |
+| 147.4 | 311.8 |
+| 147.6 | 309.3 |
+| 147.2 | 311.7 |
+| 147.2 | 314.1 |
+| 146.6 | 317.6 |
+| 146.4 | 319.2 |
+| 146.7 | 321.3 |
+| 146.6 | 320.5 |
+| 147 | 316.8 |
+| 146.9 | 318 |
+| 147.1 | 318.5 |
+| 146.5 | 319.6 |
+| 146.9 | 324.2 |
+| 147.5 | 323.1 |
+| 147 | 324.1 |
+| 146.2 | 323.7 |
+| 146.9 | 325 |
+| 146.1 | 325.5 |
+| 146.5 | 323.6 |
+| 146.1 | 324.3 |
+| 145.9 | 326.2 |
+| 145.9 | 327.9 |
+| 146.2 | 326 |
+| 145.8 | 326.5 |
+| 146.8 | 328.3 |
+| 145.9 | 327.3 |
+| 146.1 | 329.6 |
+| 146.5 | 328.8 |
+| 146.3 | 329.1 |
+| 145.8 | 330.5 |
+| 145.7 | 331.1 |
+| 146.1 | 329.1 |
+| 145.5 | 328.3 |
+| 143.8 | 327.9 |
+| 145.3 | 328.3 |
+| 145.2 | 331.2 |
+| 145.2 | 333.5 |
+| 145.1 | 330.8 |
+| 144.8 | 329.8 |
+| 145.2 | 334.8 |
+| 145.7 | 333.6 |
+| 145.5 | 332.6 |
+| 144.1 | 333.2 |
+| 143.9 | 337.1 |
+| 143 | 338.4 |
+| 144.5 | 338.6 |
+| 143.8 | 338.2 |
+| 143.3 | 338.7 |
+| 144.9 | 338.8 |
+| 143.6 | 339.9 |
+| 144 | 345.1 |
+| 141.9 | 346.3 |
+| 142.8 | 345.3 |
+| 142.4 | 341.5 |
+| 143.2 | 342.5 |
+| 143.6 | 345.2 |
+| 144 | 348.1 |
+| 141.6 | 347.3 |
+| 141.4 | 346.9 |
+| 141.9 | 346.5 |
+| 142.1 | 344.3 |
+| 143.8 | 345.7 |
+| 143.4 | 346.4 |
+| 143 | 344.3 |
+| 144 | 342.8 |
+| 143.9 | 341.1 |
+| 143.5 | 341.6 |
+| 144.5 | 345.2 |
+| 144.3 | 343.4 |
+| 144.1 | 343 |
+| 143.9 | 345.3 |
+| 143.8 | 348.4 |
+| 143.3 | 349.6 |
+| 142 | 346.8 |
+| 140.9 | 354 |
+| 142.7 | 354.9 |
+| 143.6 | 358.5 |
+| 141.9 | 367.2 |
+| 140.6 | 369.4 |
+| 140.1 | 370.4 |
+| 140.8 | 370 |
+| 141.1 | 371.2 |
+| 138.9 | 373.9 |
+| 139.3 | 376.6 |
+| 140.2 | 387.7 |
+| 140 | 391 |
+| 139.7 | 387 |
+| 140.2 | 389.4 |
+| 138.2 | 398.2 |
+| 139.2 | 400.5 |
+| 140.1 | 397.5 |
+| 139.9 | 406.7 |
+| 141.5 | 404.9 |
+| 140.3 | 409.5 |
+| 140 | 409.4 |
+| 138.9 | 413.2 |
+| 138.7 | 424.7 |
+| 139.8 | 420.2 |
+| 139.1 | 423.8 |
+| 139 | 436.5 |
+| 139.4 | 433.2 |
+| 139.7 | 435.1 |
+| 139.1 | 440.6 |
+| 139.3 | 443.4 |
+| 139.4 | 436.5 |
+| 139.2 | 443 |
+| 139.6 | 447.5 |
+| 139.8 | 444.7 |
+| 139.2 | 441.4 |
+| 139.2 | 446.8 |
+| 138.7 | 446 |
+| 140.1 | 446.1 |
+| 138.2 | 443.7 |
+| 138 | 452.3 |
+| 139.7 | 446.1 |
+| 138.7 | 454 |
+| 138.2 | 455.2 |
+| 138.9 | 454.9 |
+| 138.3 | 467.5 |
+| 138 | 471.2 |
+| 137.4 | 477.9 |
+| 139 | 470.3 |
+| 139 | 470.3 |
+| 139.1 | 476.1 |
+| 139.5 | 482.4 |
+| 139.4 | 485.6 |
+| 140 | 488.7 |
+| 138 | 498.1 |
+| 138.4 | 505.3 |
+| 137.9 | 504.5 |
+| 139.7 | 508.2 |
+| 137.4 | 512 |
+| 138.1 | 514.1 |
+| 137.2 | 520.9 |
+| 139.1 | 524.8 |
+| 138.4 | 526.7 |
+| 138.1 | 527.7 |
+| 139.3 | 527.8 |
+| 139.3 | 521.8 |
+| 139.1 | 528 |
+| 138.8 | 527.7 |
+| 138.4 | 529.3 |
+| 137.3 | 531.9 |
+| 138 | 537.2 |
+| 137.5 | 536.4 |
+| 137.1 | 533 |
+| 138 | 539.5 |
+| 138.6 | 543.4 |
+| 139.1 | 543.1 |
+| 139 | 547.1 |
+| 139 | 556.1 |
+| 137.1 | 546.5 |
+| 137.2 | 549.8 |
+| 137.1 | 556.3 |
+| 137.1 | 561 |
+| 136.5 | 570 |
+| 138.2 | 565.6 |
+| 137.6 | 570.2 |
+| 137 | 573 |
+| 138.2 | 562.8 |
+| 136.6 | 573.4 |
+| 137.2 | 578.7 |
+| 137.3 | 579.1 |
+| 136.7 | 583.3 |
+| 138.1 | 578.6 |
+| 137.4 | 579.6 |
+| 137.8 | 572.6 |
+| 137.3 | 575.8 |
+| 137.4 | 580.6 |
+| 136.6 | 586.2 |
+| 136.4 | 583.1 |
+| 135.4 | 583.8 |
+| 137 | 589.5 |
+| 137 | 588.3 |
+| 136.1 | 596 |
+| 137.3 | 601.3 |
+| 137.1 | 606.3 |
+| 135.8 | 610 |
+| 136.2 | 615.7 |
+| 136.4 | 606.1 |
+| 136.2 | 611.7 |
+| 136.3 | 609.3 |
+| 135.9 | 612.5 |
+| 136.4 | 609.9 |
+| 137.2 | 614.8 |
+| 137.1 | 614.9 |
+| 136.1 | 612.2 |
+| 137.8 | 606.9 |
+| 137.2 | 605.4 |
+| 134.8 | 606.6 |
+| 136.4 | 607.2 |
+| 135.8 | 616.2 |
+| 137.9 | 619.4 |
+| 136.2 | 617.2 |
+| 137.4 | 612.4 |
+| 137.5 | 612.8 |
+| 137.5 | 621.8 |
+| 137.7 | 622.6 |
+| 137.6 | 623.7 |
+| 136.7 | 620.2 |
+| 138.3 | 622.9 |
+| 136.9 | 625.5 |
+| 137.2 | 627.6 |
+| 136.2 | 627.9 |
+| 137 | 634.3 |
+| 136.5 | 631.9 |
+| 137.2 | 638.7 |
+| 136.4 | 643.6 |
+| 136.8 | 641.3 |
+| 136.3 | 644.8 |
+| 138.2 | 654.1 |
+| 136.8 | 651.8 |
+| 137.3 | 657.9 |
+| 136.9 | 654.4 |
+| 136.4 | 648.5 |
+| 136.5 | 654.1 |
+| 136.7 | 650.8 |
+| 137.3 | 654.8 |
+| 137 | 658.4 |
+| 137 | 649.2 |
+| 137.1 | 644.4 |
+| 136.9 | 640.7 |
+| 134.9 | 643.2 |
+| 134.6 | 641.3 |
+| 136.2 | 636.8 |
+| 135.1 | 637.2 |
+| 135.5 | 633.5 |
+| 136.2 | 629.8 |
+| 137.7 | 626.4 |
+| 135.5 | 627.9 |
+| 135.8 | 640.6 |
+| 137.8 | 636.9 |
+| 136.6 | 650.8 |
+| 137.9 | 649.5 |
+| 139 | 657.7 |
+| 138.4 | 657 |
+| 137.7 | 665.9 |
+| 137.9 | 660.2 |
+| 136.1 | 660.6 |
+| 136.3 | 662.6 |
+| 135.8 | 660.9 |
+| 136.4 | 656.1 |
+| 136.1 | 662.3 |
+| 137.6 | 661.9 |
+| 134.9 | 658.7 |
+| 135.2 | 659.7 |
+| 136.8 | 670.5 |
+| 136.1 | 673.9 |
+| 136.2 | 664.1 |
+| 136.2 | 666.2 |
+| 136.7 | 668.7 |
+| 135.1 | 662.3 |
+| 136.1 | 660.8 |
+| 135.7 | 660.7 |
+| 137.4 | 667.1 |
+| 134.8 | 669.8 |
+| 135.3 | 672.4 |
+| 136.5 | 671.3 |
+| 135.3 | 668.9 |
+| 135.7 | 670.6 |
+| 135.8 | 666.9 |
+| 135 | 680.2 |
+| 136.9 | 680.1 |
+| 134.4 | 682.3 |
+| 135.2 | 678.7 |
+| 135.7 | 677.9 |
+| 135.9 | 683.2 |
+| 135.3 | 690.9 |
+| 135.9 | 687.7 |
+| 135.3 | 687.2 |
+| 134.5 | 692.1 |
+| 135.5 | 690.7 |
+| 135.7 | 695.9 |
+| 135.2 | 700.8 |
+| 135.5 | 702.8 |
+| 136.2 | 693.7 |
+| 137 | 692.6 |
+| 136 | 691 |
+| 136.4 | 691.5 |
+| 136.2 | 700.3 |
+| 136 | 697.8 |
+| 136.7 | 698.3 |
+| 138.3 | 700.9 |
+| 135.8 | 699.1 |
+| 135.8 | 700.6 |
+| 136.4 | 706 |
+| 137.5 | 698.3 |
+| 137.6 | 704 |
+| 136.6 | 699.2 |
+| 136 | 702.9 |
+| 137.1 | 710.2 |
+| 137.6 | 703.7 |
+| 136.4 | 710 |
+| 137.2 | 710.8 |
+| 137.8 | 719.7 |
+| 136.6 | 724.9 |
+| 136.3 | 736.1 |
+| 135.9 | 736.1 |
+| 136.3 | 735.6 |
+| 136.9 | 735.7 |
+| 135.6 | 741.9 |
+| 135.5 | 754.4 |
+| 136.5 | 744.1 |
+| 137.2 | 743.5 |
+| 135.3 | 744.1 |
+| 135.5 | 743.6 |
+| 135.8 | 737.8 |
+| 137.1 | 732.2 |
+| 136.5 | 730.6 |
+| 136.4 | 731.9 |
+| 136.4 | 732.7 |
+| 136.4 | 734.6 |
+| 135.7 | 722.8 |
+| 135.3 | 722.9 |
+| 135.6 | 728.3 |
+| 137.4 | 726.9 |
+| 138.6 | 725.2 |
+| 135 | 717.4 |
+| 135.3 | 720 |
+| 137.1 | 728.7 |
+| 134.8 | 722.6 |
+| 134.6 | 725.1 |
+| 135.9 | 733.5 |
+| 137.4 | 732.4 |
+| 135.3 | 745.5 |
+| 136.2 | 749.3 |
+| 136 | 752.1 |
+| 137.2 | 751.6 |
+| 134.9 | 742.1 |
+| 137 | 742.5 |
+| 135.2 | 746.7 |
+| 134.8 | 739.2 |
+| 136.3 | 734.1 |
+| 136.9 | 737 |
+| 137.7 | 736.9 |
+| 137.1 | 736.3 |
+| 136.4 | 751.4 |
+| 135.9 | 754.2 |
+| 136.2 | 758.1 |
+| 137.6 | 756 |
+| 136.6 | 758 |
+| 139.8 | 761.5 |
+| 136.1 | 769.6 |
+| 135.3 | 768.2 |
+| 138.2 | 765.4 |
+| 135.1 | 776.4 |
+| 135.2 | 771.6 |
+| 134.4 | 786.5 |
+| 135.1 | 794.8 |
+| 136.2 | 790.8 |
+| 136.4 | 786.6 |
+| 136.9 | 782.8 |
+| 136 | 795.8 |
+| 137.1 | 790.9 |
+| 136.6 | 794.3 |
+| 136.8 | 800.7 |
+| 135.9 | 794.9 |
+| 136 | 797.6 |
+| 136.9 | 803.7 |
+| 138.3 | 799.8 |
+| 137.7 | 802 |
+| 136.3 | 801 |
+| 136.5 | 803.7 |
+| 135.1 | 805.5 |
+| 137 | 808.4 |
+| 137.1 | 813.3 |
+| 137 | 817.7 |
+| 136.7 | 827.3 |
+| 136.2 | 830 |
+| 136.1 | 821.6 |
+| 136.1 | 826.7 |
+| 137.1 | 821.7 |
+| 135.7 | 818.1 |
+| 137.5 | 831.4 |
+| 137 | 836.7 |
+| 136.9 | 836.3 |
+| 137 | 838.8 |
+| 137.4 | 852.2 |
+| 136.2 | 836.6 |
+| 137.2 | 829.2 |
+| 136.2 | 829.8 |
+| 135.2 | 823.8 |
+| 136.1 | 818.4 |
+| 135.7 | 830.4 |
+| 135.7 | 836.6 |
+| 135.5 | 830.3 |
+| 135.2 | 833.6 |
+| 134.7 | 824.2 |
+| 135.9 | 823.4 |
+| 137.1 | 831.5 |
+| 135.6 | 830.6 |
+| 136.4 | 834.1 |
+| 136.1 | 844.8 |
+| 135.1 | 831.8 |
+| 136.8 | 832.3 |
+| 136.3 | 845.4 |
+| 137.2 | 840.7 |
+| 136.6 | 841.3 |
+| 137.8 | 841.1 |
+| 136.7 | 834.1 |
+| 136 | 840 |
+| 137.2 | 831.9 |
+| 135 | 828.7 |
+| 136.7 | 832.7 |
+| 136.9 | 836.9 |
+| 136.8 | 832.3 |
+| 137.9 | 834.4 |
+| 138.2 | 843.8 |
+| 136.8 | 831.8 |
+| 136.5 | 832.7 |
+| 137.1 | 837 |
+| 137.3 | 842.5 |
+| 136.9 | 848.7 |
+| 137.7 | 848.2 |
+| 136.2 | 855.6 |
+| 137.7 | 856.3 |
+| 136.9 | 865.1 |
+| 136.4 | 869.4 |
+| 136.8 | 869.3 |
+| 136.7 | 867 |
+| 136.6 | 868 |
+| 136.7 | 872.6 |
+| 137 | 872.7 |
+| 135.7 | 866 |
+| 135.9 | 877.9 |
+| 137.2 | 884.6 |
+| 136.4 | 880.4 |
+| 135.5 | 878.4 |
+| 137.4 | 880.8 |
+| 136.9 | 885.7 |
+| 136.1 | 885.4 |
+| 136.4 | 894.8 |
+| 136.2 | 896.4 |
+| 135.9 | 909.4 |
+| 135.9 | 907.8 |
+| 136.1 | 916 |
+| 135 | 904.7 |
+| 136.4 | 904.7 |
+| 136.5 | 914.2 |
+| 137.6 | 914.6 |
+| 137.1 | 905.8 |
+| 137.7 | 902.7 |
+| 136.9 | 900.3 |
+| 137.1 | 909.8 |
+| 136.9 | 910 |
+| 135.4 | 904.8 |
+| 135.6 | 899.8 |
+| 136.4 | 900 |
+| 136.5 | 905 |
+| 136.3 | 899.1 |
+| 137.7 | 905.6 |
+| 137.2 | 915.5 |
+| 136.7 | 912.3 |
+| 136.2 | 920.6 |
+| 137 | 905.1 |
+| 135.5 | 904.6 |
+| 136.2 | 891.9 |
+| 136.6 | 894.3 |
+| 137.2 | 891.4 |
+| 136.3 | 899.2 |
+| 136.8 | 901.5 |
+| 136.2 | 902.4 |
+| 136 | 910 |
+| 136.5 | 907.3 |
+| 135.8 | 907.6 |
+| 136.3 | 906.1 |
+| 138 | 917.6 |
+| 134.7 | 921.4 |
+| 136.4 | 924.7 |
+| 137 | 920.7 |
+| 135.2 | 929.5 |
+| 135.4 | 936 |
+| 136 | 939.1 |
+| 137.2 | 941.3 |
+| 136.9 | 928.3 |
+| 136.9 | 924.3 |
+| 137.2 | 919.3 |
+| 137.2 | 934.1 |
+| 136.9 | 949.9 |
+| 137.9 | 950.4 |
+| 137 | 956.9 |
+| 137 | 949.7 |
+| 136.8 | 955 |
+| 137.7 | 954.2 |
+| 136.7 | 969.7 |
+| 135.8 | 969.9 |
+| 138 | 966.5 |
+| 136.6 | 962.2 |
+| 137.8 | 959.5 |
+| 136.1 | 971.1 |
+| 135.7 | 974 |
+| 137.8 | 979 |
+| 136.4 | 976.4 |
+| 135.9 | 973.8 |
+| 136.8 | 977.3 |
+| 136.7 | 977.1 |
+| 136.8 | 978.5 |
+| 137.5 | 975.7 |
+| 137.3 | 975.1 |
+| 138.1 | 971 |
+| 137.4 | 977.3 |
+| 136.6 | 974.9 |
+| 138.4 | 980.6 |
+| 136.5 | 979.2 |
+| 136.7 | 978 |
+| 138.2 | 980.1 |
+| 136.2 | 983.5 |
+| 135.7 | 990.2 |
+| 136.1 | 987.3 |
+| 136.2 | 985.1 |
+| 136 | 987.7 |
+| 135.8 | 989.6 |
+| 136.1 | 996 |
+| 135.7 | 994.6 |
+| 136.9 | 987 |
+| 135.7 | 985.6 |
+| 135.6 | 987.7 |
+| 136.7 | 985.8 |
+| 135.7 | 975.5 |
+| 137.9 | 980.1 |
+| 136.8 | 993.9 |
+| 136.1 | 1001 |
+| 137 | 1004 |
+| 136.4 | 1003 |
+| 138 | 998.7 |
+| 134.9 | 1021 |
+| 136.6 | 1023 |
+| 137.1 | 1027 |
+| 138 | 1018 |
+| 137 | 1017 |
+| 137.9 | 1023 |
+| 137.4 | 1027 |
+| 137.8 | 1035 |
+| 137.8 | 1011 |
+| 136.9 | 1021 |
+| 137.4 | 1028 |
+| 137.7 | 1025 |
+| 136.6 | 1028 |
+| 135.8 | 1026 |
+| 138 | 1023 |
+| 136.2 | 1032 |
+| 136.8 | 1025 |
+| 137.8 | 1029 |
+| 138.2 | 1039 |
+| 137.7 | 1031 |
+| 137 | 1036 |
+| 136.5 | 1034 |
+| 135.2 | 1053 |
+| 136 | 1053 |
+| 135.9 | 1051 |
+| 134 | 1052 |
+| 135.1 | 1054 |
+| 137.3 | 1063 |
+| 136.8 | 1073 |
+| 136.8 | 1077 |
+| 138 | 1069 |
+| 137.5 | 1062 |
+| 137.5 | 1065 |
+| 137.1 | 1056 |
+| 137.8 | 1057 |
+| 137.4 | 1058 |
+| 138.4 | 1055 |
+| 137.5 | 1061 |
+| 138.2 | 1060 |
+| 136.3 | 1063 |
+| 136.6 | 1059 |
+| 136.5 | 1048 |
+| 136.6 | 1048 |
+| 136.5 | 1053 |
+| 136.9 | 1055 |
+| 134.3 | 1060 |
+| 137.3 | 1061 |
+| 134.8 | 1064 |
+| 136.7 | 1068 |
+| 136 | 1072 |
+| 135.7 | 1071 |
+| 137.8 | 1080 |
+| 137.1 | 1076 |
+| 137.2 | 1069 |
+| 136.5 | 1059 |
+| 135.8 | 1069 |
+| 136.1 | 1073 |
+| 138.3 | 1083 |
+| 136.7 | 1083 |
+| 137.4 | 1091 |
+| 136.4 | 1096 |
+| 136.4 | 1100 |
+| 136.9 | 1098 |
+| 136.3 | 1093 |
+| 138.8 | 1095 |
+| 137.1 | 1093 |
+| 137 | 1092 |
+| 135 | 1093 |
+| 135.4 | 1093 |
+| 136.4 | 1090 |
+| 135.6 | 1093 |
+| 136.9 | 1088 |
+| 136.8 | 1098 |
+| 136.9 | 1104 |
+| 136.1 | 1103 |
+| 137.3 | 1100 |
+| 136.8 | 1104 |
+| 135.8 | 1102 |
+| 135.4 | 1092 |
+| 135.8 | 1098 |
+| 134.6 | 1086 |
+| 136.2 | 1089 |
+| 136.9 | 1086 |
+| 135.7 | 1091 |
+| 134.9 | 1088 |
+| 137.5 | 1083 |
+| 135 | 1087 |
+| 136.7 | 1090 |
+| 137 | 1092 |
+| 135.3 | 1097 |
+| 135.4 | 1105 |
+| 136.6 | 1118 |
+| 135 | 1130 |
+| 136.5 | 1124 |
+| 134.8 | 1129 |
+| 136.3 | 1134 |
+| 136.7 | 1127 |
+| 136.5 | 1129 |
+| 136.6 | 1132 |
+| 137.6 | 1134 |
+| 136.1 | 1133 |
+| 137.3 | 1123 |
+| 137 | 1130 |
+| 137.1 | 1130 |
+| 136.5 | 1130 |
+| 136.1 | 1141 |
+| 136.2 | 1142 |
+| 135 | 1149 |
+| 135.4 | 1145 |
+| 135.2 | 1140 |
+| 136.9 | 1151 |
+| 136.3 | 1144 |
+| 137 | 1149 |
+| 137.1 | 1152 |
+| 139 | 1140 |
+| 136.8 | 1142 |
+| 136.1 | 1144 |
+| 135.5 | 1161 |
+| 137.5 | 1147 |
+| 138.4 | 1152 |
+| 137.9 | 1154 |
+| 137 | 1152 |
+| 135.6 | 1139 |
+| 134.6 | 1149 |
+| 137.2 | 1159 |
+| 136.8 | 1155 |
+| 135.5 | 1164 |
+| 137 | 1168 |
+| 136.8 | 1157 |
+| 135.7 | 1165 |
+| 135.8 | 1169 |
+| 136.1 | 1170 |
+| 134.7 | 1173 |
+| 136.4 | 1157 |
+| 137.5 | 1160 |
+| 135.8 | 1164 |
+| 134.8 | 1155 |
+| 136.8 | 1153 |
+| 135.5 | 1156 |
+| 134.8 | 1147 |
+| 136.2 | 1155 |
+| 136.3 | 1156 |
+| 136.4 | 1159 |
+| 138.3 | 1158 |
+| 136.2 | 1176 |
+| 136.4 | 1181 |
+| 136.6 | 1192 |
+| 134.7 | 1205 |
+| 134.6 | 1200 |
+| 135.1 | 1201 |
+| 135.6 | 1195 |
+| 136.6 | 1218 |
+| 138.2 | 1224 |
+| 135.6 | 1217 |
+| 135 | 1214 |
+| 138.2 | 1216 |
+| 136 | 1225 |
+| 136.3 | 1224 |
+| 137.2 | 1237 |
+| 136.6 | 1239 |
+| 136.2 | 1248 |
+| 137.2 | 1257 |
+| 136.7 | 1261 |
+| 137.2 | 1257 |
+| 137.2 | 1262 |
+| 137.1 | 1249 |
+| 137.7 | 1236 |
+| 134.5 | 1243 |
+| 136.4 | 1245 |
+| 137.1 | 1244 |
+| 135.9 | 1238 |
+| 137 | 1240 |
+| 135.3 | 1236 |
+| 135.3 | 1243 |
+| 136.6 | 1252 |
+| 138.7 | 1240 |
+| 135.9 | 1240 |
+| 136.1 | 1235 |
+| 135.5 | 1233 |
+| 138.1 | 1238 |
+| 136.9 | 1245 |
+| 135.9 | 1250 |
+| 136.3 | 1259 |
+| 136.3 | 1246 |
+| 136.1 | 1232 |
+| 136.5 | 1251 |
+| 136.5 | 1248 |
+| 135.9 | 1262 |
+| 136 | 1259 |
+| 136.7 | 1272 |
+| 135.4 | 1269 |
+| 136.3 | 1277 |
+| 137.6 | 1272 |
+| 137.1 | 1278 |
+| 136.2 | 1269 |
+| 135.7 | 1270 |
+| 137.4 | 1277 |
+| 138.5 | 1287 |
+| 135.7 | 1284 |
+| 136.2 | 1282 |
+| 135.9 | 1297 |
+| 136.8 | 1303 |
+| 135.1 | 1298 |
+| 135.2 | 1299 |
+| 136.5 | 1304 |
+| 137.3 | 1313 |
+| 136.9 | 1298 |
+| 136.3 | 1295 |
+| 136.8 | 1312 |
+| 136.9 | 1303 |
+| 138.3 | 1323 |
+| 137.1 | 1311 |
+| 138.4 | 1320 |
+| 137.7 | 1309 |
+| 137.4 | 1314 |
+| 137.9 | 1315 |
+| 135.8 | 1299 |
+| 138.6 | 1304 |
+| 136.4 | 1297 |
+| 137.3 | 1309 |
+| 136.5 | 1304 |
+| 137.4 | 1316 |
+| 136.4 | 1315 |
+| 137.4 | 1304 |
+| 136.6 | 1307 |
+| 136.2 | 1311 |
+| 135.1 | 1316 |
+| 136.1 | 1304 |
+| 135 | 1325 |
+| 135.4 | 1317 |
+| 136.8 | 1324 |
+| 135.8 | 1337 |
+| 136.2 | 1342 |
+| 136.2 | 1336 |
+| 135.9 | 1326 |
+| 135.8 | 1334 |
+| 136.3 | 1338 |
+| 137.1 | 1342 |
+| 136 | 1336 |
+| 137.3 | 1341 |
+| 137.9 | 1348 |
+| 136.4 | 1339 |
+| 138.5 | 1345 |
+| 137.7 | 1343 |
+| 136.8 | 1338 |
+| 138.1 | 1343 |
+| 136.9 | 1354 |
+| 135.9 | 1345 |
+| 137.5 | 1355 |
+| 138.1 | 1355 |
+| 137.6 | 1348 |
+| 138 | 1340 |
+| 135.3 | 1329 |
+| 137.4 | 1334 |
+| 135.8 | 1328 |
+| 136.6 | 1345 |
+| 137.3 | 1344 |
+| 135.4 | 1331 |
+| 136.7 | 1338 |
+| 135.8 | 1319 |
+| 137.3 | 1327 |
+| 137.1 | 1322 |
+| 136.6 | 1317 |
+| 136 | 1323 |
+| 137.1 | 1323 |
+| 137.4 | 1328 |
+| 136.9 | 1346 |
+| 135.1 | 1355 |
+| 136.9 | 1360 |
+| 139.1 | 1351 |
+| 137.3 | 1369 |
+| 138.2 | 1365 |
+| 137.5 | 1381 |
+| 137.7 | 1357 |
+| 139 | 1363 |
+| 137.1 | 1379 |
+| 137.6 | 1381 |
+| 137.5 | 1368 |
+| 138.2 | 1359 |
+| 137.5 | 1349 |
+| 136.8 | 1350 |
+| 135.5 | 1340 |
+| 137.8 | 1338 |
+| 135.5 | 1330 |
+| 138.4 | 1328 |
+| 137.6 | 1335 |
+| 137.5 | 1345 |
+| 137.5 | 1337 |
+| 138.1 | 1343 |
+| 136.5 | 1334 |
+| 137.1 | 1339 |
+| 137.8 | 1338 |
+| 139.9 | 1340 |
+| 137.2 | 1345 |
+| 137.3 | 1354 |
+| 136.9 | 1361 |
+| 136 | 1360 |
+| 136.9 | 1351 |
+| 136.8 | 1344 |
+| 138.1 | 1356 |
+| 137.7 | 1356 |
+| 137.9 | 1356 |
+| 139.1 | 1363 |
+| 138.8 | 1363 |
+| 137.3 | 1377 |
+| 138 | 1387 |
+| 139.5 | 1378 |
+| 137.3 | 1378 |
+| 137.5 | 1392 |
+| 138.7 | 1391 |
+| 136.8 | 1386 |
+| 137.2 | 1384 |
+| 137.1 | 1381 |
+| 137.1 | 1383 |
+| 135.6 | 1382 |
+| 135.6 | 1385 |
+| 136 | 1389 |
+| 134.9 | 1384 |
+| 135.6 | 1385 |
+| 135.4 | 1385 |
+| 134.8 | 1391 |
+| 135.5 | 1386 |
+| 136.5 | 1391 |
+| 136.4 | 1391 |
+| 135.8 | 1386 |
+| 135.7 | 1390 |
+| 135.4 | 1391 |
+| 136.4 | 1397 |
+| 135.6 | 1391 |
+| 136.1 | 1390 |
+| 135.5 | 1386 |
+| 134.9 | 1390 |
+| 134.9 | 1394 |
+| 134.9 | 1395 |
+| 135.6 | 1395 |
+| 136 | 1394 |
+| 134.8 | 1394 |
+| 134.5 | 1398 |
+| 135.4 | 1395 |
+| 134.4 | 1393 |
+| 134.6 | 1384 |
+| 134.3 | 1390 |
+| 135 | 1386 |
+| 134.7 | 1384 |
+| 135.5 | 1387 |
+| 134.6 | 1388 |
+| 134.9 | 1390 |
+| 134.4 | 1397 |
+| 134.6 | 1394 |
+| 133.8 | 1390 |
+| 134.8 | 1390 |
+| 135 | 1391 |
+| 134.8 | 1392 |
+| 134.6 | 1392 |
+| 134.4 | 1395 |
+| 135.4 | 1394 |
+| 134.6 | 1391 |
+| 134.2 | 1395 |
+| 134.1 | 1400 |
+| 133.8 | 1402 |
+| 134.2 | 1409 |
+| 133.9 | 1406 |
+| 133.9 | 1406 |
+| 133.9 | 1413 |
+| 134.2 | 1417 |
+| 134.1 | 1419 |
+| 133.4 | 1411 |
+| 134.3 | 1415 |
+| 134.3 | 1417 |
+| 134.6 | 1416 |
+| 134.4 | 1418 |
+| 134.5 | 1424 |
+| 135.1 | 1421 |
+| 134.2 | 1426 |
+| 134.3 | 1434 |
+| 133.5 | 1431 |
+| 133.7 | 1437 |
+| 134 | 1437 |
+| 134.4 | 1435 |
+| 133.3 | 1433 |
+| 133.4 | 1433 |
+| 133.3 | 1431 |
+| 133.4 | 1424 |
+| 133.8 | 1426 |
+| 133.9 | 1427 |
+| 133.5 | 1431 |
+| 133.6 | 1437 |
+| 133.1 | 1438 |
+| 133.1 | 1436 |
+| 133.8 | 1433 |
+| 132.9 | 1432 |
+| 134.1 | 1428 |
+| 133.5 | 1433 |
+| 133.1 | 1434 |
+| 133.1 | 1436 |
+| 134 | 1435 |
+| 133.2 | 1438 |
+| 133.4 | 1441 |
+| 133.3 | 1439 |
+| 133.6 | 1438 |
+| 134 | 1432 |
+| 133.5 | 1438 |
+| 133 | 1441 |
+| 132.7 | 1443 |
+| 132.9 | 1450 |
+| 133.4 | 1451 |
+| 133.4 | 1452 |
+| 132.8 | 1453 |
+| 133.2 | 1460 |
+| 132.8 | 1464 |
+| 133.1 | 1465 |
+| 133.4 | 1473 |
+| 133.2 | 1467 |
+| 132.8 | 1466 |
+| 133 | 1466 |
+| 133.9 | 1466 |
+| 133.3 | 1467 |
+| 132.8 | 1472 |
+| 132.8 | 1476 |
+| 133.7 | 1477 |
+| 134.5 | 1476 |
+| 133.8 | 1477 |
+| 133.6 | 1483 |
+| 134 | 1483 |
+| 133.6 | 1482 |
+| 133.6 | 1480 |
+| 133.3 | 1477 |
+| 133 | 1468 |
+| 133.8 | 1469 |
+| 134 | 1469 |
+| 134.1 | 1466 |
+| 133.5 | 1470 |
+| 133.1 | 1469 |
+| 133.8 | 1467 |
+| 133.8 | 1468 |
+| 133.9 | 1466 |
+| 133.4 | 1475 |
+| 133 | 1477 |
+| 134 | 1478 |
+| 134 | 1476 |
+| 133.7 | 1470 |
+| 133.9 | 1471 |
+| 134 | 1469 |
+| 133.8 | 1467 |
+| 133.8 | 1468 |
+| 134.3 | 1466 |
+| 133.6 | 1467 |
+| 133.1 | 1474 |
+| 134.2 | 1474 |
+| 134 | 1476 |
+| 134.1 | 1470 |
+| 133 | 1475 |
+| 133.1 | 1471 |
+| 133.8 | 1471 |
+| 133.6 | 1467 |
+| 133.5 | 1470 |
+| 133.8 | 1468 |
+| 134.1 | 1468 |
+| 133.9 | 1467 |
+| 134.1 | 1465 |
+| 133.7 | 1468 |
+| 133.4 | 1468 |
+| 134.3 | 1470 |
+| 134.1 | 1469 |
+| 133.9 | 1470 |
+| 134.2 | 1466 |
+| 134.2 | 1466 |
+| 133.7 | 1466 |
+| 134.4 | 1460 |
+| 134 | 1466 |
+| 133.8 | 1473 |
+| 134.1 | 1476 |
+| 133.5 | 1474 |
+| 134.1 | 1473 |
+| 133.8 | 1470 |
+| 133.8 | 1468 |
+| 134.3 | 1473 |
+| 133 | 1472 |
+| 133.1 | 1477 |
+| 133 | 1477 |
+| 133.4 | 1478 |
+| 133.2 | 1480 |
+| 133.2 | 1485 |
+| 133.4 | 1484 |
+| 133.5 | 1485 |
+| 133.6 | 1486 |
+| 133.2 | 1481 |
+| 133.7 | 1479 |
+| 133.3 | 1474 |
+| 133.9 | 1476 |
+| 132.9 | 1473 |
+| 133.1 | 1468 |
+| 133.4 | 1464 |
+| 132.9 | 1461 |
+| 132.8 | 1461 |
+| 132.7 | 1460 |
+| 134.1 | 1457 |
+| 133.4 | 1461 |
+| 132.8 | 1460 |
+| 132.6 | 1459 |
+| 133.1 | 1463 |
+| 133.2 | 1464 |
+| 133.2 | 1464 |
+| 132.9 | 1461 |
+| 133 | 1462 |
+| 134 | 1467 |
+| 134.3 | 1462 |
+| 134.3 | 1461 |
+| 133.7 | 1457 |
+| 134 | 1460 |
+| 133.6 | 1459 |
+| 132.8 | 1460 |
+| 132.6 | 1460 |
+| 134.3 | 1460 |
+| 134.3 | 1458 |
+| 134.2 | 1459 |
+| 134.1 | 1458 |
+| 133.8 | 1459 |
+| 133.5 | 1462 |
+| 134.5 | 1461 |
+| 134 | 1463 |
+| 133.5 | 1456 |
+| 133 | 1459 |
+| 133.7 | 1461 |
+| 134 | 1462 |
+| 133.7 | 1465 |
+| 133.4 | 1459 |
+| 133.7 | 1462 |
+| 133.4 | 1457 |
+| 133.9 | 1453 |
+| 133.7 | 1456 |
+| 133.5 | 1460 |
+| 132.9 | 1461 |
+| 133.3 | 1461 |
+| 133.3 | 1463 |
+| 133.2 | 1462 |
+| 133.1 | 1457 |
+| 133.1 | 1461 |
+| 133.2 | 1460 |
+| 132.7 | 1458 |
+| 132.8 | 1458 |
+| 132.3 | 1457 |
+| 132.7 | 1453 |
+| 132.9 | 1449 |
+| 133.1 | 1456 |
+| 134.2 | 1457 |
+| 133.4 | 1468 |
+| 133.7 | 1471 |
+| 133.5 | 1472 |
+| 133.8 | 1478 |
+| 133.8 | 1480 |
+| 133.7 | 1479 |
+| 133.8 | 1479 |
+| 133.7 | 1480 |
+| 134.2 | 1478 |
+| 133.6 | 1471 |
+| 133.1 | 1468 |
+| 133.7 | 1470 |
+| 133.9 | 1465 |
+| 133.8 | 1474 |
+| 133.6 | 1476 |
+| 133.3 | 1476 |
+| 133.2 | 1476 |
+| 133.4 | 1480 |
+| 133.3 | 1479 |
+| 133.5 | 1473 |
+| 133.8 | 1472 |
+| 133.8 | 1474 |
+| 133.3 | 1480 |
+| 133.6 | 1478 |
+| 132.8 | 1476 |
+| 133.3 | 1481 |
+| 133 | 1486 |
+| 133.5 | 1494 |
+| 132.9 | 1489 |
+| 133.1 | 1492 |
+| 132.9 | 1494 |
+| 133.7 | 1490 |
+| 133.5 | 1496 |
+| 133.1 | 1492 |
+| 133.1 | 1493 |
+| 133.2 | 1500 |
+| 133.6 | 1501 |
+| 133.3 | 1500 |
+| 133 | 1494 |
+| 133.4 | 1492 |
+| 133.5 | 1489 |
+| 133.6 | 1490 |
+| 133.6 | 1487 |
+| 133.6 | 1490 |
+| 132.8 | 1490 |
+| 133.3 | 1494 |
+| 133.3 | 1496 |
+| 132.9 | 1492 |
+| 133.4 | 1495 |
+| 133.3 | 1493 |
+| 133.2 | 1493 |
+| 133.8 | 1489 |
+| 133.1 | 1491 |
+| 132.9 | 1489 |
+| 132.5 | 1492 |
+| 132.5 | 1493 |
+| 132.9 | 1495 |
+| 132.7 | 1489 |
+| 132.6 | 1485 |
+| 132.8 | 1480 |
+| 133.3 | 1474 |
+| 134.2 | 1468 |
+| 134.1 | 1470 |
+| 133.5 | 1470 |
+| 134.2 | 1475 |
+| 133.7 | 1479 |
+| 132.9 | 1484 |
+| 133.5 | 1489 |
+| 133.5 | 1484 |
+| 133.2 | 1486 |
+| 134.1 | 1486 |
+| 134 | 1490 |
+| 133 | 1496 |
+| 133.3 | 1493 |
+| 133.4 | 1491 |
+| 133 | 1486 |
+| 133.6 | 1492 |
+| 132.8 | 1489 |
+| 132.7 | 1491 |
+| 133.2 | 1496 |
+| 133.8 | 1497 |
+| 133.9 | 1493 |
+| 133.6 | 1491 |
+| 133.3 | 1499 |
+| 133.5 | 1500 |
+| 133.6 | 1503 |
+| 133 | 1507 |
+| 132.5 | 1501 |
+| 132.5 | 1500 |
+| 132 | 1495 |
+| 132.2 | 1501 |
+| 133.3 | 1499 |
+| 133.5 | 1499 |
+| 132.8 | 1496 |
+| 133.2 | 1504 |
+| 132.9 | 1504 |
+| 132.5 | 1498 |
+| 133.1 | 1496 |
+| 132.6 | 1496 |
+| 133.6 | 1495 |
+| 132.9 | 1497 |
+| 133 | 1498 |
+| 133.1 | 1498 |
+| 133.3 | 1499 |
+| 133.1 | 1503 |
+| 133.7 | 1506 |
+| 133.5 | 1503 |
+| 132.7 | 1499 |
+| 133.6 | 1503 |
+| 132.8 | 1499 |
+| 133.3 | 1501 |
+| 132.7 | 1504 |
+| 132.8 | 1506 |
+| 132.9 | 1505 |
+| 132.9 | 1504 |
+| 133.1 | 1500 |
+| 133.7 | 1503 |
+| 133.3 | 1501 |
+| 132.6 | 1502 |
+| 133.7 | 1507 |
+| 134.1 | 1506 |
+| 133.4 | 1510 |
+| 133.6 | 1512 |
+| 133 | 1510 |
+| 133.7 | 1507 |
+| 134.5 | 1513 |
+| 134 | 1522 |
+| 134 | 1526 |
+| 133.7 | 1526 |
+| 133.3 | 1529 |
+| 133.2 | 1539 |
+| 133.4 | 1542 |
+| 133.6 | 1536 |
+| 133.5 | 1541 |
+| 132.7 | 1539 |
+| 132.7 | 1531 |
+| 133.2 | 1532 |
+| 133.3 | 1535 |
+| 133.4 | 1540 |
+| 133.3 | 1530 |
+| 132.8 | 1538 |
+| 133.7 | 1541 |
+| 133.9 | 1539 |
+| 133.6 | 1543 |
+| 133 | 1541 |
+| 133.6 | 1536 |
+| 134.5 | 1534 |
+| 134.5 | 1537 |
+| 134.2 | 1543 |
+| 132.7 | 1545 |
+| 133.2 | 1540 |
+| 133.5 | 1539 |
+| 133 | 1538 |
+| 132.8 | 1543 |
+| 132.2 | 1549 |
+| 132.5 | 1556 |
+| 132.6 | 1558 |
+| 132.9 | 1559 |
+| 132.7 | 1562 |
+| 132.7 | 1565 |
+| 132.9 | 1565 |
+| 132.9 | 1566 |
+| 133.2 | 1568 |
+| 132.8 | 1556 |
+| 132.9 | 1563 |
+| 132.8 | 1569 |
+| 132.7 | 1583 |
+| 133.3 | 1592 |
+| 132.6 | 1593 |
+| 133.3 | 1579 |
+| 133.1 | 1582 |
+| 133.4 | 1587 |
+| 133.4 | 1585 |
+| 133.2 | 1603 |
+| 133 | 1619 |
+| 133.4 | 1598 |
+| 132.7 | 1609 |
+| 133.6 | 1623 |
+| 133.1 | 1627 |
+| 133.1 | 1636 |
+| 132.8 | 1640 |
+| 131.9 | 1621 |
+| 131.7 | 1639 |
+| 132.6 | 1640 |
+| 133.7 | 1657 |
+| 132.9 | 1647 |
+| 132.3 | 1639 |
+| 133.8 | 1647 |
+| 132.3 | 1660 |
+| 132.9 | 1683 |
+| 133.1 | 1697 |
+| 133.6 | 1694 |
+| 132.8 | 1694 |
+| 133.2 | 1718 |
+| 132.4 | 1721 |
+| 132.9 | 1720 |
+| 133.4 | 1709 |
+| 132.5 | 1725 |
+| 132.6 | 1734 |
+| 133.4 | 1744 |
+| 132.8 | 1755 |
+| 132.7 | 1739 |
+| 132.9 | 1745 |
+| 133.2 | 1734 |
+| 132.2 | 1761 |
+| 132.8 | 1754 |
+| 132.3 | 1771 |
+| 132.2 | 1774 |
+| 133.3 | 1767 |
+| 133.4 | 1756 |
+| 131.6 | 1766 |
+| 132.4 | 1785 |
+| 133.2 | 1781 |
+| 132.8 | 1771 |
+| 133.4 | 1782 |
+| 132.5 | 1758 |
+| 132.9 | 1784 |
+| 132.6 | 1786 |
+| 133.4 | 1808 |
+| 133.2 | 1812 |
+| 132.3 | 1834 |
+| 132.7 | 1827 |
+| 132.5 | 1827 |
+| 133.2 | 1826 |
+| 133.6 | 1835 |
+| 133.4 | 1835 |
+| 133.7 | 1837 |
+| 132.4 | 1854 |
+| 132.8 | 1861 |
+| 133 | 1877 |
+| 132.9 | 1886 |
+| 132.7 | 1887 |
+| 132.9 | 1903 |
+| 132.9 | 1898 |
+| 133.6 | 1914 |
+| 133.4 | 1919 |
+| 132.9 | 1910 |
+| 131.7 | 1933 |
+| 132.7 | 1932 |
+| 132.7 | 1911 |
+| 132.6 | 1929 |
+| 132.5 | 1915 |
+| 133.2 | 1922 |
+| 133.3 | 1927 |
+| 132.2 | 1921 |
+| 133.1 | 1929 |
+| 132.7 | 1925 |
+| 132.8 | 1944 |
+| 133.5 | 1942 |
+| 132.9 | 1922 |
+| 132.9 | 1918 |
+| 134.1 | 1915 |
+| 133.2 | 1911 |
+| 132.5 | 1929 |
+| 132.9 | 1917 |
+| 132.1 | 1912 |
+| 133.1 | 1928 |
+| 132.5 | 1909 |
+| 132.7 | 1926 |
+| 133 | 1930 |
+| 133 | 1922 |
+| 133 | 1923 |
+| 132.7 | 1908 |
+| 132.7 | 1929 |
+| 132.9 | 1926 |
+| 132.9 | 1933 |
+| 133.2 | 1938 |
+| 133.1 | 1927 |
+| 133.2 | 1932 |
+| 133.2 | 1922 |
+| 133.5 | 1926 |
+| 132.8 | 1921 |
+| 132.2 | 1927 |
+| 134.3 | 1945 |
+| 133 | 1951 |
+| 132.5 | 1972 |
+| 132.4 | 1960 |
+| 133.4 | 1964 |
+| 133.1 | 1962 |
+| 133.3 | 1977 |
+| 133.5 | 1999 |
+| 133.8 | 2010 |
+| 133.4 | 2020 |
+| 132.4 | 2022 |
+| 134 | 2024 |
+| 133.1 | 2029 |
+| 132.4 | 2028 |
+| 132.8 | 2041 |
+| 133.1 | 2038 |
+| 132.5 | 2041 |
+| 133.5 | 2051 |
+| 134.1 | 2059 |
+| 132.4 | 2048 |
+| 133.1 | 2069 |
+| 133.9 | 2071 |
+| 133.6 | 2100 |
+| 132.4 | 2098 |
+| 132.6 | 2082 |
+| 132.9 | 2080 |
+| 133.1 | 2065 |
+| 133.4 | 2082 |
+| 133.2 | 2092 |
+| 132.9 | 2101 |
+| 133.5 | 2093 |
+| 133.1 | 2082 |
+| 132.9 | 2111 |
+| 133.6 | 2106 |
+| 133.7 | 2106 |
+| 133 | 2125 |
+| 132.2 | 2121 |
+| 132.6 | 2135 |
+| 132.4 | 2135 |
+| 132.8 | 2132 |
+| 132.9 | 2154 |
+| 132.7 | 2142 |
+| 132.9 | 2148 |
+| 132.5 | 2161 |
+| 132.9 | 2146 |
+| 133.2 | 2142 |
+| 132.6 | 2142 |
+| 132.7 | 2146 |
+| 132.5 | 2142 |
+| 132.4 | 2149 |
+| 132.5 | 2138 |
+| 133 | 2159 |
+| 133.4 | 2153 |
+| 133.5 | 2152 |
+| 133.4 | 2174 |
+| 133.9 | 2174 |
+| 133.1 | 2159 |
+| 133.2 | 2152 |
+| 133.1 | 2185 |
+| 133.5 | 2206 |
+| 132.2 | 2228 |
+| 133.5 | 2219 |
+| 133 | 2217 |
+| 132.8 | 2221 |
+| 132.9 | 2223 |
+| 133.1 | 2219 |
+| 133 | 2225 |
+| 134.3 | 2219 |
+| 133.8 | 2231 |
+| 133.7 | 2226 |
+| 133.8 | 2219 |
+| 133.3 | 2215 |
+| 133.6 | 2224 |
+| 133.9 | 2250 |
+| 133 | 2260 |
+| 132.6 | 2253 |
+| 132.4 | 2241 |
+| 133.6 | 2257 |
+| 133.4 | 2246 |
+| 132.9 | 2257 |
+| 133.6 | 2259 |
+| 133.5 | 2259 |
+| 133.4 | 2267 |
+| 133.5 | 2281 |
+| 132.8 | 2265 |
+| 133.2 | 2288 |
+| 133 | 2287 |
+| 133.4 | 2273 |
+| 133.6 | 2298 |
+| 133.1 | 2316 |
+| 133.8 | 2312 |
+| 133.2 | 2310 |
+| 134.1 | 2312 |
+| 133.5 | 2303 |
+| 133.2 | 2288 |
+| 133.3 | 2304 |
+| 133.3 | 2299 |
+| 133.9 | 2323 |
+| 133.1 | 2334 |
+| 133.3 | 2337 |
+| 133.9 | 2340 |
+| 133.3 | 2324 |
+| 133 | 2336 |
+| 133.4 | 2348 |
+| 134 | 2347 |
+| 133 | 2348 |
+| 133.7 | 2367 |
+| 133.4 | 2360 |
+| 133.9 | 2348 |
+| 133.1 | 2359 |
+| 133.2 | 2380 |
+| 133.4 | 2362 |
+| 133.8 | 2349 |
+| 134.3 | 2367 |
+| 133.1 | 2373 |
+| 133.2 | 2372 |
+| 133.5 | 2381 |
+| 133.1 | 2387 |
+| 133.4 | 2395 |
+| 133.6 | 2405 |
+| 133.3 | 2438 |
+| 133.1 | 2406 |
+| 133.4 | 2405 |
+| 133.6 | 2433 |
+| 133.4 | 2435 |
+| 133.8 | 2450 |
+| 134 | 2442 |
+| 133.5 | 2445 |
+| 133 | 2432 |
+| 133 | 2422 |
+| 133.7 | 2433 |
+| 134 | 2449 |
+| 133.5 | 2443 |
+| 134 | 2424 |
+| 134.2 | 2428 |
+| 133.4 | 2477 |
+| 132.7 | 2484 |
+| 133.6 | 2515 |
+| 133.3 | 2514 |
+| 132.7 | 2538 |
+| 133.8 | 2518 |
+| 134 | 2534 |
+| 133.2 | 2540 |
+| 133.2 | 2514 |
+| 132.9 | 2505 |
+| 133 | 2501 |
+| 133.4 | 2499 |
+| 133 | 2511 |
+| 133.6 | 2510 |
+| 134.1 | 2540 |
+| 134 | 2512 |
+| 133.6 | 2524 |
+| 134 | 2511 |
+| 133.1 | 2519 |
+| 133.9 | 2502 |
+| 134.2 | 2525 |
+| 133.7 | 2538 |
+| 134.2 | 2556 |
+| 133.3 | 2555 |
+| 133.6 | 2555 |
+| 133.9 | 2559 |
+| 134.2 | 2565 |
+| 133.7 | 2567 |
+| 133.7 | 2582 |
+| 133.8 | 2568 |
+| 133.7 | 2569 |
+| 133.5 | 2566 |
+| 134.2 | 2555 |
+| 133.6 | 2553 |
+| 133.4 | 2571 |
+| 133.3 | 2585 |
+| 133 | 2616 |
+| 133.8 | 2623 |
+| 133.6 | 2636 |
+| 133.9 | 2633 |
+| 133.5 | 2660 |
+| 134.1 | 2670 |
+| 134.1 | 2686 |
+| 133.4 | 2672 |
+| 133.9 | 2658 |
+| 133.9 | 2661 |
+| 134.1 | 2688 |
+| 134.2 | 2703 |
+| 134.1 | 2711 |
+| 134.2 | 2691 |
+| 134.3 | 2730 |
+| 134.5 | 2716 |
+| 134.1 | 2708 |
+| 133.7 | 2706 |
+| 133.8 | 2693 |
+| 134.9 | 2673 |
+| 135.5 | 2677 |
+| 134.6 | 2670 |
+| 134.6 | 2665 |
+| 133.8 | 2663 |
+| 134.3 | 2692 |
+| 133.9 | 2695 |
+| 133.9 | 2698 |
+| 134.5 | 2726 |
+| 133.9 | 2724 |
+| 133.5 | 2724 |
+| 133.8 | 2730 |
+| 134 | 2725 |
+| 132.7 | 2706 |
+| 133.7 | 2711 |
+| 132.9 | 2748 |
+| 133.4 | 2749 |
+| 134.2 | 2741 |
+| 133.2 | 2743 |
+| 133.4 | 2754 |
+| 133.6 | 2742 |
+| 133 | 2767 |
+| 133.6 | 2771 |
+| 133.5 | 2754 |
+| 132.9 | 2755 |
+| 133 | 2733 |
+| 134 | 2710 |
+| 134.2 | 2724 |
+| 133.7 | 2719 |
+| 133.8 | 2737 |
+| 133.3 | 2757 |
+| 133.7 | 2780 |
+| 133.5 | 2767 |
+| 133.6 | 2771 |
+| 134.8 | 2773 |
+| 133.7 | 2767 |
+| 133.7 | 2766 |
+| 133.5 | 2782 |
+| 134.2 | 2785 |
+| 134 | 2793 |
+| 134.5 | 2801 |
+| 133.7 | 2784 |
+| 134 | 2784 |
+| 133.9 | 2788 |
+| 133.7 | 2789 |
+| 133.7 | 2781 |
+| 134.4 | 2793 |
+| 134.2 | 2812 |
+| 133.9 | 2802 |
+| 133.8 | 2783 |
+| 133.6 | 2769 |
+| 133.7 | 2773 |
+| 133.5 | 2754 |
+| 134.2 | 2755 |
+| 134 | 2766 |
+| 133.2 | 2767 |
+| 134.3 | 2755 |
+| 134.1 | 2757 |
+| 134 | 2768 |
+| 133.6 | 2787 |
+| 133.9 | 2797 |
+| 133.2 | 2765 |
+| 134.2 | 2789 |
+| 134 | 2775 |
+| 134.2 | 2779 |
+| 134.2 | 2786 |
+| 133.7 | 2796 |
+| 134.1 | 2779 |
+| 133 | 2796 |
+| 133.9 | 2762 |
+| 133.6 | 2768 |
+| 133.7 | 2764 |
+| 133.8 | 2776 |
+| 134.1 | 2805 |
+| 133.6 | 2786 |
+| 133.6 | 2817 |
+| 133.6 | 2832 |
+| 133.8 | 2828 |
+| 134.2 | 2834 |
+| 134.4 | 2823 |
+| 134.6 | 2820 |
+| 134.5 | 2835 |
+| 133.4 | 2820 |
+| 133.1 | 2823 |
+| 132.7 | 2842 |
+| 134.9 | 2874 |
+| 133.7 | 2855 |
+| 133.4 | 2863 |
+| 133.9 | 2861 |
+| 133.8 | 2845 |
+| 133.9 | 2858 |
+| 133.7 | 2868 |
+| 134.1 | 2871 |
+| 134.3 | 2900 |
+| 132.9 | 2879 |
+| 133.1 | 2853 |
+| 134.1 | 2873 |
+| 134.3 | 2851 |
+| 133.5 | 2875 |
+| 134.5 | 2894 |
+| 133.6 | 2906 |
+| 134.2 | 2899 |
+| 134.4 | 2884 |
+| 134.4 | 2880 |
+| 134.4 | 2855 |
+| 133.7 | 2870 |
+| 133.6 | 2869 |
+| 133.6 | 2862 |
+| 133.8 | 2865 |
+| 133.6 | 2858 |
+| 134.2 | 2893 |
+| 134.1 | 2891 |
+| 134.7 | 2865 |
+| 135 | 2881 |
+| 134.1 | 2902 |
+| 134.2 | 2910 |
+| 134 | 2913 |
+| 134.5 | 2916 |
+| 133.8 | 2914 |
+| 134.2 | 2933 |
+| 134.5 | 2949 |
+| 133.3 | 2953 |
+| 133.9 | 2950 |
+| 134.2 | 2950 |
+| 133.9 | 2928 |
+| 134.2 | 2942 |
+| 134.5 | 2992 |
+| 134.6 | 2976 |
+| 133.1 | 2993 |
+| 133.5 | 3007 |
+| 133.9 | 3017 |
+| 134.1 | 3017 |
+| 133.1 | 3002 |
+| 134.6 | 3024 |
+| 133.4 | 3008 |
+| 134.3 | 3001 |
+| 134.1 | 3013 |
+| 134 | 3010 |
+| 133.9 | 3011 |
+| 133.8 | 3015 |
+| 134.6 | 3003 |
+| 133.8 | 3003 |
+| 134.3 | 3013 |
+| 135 | 3026 |
+| 133.8 | 3020 |
+| 133.5 | 3016 |
+| 134.1 | 2998 |
+| 133.9 | 2984 |
+| 134.1 | 3001 |
+| 133.9 | 3008 |
+| 134 | 2980 |
+| 133.3 | 2993 |
+| 133.1 | 2977 |
+| 133.3 | 2940 |
+| 133.4 | 2956 |
+| 133.7 | 2953 |
+| 133.8 | 2968 |
+| 133.8 | 2973 |
+| 133.9 | 2974 |
+| 133.8 | 2985 |
+| 134.4 | 2967 |
+| 133.8 | 2966 |
+| 134.2 | 2997 |
+| 134.6 | 3019 |
+| 133.1 | 2985 |
+| 133.4 | 2998 |
+| 133.8 | 3001 |
+| 133.9 | 3025 |
+| 133.9 | 3031 |
+| 133.2 | 3021 |
+| 133.4 | 3017 |
+| 133.6 | 3036 |
+| 134.2 | 3081 |
+| 134.2 | 3081 |
+| 134.2 | 3095 |
+| 134.2 | 3083 |
+| 134 | 3057 |
+| 133.9 | 3053 |
+| 134.2 | 3060 |
+| 134.7 | 3057 |
+| 133.4 | 3056 |
+| 134.2 | 3054 |
+| 134.9 | 3051 |
+| 134 | 3036 |
+| 134.9 | 3046 |
+| 134 | 3034 |
+| 133.1 | 3051 |
+| 134.1 | 3059 |
+| 133.6 | 3071 |
+| 134.9 | 3099 |
+| 133.9 | 3094 |
+| 134 | 3124 |
+| 134 | 3102 |
+| 134.5 | 3109 |
+| 134.6 | 3089 |
+| 133.6 | 3078 |
+| 134.2 | 3083 |
+| 134 | 3092 |
+| 133.6 | 3112 |
+| 133.4 | 3117 |
+| 134.5 | 3127 |
+| 134.8 | 3150 |
+| 133.5 | 3160 |
+| 133.7 | 3158 |
+| 134.1 | 3157 |
+| 134.1 | 3159 |
+| 134.2 | 3149 |
+| 133.5 | 3169 |
+| 134.5 | 3179 |
+| 133.9 | 3150 |
+| 133.2 | 3153 |
+| 134.1 | 3177 |
+| 134.9 | 3192 |
+| 133.7 | 3187 |
+| 133.4 | 3204 |
+| 134 | 3217 |
+| 134.1 | 3210 |
+| 134.1 | 3157 |
+| 134 | 3185 |
+| 134.7 | 3166 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+
+**`hole_ramp_rel130_d4` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 129.4
+- `free_shell.areal_density_ratio`: 0.4929
+- `free_shell.msd.1 ns`: 252.9
+- `free_shell.msd.10 ns`: 665.9
+- `free_shell.msd.end`: 3536
+- `free_shell.msd.end_ns`: 68
+- `params.hole_hold_ps`: 1e+04
+- `params.release_t_c`: 130
+- `params.scaffold_d_nm`: 4
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `scaffold.d_nm`: 4
+- `scaffold.nearest_tethered_r_held_min`: 68.29
+- `scaffold.nearest_tethered_r_t0`: 70
+- `scaffold.tethered_fraction`: 0.1594
+- T (°C): 25
+- `t_close_ns`: 0.5
+- `thickness_final`: 134.1
+- `thickness_t0`: 161.4
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 129.8 | — |
+| 129.8 | — |
+| 129.5 | — |
+| 129.6 | — |
+| 129.2 | — |
+| 129.9 | — |
+| 129.7 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.7 | — |
+| 129.6 | — |
+| 129.8 | — |
+| 129.6 | — |
+| 131.1 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.5 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.6 | — |
+| 129.3 | — |
+| 129.9 | — |
+| 128.8 | — |
+| 129.4 | — |
+| 129.8 | — |
+| 129.3 | — |
+| 129.9 | — |
+| 129.5 | — |
+| 129.8 | — |
+| 130 | — |
+| 129.5 | — |
+| 130.4 | — |
+| 129.5 | — |
+| 129.9 | — |
+| 130.1 | — |
+| 129.8 | — |
+| 130 | — |
+| 129.9 | — |
+| 129.8 | — |
+| 129.5 | — |
+| 130 | — |
+| 129.3 | — |
+| 129.3 | — |
+| 129.4 | — |
+| 129.1 | — |
+| 129.6 | — |
+| 129.6 | — |
+| 130 | — |
+| 129.8 | — |
+| 129.8 | — |
+| 131 | — |
+| 129.8 | — |
+| 129.9 | — |
+| 129.5 | — |
+| 130 | — |
+| 130.4 | — |
+| 130.2 | — |
+| 130.2 | — |
+| 129.4 | — |
+| 129.7 | — |
+| 130 | — |
+| 130.3 | — |
+| 130.4 | — |
+| 130.2 | — |
+| 130.3 | — |
+| 130.2 | — |
+| 129.6 | — |
+| 130.2 | — |
+| 130.1 | — |
+| 130 | — |
+| 130.3 | — |
+| 129.8 | — |
+| 130.5 | — |
+| 130.1 | — |
+| 130.6 | — |
+| 130.3 | — |
+| 130.4 | — |
+| 130.6 | — |
+| 130.6 | — |
+| 130.7 | — |
+| 130.7 | — |
+| 131.5 | — |
+| 130.5 | — |
+| 130.6 | — |
+| 131.9 | — |
+| 131.1 | — |
+| 131.1 | — |
+| 131.2 | — |
+| 130.3 | — |
+| 131.6 | — |
+| 131.7 | — |
+| 131.7 | — |
+| 131.1 | — |
+| 131.4 | — |
+| 131.5 | — |
+| 131.5 | — |
+| 131.3 | — |
+| 131.8 | — |
+| 131.6 | — |
+| 132.1 | — |
+| 131.5 | — |
+| 131.6 | — |
+| 131.6 | — |
+| 132.1 | — |
+| 132 | — |
+| 131.9 | — |
+| 132 | — |
+| 131.6 | — |
+| 132.4 | — |
+| 132.2 | — |
+| 131.9 | — |
+| 131.8 | — |
+| 132.3 | — |
+| 132.7 | — |
+| 132.4 | — |
+| 132.3 | — |
+| 132.5 | — |
+| 132.9 | — |
+| 131.8 | — |
+| 131.9 | — |
+| 132.5 | — |
+| 132.4 | — |
+| 133.1 | — |
+| 132.8 | — |
+| 133 | — |
+| 133.3 | — |
+| 133.3 | — |
+| 133.4 | — |
+| 134.1 | — |
+| 133.3 | — |
+| 133.3 | — |
+| 133.1 | — |
+| 133.4 | — |
+| 133.6 | — |
+| 133.5 | — |
+| 133.9 | — |
+| 133.9 | — |
+| 134 | — |
+| 133 | — |
+| 133.5 | — |
+| 134.1 | — |
+| 134 | — |
+| 133.7 | — |
+| 134 | — |
+| 133.6 | — |
+| 133.8 | — |
+| 133.4 | — |
+| 133.4 | — |
+| 134 | — |
+| 134.5 | — |
+| 133.8 | — |
+| 133.7 | — |
+| 133.6 | — |
+| 134.2 | — |
+| 133.7 | — |
+| 134 | — |
+| 134.6 | — |
+| 134.4 | — |
+| 134.8 | — |
+| 134.3 | — |
+| 134.6 | — |
+| 134.3 | — |
+| 134.1 | — |
+| 134.3 | — |
+| 134.2 | — |
+| 134.9 | — |
+| 135.1 | — |
+| 135.1 | — |
+| 134.8 | — |
+| 134.6 | — |
+| 135 | — |
+| 135.9 | — |
+| 136.3 | — |
+| 135.3 | — |
+| 135 | — |
+| 136 | — |
+| 135.8 | — |
+| 135.9 | — |
+| 136.2 | — |
+| 135.5 | — |
+| 136.5 | — |
+| 136.4 | — |
+| 136 | — |
+| 135.9 | — |
+| 135.8 | — |
+| 136.8 | — |
+| 136.7 | — |
+| 136.8 | — |
+| 136.8 | — |
+| 136.7 | — |
+| 137 | — |
+| 137.1 | — |
+| 137.6 | — |
+| 137.9 | — |
+| 137.4 | — |
+| 137.8 | — |
+| 136.8 | — |
+| 137.8 | — |
+| 137.8 | — |
+| 137.6 | — |
+| 138.3 | — |
+| 138.9 | — |
+| 138.1 | — |
+| 138.2 | — |
+| 137.5 | — |
+| 137.9 | — |
+| 138.2 | — |
+| 138.6 | — |
+| 138.5 | — |
+| 137.8 | — |
+| 137.6 | — |
+| 138.3 | — |
+| 138.5 | — |
+| 138.8 | — |
+| 138.2 | — |
+| 138.5 | — |
+| 138.4 | — |
+| 139.3 | — |
+| 139.1 | — |
+| 138.2 | — |
+| 138.8 | — |
+| 139.6 | — |
+| 139.8 | — |
+| 140.4 | — |
+| 140.4 | — |
+| 140.7 | — |
+| 140.2 | — |
+| 140.1 | — |
+| 140 | — |
+| 140.5 | — |
+| 140.1 | — |
+| 140.5 | — |
+| 140.1 | — |
+| 140.1 | — |
+| 140.1 | — |
+| 141.1 | — |
+| 140.1 | — |
+| 140.8 | — |
+| 141.2 | — |
+| 141.5 | — |
+| 141.7 | — |
+| 140.7 | — |
+| 141 | — |
+| 141.9 | — |
+| 141.7 | — |
+| 142.3 | — |
+| 141.8 | — |
+| 140.9 | — |
+| 141.2 | — |
+| 140.8 | — |
+| 142.1 | — |
+| 142.1 | — |
+| 141.1 | — |
+| 142.1 | — |
+| 141.9 | — |
+| 142.3 | — |
+| 142.3 | — |
+| 142.3 | — |
+| 142.5 | — |
+| 142.5 | — |
+| 142.5 | — |
+| 142 | — |
+| 142.7 | — |
+| 143.2 | — |
+| 142.6 | — |
+| 144.2 | — |
+| 143.9 | — |
+| 143 | — |
+| 143.9 | — |
+| 143.6 | — |
+| 144.1 | — |
+| 143.7 | — |
+| 144.1 | — |
+| 144.2 | — |
+| 144.3 | — |
+| 143.9 | — |
+| 144.8 | — |
+| 145.4 | — |
+| 145.4 | — |
+| 145.4 | — |
+| 145.4 | — |
+| 145.3 | — |
+| 145.7 | — |
+| 145.2 | — |
+| 145.4 | — |
+| 144.6 | — |
+| 145.2 | — |
+| 145.9 | — |
+| 145.7 | — |
+| 145.1 | — |
+| 146.3 | — |
+| 146.2 | — |
+| 146.6 | — |
+| 147.3 | — |
+| 146.8 | — |
+| 147.4 | — |
+| 146.6 | — |
+| 147.8 | — |
+| 146.9 | — |
+| 147.4 | — |
+| 147.9 | — |
+| 147.2 | — |
+| 148.3 | — |
+| 148.3 | — |
+| 147.5 | — |
+| 147.4 | — |
+| 148.7 | — |
+| 149 | — |
+| 147.5 | — |
+| 147.6 | — |
+| 147.8 | — |
+| 147.9 | — |
+| 147.8 | — |
+| 149.1 | — |
+| 148.4 | — |
+| 148 | — |
+| 148.4 | — |
+| 148.9 | — |
+| 149.1 | — |
+| 149.1 | — |
+| 149.4 | — |
+| 148.9 | — |
+| 150 | — |
+| 149.4 | — |
+| 149.7 | — |
+| 149.3 | — |
+| 150.5 | — |
+| 149.4 | — |
+| 150.1 | — |
+| 150.4 | — |
+| 151.4 | — |
+| 151.3 | — |
+| 150.3 | — |
+| 150.6 | — |
+| 151.3 | — |
+| 151.6 | — |
+| 151.8 | — |
+| 152.2 | — |
+| 152.1 | — |
+| 151.5 | — |
+| 152 | — |
+| 152.3 | — |
+| 152.5 | — |
+| 152.5 | — |
+| 153 | — |
+| 152.9 | — |
+| 153.3 | — |
+| 152.9 | — |
+| 153.4 | — |
+| 152.8 | — |
+| 152 | — |
+| 152.9 | — |
+| 153 | — |
+| 153.6 | — |
+| 153.9 | — |
+| 153.1 | — |
+| 153.7 | — |
+| 154.2 | — |
+| 153.7 | — |
+| 154.5 | — |
+| 154.5 | — |
+| 154.5 | — |
+| 154 | — |
+| 154.2 | — |
+| 155.2 | — |
+| 154.1 | — |
+| 155.2 | — |
+| 156 | — |
+| 155.6 | — |
+| 156.7 | — |
+| 156.5 | — |
+| 156.5 | — |
+| 156.7 | — |
+| 156.3 | — |
+| 156.4 | — |
+| 157.1 | — |
+| 156.6 | — |
+| 156.9 | — |
+| 156.8 | — |
+| 158.6 | — |
+| 158.3 | — |
+| 158.1 | — |
+| 158.2 | — |
+| 158.4 | — |
+| 158.3 | — |
+| 158.9 | — |
+| 159.9 | — |
+| 159.1 | — |
+| 159 | — |
+| 160.3 | — |
+| 159.3 | — |
+| 159.7 | — |
+| 160.8 | — |
+| 161.1 | — |
+| 160.7 | — |
+| 159.3 | — |
+| 160.2 | — |
+| 160.3 | — |
+| 160.3 | — |
+| 160.4 | — |
+| 161.3 | — |
+| 160.6 | — |
+| 160.9 | — |
+| 161.6 | — |
+| 161.8 | — |
+| 161.5 | — |
+| 161 | — |
+| 160.6 | — |
+| 160.7 | — |
+| 161.6 | — |
+| 161.7 | — |
+| 162.8 | — |
+| 162.5 | — |
+| 162.4 | — |
+| 162.7 | — |
+| 161.4 | — |
+| 160 | — |
+| 160.4 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 160.5 | — |
+| 161.2 | — |
+| 160.3 | — |
+| 162 | — |
+| 160.8 | — |
+| 161.2 | — |
+| 160.7 | — |
+| 161.2 | — |
+| 160.4 | — |
+| 161.3 | — |
+| 161.1 | — |
+| 160.1 | — |
+| 161.1 | — |
+| 161.8 | — |
+| 161.3 | — |
+| 161.2 | — |
+| 160.2 | — |
+| 161.4 | — |
+| 161.6 | — |
+| 162.3 | — |
+| 161.9 | — |
+| 163 | — |
+| 161.4 | — |
+| 163.5 | — |
+| 162.6 | — |
+| 161.6 | — |
+| 162 | — |
+| 161 | — |
+| 162.9 | — |
+| 161.6 | — |
+| 162.1 | — |
+| 163.1 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 161.8 | — |
+| 161.8 | — |
+| 160.3 | — |
+| 162.5 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 161.6 | — |
+| 161.4 | — |
+| 161.7 | — |
+| 161.5 | — |
+| 162.1 | — |
+| 161.4 | — |
+| 160.9 | — |
+| 161.4 | — |
+| 162.2 | — |
+| 161.3 | — |
+| 162.2 | — |
+| 161.5 | — |
+| 162 | — |
+| 161.7 | — |
+| 162.7 | — |
+| 162.1 | — |
+| 162.3 | — |
+| 160.7 | — |
+| 161.4 | — |
+| 162.7 | — |
+| 162.3 | — |
+| 161.9 | — |
+| 161.3 | — |
+| 163.3 | — |
+| 162.3 | — |
+| 160.8 | — |
+| 160.9 | — |
+| 161.1 | — |
+| 162.6 | — |
+| 161.4 | — |
+| 160.5 | — |
+| 161.1 | — |
+| 162.6 | — |
+| 161.7 | — |
+| 161.4 | — |
+| 161.9 | — |
+| 163.1 | — |
+| 163.4 | — |
+| 163 | — |
+| 162.9 | — |
+| 164.2 | — |
+| 163 | — |
+| 162.4 | — |
+| 162 | — |
+| 161.3 | — |
+| 160.9 | — |
+| 162.8 | — |
+| 162.3 | — |
+| 163 | — |
+| 162.1 | — |
+| 162 | — |
+| 162.1 | — |
+| 161.9 | — |
+| 161 | — |
+| 161.7 | — |
+| 161.4 | — |
+| 162 | — |
+| 161.5 | — |
+| 162 | — |
+| 161.2 | — |
+| 161.7 | — |
+| 161.3 | — |
+| 161.7 | — |
+| 161.8 | — |
+| 162.2 | — |
+| 161.7 | — |
+| 161.7 | — |
+| 162 | — |
+| 162.3 | — |
+| 162.3 | — |
+| 161.2 | — |
+| 161.4 | — |
+| 162.2 | — |
+| 162.3 | — |
+| 161.7 | — |
+| 161.7 | — |
+| 162.4 | — |
+| 161.9 | — |
+| 161.9 | — |
+| 161.5 | — |
+| 162 | — |
+| 162.6 | — |
+| 163.7 | — |
+| 161.9 | — |
+| 161.9 | — |
+| 162.8 | — |
+| 163 | — |
+| 162.5 | — |
+| 161.8 | — |
+| 161.1 | — |
+| 162 | — |
+| 161.8 | — |
+| 162 | — |
+| 161.6 | — |
+| 162.6 | — |
+| 162 | — |
+| 161.5 | — |
+| 161.5 | — |
+| 161.9 | — |
+| 162.2 | — |
+| 163.4 | — |
+| 161.2 | — |
+| 161.2 | — |
+| 162.3 | — |
+| 162.5 | — |
+| 162.8 | — |
+| 162.8 | — |
+| 161.4 | — |
+| 163.4 | — |
+| 163.1 | — |
+| 162.2 | — |
+| 162 | — |
+| 162.5 | — |
+| 161.2 | — |
+| 162.1 | — |
+| 160.5 | — |
+| 161.3 | — |
+| 162 | — |
+| 162.4 | — |
+| 162.2 | — |
+| 161.8 | — |
+| 163.5 | — |
+| 163.1 | — |
+| 161.8 | — |
+| 162.6 | — |
+| 162.9 | — |
+| 162.4 | — |
+| 162 | — |
+| 161.9 | — |
+| 161.5 | — |
+| 161.9 | — |
+| 161.7 | — |
+| 162.4 | — |
+| 163.8 | — |
+| 161.7 | — |
+| 163.6 | — |
+| 162.4 | — |
+| 162.8 | — |
+| 163.5 | — |
+| 162.2 | — |
+| 161.4 | 0 |
+| 161.5 | 8.013 |
+| 159.3 | 12.27 |
+| 158.5 | 15.45 |
+| 158.1 | 18.75 |
+| 158.5 | 21.11 |
+| 157.9 | 22.76 |
+| 157.8 | 23.79 |
+| 156.4 | 25.53 |
+| 157.3 | 27.86 |
+| 157.1 | 29.26 |
+| 157.3 | 31.11 |
+| 157.2 | 33.05 |
+| 156.5 | 34.73 |
+| 156.8 | 35.92 |
+| 156.7 | 37.72 |
+| 155.9 | 38.52 |
+| 156.3 | 39.59 |
+| 156.2 | 40.55 |
+| 154.9 | 41.22 |
+| 155.8 | 42.97 |
+| 156.4 | 45.4 |
+| 155.7 | 47.64 |
+| 155.9 | 49.48 |
+| 155.4 | 50.93 |
+| 154.8 | 52.82 |
+| 155 | 53.99 |
+| 153.2 | 55.45 |
+| 154.7 | 55.45 |
+| 153.9 | 57.29 |
+| 153.8 | 59.81 |
+| 154.2 | 61.71 |
+| 153.7 | 63.93 |
+| 152.9 | 64.41 |
+| 153.8 | 66.33 |
+| 153.1 | 66.96 |
+| 153 | 68.14 |
+| 152.6 | 68.89 |
+| 152.5 | 69.73 |
+| 152.1 | 70.5 |
+| 152.3 | 70.72 |
+| 153 | 71.17 |
+| 152.4 | 72.39 |
+| 152.7 | 73.6 |
+| 151.9 | 74.83 |
+| 151.6 | 76.3 |
+| 152.7 | 77.38 |
+| 152.1 | 78.43 |
+| 151.5 | 80.07 |
+| 151.1 | 80.78 |
+| 150.8 | 81.86 |
+| 151 | 83.73 |
+| 150.9 | 86.49 |
+| 150.4 | 87.95 |
+| 151.2 | 87.81 |
+| 151.1 | 86.51 |
+| 151.4 | 85.97 |
+| 150.8 | 88.89 |
+| 151.1 | 92.16 |
+| 149.9 | 93.69 |
+| 149.5 | 94.03 |
+| 150.5 | 94.78 |
+| 150.5 | 94.48 |
+| 150.5 | 94.52 |
+| 149.9 | 96.28 |
+| 150.8 | 98 |
+| 150 | 97.89 |
+| 149.9 | 100.5 |
+| 149 | 102.6 |
+| 149.2 | 104.4 |
+| 149.1 | 105.6 |
+| 149.1 | 105.7 |
+| 148.9 | 107.2 |
+| 150.6 | 109.7 |
+| 149.5 | 111.6 |
+| 148.6 | 113.6 |
+| 149.1 | 113.7 |
+| 149.4 | 115.2 |
+| 148.8 | 117.7 |
+| 148 | 121.6 |
+| 148 | 124.1 |
+| 148.6 | 125.4 |
+| 148.3 | 125.2 |
+| 148.6 | 126 |
+| 148.6 | 128.3 |
+| 148.6 | 131.1 |
+| 148.1 | 133.9 |
+| 146 | 137.7 |
+| 146.9 | 139.2 |
+| 145.9 | 139.8 |
+| 146.9 | 140 |
+| 144.9 | 142.8 |
+| 147.6 | 142.6 |
+| 147.2 | 144.1 |
+| 147.4 | 146.1 |
+| 144.1 | 151.5 |
+| 143 | 154.7 |
+| 143.2 | 153.6 |
+| 143.8 | 154.6 |
+| 142.1 | 158.2 |
+| 142.5 | 160.7 |
+| 144.5 | 163 |
+| 142.4 | 166.6 |
+| 142.9 | 167.8 |
+| 142.2 | 170.4 |
+| 140.8 | 173.6 |
+| 140.4 | 175.6 |
+| 141.3 | 178.4 |
+| 140.7 | 178 |
+| 140.4 | 181.6 |
+| 140.5 | 184.1 |
+| 141.1 | 184.4 |
+| 140.7 | 184 |
+| 140 | 185.7 |
+| 140.3 | 187.1 |
+| 140.5 | 189.2 |
+| 140.2 | 190.5 |
+| 140.3 | 193 |
+| 139.4 | 195 |
+| 138.8 | 196.6 |
+| 138.1 | 198.3 |
+| 137.3 | 198 |
+| 137.5 | 198.7 |
+| 137.7 | 200.4 |
+| 138.2 | 202.7 |
+| 138.5 | 203.4 |
+| 137.2 | 203.2 |
+| 138.4 | 204.3 |
+| 137 | 205 |
+| 138.5 | 206.6 |
+| 138.3 | 207.8 |
+| 136.6 | 207.7 |
+| 137.2 | 208.7 |
+| 137 | 209.4 |
+| 137.7 | 210.7 |
+| 135.4 | 212.3 |
+| 138.2 | 212.5 |
+| 134.4 | 215.2 |
+| 136.8 | 216 |
+| 136.7 | 215.5 |
+| 134.2 | 217.8 |
+| 133.4 | 217.1 |
+| 134.7 | 218.5 |
+| 133.7 | 218.9 |
+| 132.6 | 219.3 |
+| 133.7 | 221 |
+| 132.7 | 221.4 |
+| 133.6 | 223.2 |
+| 134.3 | 223.3 |
+| 133.9 | 222.5 |
+| 134.3 | 225.2 |
+| 131.9 | 227 |
+| 133.6 | 226.9 |
+| 132.8 | 227.8 |
+| 133.8 | 227.5 |
+| 132.6 | 227.4 |
+| 133.6 | 227.3 |
+| 133.1 | 228.3 |
+| 132.2 | 228.8 |
+| 133.4 | 228.4 |
+| 134.2 | 228.4 |
+| 132.6 | 228.1 |
+| 133.5 | 228.9 |
+| 132.5 | 229.6 |
+| 134.5 | 229.3 |
+| 134.1 | 231 |
+| 132.8 | 232.9 |
+| 133.1 | 234.4 |
+| 133 | 236.7 |
+| 133 | 236.6 |
+| 134.1 | 239.4 |
+| 132.2 | 238.6 |
+| 134.6 | 238.2 |
+| 133.8 | 237.2 |
+| 134 | 239.3 |
+| 133.7 | 237.7 |
+| 132.7 | 238.3 |
+| 132.4 | 239.4 |
+| 132.2 | 239.8 |
+| 132.9 | 240.7 |
+| 134 | 241.2 |
+| 132.8 | 244.8 |
+| 130.9 | 245 |
+| 133 | 242.9 |
+| 133.1 | 243.4 |
+| 132.5 | 245.4 |
+| 131.9 | 248 |
+| 132.4 | 247.9 |
+| 131.9 | 245.9 |
+| 132.3 | 247.8 |
+| 132.1 | 247.7 |
+| 132 | 245.3 |
+| 132.5 | 246.2 |
+| 132.1 | 248.8 |
+| 131.7 | 249.6 |
+| 131.3 | 252.9 |
+| 131.4 | 253.5 |
+| 131.7 | 251.6 |
+| 132.7 | 250.3 |
+| 132.3 | 250.8 |
+| 132.8 | 252.9 |
+| 132 | 254.3 |
+| 132.9 | 254.1 |
+| 133.2 | 256.5 |
+| 132.8 | 258 |
+| 132.8 | 258 |
+| 131.8 | 259.3 |
+| 131.9 | 259.6 |
+| 132.8 | 257 |
+| 132.5 | 257.8 |
+| 131.4 | 260.3 |
+| 131.7 | 259.7 |
+| 132.1 | 261.2 |
+| 130.9 | 262.6 |
+| 131.8 | 261.8 |
+| 132.1 | 262.4 |
+| 132.5 | 263.4 |
+| 132.1 | 259.7 |
+| 132.1 | 258.9 |
+| 130.9 | 261 |
+| 131.7 | 263.1 |
+| 131 | 261.4 |
+| 131.8 | 265.2 |
+| 130.8 | 267.3 |
+| 131.5 | 267.2 |
+| 131.3 | 266.5 |
+| 131.8 | 264.7 |
+| 132 | 264.9 |
+| 132.9 | 265.2 |
+| 132.4 | 266.8 |
+| 132.2 | 268.1 |
+| 130.8 | 268.4 |
+| 132.1 | 269.1 |
+| 132.4 | 269.1 |
+| 131.7 | 271.7 |
+| 131.6 | 270.2 |
+| 131.9 | 269.3 |
+| 130.3 | 271.2 |
+| 130.8 | 274.7 |
+| 131.4 | 275.4 |
+| 131.3 | 272.9 |
+| 131.4 | 274.2 |
+| 132.3 | 275.1 |
+| 130.2 | 274.4 |
+| 131.5 | 273.4 |
+| 131.8 | 275.8 |
+| 131.2 | 278.7 |
+| 130.8 | 279.2 |
+| 131.2 | 277.3 |
+| 131.2 | 275.9 |
+| 131.7 | 276.5 |
+| 132 | 278 |
+| 131.1 | 278.2 |
+| 130.6 | 279.6 |
+| 131.3 | 281.6 |
+| 131.1 | 281 |
+| 131.2 | 283.1 |
+| 130.8 | 282.3 |
+| 132.4 | 281.7 |
+| 131 | 280.5 |
+| 131.6 | 278.8 |
+| 131.9 | 280.4 |
+| 131 | 280.9 |
+| 130.5 | 281.5 |
+| 130.9 | 280.9 |
+| 131.5 | 280.2 |
+| 130.2 | 280.6 |
+| 132.5 | 281 |
+| 130.6 | 280 |
+| 132 | 281 |
+| 131.6 | 283.7 |
+| 131.5 | 283.8 |
+| 130.7 | 285 |
+| 131.5 | 285.4 |
+| 131.3 | 285.7 |
+| 132.2 | 283.3 |
+| 132.2 | 281.8 |
+| 131.4 | 281.4 |
+| 131 | 283.6 |
+| 131.4 | 284.5 |
+| 132.2 | 285.8 |
+| 131.2 | 285.8 |
+| 131.6 | 286.1 |
+| 132.5 | 283.9 |
+| 131.7 | 284.5 |
+| 132.5 | 288.1 |
+| 131.5 | 289.5 |
+| 131.2 | 287.3 |
+| 131.9 | 290.3 |
+| 131.8 | 293.5 |
+| 131.7 | 293 |
+| 131.5 | 291.5 |
+| 131.8 | 292 |
+| 132.9 | 291.4 |
+| 132.4 | 289.8 |
+| 132.4 | 291.3 |
+| 132.9 | 293.8 |
+| 132.3 | 294.3 |
+| 131.9 | 293.4 |
+| 131.4 | 293.3 |
+| 131.5 | 292.1 |
+| 131.5 | 292.1 |
+| 131.4 | 292.6 |
+| 131.5 | 291.4 |
+| 129.8 | 292.3 |
+| 130.2 | 294 |
+| 130.7 | 294.1 |
+| 130.5 | 294.5 |
+| 131 | 297.9 |
+| 130.7 | 297.4 |
+| 130.6 | 298 |
+| 131.4 | 298.7 |
+| 129.9 | 302.8 |
+| 130.1 | 301 |
+| 130.2 | 298.5 |
+| 128.9 | 298.7 |
+| 129.5 | 302.1 |
+| 129.8 | 301.5 |
+| 130.7 | 298.5 |
+| 131.3 | 298 |
+| 131.2 | 299.2 |
+| 130 | 302.2 |
+| 130.3 | 300.2 |
+| 130.5 | 302.3 |
+| 129.6 | 304.6 |
+| 131.4 | 304.7 |
+| 130 | 302.5 |
+| 130.4 | 301.6 |
+| 129.7 | 301.5 |
+| 130.5 | 303 |
+| 129.6 | 301.9 |
+| 131.1 | 302.5 |
+| 130.7 | 302.2 |
+| 130.6 | 303.1 |
+| 131.2 | 305.4 |
+| 129.2 | 307.8 |
+| 130.2 | 308.2 |
+| 128.9 | 307.9 |
+| 130.1 | 309.3 |
+| 129.8 | 306.7 |
+| 130.7 | 303.6 |
+| 130.8 | 303.1 |
+| 130.2 | 306.6 |
+| 128.6 | 309.1 |
+| 129.4 | 308.8 |
+| 129.9 | 307 |
+| 128.5 | 310.3 |
+| 129.8 | 311.1 |
+| 129.3 | 312.8 |
+| 130.6 | 311.7 |
+| 130.3 | 311.4 |
+| 130.3 | 313.2 |
+| 129.1 | 312.6 |
+| 128.8 | 313.8 |
+| 129.1 | 313.2 |
+| 129.9 | 312.3 |
+| 131.6 | 311.2 |
+| 128.1 | 313.2 |
+| 130.3 | 313 |
+| 129.3 | 314.5 |
+| 129.5 | 314.7 |
+| 129.9 | 313.3 |
+| 128.5 | 313.5 |
+| 129.2 | 315.5 |
+| 129.1 | 316.7 |
+| 129.3 | 315.2 |
+| 129.2 | 313.3 |
+| 128.8 | 313.9 |
+| 127.8 | 313.7 |
+| 129.9 | 315.1 |
+| 129.2 | 314.1 |
+| 128.9 | 316.3 |
+| 127.4 | 318.5 |
+| 128.7 | 316.1 |
+| 129.7 | 318.2 |
+| 128.7 | 317.4 |
+| 129.1 | 317.7 |
+| 128 | 320.1 |
+| 128.4 | 319.7 |
+| 127.9 | 321.5 |
+| 127.5 | 320.4 |
+| 128.7 | 320.9 |
+| 126.8 | 321.3 |
+| 127 | 323.3 |
+| 127.4 | 324.4 |
+| 127.9 | 320.7 |
+| 127.1 | 321.6 |
+| 128 | 323.3 |
+| 128.8 | 322.4 |
+| 128.9 | 322.1 |
+| 129.1 | 322.6 |
+| 128.2 | 325.9 |
+| 130.7 | 325.8 |
+| 128.3 | 325.4 |
+| 128.6 | 327.4 |
+| 128.9 | 327.7 |
+| 128.2 | 328 |
+| 127 | 328.9 |
+| 127.7 | 331.9 |
+| 127.4 | 331.6 |
+| 129 | 332.5 |
+| 128.6 | 338.2 |
+| 128.1 | 339.9 |
+| 127.9 | 339.3 |
+| 127.7 | 344.9 |
+| 127.2 | 347 |
+| 129.1 | 344.2 |
+| 129.2 | 345 |
+| 128.7 | 349.8 |
+| 129.5 | 353.1 |
+| 128.7 | 355.6 |
+| 127.8 | 360.8 |
+| 127.9 | 364.8 |
+| 127.8 | 369.3 |
+| 127.4 | 371.4 |
+| 128.1 | 373.7 |
+| 127.1 | 371.2 |
+| 128 | 377.6 |
+| 126.5 | 382.5 |
+| 128.5 | 385.8 |
+| 129.1 | 390.2 |
+| 127.8 | 393.9 |
+| 128 | 398.3 |
+| 127.4 | 400 |
+| 126.5 | 403.8 |
+| 125.8 | 410.2 |
+| 127.3 | 411.5 |
+| 127.3 | 410.4 |
+| 127.2 | 412.5 |
+| 127.3 | 421.5 |
+| 126.7 | 420.5 |
+| 127.8 | 427.3 |
+| 127.5 | 427.1 |
+| 126.2 | 430.9 |
+| 127.4 | 432.9 |
+| 126.4 | 441.7 |
+| 127.2 | 446.6 |
+| 126.3 | 451.2 |
+| 128.2 | 444.4 |
+| 127.5 | 445.9 |
+| 126.7 | 448.6 |
+| 127.7 | 452.9 |
+| 127.4 | 460.7 |
+| 127.5 | 457.4 |
+| 127.2 | 461.1 |
+| 126.9 | 459.1 |
+| 128 | 461.4 |
+| 127 | 464.7 |
+| 127.1 | 461.9 |
+| 127.2 | 469.6 |
+| 127.8 | 472.4 |
+| 127.5 | 480.1 |
+| 127 | 481.8 |
+| 127.1 | 480.6 |
+| 126.5 | 485.9 |
+| 128.1 | 481.7 |
+| 128 | 484.2 |
+| 127 | 485.6 |
+| 127.4 | 489.4 |
+| 127.3 | 483.3 |
+| 127.6 | 487.5 |
+| 127.3 | 488.9 |
+| 127.7 | 498.6 |
+| 126.6 | 501.6 |
+| 125.8 | 499.7 |
+| 127.5 | 500.8 |
+| 126.5 | 502.1 |
+| 128.8 | 511.5 |
+| 127.4 | 518.4 |
+| 126.5 | 521.7 |
+| 126.9 | 518.4 |
+| 128.6 | 519.5 |
+| 128.8 | 522.5 |
+| 127.8 | 519.1 |
+| 126.6 | 524.6 |
+| 127.5 | 522.6 |
+| 127.2 | 524.5 |
+| 128.7 | 526.3 |
+| 127.6 | 528.3 |
+| 127.1 | 526.1 |
+| 127.2 | 529 |
+| 128.1 | 529.7 |
+| 127.5 | 536.4 |
+| 127.3 | 535.6 |
+| 128.6 | 536.8 |
+| 127.9 | 538.7 |
+| 127.2 | 545.4 |
+| 127.1 | 543.9 |
+| 127 | 542.3 |
+| 127.9 | 535.5 |
+| 126.8 | 542.5 |
+| 126.2 | 544.9 |
+| 126.8 | 540.9 |
+| 127.2 | 550.4 |
+| 126.5 | 552.9 |
+| 126.2 | 555.1 |
+| 126.8 | 553.9 |
+| 126 | 558.1 |
+| 127.2 | 555 |
+| 128.3 | 552 |
+| 129.1 | 552.5 |
+| 127.5 | 558.7 |
+| 128.8 | 564.1 |
+| 128.5 | 570.4 |
+| 126.9 | 575 |
+| 128.3 | 582.4 |
+| 125.8 | 589.9 |
+| 126 | 589.3 |
+| 126.9 | 586.7 |
+| 127.1 | 584.3 |
+| 126.8 | 587.1 |
+| 126.8 | 587 |
+| 125.7 | 588 |
+| 127.1 | 594.2 |
+| 127.7 | 598.6 |
+| 126.2 | 596.6 |
+| 127.3 | 605 |
+| 127.2 | 607.6 |
+| 127.2 | 604 |
+| 126.6 | 601 |
+| 127.7 | 602.6 |
+| 127.6 | 609.1 |
+| 127.2 | 611.3 |
+| 127.1 | 611.5 |
+| 127.3 | 616.1 |
+| 126 | 617.3 |
+| 127 | 610.1 |
+| 127.9 | 620.7 |
+| 126.8 | 613.5 |
+| 127.5 | 617.3 |
+| 127.5 | 616.5 |
+| 127.9 | 621.1 |
+| 126 | 629.8 |
+| 127.5 | 629.8 |
+| 126.9 | 637 |
+| 127.1 | 645.5 |
+| 126.8 | 644 |
+| 127.9 | 639.3 |
+| 129.9 | 639.9 |
+| 127.3 | 641.3 |
+| 126.9 | 644 |
+| 126.5 | 646.9 |
+| 126.9 | 651.7 |
+| 127.3 | 655.2 |
+| 127.5 | 655.8 |
+| 127.5 | 658.9 |
+| 125.5 | 655.4 |
+| 127.2 | 652.2 |
+| 126.3 | 651 |
+| 126.8 | 657.6 |
+| 126.6 | 664.4 |
+| 125.6 | 654.9 |
+| 127.4 | 657.3 |
+| 128.2 | 656.5 |
+| 128 | 667.1 |
+| 125.6 | 664.4 |
+| 126.8 | 666.3 |
+| 125.2 | 663.5 |
+| 125.7 | 664.2 |
+| 126.6 | 666 |
+| 126.8 | 665.9 |
+| 126.1 | 665.4 |
+| 126.5 | 670.2 |
+| 126.6 | 674.6 |
+| 125.2 | 678.9 |
+| 126.7 | 669.8 |
+| 126.8 | 674.5 |
+| 126.6 | 676.3 |
+| 127.5 | 667.3 |
+| 128.2 | 674.7 |
+| 128.9 | 670.7 |
+| 127 | 678.9 |
+| 126.1 | 682.6 |
+| 125.9 | 690.6 |
+| 126.1 | 694.2 |
+| 126.3 | 696.4 |
+| 125.8 | 691.3 |
+| 126.8 | 697.1 |
+| 126.5 | 693.4 |
+| 128.1 | 690.7 |
+| 126.5 | 698.6 |
+| 126.5 | 708.3 |
+| 126.8 | 709.6 |
+| 128.1 | 712.3 |
+| 127.9 | 717 |
+| 126.7 | 709 |
+| 126.7 | 717.2 |
+| 126.2 | 728.3 |
+| 126 | 724.6 |
+| 126.2 | 729.1 |
+| 127.8 | 734.1 |
+| 127.3 | 737.2 |
+| 127.4 | 740.2 |
+| 126.1 | 747.2 |
+| 126.2 | 744.7 |
+| 126.7 | 748.8 |
+| 128.2 | 746.1 |
+| 127.5 | 744.8 |
+| 127 | 743.7 |
+| 127.8 | 744.9 |
+| 127.7 | 750.2 |
+| 128.6 | 745.8 |
+| 128.4 | 738.3 |
+| 127.6 | 741.1 |
+| 127.5 | 747.9 |
+| 128.2 | 748 |
+| 127.3 | 742 |
+| 128.2 | 742.2 |
+| 127.3 | 746.9 |
+| 127.1 | 743.4 |
+| 127.5 | 749.4 |
+| 128.5 | 756.6 |
+| 126.7 | 756.4 |
+| 127.6 | 754.3 |
+| 127.2 | 758.1 |
+| 125.9 | 761.2 |
+| 126 | 763.2 |
+| 125.8 | 760.4 |
+| 127 | 757 |
+| 127.1 | 764 |
+| 127.9 | 769.2 |
+| 126.7 | 765.7 |
+| 127.3 | 771.4 |
+| 128.2 | 772.3 |
+| 126.8 | 773 |
+| 126.4 | 768.5 |
+| 127.1 | 769.2 |
+| 126.4 | 778.6 |
+| 127.4 | 781 |
+| 125.6 | 786.9 |
+| 126.1 | 789.6 |
+| 125.8 | 789.9 |
+| 126.7 | 789.6 |
+| 127.5 | 791.1 |
+| 126.8 | 789.8 |
+| 125.1 | 788.3 |
+| 127.7 | 793.5 |
+| 127.1 | 790.6 |
+| 127.4 | 795.4 |
+| 126.2 | 799.4 |
+| 127.5 | 801.2 |
+| 127 | 804 |
+| 127.3 | 799.4 |
+| 127.3 | 807.6 |
+| 128.2 | 803.4 |
+| 127.1 | 815.2 |
+| 126.3 | 814.6 |
+| 128 | 818.6 |
+| 127.3 | 817.6 |
+| 126.9 | 825 |
+| 128.1 | 827.5 |
+| 129.5 | 834.1 |
+| 128.7 | 835.1 |
+| 127.6 | 842.9 |
+| 125.7 | 842.7 |
+| 128.2 | 840.9 |
+| 127.1 | 841.8 |
+| 127.6 | 845.2 |
+| 127.1 | 845.2 |
+| 126.6 | 850.8 |
+| 127.7 | 855.9 |
+| 126.9 | 855.8 |
+| 127.1 | 857.1 |
+| 127.7 | 857.7 |
+| 127.6 | 858.9 |
+| 125.8 | 858.3 |
+| 127.2 | 862.3 |
+| 128.1 | 863.1 |
+| 127.6 | 866.1 |
+| 127 | 859.7 |
+| 128.6 | 859.6 |
+| 128.3 | 857.6 |
+| 126.8 | 857.8 |
+| 127.9 | 852.6 |
+| 127 | 854 |
+| 127.4 | 851 |
+| 128.3 | 851.8 |
+| 128.5 | 853.1 |
+| 127.5 | 851.5 |
+| 127.3 | 855.6 |
+| 128.2 | 861.9 |
+| 128.5 | 859.9 |
+| 127.7 | 853.3 |
+| 128.7 | 854.5 |
+| 127.1 | 862.1 |
+| 127.5 | 862.6 |
+| 127.5 | 863.9 |
+| 128 | 862.5 |
+| 127.4 | 859.3 |
+| 126.1 | 865.1 |
+| 128.6 | 858.6 |
+| 126.9 | 869.3 |
+| 127.7 | 863.7 |
+| 127.4 | 858.5 |
+| 128.1 | 860.5 |
+| 126.6 | 858.2 |
+| 128.2 | 850.4 |
+| 129.4 | 852.1 |
+| 128.3 | 850.1 |
+| 126.8 | 859.7 |
+| 128.3 | 860.1 |
+| 126.3 | 869.6 |
+| 128.1 | 868.3 |
+| 127.2 | 875.7 |
+| 127.5 | 873.6 |
+| 128.1 | 882.4 |
+| 126.9 | 887.3 |
+| 127.6 | 893.3 |
+| 126.5 | 892.2 |
+| 128.1 | 889.6 |
+| 128 | 891.2 |
+| 127 | 891 |
+| 127.4 | 894.4 |
+| 127.6 | 890.4 |
+| 128 | 894.9 |
+| 127.4 | 906.1 |
+| 127.6 | 911.6 |
+| 128.5 | 908.5 |
+| 128.7 | 899.9 |
+| 128.7 | 902.6 |
+| 127.7 | 908.5 |
+| 127 | 903.2 |
+| 128.2 | 892 |
+| 128.9 | 898.9 |
+| 127.6 | 899.2 |
+| 128 | 902.1 |
+| 128.6 | 901.1 |
+| 125.7 | 904.2 |
+| 127.5 | 901.9 |
+| 127.2 | 912.2 |
+| 127.6 | 915.2 |
+| 127.3 | 917.7 |
+| 128.3 | 914.3 |
+| 129.2 | 910.9 |
+| 129 | 911.7 |
+| 127.8 | 914.2 |
+| 128.7 | 922.4 |
+| 128.4 | 923.3 |
+| 129.3 | 918.8 |
+| 126.7 | 919.3 |
+| 127.8 | 924.9 |
+| 125.8 | 931.8 |
+| 127.2 | 923.5 |
+| 128.6 | 934.5 |
+| 127.2 | 940.4 |
+| 127 | 941.4 |
+| 128.2 | 950.3 |
+| 126.8 | 946.5 |
+| 127.6 | 949.1 |
+| 127.6 | 944.2 |
+| 127.3 | 943.6 |
+| 128.6 | 947.2 |
+| 127.6 | 949.1 |
+| 128.3 | 948.8 |
+| 127.5 | 948 |
+| 127.7 | 948.9 |
+| 129.5 | 957.1 |
+| 127.7 | 961.4 |
+| 128.8 | 961.9 |
+| 128.9 | 960 |
+| 129.7 | 968.1 |
+| 129 | 961 |
+| 127.5 | 963.6 |
+| 128 | 962.3 |
+| 128.4 | 964.4 |
+| 127.4 | 964.8 |
+| 127.4 | 973 |
+| 127 | 976.9 |
+| 128.7 | 976.1 |
+| 127.8 | 980.4 |
+| 127.9 | 979.7 |
+| 127.3 | 973.6 |
+| 127.7 | 969.3 |
+| 127.6 | 974.6 |
+| 129.7 | 980.9 |
+| 128.9 | 993.2 |
+| 128.4 | 994.9 |
+| 128.8 | 995.2 |
+| 128.3 | 1001 |
+| 129.1 | 1011 |
+| 128.8 | 999.8 |
+| 126.2 | 1007 |
+| 127.4 | 1010 |
+| 129.2 | 1001 |
+| 128.2 | 1010 |
+| 128.2 | 1016 |
+| 129.3 | 1013 |
+| 128.9 | 1029 |
+| 128.3 | 1024 |
+| 129 | 1033 |
+| 128.9 | 1034 |
+| 129.8 | 1038 |
+| 127.4 | 1034 |
+| 128.5 | 1030 |
+| 128.4 | 1036 |
+| 130.2 | 1040 |
+| 127.9 | 1044 |
+| 127.9 | 1049 |
+| 127.1 | 1050 |
+| 128.1 | 1059 |
+| 128.1 | 1056 |
+| 128.8 | 1051 |
+| 129.4 | 1046 |
+| 129.1 | 1045 |
+| 126.8 | 1042 |
+| 127 | 1046 |
+| 128 | 1057 |
+| 129.8 | 1063 |
+| 128.6 | 1068 |
+| 128.3 | 1065 |
+| 128.2 | 1057 |
+| 129.4 | 1058 |
+| 130.1 | 1061 |
+| 128.5 | 1072 |
+| 128.2 | 1075 |
+| 130.2 | 1073 |
+| 127.7 | 1075 |
+| 128.6 | 1085 |
+| 127.6 | 1093 |
+| 128.4 | 1095 |
+| 129.2 | 1101 |
+| 128.4 | 1094 |
+| 128.6 | 1090 |
+| 129 | 1097 |
+| 127.7 | 1097 |
+| 129.7 | 1097 |
+| 129.7 | 1105 |
+| 128.6 | 1112 |
+| 129.2 | 1114 |
+| 126.6 | 1113 |
+| 128.3 | 1117 |
+| 127.5 | 1123 |
+| 129.7 | 1118 |
+| 129 | 1120 |
+| 130.3 | 1115 |
+| 128 | 1122 |
+| 129.3 | 1121 |
+| 129.3 | 1132 |
+| 129.9 | 1118 |
+| 127.9 | 1120 |
+| 127.6 | 1111 |
+| 127.9 | 1120 |
+| 128.6 | 1119 |
+| 127.7 | 1124 |
+| 130.2 | 1128 |
+| 129.6 | 1129 |
+| 128.5 | 1123 |
+| 129.5 | 1122 |
+| 127.8 | 1122 |
+| 127.9 | 1130 |
+| 129.1 | 1120 |
+| 127 | 1131 |
+| 127.5 | 1132 |
+| 127.9 | 1130 |
+| 128.3 | 1129 |
+| 127.5 | 1130 |
+| 128.5 | 1131 |
+| 128.1 | 1134 |
+| 129.3 | 1141 |
+| 128.8 | 1147 |
+| 129.4 | 1147 |
+| 128.8 | 1143 |
+| 129.7 | 1149 |
+| 127.9 | 1151 |
+| 128.5 | 1148 |
+| 127.6 | 1143 |
+| 128.5 | 1136 |
+| 127.2 | 1134 |
+| 127.9 | 1138 |
+| 127.2 | 1155 |
+| 128.1 | 1147 |
+| 128 | 1147 |
+| 128.4 | 1147 |
+| 129.2 | 1155 |
+| 128.1 | 1154 |
+| 128 | 1150 |
+| 128.8 | 1158 |
+| 128.8 | 1162 |
+| 129.7 | 1169 |
+| 128.5 | 1170 |
+| 130.1 | 1164 |
+| 130.8 | 1176 |
+| 128.1 | 1175 |
+| 129.1 | 1180 |
+| 129 | 1176 |
+| 128.7 | 1185 |
+| 129.9 | 1189 |
+| 129.5 | 1182 |
+| 129.4 | 1190 |
+| 128.3 | 1191 |
+| 129.4 | 1197 |
+| 127.9 | 1195 |
+| 129 | 1206 |
+| 129.4 | 1202 |
+| 130 | 1211 |
+| 128.9 | 1212 |
+| 129.3 | 1198 |
+| 128.3 | 1207 |
+| 129.4 | 1196 |
+| 128 | 1206 |
+| 129.1 | 1204 |
+| 129.5 | 1197 |
+| 129.7 | 1197 |
+| 131.5 | 1200 |
+| 127.5 | 1210 |
+| 129.1 | 1210 |
+| 129.1 | 1209 |
+| 128.8 | 1208 |
+| 127.2 | 1205 |
+| 128.6 | 1207 |
+| 128.1 | 1221 |
+| 129.4 | 1224 |
+| 127.9 | 1233 |
+| 129.8 | 1229 |
+| 129.5 | 1225 |
+| 129 | 1220 |
+| 127.9 | 1226 |
+| 128.2 | 1224 |
+| 128.8 | 1218 |
+| 128.7 | 1224 |
+| 128.2 | 1222 |
+| 129.2 | 1222 |
+| 128.8 | 1229 |
+| 128.2 | 1238 |
+| 127.4 | 1235 |
+| 128.2 | 1248 |
+| 128.5 | 1247 |
+| 128.5 | 1248 |
+| 128.7 | 1246 |
+| 128.8 | 1245 |
+| 128.1 | 1262 |
+| 129.2 | 1259 |
+| 128.3 | 1254 |
+| 128.1 | 1249 |
+| 129.2 | 1254 |
+| 128.1 | 1265 |
+| 127.8 | 1261 |
+| 128.3 | 1260 |
+| 128.2 | 1258 |
+| 128.4 | 1263 |
+| 129.4 | 1264 |
+| 128.1 | 1266 |
+| 128.7 | 1255 |
+| 128.3 | 1255 |
+| 127.9 | 1252 |
+| 127.7 | 1255 |
+| 129.5 | 1246 |
+| 127.9 | 1244 |
+| 129.4 | 1250 |
+| 127.1 | 1246 |
+| 127.3 | 1244 |
+| 128.3 | 1247 |
+| 128.5 | 1251 |
+| 128.4 | 1261 |
+| 129.7 | 1253 |
+| 129.9 | 1268 |
+| 128.5 | 1278 |
+| 128.9 | 1287 |
+| 130 | 1281 |
+| 128.6 | 1269 |
+| 128.6 | 1274 |
+| 128.2 | 1274 |
+| 128.1 | 1289 |
+| 128.2 | 1294 |
+| 129.7 | 1296 |
+| 128.2 | 1303 |
+| 127.4 | 1314 |
+| 126.8 | 1312 |
+| 128.4 | 1312 |
+| 127.4 | 1312 |
+| 127.4 | 1307 |
+| 126.3 | 1313 |
+| 128.3 | 1320 |
+| 128.5 | 1318 |
+| 128.9 | 1314 |
+| 130 | 1317 |
+| 129.5 | 1313 |
+| 129.2 | 1322 |
+| 127.1 | 1331 |
+| 129.2 | 1338 |
+| 128.1 | 1334 |
+| 129 | 1333 |
+| 129.6 | 1334 |
+| 129.4 | 1341 |
+| 128.6 | 1337 |
+| 128.5 | 1350 |
+| 128.6 | 1347 |
+| 128.9 | 1343 |
+| 128.6 | 1336 |
+| 128.1 | 1347 |
+| 127.1 | 1360 |
+| 128.7 | 1356 |
+| 128.3 | 1356 |
+| 130.3 | 1355 |
+| 130.9 | 1354 |
+| 128.9 | 1363 |
+| 129.1 | 1352 |
+| 129.3 | 1349 |
+| 129.4 | 1353 |
+| 127.6 | 1358 |
+| 128.4 | 1346 |
+| 127.3 | 1348 |
+| 128.8 | 1360 |
+| 128.5 | 1366 |
+| 129.7 | 1370 |
+| 129.5 | 1367 |
+| 128.4 | 1361 |
+| 131.3 | 1357 |
+| 130.6 | 1355 |
+| 129.7 | 1355 |
+| 128.7 | 1358 |
+| 127.8 | 1354 |
+| 126.9 | 1366 |
+| 128.2 | 1363 |
+| 129.2 | 1363 |
+| 129.6 | 1363 |
+| 129.4 | 1370 |
+| 129.6 | 1375 |
+| 130.4 | 1373 |
+| 129.7 | 1380 |
+| 128.8 | 1381 |
+| 128.8 | 1376 |
+| 129.6 | 1368 |
+| 128.2 | 1378 |
+| 128.5 | 1376 |
+| 128.7 | 1376 |
+| 128.7 | 1375 |
+| 128.8 | 1389 |
+| 127.8 | 1389 |
+| 128.7 | 1377 |
+| 127.7 | 1379 |
+| 127.8 | 1371 |
+| 128.2 | 1380 |
+| 128.6 | 1371 |
+| 128 | 1380 |
+| 130.3 | 1394 |
+| 129 | 1390 |
+| 129.4 | 1389 |
+| 129 | 1395 |
+| 127.3 | 1386 |
+| 129.2 | 1399 |
+| 129 | 1403 |
+| 129.9 | 1391 |
+| 128.4 | 1402 |
+| 130 | 1405 |
+| 130.2 | 1408 |
+| 129.6 | 1402 |
+| 128.3 | 1420 |
+| 130 | 1421 |
+| 129 | 1415 |
+| 127.7 | 1415 |
+| 128 | 1427 |
+| 129 | 1434 |
+| 128 | 1436 |
+| 128.8 | 1434 |
+| 129.1 | 1436 |
+| 129.3 | 1438 |
+| 129.1 | 1446 |
+| 129.4 | 1445 |
+| 129.4 | 1444 |
+| 128.8 | 1457 |
+| 129 | 1459 |
+| 129.6 | 1460 |
+| 129.1 | 1466 |
+| 128.2 | 1471 |
+| 128.4 | 1472 |
+| 128.4 | 1462 |
+| 128.7 | 1469 |
+| 131 | 1473 |
+| 126.5 | 1476 |
+| 127.2 | 1475 |
+| 130.4 | 1474 |
+| 129.8 | 1473 |
+| 128.3 | 1479 |
+| 128.2 | 1466 |
+| 130.3 | 1458 |
+| 129.6 | 1453 |
+| 129.1 | 1454 |
+| 129.5 | 1454 |
+| 126.9 | 1451 |
+| 129.2 | 1452 |
+| 129.7 | 1443 |
+| 130.1 | 1438 |
+| 130 | 1435 |
+| 129 | 1435 |
+| 130 | 1458 |
+| 128.9 | 1458 |
+| 127.3 | 1473 |
+| 130.1 | 1471 |
+| 129.4 | 1482 |
+| 129.3 | 1490 |
+| 130.4 | 1493 |
+| 130.5 | 1481 |
+| 129.4 | 1485 |
+| 128.8 | 1489 |
+| 130.1 | 1489 |
+| 129.6 | 1483 |
+| 129.4 | 1492 |
+| 130 | 1500 |
+| 128.7 | 1504 |
+| 129.8 | 1500 |
+| 129.1 | 1500 |
+| 129.5 | 1505 |
+| 129.4 | 1491 |
+| 128.7 | 1483 |
+| 129 | 1485 |
+| 129.4 | 1489 |
+| 131.3 | 1480 |
+| 129.9 | 1486 |
+| 130.2 | 1493 |
+| 129.3 | 1499 |
+| 128.7 | 1495 |
+| 127.7 | 1503 |
+| 128.7 | 1509 |
+| 127.4 | 1508 |
+| 129.3 | 1506 |
+| 128.2 | 1500 |
+| 129 | 1505 |
+| 128.4 | 1519 |
+| 129.8 | 1509 |
+| 128.9 | 1519 |
+| 129.6 | 1516 |
+| 128.7 | 1517 |
+| 129.6 | 1513 |
+| 129.6 | 1524 |
+| 128.8 | 1529 |
+| 130.2 | 1529 |
+| 128.9 | 1520 |
+| 130.1 | 1539 |
+| 128.8 | 1537 |
+| 130.4 | 1541 |
+| 129.6 | 1543 |
+| 128.3 | 1526 |
+| 129.4 | 1529 |
+| 129.7 | 1545 |
+| 129.1 | 1539 |
+| 130.4 | 1552 |
+| 130.4 | 1545 |
+| 131.4 | 1545 |
+| 130.7 | 1549 |
+| 130.5 | 1552 |
+| 129.5 | 1552 |
+| 128.9 | 1549 |
+| 130 | 1548 |
+| 129.5 | 1553 |
+| 129.2 | 1560 |
+| 128.5 | 1552 |
+| 128.1 | 1554 |
+| 130.8 | 1567 |
+| 130.9 | 1557 |
+| 131.4 | 1565 |
+| 129.1 | 1576 |
+| 129.2 | 1576 |
+| 129.4 | 1566 |
+| 129.2 | 1559 |
+| 129.9 | 1559 |
+| 130.1 | 1552 |
+| 130.1 | 1556 |
+| 129.9 | 1546 |
+| 130.8 | 1548 |
+| 129.2 | 1552 |
+| 129.9 | 1551 |
+| 132.3 | 1551 |
+| 133 | 1551 |
+| 131.9 | 1553 |
+| 132.8 | 1555 |
+| 132.8 | 1553 |
+| 132.6 | 1561 |
+| 132.7 | 1562 |
+| 132.2 | 1565 |
+| 132.4 | 1567 |
+| 133.3 | 1567 |
+| 132.1 | 1570 |
+| 133 | 1568 |
+| 131.5 | 1565 |
+| 132 | 1568 |
+| 133 | 1567 |
+| 132.6 | 1563 |
+| 133.8 | 1565 |
+| 133.4 | 1566 |
+| 133.7 | 1567 |
+| 133.2 | 1570 |
+| 133.3 | 1567 |
+| 133.2 | 1570 |
+| 133 | 1574 |
+| 133.4 | 1574 |
+| 132.7 | 1579 |
+| 133.4 | 1586 |
+| 132.9 | 1587 |
+| 132.4 | 1589 |
+| 132.6 | 1591 |
+| 132.3 | 1598 |
+| 133.5 | 1604 |
+| 133.1 | 1610 |
+| 133.6 | 1612 |
+| 133.9 | 1605 |
+| 134.6 | 1604 |
+| 134 | 1606 |
+| 134.2 | 1605 |
+| 134.3 | 1606 |
+| 133.9 | 1605 |
+| 133.6 | 1603 |
+| 132.7 | 1600 |
+| 134.1 | 1594 |
+| 134.5 | 1594 |
+| 134.7 | 1587 |
+| 134.2 | 1593 |
+| 133.8 | 1595 |
+| 134.3 | 1593 |
+| 134.1 | 1595 |
+| 134.5 | 1589 |
+| 134.3 | 1593 |
+| 133.6 | 1594 |
+| 133.5 | 1592 |
+| 134.1 | 1597 |
+| 133.7 | 1601 |
+| 133.5 | 1605 |
+| 133.6 | 1609 |
+| 134 | 1611 |
+| 134.4 | 1608 |
+| 133.9 | 1611 |
+| 133.9 | 1611 |
+| 134.4 | 1613 |
+| 133.4 | 1612 |
+| 133.4 | 1611 |
+| 133.8 | 1614 |
+| 134.8 | 1616 |
+| 134.2 | 1620 |
+| 132.6 | 1620 |
+| 133.2 | 1619 |
+| 134.1 | 1620 |
+| 134.3 | 1619 |
+| 134.9 | 1621 |
+| 133.2 | 1622 |
+| 134.1 | 1626 |
+| 134.7 | 1624 |
+| 135 | 1623 |
+| 134.6 | 1623 |
+| 133.7 | 1625 |
+| 133.4 | 1628 |
+| 134.6 | 1628 |
+| 134.3 | 1627 |
+| 134 | 1628 |
+| 133.4 | 1624 |
+| 133.3 | 1627 |
+| 133.8 | 1629 |
+| 133.6 | 1630 |
+| 133.3 | 1630 |
+| 133.6 | 1633 |
+| 133.5 | 1632 |
+| 133.4 | 1634 |
+| 134.5 | 1637 |
+| 133 | 1637 |
+| 134.5 | 1634 |
+| 133.4 | 1634 |
+| 133.5 | 1636 |
+| 132.5 | 1640 |
+| 132.8 | 1645 |
+| 132.6 | 1646 |
+| 133 | 1645 |
+| 133.3 | 1643 |
+| 133.4 | 1641 |
+| 132.6 | 1641 |
+| 133.3 | 1644 |
+| 133.1 | 1645 |
+| 134.4 | 1647 |
+| 133.7 | 1649 |
+| 132.8 | 1651 |
+| 133 | 1657 |
+| 133.4 | 1651 |
+| 133.4 | 1647 |
+| 132.8 | 1651 |
+| 133.1 | 1646 |
+| 133 | 1644 |
+| 133.2 | 1645 |
+| 133.2 | 1644 |
+| 133.2 | 1645 |
+| 132.6 | 1643 |
+| 132.8 | 1643 |
+| 133.3 | 1648 |
+| 132.6 | 1648 |
+| 133.9 | 1649 |
+| 133.9 | 1651 |
+| 133.1 | 1648 |
+| 132.7 | 1647 |
+| 132.8 | 1652 |
+| 132.9 | 1650 |
+| 132.7 | 1646 |
+| 132.8 | 1643 |
+| 133.5 | 1643 |
+| 132.4 | 1646 |
+| 132.7 | 1645 |
+| 132.7 | 1642 |
+| 133 | 1646 |
+| 132.8 | 1648 |
+| 132.8 | 1646 |
+| 132.9 | 1655 |
+| 133.1 | 1656 |
+| 133.1 | 1657 |
+| 133.7 | 1654 |
+| 133.4 | 1655 |
+| 133 | 1651 |
+| 132.8 | 1653 |
+| 132.9 | 1653 |
+| 132.5 | 1652 |
+| 133.8 | 1653 |
+| 133.2 | 1650 |
+| 133.2 | 1648 |
+| 133.3 | 1649 |
+| 133.1 | 1654 |
+| 133.1 | 1659 |
+| 133.4 | 1654 |
+| 133.1 | 1656 |
+| 132.5 | 1653 |
+| 132.6 | 1650 |
+| 133.2 | 1649 |
+| 133.1 | 1657 |
+| 133.7 | 1655 |
+| 132.9 | 1657 |
+| 132.8 | 1655 |
+| 132.7 | 1656 |
+| 133.4 | 1658 |
+| 133.6 | 1661 |
+| 133.3 | 1660 |
+| 133.5 | 1656 |
+| 132.8 | 1656 |
+| 133 | 1656 |
+| 133.4 | 1658 |
+| 132.8 | 1656 |
+| 132.8 | 1659 |
+| 133.4 | 1660 |
+| 133.2 | 1661 |
+| 133.7 | 1663 |
+| 133 | 1665 |
+| 132.7 | 1666 |
+| 132.5 | 1671 |
+| 132.8 | 1669 |
+| 132.8 | 1663 |
+| 132.8 | 1664 |
+| 132.8 | 1665 |
+| 133.2 | 1663 |
+| 132.6 | 1662 |
+| 132.3 | 1668 |
+| 132.6 | 1666 |
+| 133 | 1675 |
+| 133.2 | 1677 |
+| 133.1 | 1679 |
+| 132.4 | 1676 |
+| 132.9 | 1674 |
+| 132.9 | 1672 |
+| 133.1 | 1674 |
+| 132.7 | 1671 |
+| 133.1 | 1670 |
+| 132.7 | 1670 |
+| 132.8 | 1671 |
+| 133.2 | 1670 |
+| 133.3 | 1670 |
+| 132.8 | 1674 |
+| 132.6 | 1671 |
+| 132.9 | 1673 |
+| 132.9 | 1669 |
+| 132.8 | 1673 |
+| 132.5 | 1672 |
+| 132.2 | 1673 |
+| 132.6 | 1674 |
+| 132.3 | 1674 |
+| 132.8 | 1674 |
+| 132.8 | 1671 |
+| 132.8 | 1674 |
+| 132.7 | 1680 |
+| 132.9 | 1683 |
+| 132.6 | 1683 |
+| 132.5 | 1682 |
+| 132.8 | 1680 |
+| 132.6 | 1674 |
+| 133.1 | 1678 |
+| 132.4 | 1675 |
+| 133.3 | 1684 |
+| 133.6 | 1685 |
+| 132.8 | 1686 |
+| 132.8 | 1691 |
+| 133.2 | 1691 |
+| 132.8 | 1692 |
+| 132.3 | 1693 |
+| 133.3 | 1689 |
+| 134 | 1685 |
+| 132.9 | 1683 |
+| 133.8 | 1683 |
+| 133.3 | 1685 |
+| 132.9 | 1687 |
+| 133.4 | 1687 |
+| 133.4 | 1687 |
+| 133 | 1685 |
+| 132.3 | 1683 |
+| 133 | 1684 |
+| 132.9 | 1682 |
+| 132.9 | 1686 |
+| 132.6 | 1685 |
+| 132.5 | 1688 |
+| 132.5 | 1689 |
+| 132.4 | 1692 |
+| 132.7 | 1694 |
+| 132.5 | 1698 |
+| 132.8 | 1699 |
+| 132.8 | 1693 |
+| 133.2 | 1695 |
+| 133.3 | 1701 |
+| 133.3 | 1699 |
+| 132.9 | 1699 |
+| 132.6 | 1696 |
+| 132.8 | 1690 |
+| 132.7 | 1695 |
+| 133.4 | 1695 |
+| 133.4 | 1693 |
+| 133.6 | 1691 |
+| 133.5 | 1690 |
+| 133.7 | 1696 |
+| 133.7 | 1700 |
+| 133.1 | 1700 |
+| 132.5 | 1703 |
+| 132.5 | 1700 |
+| 133.2 | 1696 |
+| 132.6 | 1694 |
+| 132.6 | 1694 |
+| 132.5 | 1702 |
+| 132.3 | 1700 |
+| 132 | 1702 |
+| 132.2 | 1705 |
+| 132.6 | 1707 |
+| 132.6 | 1710 |
+| 133.3 | 1713 |
+| 132.6 | 1716 |
+| 132.5 | 1718 |
+| 132.6 | 1712 |
+| 132.9 | 1716 |
+| 132.4 | 1718 |
+| 132.7 | 1723 |
+| 132.9 | 1720 |
+| 132.5 | 1716 |
+| 132 | 1718 |
+| 132.3 | 1717 |
+| 133.3 | 1718 |
+| 132.5 | 1717 |
+| 132.2 | 1721 |
+| 132.7 | 1720 |
+| 133.4 | 1724 |
+| 132.8 | 1731 |
+| 133.4 | 1730 |
+| 132.9 | 1733 |
+| 132.5 | 1737 |
+| 131.9 | 1736 |
+| 133.4 | 1742 |
+| 133 | 1747 |
+| 132.4 | 1749 |
+| 132.6 | 1748 |
+| 132.6 | 1753 |
+| 133.2 | 1749 |
+| 133.1 | 1751 |
+| 132.6 | 1755 |
+| 133.5 | 1753 |
+| 133.2 | 1755 |
+| 133.4 | 1756 |
+| 133.2 | 1754 |
+| 133.1 | 1750 |
+| 133.4 | 1745 |
+| 133.2 | 1745 |
+| 133.4 | 1750 |
+| 133 | 1751 |
+| 133 | 1753 |
+| 132.4 | 1750 |
+| 132.8 | 1748 |
+| 132.5 | 1748 |
+| 132.8 | 1750 |
+| 132.2 | 1755 |
+| 132.7 | 1755 |
+| 132.6 | 1752 |
+| 132.6 | 1752 |
+| 133.1 | 1754 |
+| 132.8 | 1754 |
+| 132.9 | 1752 |
+| 132.8 | 1752 |
+| 133.3 | 1753 |
+| 133.5 | 1754 |
+| 133.5 | 1757 |
+| 132.9 | 1755 |
+| 132 | 1751 |
+| 133.3 | 1752 |
+| 133.2 | 1749 |
+| 133 | 1753 |
+| 132.6 | 1749 |
+| 132.5 | 1745 |
+| 132.9 | 1749 |
+| 133.5 | 1751 |
+| 133.2 | 1753 |
+| 133 | 1749 |
+| 132.4 | 1748 |
+| 133.5 | 1749 |
+| 133.4 | 1751 |
+| 132.8 | 1750 |
+| 132.8 | 1751 |
+| 132.8 | 1756 |
+| 132.8 | 1752 |
+| 133.8 | 1747 |
+| 133.2 | 1746 |
+| 133.2 | 1746 |
+| 133.4 | 1747 |
+| 133.3 | 1750 |
+| 133.5 | 1751 |
+| 133.1 | 1748 |
+| 132.7 | 1756 |
+| 133.1 | 1760 |
+| 132.9 | 1760 |
+| 132.7 | 1763 |
+| 133.4 | 1764 |
+| 132.7 | 1760 |
+| 132.8 | 1755 |
+| 132.3 | 1760 |
+| 132.5 | 1751 |
+| 132.4 | 1752 |
+| 132.8 | 1747 |
+| 133 | 1747 |
+| 132.5 | 1752 |
+| 132.8 | 1753 |
+| 132.5 | 1751 |
+| 132.9 | 1747 |
+| 133 | 1749 |
+| 132.6 | 1756 |
+| 132.8 | 1755 |
+| 132.9 | 1752 |
+| 133.3 | 1753 |
+| 132.6 | 1755 |
+| 132.9 | 1753 |
+| 132.9 | 1755 |
+| 132.4 | 1758 |
+| 132.3 | 1751 |
+| 132.8 | 1757 |
+| 132.9 | 1759 |
+| 132.8 | 1759 |
+| 132.1 | 1760 |
+| 131.7 | 1759 |
+| 132.5 | 1755 |
+| 132.8 | 1758 |
+| 132.9 | 1760 |
+| 132.1 | 1757 |
+| 132.5 | 1755 |
+| 132.6 | 1748 |
+| 133.1 | 1747 |
+| 132.5 | 1749 |
+| 132.5 | 1750 |
+| 132.3 | 1751 |
+| 133.4 | 1756 |
+| 132.7 | 1750 |
+| 132.4 | 1756 |
+| 132 | 1758 |
+| 132.9 | 1760 |
+| 132.4 | 1756 |
+| 132.9 | 1754 |
+| 132.8 | 1756 |
+| 133 | 1754 |
+| 132.6 | 1761 |
+| 132.8 | 1763 |
+| 132.8 | 1767 |
+| 132.9 | 1778 |
+| 132.9 | 1775 |
+| 133.3 | 1790 |
+| 132.6 | 1782 |
+| 132.1 | 1784 |
+| 133.2 | 1794 |
+| 133 | 1805 |
+| 133.4 | 1809 |
+| 133 | 1803 |
+| 132.9 | 1806 |
+| 133.3 | 1806 |
+| 132.2 | 1800 |
+| 132 | 1804 |
+| 132.8 | 1819 |
+| 132.7 | 1806 |
+| 132.5 | 1806 |
+| 132.3 | 1806 |
+| 132.6 | 1824 |
+| 132.2 | 1831 |
+| 133.1 | 1824 |
+| 132.7 | 1836 |
+| 132.6 | 1843 |
+| 132.4 | 1837 |
+| 132.6 | 1883 |
+| 132.3 | 1903 |
+| 132.2 | 1879 |
+| 133 | 1884 |
+| 132.7 | 1867 |
+| 132.9 | 1883 |
+| 133 | 1895 |
+| 133.1 | 1914 |
+| 132.6 | 1911 |
+| 132.4 | 1923 |
+| 133.4 | 1917 |
+| 133.4 | 1908 |
+| 133.6 | 1909 |
+| 133.3 | 1900 |
+| 133.5 | 1909 |
+| 133.6 | 1897 |
+| 132.8 | 1909 |
+| 133.4 | 1906 |
+| 133.2 | 1916 |
+| 132.6 | 1920 |
+| 132.8 | 1931 |
+| 132.2 | 1939 |
+| 132.3 | 1951 |
+| 132.6 | 1954 |
+| 133.1 | 1961 |
+| 133.7 | 1962 |
+| 133.2 | 1970 |
+| 133.2 | 1973 |
+| 133 | 1978 |
+| 133.3 | 1991 |
+| 132.8 | 1983 |
+| 133.1 | 1971 |
+| 132.5 | 1985 |
+| 132.7 | 1978 |
+| 132.4 | 1983 |
+| 132.1 | 1979 |
+| 132.2 | 1991 |
+| 133.1 | 1990 |
+| 132.3 | 1999 |
+| 133.6 | 1999 |
+| 133.2 | 2008 |
+| 133.2 | 2024 |
+| 132.4 | 2020 |
+| 133.2 | 2027 |
+| 133.5 | 2017 |
+| 133.6 | 2018 |
+| 132.4 | 2034 |
+| 132.3 | 2044 |
+| 132.9 | 2063 |
+| 132.8 | 2061 |
+| 132.8 | 2082 |
+| 133.2 | 2076 |
+| 132.9 | 2092 |
+| 132.7 | 2083 |
+| 133.2 | 2081 |
+| 133.4 | 2105 |
+| 132.9 | 2111 |
+| 132.9 | 2102 |
+| 132.2 | 2112 |
+| 132.7 | 2099 |
+| 133.7 | 2088 |
+| 133.3 | 2094 |
+| 133.6 | 2108 |
+| 132.9 | 2118 |
+| 132.8 | 2133 |
+| 133.1 | 2124 |
+| 133.9 | 2112 |
+| 132.9 | 2140 |
+| 133.3 | 2175 |
+| 133 | 2182 |
+| 133.1 | 2174 |
+| 133 | 2181 |
+| 132.7 | 2183 |
+| 132.5 | 2176 |
+| 132.8 | 2172 |
+| 133.1 | 2155 |
+| 132.6 | 2172 |
+| 132.9 | 2183 |
+| 132.1 | 2190 |
+| 133.5 | 2172 |
+| 132.5 | 2185 |
+| 133.2 | 2176 |
+| 132.3 | 2191 |
+| 133 | 2200 |
+| 132.9 | 2200 |
+| 132.6 | 2197 |
+| 133.3 | 2206 |
+| 132.9 | 2201 |
+| 133 | 2207 |
+| 133.9 | 2211 |
+| 133.2 | 2224 |
+| 133.9 | 2208 |
+| 133 | 2218 |
+| 133 | 2216 |
+| 133.1 | 2230 |
+| 133.4 | 2246 |
+| 133.1 | 2251 |
+| 132.3 | 2277 |
+| 133.5 | 2310 |
+| 132.7 | 2318 |
+| 132.7 | 2310 |
+| 133.2 | 2306 |
+| 132.8 | 2315 |
+| 133.5 | 2324 |
+| 133.1 | 2325 |
+| 132.9 | 2327 |
+| 133.9 | 2330 |
+| 132.7 | 2331 |
+| 132.3 | 2337 |
+| 132.9 | 2361 |
+| 132.6 | 2364 |
+| 133.7 | 2358 |
+| 132.9 | 2372 |
+| 132.8 | 2372 |
+| 133.7 | 2343 |
+| 132.6 | 2348 |
+| 132.8 | 2341 |
+| 132.6 | 2368 |
+| 133.2 | 2383 |
+| 133.4 | 2374 |
+| 132.4 | 2371 |
+| 133.5 | 2366 |
+| 133.1 | 2369 |
+| 133.5 | 2358 |
+| 132.8 | 2370 |
+| 132.9 | 2382 |
+| 132 | 2387 |
+| 132.3 | 2375 |
+| 133.3 | 2362 |
+| 132.2 | 2376 |
+| 132.8 | 2395 |
+| 134 | 2401 |
+| 133.3 | 2418 |
+| 132.9 | 2428 |
+| 133 | 2441 |
+| 133 | 2419 |
+| 132.7 | 2421 |
+| 132.1 | 2421 |
+| 133 | 2433 |
+| 133.3 | 2424 |
+| 133.6 | 2418 |
+| 132.5 | 2420 |
+| 133.5 | 2405 |
+| 133.2 | 2402 |
+| 133.7 | 2404 |
+| 133.5 | 2398 |
+| 133.9 | 2419 |
+| 133.4 | 2410 |
+| 132.3 | 2418 |
+| 133.1 | 2429 |
+| 133.6 | 2422 |
+| 133.5 | 2417 |
+| 133.6 | 2408 |
+| 132.9 | 2397 |
+| 133.4 | 2410 |
+| 133.6 | 2418 |
+| 133.2 | 2427 |
+| 132.2 | 2433 |
+| 133.6 | 2430 |
+| 133.5 | 2459 |
+| 133 | 2448 |
+| 133.2 | 2452 |
+| 133.2 | 2474 |
+| 132.9 | 2485 |
+| 133.8 | 2473 |
+| 133.3 | 2481 |
+| 132.9 | 2505 |
+| 131.9 | 2491 |
+| 132.8 | 2481 |
+| 132.6 | 2491 |
+| 132.8 | 2495 |
+| 133.5 | 2500 |
+| 133.1 | 2491 |
+| 133.5 | 2499 |
+| 132.5 | 2495 |
+| 132.3 | 2489 |
+| 132.6 | 2489 |
+| 133.3 | 2496 |
+| 132.2 | 2492 |
+| 132.7 | 2510 |
+| 133.1 | 2503 |
+| 132.9 | 2476 |
+| 133.5 | 2488 |
+| 133.7 | 2488 |
+| 132.4 | 2491 |
+| 133.1 | 2506 |
+| 132.1 | 2506 |
+| 133.3 | 2485 |
+| 132.8 | 2481 |
+| 132.6 | 2501 |
+| 132.7 | 2486 |
+| 132.6 | 2522 |
+| 133.3 | 2532 |
+| 133.2 | 2524 |
+| 132.7 | 2534 |
+| 133.2 | 2550 |
+| 133 | 2587 |
+| 132.6 | 2592 |
+| 133.3 | 2596 |
+| 133.9 | 2578 |
+| 133.4 | 2583 |
+| 133.2 | 2587 |
+| 133.3 | 2581 |
+| 133.8 | 2576 |
+| 134.1 | 2592 |
+| 134.1 | 2621 |
+| 133.5 | 2612 |
+| 132.6 | 2597 |
+| 132.4 | 2594 |
+| 133.5 | 2585 |
+| 131.9 | 2573 |
+| 132.9 | 2584 |
+| 132.7 | 2589 |
+| 132.5 | 2568 |
+| 133.3 | 2590 |
+| 132.8 | 2602 |
+| 133.8 | 2604 |
+| 134.4 | 2591 |
+| 134.5 | 2611 |
+| 134.3 | 2616 |
+| 134 | 2627 |
+| 134.4 | 2634 |
+| 133.2 | 2625 |
+| 133.7 | 2617 |
+| 132.9 | 2638 |
+| 134 | 2619 |
+| 134.3 | 2619 |
+| 134.3 | 2629 |
+| 134 | 2633 |
+| 133 | 2636 |
+| 133.9 | 2646 |
+| 134.3 | 2666 |
+| 133.5 | 2664 |
+| 133.7 | 2674 |
+| 133.8 | 2688 |
+| 133.6 | 2670 |
+| 133.6 | 2686 |
+| 133.5 | 2693 |
+| 133.1 | 2690 |
+| 133.1 | 2693 |
+| 133.8 | 2692 |
+| 133.6 | 2698 |
+| 133.3 | 2700 |
+| 133.9 | 2698 |
+| 133.9 | 2684 |
+| 133.3 | 2675 |
+| 134.3 | 2674 |
+| 133.8 | 2682 |
+| 133.4 | 2700 |
+| 134 | 2708 |
+| 133.6 | 2727 |
+| 133.8 | 2740 |
+| 132.9 | 2715 |
+| 131.9 | 2724 |
+| 132.9 | 2721 |
+| 134.5 | 2727 |
+| 133.7 | 2722 |
+| 133.3 | 2753 |
+| 133.4 | 2774 |
+| 134.4 | 2781 |
+| 133.7 | 2761 |
+| 133.9 | 2775 |
+| 134.7 | 2755 |
+| 134.1 | 2763 |
+| 134.3 | 2745 |
+| 134 | 2737 |
+| 132.9 | 2765 |
+| 134.6 | 2773 |
+| 134.5 | 2766 |
+| 134.7 | 2757 |
+| 134.5 | 2744 |
+| 133.7 | 2758 |
+| 133.9 | 2784 |
+| 134.1 | 2780 |
+| 134.3 | 2794 |
+| 134.7 | 2794 |
+| 133.5 | 2778 |
+| 133.6 | 2777 |
+| 134 | 2775 |
+| 133.2 | 2810 |
+| 133.9 | 2833 |
+| 133.8 | 2818 |
+| 134.1 | 2814 |
+| 133.5 | 2815 |
+| 133 | 2832 |
+| 132.2 | 2815 |
+| 134.2 | 2822 |
+| 134.2 | 2827 |
+| 134 | 2842 |
+| 134.2 | 2835 |
+| 133.7 | 2819 |
+| 134.4 | 2818 |
+| 133.8 | 2817 |
+| 134.2 | 2831 |
+| 133.4 | 2832 |
+| 133.7 | 2842 |
+| 134 | 2830 |
+| 133.8 | 2842 |
+| 133.8 | 2834 |
+| 133.9 | 2842 |
+| 134.1 | 2851 |
+| 132.9 | 2870 |
+| 134.1 | 2853 |
+| 134.6 | 2860 |
+| 133.9 | 2862 |
+| 133.3 | 2866 |
+| 134.2 | 2881 |
+| 134.6 | 2909 |
+| 134.7 | 2895 |
+| 133.1 | 2885 |
+| 135.4 | 2892 |
+| 135 | 2922 |
+| 133.1 | 2929 |
+| 133.7 | 2910 |
+| 134.3 | 2900 |
+| 134.3 | 2908 |
+| 134.2 | 2910 |
+| 134.7 | 2918 |
+| 134 | 2895 |
+| 134.7 | 2906 |
+| 133.9 | 2919 |
+| 133.9 | 2909 |
+| 134.4 | 2912 |
+| 133.5 | 2916 |
+| 134 | 2938 |
+| 133.9 | 2936 |
+| 134 | 2952 |
+| 133.6 | 2951 |
+| 134.1 | 2947 |
+| 133.8 | 2929 |
+| 133.7 | 2937 |
+| 133.9 | 2951 |
+| 132.5 | 2960 |
+| 132.9 | 2987 |
+| 133.3 | 2983 |
+| 134 | 2988 |
+| 134 | 3008 |
+| 133.7 | 2992 |
+| 133.9 | 2996 |
+| 133 | 3002 |
+| 133 | 3017 |
+| 133.2 | 3033 |
+| 132.9 | 3026 |
+| 134.2 | 3024 |
+| 133.2 | 3034 |
+| 134 | 3062 |
+| 133.3 | 3068 |
+| 133.6 | 3062 |
+| 134.1 | 3061 |
+| 133.3 | 3067 |
+| 133.4 | 3081 |
+| 133.7 | 3077 |
+| 134.3 | 3119 |
+| 134.6 | 3097 |
+| 133.4 | 3085 |
+| 133.7 | 3101 |
+| 133 | 3094 |
+| 133.4 | 3111 |
+| 133.7 | 3136 |
+| 133.9 | 3141 |
+| 133.5 | 3139 |
+| 134.3 | 3139 |
+| 133.7 | 3123 |
+| 133.2 | 3142 |
+| 133.8 | 3176 |
+| 134.3 | 3176 |
+| 134.1 | 3170 |
+| 133.7 | 3180 |
+| 132.9 | 3158 |
+| 133.2 | 3181 |
+| 133.9 | 3176 |
+| 134.6 | 3163 |
+| 133.6 | 3166 |
+| 133.1 | 3192 |
+| 134 | 3177 |
+| 134.2 | 3158 |
+| 133.9 | 3167 |
+| 134.1 | 3180 |
+| 133.7 | 3185 |
+| 133.9 | 3184 |
+| 133.8 | 3191 |
+| 133.2 | 3200 |
+| 134.3 | 3263 |
+| 133.3 | 3267 |
+| 134.6 | 3276 |
+| 133.3 | 3289 |
+| 133.6 | 3298 |
+| 133.9 | 3284 |
+| 133.5 | 3270 |
+| 133.7 | 3266 |
+| 134.8 | 3288 |
+| 134 | 3270 |
+| 133.6 | 3261 |
+| 133.5 | 3264 |
+| 133.9 | 3285 |
+| 133.7 | 3281 |
+| 134.2 | 3293 |
+| 134.4 | 3301 |
+| 133.6 | 3316 |
+| 133.5 | 3300 |
+| 133.7 | 3300 |
+| 134.7 | 3298 |
+| 134.4 | 3312 |
+| 133 | 3318 |
+| 133.7 | 3308 |
+| 133.2 | 3337 |
+| 133.7 | 3335 |
+| 134.1 | 3357 |
+| 133.4 | 3371 |
+| 134.1 | 3384 |
+| 134.3 | 3377 |
+| 134.3 | 3358 |
+| 133.8 | 3370 |
+| 133.5 | 3364 |
+| 133.1 | 3370 |
+| 134.5 | 3374 |
+| 134.5 | 3370 |
+| 133.9 | 3368 |
+| 134 | 3385 |
+| 133.9 | 3364 |
+| 133.7 | 3376 |
+| 133.2 | 3379 |
+| 133.6 | 3389 |
+| 133.8 | 3387 |
+| 134.1 | 3391 |
+| 133.4 | 3376 |
+| 133.3 | 3363 |
+| 134 | 3361 |
+| 134.3 | 3357 |
+| 134.6 | 3357 |
+| 134.7 | 3362 |
+| 133.9 | 3373 |
+| 133.9 | 3396 |
+| 134.5 | 3370 |
+| 134.1 | 3399 |
+| 133.9 | 3402 |
+| 134.5 | 3393 |
+| 133.5 | 3378 |
+| 135.7 | 3394 |
+| 133.6 | 3398 |
+| 133.3 | 3415 |
+| 133.1 | 3401 |
+| 133.5 | 3420 |
+| 133.3 | 3447 |
+| 133.6 | 3430 |
+| 134.1 | 3406 |
+| 132.8 | 3423 |
+| 134.1 | 3453 |
+| 134 | 3439 |
+| 134.6 | 3442 |
+| 133.8 | 3428 |
+| 133.8 | 3453 |
+| 133.4 | 3451 |
+| 134.7 | 3452 |
+| 133.7 | 3443 |
+| 134 | 3461 |
+| 134.9 | 3452 |
+| 133.9 | 3467 |
+| 133.8 | 3501 |
+| 133.3 | 3488 |
+| 134.5 | 3476 |
+| 134.6 | 3473 |
+| 134.9 | 3456 |
+| 134.8 | 3440 |
+| 134.5 | 3461 |
+| 133.8 | 3458 |
+| 134.2 | 3479 |
+| 134 | 3442 |
+| 133.7 | 3441 |
+| 134.3 | 3464 |
+| 134 | 3486 |
+| 134.1 | 3469 |
+| 133.9 | 3463 |
+| 133.6 | 3476 |
+| 134 | 3497 |
+| 134 | 3499 |
+| 134.2 | 3516 |
+| 132.9 | 3491 |
+| 133.5 | 3498 |
+| 133.3 | 3489 |
+| 134 | 3495 |
+| 134.1 | 3510 |
+| 134.5 | 3548 |
+| 133.4 | 3546 |
+| 133.1 | 3526 |
+| 133.5 | 3529 |
+| 133.8 | 3510 |
+| 133.6 | 3511 |
+| 133.7 | 3513 |
+| 134.4 | 3528 |
+| 133.9 | 3528 |
+| 134.3 | 3531 |
+| 133.8 | 3512 |
+| 133 | 3520 |
+| 133.6 | 3531 |
+| 134.1 | 3536 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 10 | 25 |
+| 12 | 35 |
+| 14 | 45 |
+| 16 | 55 |
+| 18 | 65 |
+| 20 | 75 |
+| 22 | 85 |
+| 24 | 90 |
+| 34 | 90 |
+| 36 | 100 |
+| 38 | 110 |
+| 40 | 120 |
+| 42 | 130 |
+| 52 | 130 |
+| 54 | 140 |
+| 56 | 150 |
+| 58 | 160 |
+| 68 | 160 |
+
+
 </details>
 
 ### `pe_cg_hole_r3nm_90C_n320_c240_s1_rep222`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 90 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_90C.data`). Stage now: `hole_free_failed_20261102` (failed, 0.0%).
+PE CG, film with a 3 nm-radius cylindrical hole at 90 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_90C.data`). Status: finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_free`.
 
-No analysed properties yet; pending: `hole_free_failed_20261102`: failed, 0.0%. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -5009,20 +20089,1221 @@ No analysed properties yet; pending: `hole_free_failed_20261102`: failed, 0.0%. 
 
 **Stages**
 
-- **`hole_free`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC
 - **`hole_free_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 18:40 UTC, ended 2026-11-02 18:40 UTC; reads `systems/pe_cg_hole_r3nm_90C_n320_c240_s1_rep222/data.lmp`
+- **`hole_free`** (rdyu-rog): finished; started 2026-11-12 09:41 UTC, ended 2026-11-12 14:02 UTC; reads `systems/pe_cg_hole_r3nm_90C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | `hole_free_failed_20261102`: failed, 0.0% | no |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_failed_20261102` (failed, 0.0%), `hole_free` | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
+
+**`hole_free` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 131.3
+- `free_shell.areal_density_ratio`: 0.8548
+- `free_shell.msd.1 ns`: 488.5
+- `free_shell.msd.10 ns`: 1240
+- `free_shell.msd.end`: 1755
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: none
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- T (°C): 90
+- `t_close_ns`: 0.13
+- `thickness_final`: 131.8
+- `thickness_t0`: 166.8
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 131.8 | — |
+| 131.7 | — |
+| 131.7 | — |
+| 131.4 | — |
+| 131.5 | — |
+| 132.2 | — |
+| 132.4 | — |
+| 132.5 | — |
+| 131.5 | — |
+| 132 | — |
+| 131.8 | — |
+| 132.3 | — |
+| 131.9 | — |
+| 132.6 | — |
+| 132.4 | — |
+| 132 | — |
+| 131.3 | — |
+| 131.8 | — |
+| 131.5 | — |
+| 132.2 | — |
+| 131.8 | — |
+| 131.8 | — |
+| 131.7 | — |
+| 132.5 | — |
+| 132.3 | — |
+| 132.5 | — |
+| 131.7 | — |
+| 131.5 | — |
+| 131.6 | — |
+| 132.2 | — |
+| 132.5 | — |
+| 132.3 | — |
+| 131.4 | — |
+| 132.1 | — |
+| 131.9 | — |
+| 132.8 | — |
+| 133 | — |
+| 132.7 | — |
+| 132.3 | — |
+| 132.6 | — |
+| 133 | — |
+| 133.5 | — |
+| 133.2 | — |
+| 132.8 | — |
+| 132.8 | — |
+| 132.6 | — |
+| 132.6 | — |
+| 133.2 | — |
+| 132.9 | — |
+| 133.2 | — |
+| 133.5 | — |
+| 132.7 | — |
+| 133.5 | — |
+| 133.7 | — |
+| 133.5 | — |
+| 133.1 | — |
+| 134.2 | — |
+| 134.4 | — |
+| 134.5 | — |
+| 134.4 | — |
+| 134.2 | — |
+| 134.2 | — |
+| 135.1 | — |
+| 134.1 | — |
+| 134.6 | — |
+| 134.4 | — |
+| 135.1 | — |
+| 135.8 | — |
+| 135.7 | — |
+| 135 | — |
+| 135.4 | — |
+| 135.2 | — |
+| 136.3 | — |
+| 135.1 | — |
+| 136 | — |
+| 135.7 | — |
+| 136.4 | — |
+| 137 | — |
+| 136.2 | — |
+| 136.7 | — |
+| 136.6 | — |
+| 136.6 | — |
+| 136.6 | — |
+| 136.5 | — |
+| 136.6 | — |
+| 137.3 | — |
+| 137.4 | — |
+| 137.3 | — |
+| 137.8 | — |
+| 138.1 | — |
+| 138.4 | — |
+| 138.3 | — |
+| 138.8 | — |
+| 138.6 | — |
+| 138 | — |
+| 139.7 | — |
+| 139.2 | — |
+| 139.3 | — |
+| 140.1 | — |
+| 138.6 | — |
+| 139.6 | — |
+| 139.6 | — |
+| 139.9 | — |
+| 140.1 | — |
+| 140.5 | — |
+| 140.7 | — |
+| 140.5 | — |
+| 140.5 | — |
+| 140.6 | — |
+| 140.8 | — |
+| 141.5 | — |
+| 141.3 | — |
+| 141.4 | — |
+| 141.8 | — |
+| 141.1 | — |
+| 142.5 | — |
+| 143 | — |
+| 141.9 | — |
+| 142.6 | — |
+| 142.4 | — |
+| 143 | — |
+| 143.1 | — |
+| 143.1 | — |
+| 143.8 | — |
+| 142.7 | — |
+| 143.2 | — |
+| 143.6 | — |
+| 143.4 | — |
+| 144.3 | — |
+| 144.8 | — |
+| 145.3 | — |
+| 146.3 | — |
+| 145 | — |
+| 144.1 | — |
+| 146.7 | — |
+| 145.8 | — |
+| 145.7 | — |
+| 146.4 | — |
+| 147 | — |
+| 147.2 | — |
+| 146.8 | — |
+| 147.8 | — |
+| 146.5 | — |
+| 147.2 | — |
+| 147.8 | — |
+| 147.3 | — |
+| 148.5 | — |
+| 147.2 | — |
+| 148.7 | — |
+| 149.1 | — |
+| 149.5 | — |
+| 149.9 | — |
+| 148.9 | — |
+| 149.2 | — |
+| 150.8 | — |
+| 150.9 | — |
+| 150.8 | — |
+| 150.7 | — |
+| 150.5 | — |
+| 150.8 | — |
+| 151.4 | — |
+| 151.4 | — |
+| 150.7 | — |
+| 153 | — |
+| 152.6 | — |
+| 152.8 | — |
+| 153.5 | — |
+| 154 | — |
+| 154.1 | — |
+| 154.5 | — |
+| 154.6 | — |
+| 154.3 | — |
+| 154.6 | — |
+| 154.5 | — |
+| 154.3 | — |
+| 155.6 | — |
+| 156.6 | — |
+| 156.8 | — |
+| 157.2 | — |
+| 156.4 | — |
+| 156.5 | — |
+| 157.5 | — |
+| 157.2 | — |
+| 158 | — |
+| 159.3 | — |
+| 158.8 | — |
+| 159.1 | — |
+| 159.2 | — |
+| 160 | — |
+| 159.1 | — |
+| 160.1 | — |
+| 160.3 | — |
+| 160.7 | — |
+| 162.8 | — |
+| 160.6 | — |
+| 162.9 | — |
+| 161 | — |
+| 163.1 | — |
+| 161.8 | — |
+| 162.5 | — |
+| 162.8 | — |
+| 163.3 | — |
+| 164 | — |
+| 163.5 | — |
+| 164.2 | — |
+| 163.7 | — |
+| 164.4 | — |
+| 165.6 | — |
+| 165.4 | — |
+| 164.2 | — |
+| 163.8 | — |
+| 165.2 | — |
+| 164.5 | — |
+| 164.2 | — |
+| 165.9 | — |
+| 164.4 | — |
+| 165.1 | — |
+| 163.7 | — |
+| 165.5 | — |
+| 163.9 | — |
+| 164.7 | — |
+| 164.4 | — |
+| 165.2 | — |
+| 165.6 | — |
+| 165.2 | — |
+| 164.6 | — |
+| 164.3 | — |
+| 164.3 | — |
+| 164.8 | — |
+| 162.7 | — |
+| 164.3 | — |
+| 164.5 | — |
+| 162.7 | — |
+| 164.8 | — |
+| 163.5 | — |
+| 163 | — |
+| 164.6 | — |
+| 164.7 | — |
+| 164.2 | — |
+| 165.2 | — |
+| 164.3 | — |
+| 164.1 | — |
+| 164.9 | — |
+| 165.3 | — |
+| 165.7 | — |
+| 163.5 | — |
+| 164.8 | — |
+| 165 | — |
+| 165.4 | — |
+| 165.1 | — |
+| 164.7 | — |
+| 164.6 | — |
+| 164.4 | — |
+| 165.4 | — |
+| 165.7 | — |
+| 164.7 | — |
+| 164.1 | — |
+| 164.3 | — |
+| 164.2 | — |
+| 164.8 | — |
+| 164.3 | — |
+| 164.4 | — |
+| 163.4 | — |
+| 164.7 | — |
+| 163.4 | — |
+| 164 | — |
+| 165.1 | — |
+| 164.1 | — |
+| 164.8 | — |
+| 163.4 | — |
+| 164.3 | — |
+| 164.1 | — |
+| 164.5 | — |
+| 165.1 | — |
+| 164.5 | — |
+| 164.5 | — |
+| 165.1 | — |
+| 163.9 | — |
+| 163.8 | — |
+| 165 | — |
+| 164.8 | — |
+| 164.6 | — |
+| 164.3 | — |
+| 163.5 | — |
+| 164.5 | — |
+| 165.6 | — |
+| 165.4 | — |
+| 164.6 | — |
+| 162.7 | — |
+| 163.6 | — |
+| 165 | — |
+| 165.7 | — |
+| 165.6 | — |
+| 165.5 | — |
+| 166.4 | — |
+| 164.5 | — |
+| 165.2 | — |
+| 165.2 | — |
+| 166.2 | — |
+| 167.6 | — |
+| 164.9 | — |
+| 164.4 | — |
+| 165.2 | — |
+| 165.1 | — |
+| 165 | — |
+| 164.3 | — |
+| 164.4 | — |
+| 164.3 | — |
+| 165.5 | — |
+| 165.1 | — |
+| 164.3 | — |
+| 164.4 | — |
+| 165.8 | — |
+| 164 | — |
+| 165.5 | — |
+| 164.5 | — |
+| 163.3 | — |
+| 164.9 | — |
+| 164.3 | — |
+| 166.1 | — |
+| 165 | — |
+| 165.8 | — |
+| 163.7 | — |
+| 163.4 | — |
+| 166.1 | — |
+| 164.5 | — |
+| 163.7 | — |
+| 164.5 | — |
+| 165 | — |
+| 164.2 | — |
+| 166.5 | — |
+| 164.5 | — |
+| 164.9 | — |
+| 164.4 | — |
+| 165.8 | — |
+| 165.6 | — |
+| 165.5 | — |
+| 165.4 | — |
+| 165.8 | — |
+| 164.5 | — |
+| 165.4 | — |
+| 165 | — |
+| 165.9 | — |
+| 165.4 | — |
+| 165.7 | — |
+| 165.7 | — |
+| 165.1 | — |
+| 164.9 | — |
+| 164.5 | — |
+| 163.6 | — |
+| 163.6 | — |
+| 164.1 | — |
+| 165.3 | — |
+| 164.5 | — |
+| 165.7 | — |
+| 164.9 | — |
+| 163.7 | — |
+| 163.9 | — |
+| 164.5 | — |
+| 164.9 | — |
+| 164 | — |
+| 163.2 | — |
+| 165.6 | — |
+| 165.6 | — |
+| 165.5 | — |
+| 165.2 | — |
+| 165.6 | — |
+| 164.9 | — |
+| 162.7 | — |
+| 162.4 | — |
+| 163 | — |
+| 163.1 | — |
+| 165.6 | — |
+| 165.3 | — |
+| 164.5 | — |
+| 165.2 | — |
+| 164.6 | — |
+| 164.2 | — |
+| 162.7 | — |
+| 164.2 | — |
+| 163.7 | — |
+| 164.7 | — |
+| 164 | — |
+| 165.2 | — |
+| 165.5 | — |
+| 163.1 | — |
+| 165.4 | — |
+| 165.7 | — |
+| 164.1 | — |
+| 165 | — |
+| 163.7 | — |
+| 163.9 | — |
+| 164.5 | — |
+| 165.2 | — |
+| 165.4 | — |
+| 163.5 | — |
+| 165.1 | — |
+| 163.9 | — |
+| 164.9 | — |
+| 164.7 | — |
+| 166.8 | 0 |
+| 165.5 | 13.59 |
+| 164 | 23.02 |
+| 161.6 | 31.65 |
+| 159.4 | 41.59 |
+| 158.7 | 51.16 |
+| 156.7 | 59.48 |
+| 154.2 | 65.1 |
+| 154.3 | 70.33 |
+| 154.1 | 76.29 |
+| 152.8 | 83.95 |
+| 152 | 92.59 |
+| 151.8 | 100.4 |
+| 149.3 | 110.2 |
+| 148.1 | 117.9 |
+| 147.5 | 125.8 |
+| 146.1 | 133.6 |
+| 145.9 | 144.6 |
+| 145.4 | 152.5 |
+| 145.2 | 156.1 |
+| 144.6 | 161.7 |
+| 143.8 | 167.6 |
+| 143.7 | 172.6 |
+| 142.7 | 182.9 |
+| 142.9 | 190.4 |
+| 141.6 | 199.6 |
+| 140.5 | 210.4 |
+| 139.9 | 222.3 |
+| 140.2 | 230.6 |
+| 140 | 234.7 |
+| 139.4 | 239.4 |
+| 138.2 | 246 |
+| 137.1 | 251 |
+| 137.1 | 257.7 |
+| 136.8 | 261.4 |
+| 136.3 | 266.9 |
+| 135.1 | 274.3 |
+| 135 | 275 |
+| 134.8 | 275.4 |
+| 134.5 | 279.4 |
+| 135.6 | 280.8 |
+| 135.2 | 284.5 |
+| 134.5 | 291.1 |
+| 134.8 | 295.2 |
+| 135.1 | 298.3 |
+| 135.6 | 305.9 |
+| 136.2 | 309.3 |
+| 135.2 | 311.1 |
+| 135.3 | 308.5 |
+| 134.8 | 312 |
+| 136.1 | 312.3 |
+| 135.9 | 313.8 |
+| 134.4 | 316.8 |
+| 134.2 | 323.4 |
+| 134.3 | 324.8 |
+| 134.8 | 327 |
+| 134.6 | 328.4 |
+| 134.4 | 333.5 |
+| 134.1 | 338.5 |
+| 133.8 | 342.6 |
+| 133.3 | 345.5 |
+| 132.8 | 348.8 |
+| 133.5 | 355.3 |
+| 133.3 | 350.6 |
+| 133.7 | 352 |
+| 134.2 | 356.8 |
+| 133.3 | 356.4 |
+| 133.5 | 357.2 |
+| 133.3 | 355.2 |
+| 133.6 | 355.6 |
+| 133.6 | 359.6 |
+| 133.5 | 363.4 |
+| 133.2 | 364.4 |
+| 134 | 363.9 |
+| 133.9 | 366.7 |
+| 134.9 | 367.2 |
+| 133.4 | 367.5 |
+| 133.9 | 369.3 |
+| 134.1 | 369.1 |
+| 133.4 | 372 |
+| 133.3 | 374.9 |
+| 133.4 | 374.7 |
+| 133.7 | 376 |
+| 133.4 | 374.3 |
+| 133.7 | 377 |
+| 133.7 | 378.4 |
+| 133.2 | 383.5 |
+| 133.3 | 388 |
+| 133.2 | 392.4 |
+| 133.8 | 393.1 |
+| 133.4 | 393.4 |
+| 133.4 | 391.9 |
+| 133.1 | 393.4 |
+| 133 | 390.5 |
+| 132.9 | 390.3 |
+| 133.5 | 389.6 |
+| 133.2 | 390.8 |
+| 133 | 396.2 |
+| 132.7 | 395.8 |
+| 133 | 394.1 |
+| 132.5 | 391.3 |
+| 134 | 390.7 |
+| 133.6 | 391.7 |
+| 133.5 | 396.1 |
+| 133.2 | 394.2 |
+| 133.7 | 394.4 |
+| 133.6 | 398.5 |
+| 133.3 | 402.3 |
+| 133 | 405.1 |
+| 133.2 | 406.9 |
+| 133.4 | 407.9 |
+| 133.4 | 407.8 |
+| 133.6 | 409.1 |
+| 133.7 | 411.7 |
+| 133.7 | 412.3 |
+| 133.3 | 413 |
+| 133.4 | 410.9 |
+| 133.8 | 410.9 |
+| 133.8 | 412.5 |
+| 133.4 | 417.2 |
+| 134.1 | 415.5 |
+| 134 | 413.5 |
+| 134.1 | 413.4 |
+| 133.5 | 418 |
+| 133 | 420.6 |
+| 132.5 | 421.7 |
+| 133.8 | 421.5 |
+| 134.1 | 425.2 |
+| 133.2 | 431.8 |
+| 133.2 | 434.2 |
+| 133.4 | 432.7 |
+| 133.8 | 431.9 |
+| 133.3 | 432.5 |
+| 133.4 | 436.4 |
+| 133.1 | 435.1 |
+| 133.9 | 436.2 |
+| 133.5 | 437.3 |
+| 132.9 | 440 |
+| 133.1 | 443.8 |
+| 132.9 | 442.3 |
+| 133.3 | 442.7 |
+| 133.9 | 442.4 |
+| 134 | 441.9 |
+| 133.8 | 442 |
+| 133.9 | 441.5 |
+| 133.7 | 445.8 |
+| 133.8 | 449.1 |
+| 133.5 | 453 |
+| 133.3 | 451.5 |
+| 134.4 | 446.5 |
+| 133.4 | 451.7 |
+| 133 | 449.7 |
+| 133 | 451 |
+| 134 | 452.7 |
+| 133 | 451.9 |
+| 132.8 | 457.8 |
+| 132.8 | 456.4 |
+| 132.5 | 462.4 |
+| 132.7 | 462.5 |
+| 133.2 | 461.4 |
+| 132.2 | 460.6 |
+| 133.2 | 461 |
+| 133.1 | 460.2 |
+| 133.3 | 456.5 |
+| 132.9 | 457.1 |
+| 133.5 | 460.9 |
+| 133.2 | 464.6 |
+| 133.5 | 468.6 |
+| 133.5 | 469.4 |
+| 132.9 | 469.6 |
+| 132.3 | 470.1 |
+| 132.7 | 471.3 |
+| 132.6 | 468.5 |
+| 133 | 469.4 |
+| 133.3 | 468.7 |
+| 132.8 | 468.7 |
+| 132.7 | 469.4 |
+| 133 | 469.5 |
+| 132.6 | 470.1 |
+| 132.8 | 468.5 |
+| 133.2 | 468 |
+| 133.3 | 468.6 |
+| 132.7 | 472.7 |
+| 132.5 | 476.9 |
+| 131.9 | 476.1 |
+| 132.8 | 473.4 |
+| 133 | 475.8 |
+| 132.1 | 479.6 |
+| 132.8 | 480.7 |
+| 132.5 | 481.4 |
+| 133.7 | 478.5 |
+| 132.9 | 477.3 |
+| 132.2 | 478.2 |
+| 133 | 478.8 |
+| 132.4 | 481.7 |
+| 132.6 | 483.5 |
+| 132.8 | 479.3 |
+| 132.6 | 481.1 |
+| 132.9 | 483.8 |
+| 133.1 | 482.5 |
+| 132.5 | 488.5 |
+| 132.8 | 490.4 |
+| 132.2 | 489.1 |
+| 131.9 | 491.1 |
+| 133.2 | 488.3 |
+| 133.4 | 487.8 |
+| 133 | 488.3 |
+| 132.5 | 490.4 |
+| 133.1 | 494.7 |
+| 133.1 | 490.8 |
+| 132.6 | 491.6 |
+| 131.8 | 489.6 |
+| 132.2 | 491.6 |
+| 132.6 | 494.8 |
+| 133.3 | 494.2 |
+| 133.1 | 496.1 |
+| 132.9 | 494.5 |
+| 132.4 | 494.5 |
+| 132.2 | 497.9 |
+| 132.1 | 500 |
+| 132 | 498.8 |
+| 132.6 | 498.5 |
+| 132.5 | 496.2 |
+| 131.9 | 497.3 |
+| 132.8 | 495.4 |
+| 131.6 | 500.9 |
+| 131.7 | 505.1 |
+| 131.7 | 500.6 |
+| 132.2 | 498.7 |
+| 132.4 | 501.3 |
+| 131.9 | 501.3 |
+| 132.1 | 507.1 |
+| 131.7 | 508.9 |
+| 132.6 | 508.1 |
+| 132.9 | 507.9 |
+| 132.3 | 514.2 |
+| 132.5 | 517.9 |
+| 132.5 | 521.6 |
+| 132.3 | 524.8 |
+| 133.2 | 519.9 |
+| 132.3 | 519.4 |
+| 131.9 | 514 |
+| 132.4 | 516.3 |
+| 132 | 516.1 |
+| 132.6 | 516.9 |
+| 132.9 | 517.9 |
+| 132.3 | 518.2 |
+| 133.4 | 520.6 |
+| 132.8 | 524.8 |
+| 132.9 | 525.9 |
+| 133.4 | 527.6 |
+| 132.2 | 525.3 |
+| 133.4 | 530.4 |
+| 133.4 | 528 |
+| 132.4 | 531.1 |
+| 132.3 | 532.3 |
+| 132.4 | 535.2 |
+| 133 | 532.6 |
+| 133.5 | 532.5 |
+| 132.4 | 535 |
+| 132.4 | 538.4 |
+| 132.6 | 535.9 |
+| 133.2 | 536.1 |
+| 133.2 | 536.7 |
+| 133.3 | 535.1 |
+| 131.7 | 537 |
+| 132 | 539 |
+| 133.1 | 540.3 |
+| 132.7 | 536.6 |
+| 132.4 | 543.6 |
+| 132.8 | 544.8 |
+| 132.9 | 543.2 |
+| 132.3 | 543.7 |
+| 132.4 | 543.4 |
+| 132.7 | 546.1 |
+| 132.8 | 549.7 |
+| 132.2 | 548.5 |
+| 132.3 | 547.2 |
+| 132.5 | 545.8 |
+| 132.2 | 545.5 |
+| 132.4 | 548 |
+| 132.7 | 550.9 |
+| 132 | 551.8 |
+| 133.1 | 551.4 |
+| 133.2 | 551.7 |
+| 133.3 | 551.5 |
+| 132.6 | 554 |
+| 131.9 | 557.9 |
+| 132.1 | 554.4 |
+| 132.1 | 555.8 |
+| 132.3 | 555.1 |
+| 131.8 | 558.1 |
+| 131.4 | 557.3 |
+| 131.8 | 556.3 |
+| 132.3 | 557.3 |
+| 132.3 | 556.5 |
+| 131.9 | 559.1 |
+| 131.8 | 559.9 |
+| 132.5 | 561.3 |
+| 132.3 | 563.3 |
+| 131.5 | 568.5 |
+| 131.6 | 569.8 |
+| 132.2 | 568.8 |
+| 133 | 568.4 |
+| 132.7 | 574.1 |
+| 131.7 | 576.5 |
+| 131.7 | 579.2 |
+| 132.3 | 582.9 |
+| 131.9 | 579.5 |
+| 132.7 | 582.1 |
+| 131.6 | 588.9 |
+| 131.4 | 589.6 |
+| 132.5 | 589.7 |
+| 131.8 | 581.6 |
+| 132.1 | 579.6 |
+| 132 | 579.4 |
+| 131.6 | 581.4 |
+| 133 | 578.4 |
+| 132.2 | 577.3 |
+| 133 | 578.9 |
+| 132.6 | 576.7 |
+| 132.8 | 577.7 |
+| 132.4 | 580.9 |
+| 131.7 | 585.3 |
+| 131.8 | 583.8 |
+| 131.7 | 587.4 |
+| 131.8 | 585.7 |
+| 132 | 588.7 |
+| 132.8 | 591.4 |
+| 132.3 | 592.6 |
+| 132.3 | 594.7 |
+| 131.3 | 594.1 |
+| 132.1 | 593 |
+| 132.5 | 589.4 |
+| 132 | 591.1 |
+| 132.1 | 587.7 |
+| 131.3 | 591.1 |
+| 131.8 | 595.6 |
+| 131.2 | 597.4 |
+| 132 | 597.4 |
+| 132.8 | 590.5 |
+| 132.2 | 588.3 |
+| 132.4 | 590.1 |
+| 132.1 | 594.2 |
+| 131.9 | 597 |
+| 132.2 | 595.3 |
+| 131.7 | 596.1 |
+| 131.5 | 598.2 |
+| 132.3 | 598.8 |
+| 132 | 593.5 |
+| 132.4 | 594.4 |
+| 132.4 | 594.5 |
+| 131.8 | 596.6 |
+| 132.4 | 597.3 |
+| 131.4 | 597.9 |
+| 132.1 | 596.1 |
+| 132.7 | 598.1 |
+| 132.7 | 598 |
+| 132.4 | 601.5 |
+| 131.3 | 600 |
+| 132.4 | 601.1 |
+| 132.3 | 604.8 |
+| 132.7 | 604.6 |
+| 132.5 | 604 |
+| 132.6 | 607.9 |
+| 132.9 | 612.2 |
+| 132.4 | 615.3 |
+| 132.2 | 615.2 |
+| 132.1 | 614.6 |
+| 132.9 | 613.8 |
+| 132.9 | 615.8 |
+| 133 | 616.4 |
+| 132.6 | 616.3 |
+| 132.7 | 615.1 |
+| 132.6 | 617 |
+| 132.9 | 616.6 |
+| 132.2 | 619.2 |
+| 132 | 619 |
+| 132.3 | 617.9 |
+| 132.7 | 618 |
+| 132 | 624.3 |
+| 132.4 | 628.3 |
+| 132.1 | 626.2 |
+| 132.9 | 625.3 |
+| 132.3 | 629.2 |
+| 132.2 | 633 |
+| 131.7 | 633.1 |
+| 132.2 | 635.2 |
+| 132.4 | 635.6 |
+| 132.3 | 625.6 |
+| 132.6 | 623.8 |
+| 132.1 | 622.6 |
+| 132 | 621.5 |
+| 132.8 | 618.7 |
+| 132.4 | 616.4 |
+| 132.1 | 620.2 |
+| 132.2 | 626.6 |
+| 133 | 624.2 |
+| 132.7 | 625.8 |
+| 131.5 | 628.9 |
+| 132.4 | 628.6 |
+| 132.1 | 641.1 |
+| 132.5 | 649 |
+| 132.4 | 651.5 |
+| 131.9 | 659.1 |
+| 131.9 | 661.8 |
+| 131 | 680.2 |
+| 131.3 | 693.9 |
+| 131.7 | 687.6 |
+| 131.8 | 695.9 |
+| 131.2 | 695.9 |
+| 131.8 | 707.5 |
+| 132.2 | 708.4 |
+| 131 | 709.1 |
+| 131.3 | 712.2 |
+| 131.3 | 722.4 |
+| 132.2 | 724.5 |
+| 131.5 | 737.3 |
+| 131.3 | 737.4 |
+| 130.6 | 734 |
+| 131.4 | 752.6 |
+| 131 | 751.2 |
+| 131.7 | 746.9 |
+| 131.2 | 754.6 |
+| 131.5 | 765.7 |
+| 131.1 | 773.6 |
+| 131.4 | 765.3 |
+| 132 | 767.1 |
+| 132.6 | 773.8 |
+| 132.2 | 774.5 |
+| 131.3 | 781.5 |
+| 131.9 | 784.2 |
+| 132 | 782.2 |
+| 132 | 785 |
+| 131.1 | 794.2 |
+| 131.7 | 798.8 |
+| 132.2 | 801.1 |
+| 131.2 | 807.3 |
+| 131.9 | 803.4 |
+| 132.4 | 803 |
+| 131.9 | 812.6 |
+| 132.5 | 807.8 |
+| 131.4 | 813.8 |
+| 132.4 | 827.8 |
+| 132 | 833.9 |
+| 132.7 | 857.9 |
+| 131.4 | 843.8 |
+| 132.4 | 843.6 |
+| 132.7 | 851.9 |
+| 132.1 | 857.1 |
+| 132.5 | 862.5 |
+| 132.2 | 856.4 |
+| 131.5 | 868.6 |
+| 131.7 | 867.5 |
+| 132.5 | 870.1 |
+| 132.3 | 884 |
+| 131.9 | 888.4 |
+| 132 | 891 |
+| 131.9 | 908.7 |
+| 131.3 | 918.1 |
+| 131.7 | 912.6 |
+| 132.6 | 914.9 |
+| 132.1 | 923.1 |
+| 132.2 | 930.9 |
+| 132.3 | 930.3 |
+| 131.4 | 932.1 |
+| 131.7 | 931.6 |
+| 131.8 | 930.1 |
+| 132 | 956.2 |
+| 132.4 | 951 |
+| 131.5 | 947.8 |
+| 131.8 | 945.9 |
+| 131.7 | 951.2 |
+| 131.9 | 953.6 |
+| 132 | 963.1 |
+| 131.4 | 967.5 |
+| 132.1 | 975.5 |
+| 132.2 | 981.6 |
+| 132.1 | 989.5 |
+| 132 | 988.5 |
+| 131.6 | 995 |
+| 132.4 | 989.6 |
+| 131.4 | 1000 |
+| 133 | 1005 |
+| 132.3 | 1014 |
+| 131.9 | 1013 |
+| 132 | 1010 |
+| 132.1 | 1015 |
+| 132 | 996.8 |
+| 132.5 | 1006 |
+| 132.2 | 1011 |
+| 132 | 1018 |
+| 131.6 | 1034 |
+| 131.5 | 1036 |
+| 131.5 | 1037 |
+| 132.5 | 1039 |
+| 132.3 | 1032 |
+| 132 | 1038 |
+| 131.7 | 1035 |
+| 132.7 | 1022 |
+| 132.1 | 1030 |
+| 133 | 1032 |
+| 132 | 1051 |
+| 131.2 | 1051 |
+| 131.7 | 1055 |
+| 131.7 | 1070 |
+| 131.3 | 1079 |
+| 130.8 | 1092 |
+| 131.6 | 1077 |
+| 131.3 | 1068 |
+| 131.3 | 1082 |
+| 131.6 | 1086 |
+| 131.4 | 1085 |
+| 131.4 | 1083 |
+| 131.8 | 1090 |
+| 132.8 | 1099 |
+| 131.8 | 1108 |
+| 131.9 | 1111 |
+| 132.2 | 1103 |
+| 131.5 | 1112 |
+| 132.6 | 1125 |
+| 131.8 | 1116 |
+| 131.3 | 1122 |
+| 130.5 | 1119 |
+| 132.3 | 1127 |
+| 131.7 | 1124 |
+| 131.4 | 1143 |
+| 131.9 | 1147 |
+| 131.3 | 1149 |
+| 131.8 | 1162 |
+| 131.8 | 1159 |
+| 132.6 | 1157 |
+| 131 | 1164 |
+| 131.6 | 1160 |
+| 131.1 | 1161 |
+| 132 | 1168 |
+| 131.5 | 1171 |
+| 132.1 | 1171 |
+| 132.3 | 1175 |
+| 131.8 | 1183 |
+| 131.9 | 1193 |
+| 131.2 | 1207 |
+| 131.5 | 1208 |
+| 132.3 | 1204 |
+| 132.4 | 1204 |
+| 132.7 | 1216 |
+| 132.1 | 1213 |
+| 132 | 1217 |
+| 131.6 | 1229 |
+| 131.6 | 1231 |
+| 131.9 | 1241 |
+| 132.3 | 1240 |
+| 131.7 | 1229 |
+| 131.6 | 1232 |
+| 130.6 | 1240 |
+| 131.5 | 1231 |
+| 131.9 | 1233 |
+| 132.4 | 1218 |
+| 132.7 | 1226 |
+| 131.3 | 1242 |
+| 131.9 | 1240 |
+| 131.3 | 1241 |
+| 131.4 | 1237 |
+| 132.1 | 1231 |
+| 132.2 | 1220 |
+| 131.9 | 1226 |
+| 132.2 | 1229 |
+| 131.7 | 1226 |
+| 131.9 | 1219 |
+| 131.1 | 1220 |
+| 131.6 | 1223 |
+| 131.9 | 1221 |
+| 131.6 | 1219 |
+| 131.4 | 1236 |
+| 131.8 | 1240 |
+| 132.2 | 1245 |
+| 131.8 | 1259 |
+| 131.9 | 1255 |
+| 131.7 | 1243 |
+| 131.6 | 1244 |
+| 132.5 | 1246 |
+| 132.1 | 1268 |
+| 130.8 | 1268 |
+| 131.9 | 1261 |
+| 131.7 | 1279 |
+| 132.5 | 1276 |
+| 132.3 | 1277 |
+| 131.9 | 1281 |
+| 131.9 | 1294 |
+| 132.1 | 1291 |
+| 132.3 | 1307 |
+| 132.3 | 1311 |
+| 132.4 | 1326 |
+| 132.5 | 1327 |
+| 131.9 | 1327 |
+| 131.9 | 1332 |
+| 131.3 | 1337 |
+| 132.3 | 1335 |
+| 131.6 | 1313 |
+| 132.2 | 1316 |
+| 131.8 | 1330 |
+| 132.2 | 1339 |
+| 132.7 | 1340 |
+| 131.6 | 1334 |
+| 131.4 | 1323 |
+| 130.8 | 1331 |
+| 130.8 | 1328 |
+| 131.3 | 1344 |
+| 131.1 | 1347 |
+| 132.1 | 1353 |
+| 132 | 1357 |
+| 132.4 | 1354 |
+| 131.7 | 1367 |
+| 131.6 | 1373 |
+| 131.4 | 1369 |
+| 131.9 | 1371 |
+| 131.6 | 1384 |
+| 131.8 | 1373 |
+| 131.5 | 1393 |
+| 131.4 | 1376 |
+| 131.2 | 1393 |
+| 131.5 | 1403 |
+| 131.9 | 1404 |
+| 132.6 | 1397 |
+| 131.4 | 1403 |
+| 132.4 | 1390 |
+| 132.6 | 1383 |
+| 131.4 | 1365 |
+| 132 | 1377 |
+| 131.8 | 1379 |
+| 131.8 | 1375 |
+| 132.2 | 1383 |
+| 132.2 | 1389 |
+| 132.4 | 1391 |
+| 132.1 | 1406 |
+| 131.8 | 1407 |
+| 131.6 | 1394 |
+| 131.9 | 1395 |
+| 131.8 | 1402 |
+| 131.8 | 1408 |
+| 131.8 | 1406 |
+| 131.5 | 1416 |
+| 132.2 | 1398 |
+| 131.6 | 1394 |
+| 131.9 | 1408 |
+| 132.1 | 1419 |
+| 131.5 | 1426 |
+| 132.1 | 1450 |
+| 131.7 | 1444 |
+| 132.2 | 1432 |
+| 131.5 | 1448 |
+| 131.8 | 1460 |
+| 131.7 | 1457 |
+| 131.8 | 1453 |
+| 131.3 | 1434 |
+| 132 | 1445 |
+| 131 | 1453 |
+| 131.8 | 1435 |
+| 132.6 | 1441 |
+| 132.6 | 1429 |
+| 131.9 | 1455 |
+| 132.5 | 1450 |
+| 132.8 | 1452 |
+| 132.2 | 1454 |
+| 132.9 | 1443 |
+| 132.9 | 1448 |
+| 132.3 | 1458 |
+| 132.2 | 1452 |
+| 131.9 | 1434 |
+| 132 | 1442 |
+| 131.7 | 1432 |
+| 132.5 | 1451 |
+| 132.3 | 1447 |
+| 132.3 | 1454 |
+| 132.4 | 1456 |
+| 131.6 | 1462 |
+| 131.7 | 1466 |
+| 131.7 | 1467 |
+| 132.2 | 1476 |
+| 131.7 | 1488 |
+| 131.7 | 1495 |
+| 132.2 | 1484 |
+| 132.2 | 1506 |
+| 132.2 | 1504 |
+| 132.5 | 1507 |
+| 132.5 | 1510 |
+| 132.7 | 1516 |
+| 132.2 | 1511 |
+| 132.7 | 1498 |
+| 132.2 | 1508 |
+| 132.4 | 1518 |
+| 133 | 1519 |
+| 132.6 | 1534 |
+| 132.6 | 1540 |
+| 131.8 | 1539 |
+| 132.1 | 1564 |
+| 132 | 1565 |
+| 132.4 | 1576 |
+| 131.7 | 1592 |
+| 131.4 | 1579 |
+| 131.8 | 1581 |
+| 132 | 1587 |
+| 132.1 | 1575 |
+| 131.7 | 1587 |
+| 132.1 | 1589 |
+| 131.9 | 1598 |
+| 132.3 | 1577 |
+| 131.9 | 1588 |
+| 131.5 | 1609 |
+| 132.3 | 1615 |
+| 131.5 | 1614 |
+| 132 | 1621 |
+| 132.2 | 1626 |
+| 131.3 | 1619 |
+| 131.7 | 1630 |
+| 132.2 | 1637 |
+| 131 | 1626 |
+| 131.9 | 1645 |
+| 131.8 | 1633 |
+| 132.4 | 1629 |
+| 132.1 | 1633 |
+| 131.2 | 1651 |
+| 131 | 1659 |
+| 130.8 | 1663 |
+| 132 | 1658 |
+| 131.4 | 1671 |
+| 131.9 | 1665 |
+| 131 | 1680 |
+| 131.2 | 1677 |
+| 131.3 | 1654 |
+| 131.8 | 1666 |
+| 131.2 | 1672 |
+| 130.8 | 1674 |
+| 131.5 | 1659 |
+| 131.1 | 1671 |
+| 131 | 1674 |
+| 131.8 | 1676 |
+| 131.5 | 1686 |
+| 131.9 | 1671 |
+| 132 | 1672 |
+| 132.1 | 1687 |
+| 132.4 | 1698 |
+| 131.6 | 1700 |
+| 131.5 | 1708 |
+| 131.9 | 1702 |
+| 131.7 | 1719 |
+| 131.8 | 1722 |
+| 132 | 1732 |
+| 131.9 | 1735 |
+| 132 | 1732 |
+| 131.9 | 1725 |
+| 131.8 | 1733 |
+| 132.9 | 1748 |
+| 131.7 | 1762 |
+| 132.4 | 1749 |
+| 130.9 | 1746 |
+| 131.8 | 1759 |
+| 131.7 | 1747 |
+| 131.1 | 1753 |
+| 132 | 1748 |
+| 131.8 | 1755 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 90 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 90 |
+
 
 </details>
 
 ### `pe_cg_hole_r4nm_160C_n320_c240_s1_rep222`
 
-PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free_gap5nm`.
+PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 320 chains × C240, 25,600 beads; built from `pe_cg_pore_w5nm_n320_c240_s1_rep222` (`pore/hold_160C.data`). Status: finished: `hole_free_gap5nm`, `hole_free`.
 
 No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_rep222` ← `pe_cg_pore500k_w10nm_n320_c240_s1_rep222` ← `pe_cg_amorph_n320_c240_s1_rep222`: D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
@@ -5043,10 +21324,11 @@ No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n320_c240_s1_re
 **Stages**
 
 - **`hole_free_gap5nm`** (rdyu-server): finished; started 2026-11-02 20:16 UTC, ended 2026-11-07 03:09 UTC; reads `systems/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/data.lmp`
+- **`hole_free`** (rdyu-server): finished; started 2026-11-12 02:07 UTC, ended 2026-11-14 15:02 UTC; reads `systems/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_gap5nm` | `hole_free` |
+| narrow | 5 nm (at 25 °C) | 4.37 nm | 12.9 nm | 12.9 × 12.9 nm (25 °C) | — | finished: `hole_free_gap5nm`, `hole_free` | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6569,9 +22851,9 @@ No analysed properties yet; pending: pore not started. Equilibration: from `pe_c
 
 ### `pe_cg_hole_r2nm_160C_n640_c240_s1_rep441`
 
-PE CG, film with a 2 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (running, 6.8% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-14 08:06 UTC).
+PE CG, film with a 2 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Status: finished: `hole_free`.
 
-No analysed properties yet; pending: `hole_free`: running, 6.8% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-14 08:06 UTC. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6589,11 +22871,11 @@ No analysed properties yet; pending: `hole_free`: running, 6.8% (0/3 segments, S
 
 **Stages**
 
-- **`hole_free`** (rdyu-server): running, 6.8% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-14 08:06 UTC; started 2026-11-11 11:40 UTC; reads `systems/pe_cg_hole_r2nm_160C_n640_c240_s1_rep441/data.lmp`
+- **`hole_free`** (rdyu-server): finished; started 2026-11-11 11:40 UTC, ended 2026-11-13 21:58 UTC; reads `systems/pe_cg_hole_r2nm_160C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: running, 6.8% (0/3 segments, Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0); ETA 2026-11-14 08:06 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | finished: `hole_free` | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6601,9 +22883,9 @@ No analysed properties yet; pending: `hole_free`: running, 6.8% (0/3 segments, S
 
 ### `pe_cg_hole_r3nm_160C_n640_c240_s1_rep441`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (running, 86.1% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:00 UTC).
+PE CG, film with a 3 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Status: finished: `hole_free_gap5nm` (cancelled/killed?, 18.5%), `hole_free`.
 
-No analysed properties yet; pending: `hole_free`: running, 86.1% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:00 UTC. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6621,22 +22903,1225 @@ No analysed properties yet; pending: `hole_free`: running, 86.1% (2/3 segments, 
 
 **Stages**
 
-- **`hole_free_gap5nm`** (rdyu-rog): cancelled/killed?, 18.5%; started 2026-11-09 07:12 UTC
-- **`hole_free`** (rdyu-rog): running, 86.1% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:00 UTC; started 2026-11-09 19:02 UTC
+- **`hole_free_gap5nm`** (rdyu-rog): cancelled/killed?, 18.5%; started 2026-11-09 07:12 UTC; reads `systems/pe_cg_hole_r3nm_160C_n640_c240_s1_rep441/data.lmp`
+- **`hole_free`** (rdyu-rog): finished; started 2026-11-09 19:02 UTC, ended 2026-11-11 21:03 UTC; reads `systems/pe_cg_hole_r3nm_160C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: running, 86.1% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:00 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | finished: `hole_free_gap5nm` (cancelled/killed?, 18.5%), `hole_free` | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
+
+**`hole_free` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 66.59
+- `free_shell.areal_density_ratio`: 0.1655
+- `free_shell.msd.1 ns`: 527.7
+- `free_shell.msd.10 ns`: 2149
+- `free_shell.msd.end`: 3633
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: none
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `plateau.r_eff`: 85.84
+- `plateau.r_eff_sd`: 0.7369
+- `plateau.r_min`: 76.48
+- T (°C): 160
+- `thickness_final`: 103.3
+- `thickness_t0`: 92.71
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 67.26 | — |
+| 66.85 | — |
+| 67.31 | — |
+| 66.95 | — |
+| 67.18 | — |
+| 67.31 | — |
+| 67 | — |
+| 67.18 | — |
+| 66.96 | — |
+| 67.01 | — |
+| 67.52 | — |
+| 67.24 | — |
+| 67.39 | — |
+| 66.89 | — |
+| 66.88 | — |
+| 66.51 | — |
+| 67.17 | — |
+| 67.17 | — |
+| 67.37 | — |
+| 67.21 | — |
+| 66.88 | — |
+| 67.19 | — |
+| 67.46 | — |
+| 67.48 | — |
+| 66.89 | — |
+| 67.12 | — |
+| 67.15 | — |
+| 67.1 | — |
+| 67.08 | — |
+| 67.07 | — |
+| 67.2 | — |
+| 67.69 | — |
+| 67.45 | — |
+| 67.2 | — |
+| 67.44 | — |
+| 67.51 | — |
+| 67.12 | — |
+| 67.31 | — |
+| 67.44 | — |
+| 67.39 | — |
+| 67.61 | — |
+| 67.22 | — |
+| 67.3 | — |
+| 67.38 | — |
+| 67.36 | — |
+| 67.48 | — |
+| 67.58 | — |
+| 68.05 | — |
+| 67.52 | — |
+| 67.74 | — |
+| 67.64 | — |
+| 67.76 | — |
+| 67.35 | — |
+| 68.06 | — |
+| 68.15 | — |
+| 67.87 | — |
+| 67.84 | — |
+| 68.23 | — |
+| 67.87 | — |
+| 67.74 | — |
+| 68.05 | — |
+| 68.24 | — |
+| 68.54 | — |
+| 68.03 | — |
+| 67.83 | — |
+| 68.08 | — |
+| 68.15 | — |
+| 68.1 | — |
+| 67.98 | — |
+| 67.81 | — |
+| 68.2 | — |
+| 68.15 | — |
+| 68.11 | — |
+| 68.05 | — |
+| 68.68 | — |
+| 68.1 | — |
+| 68.26 | — |
+| 68.01 | — |
+| 68.55 | — |
+| 68.5 | — |
+| 68.42 | — |
+| 68.09 | — |
+| 68.18 | — |
+| 67.89 | — |
+| 68.67 | — |
+| 69.08 | — |
+| 68.82 | — |
+| 68.53 | — |
+| 68.64 | — |
+| 68.34 | — |
+| 68.37 | — |
+| 68.47 | — |
+| 68.59 | — |
+| 68.72 | — |
+| 68.61 | — |
+| 68.83 | — |
+| 68.63 | — |
+| 68.6 | — |
+| 69.09 | — |
+| 69.04 | — |
+| 69.25 | — |
+| 69.09 | — |
+| 68.82 | — |
+| 69.05 | — |
+| 69.72 | — |
+| 69.03 | — |
+| 69.53 | — |
+| 68.97 | — |
+| 69.68 | — |
+| 69.73 | — |
+| 69.85 | — |
+| 68.79 | — |
+| 69.42 | — |
+| 69.47 | — |
+| 69.26 | — |
+| 69.76 | — |
+| 69.71 | — |
+| 70.25 | — |
+| 70.11 | — |
+| 70.18 | — |
+| 70.31 | — |
+| 70.16 | — |
+| 70.07 | — |
+| 70.18 | — |
+| 70.11 | — |
+| 70.29 | — |
+| 69.79 | — |
+| 70.19 | — |
+| 70.35 | — |
+| 70.8 | — |
+| 70.96 | — |
+| 70.41 | — |
+| 70.63 | — |
+| 70.1 | — |
+| 70.84 | — |
+| 70.48 | — |
+| 70.14 | — |
+| 70.12 | — |
+| 70.32 | — |
+| 70.35 | — |
+| 70.55 | — |
+| 70.72 | — |
+| 71.36 | — |
+| 70.91 | — |
+| 71.6 | — |
+| 71.16 | — |
+| 70.78 | — |
+| 71.14 | — |
+| 71.17 | — |
+| 71.99 | — |
+| 71.55 | — |
+| 71.64 | — |
+| 71.4 | — |
+| 72 | — |
+| 72.19 | — |
+| 71.03 | — |
+| 71.67 | — |
+| 72.21 | — |
+| 71.77 | — |
+| 72.42 | — |
+| 72.18 | — |
+| 72.12 | — |
+| 72.71 | — |
+| 71.92 | — |
+| 72.46 | — |
+| 72.36 | — |
+| 72.73 | — |
+| 72.52 | — |
+| 72.88 | — |
+| 71.97 | — |
+| 72.51 | — |
+| 72.63 | — |
+| 72.42 | — |
+| 72.72 | — |
+| 72.97 | — |
+| 73.52 | — |
+| 73.13 | — |
+| 73.4 | — |
+| 73.68 | — |
+| 74.02 | — |
+| 74.58 | — |
+| 74.07 | — |
+| 74.23 | — |
+| 74.16 | — |
+| 73.97 | — |
+| 73.95 | — |
+| 75.15 | — |
+| 74.87 | — |
+| 74.93 | — |
+| 75.19 | — |
+| 75.29 | — |
+| 75.01 | — |
+| 74.25 | — |
+| 75.24 | — |
+| 75.15 | — |
+| 74.65 | — |
+| 75.83 | — |
+| 74.91 | — |
+| 75.04 | — |
+| 74.46 | — |
+| 74.91 | — |
+| 75.86 | — |
+| 76.04 | — |
+| 75.2 | — |
+| 75.22 | — |
+| 75.61 | — |
+| 75.89 | — |
+| 75.66 | — |
+| 74.83 | — |
+| 74.84 | — |
+| 75.48 | — |
+| 76.29 | — |
+| 76.18 | — |
+| 76.36 | — |
+| 76.43 | — |
+| 77.01 | — |
+| 76.97 | — |
+| 77.41 | — |
+| 78.31 | — |
+| 77.76 | — |
+| 78.3 | — |
+| 77.77 | — |
+| 78.94 | — |
+| 78.44 | — |
+| 78.45 | — |
+| 78.27 | — |
+| 77.57 | — |
+| 78 | — |
+| 78.37 | — |
+| 79.02 | — |
+| 78.11 | — |
+| 77.46 | — |
+| 79.2 | — |
+| 79.45 | — |
+| 78.36 | — |
+| 78.39 | — |
+| 78.84 | — |
+| 78.76 | — |
+| 79.15 | — |
+| 79.1 | — |
+| 79.06 | — |
+| 79.51 | — |
+| 79.73 | — |
+| 79.79 | — |
+| 80.46 | — |
+| 79.97 | — |
+| 79.9 | — |
+| 81.02 | — |
+| 80.84 | — |
+| 81.28 | — |
+| 81.61 | — |
+| 80.52 | — |
+| 80.56 | — |
+| 81.22 | — |
+| 80.97 | — |
+| 81.31 | — |
+| 80.73 | — |
+| 81.2 | — |
+| 81.27 | — |
+| 80.99 | — |
+| 81.42 | — |
+| 81.7 | — |
+| 81.29 | — |
+| 82.19 | — |
+| 82.06 | — |
+| 82.27 | — |
+| 81.91 | — |
+| 82.33 | — |
+| 82.08 | — |
+| 82.61 | — |
+| 82.25 | — |
+| 82.66 | — |
+| 82.71 | — |
+| 82 | — |
+| 82.18 | — |
+| 82.88 | — |
+| 83 | — |
+| 83.01 | — |
+| 83.95 | — |
+| 83.57 | — |
+| 83.57 | — |
+| 84.21 | — |
+| 84.85 | — |
+| 84.65 | — |
+| 84.39 | — |
+| 83.69 | — |
+| 82.84 | — |
+| 82.94 | — |
+| 84.63 | — |
+| 84.69 | — |
+| 84.33 | — |
+| 83.79 | — |
+| 84.31 | — |
+| 84.07 | — |
+| 83.27 | — |
+| 83.2 | — |
+| 83.84 | — |
+| 84.61 | — |
+| 83.81 | — |
+| 83.3 | — |
+| 83.64 | — |
+| 84.17 | — |
+| 83.15 | — |
+| 85.11 | — |
+| 85.1 | — |
+| 83.94 | — |
+| 84.33 | — |
+| 84.11 | — |
+| 83.6 | — |
+| 84.49 | — |
+| 84.5 | — |
+| 84.81 | — |
+| 85.14 | — |
+| 85.12 | — |
+| 84.75 | — |
+| 85.63 | — |
+| 85.36 | — |
+| 85.58 | — |
+| 85.83 | — |
+| 85.76 | — |
+| 86.87 | — |
+| 85.64 | — |
+| 85.28 | — |
+| 86.84 | — |
+| 86.56 | — |
+| 86.23 | — |
+| 84.17 | — |
+| 85.63 | — |
+| 86.56 | — |
+| 86.18 | — |
+| 86.19 | — |
+| 86.66 | — |
+| 86.6 | — |
+| 87.69 | — |
+| 87.52 | — |
+| 87.35 | — |
+| 87.27 | — |
+| 87.52 | — |
+| 87.1 | — |
+| 86.96 | — |
+| 88.39 | — |
+| 87.37 | — |
+| 88.77 | — |
+| 88.21 | — |
+| 87.95 | — |
+| 88.03 | — |
+| 88.4 | — |
+| 88.8 | — |
+| 87.87 | — |
+| 88.33 | — |
+| 88.15 | — |
+| 88.07 | — |
+| 88.55 | — |
+| 88.69 | — |
+| 88.75 | — |
+| 89.41 | — |
+| 89.41 | — |
+| 89.54 | — |
+| 88.28 | — |
+| 88.54 | — |
+| 87.98 | — |
+| 89.1 | — |
+| 89.64 | — |
+| 89.05 | — |
+| 89.27 | — |
+| 90.45 | — |
+| 90.51 | — |
+| 90.21 | — |
+| 90.16 | — |
+| 90.12 | — |
+| 91.28 | — |
+| 91.29 | — |
+| 91.16 | — |
+| 89.56 | — |
+| 89.57 | — |
+| 90.73 | — |
+| 90.02 | — |
+| 90.51 | — |
+| 91.08 | — |
+| 91.89 | — |
+| 92.45 | — |
+| 91 | — |
+| 92.12 | — |
+| 91.61 | — |
+| 91.33 | — |
+| 91.3 | — |
+| 90.61 | — |
+| 91.44 | — |
+| 90.37 | — |
+| 91.01 | — |
+| 90.71 | — |
+| 90.05 | — |
+| 90.64 | — |
+| 90.49 | — |
+| 89.71 | — |
+| 90.46 | — |
+| 90.47 | — |
+| 91.2 | — |
+| 90.44 | — |
+| 90.71 | — |
+| 92.71 | 0 |
+| 91.92 | 23.22 |
+| 92.38 | 37.93 |
+| 92.25 | 49.56 |
+| 91.47 | 56.5 |
+| 91.82 | 65.4 |
+| 92.77 | 72.64 |
+| 92.42 | 87.03 |
+| 92.13 | 94.38 |
+| 91.44 | 95.59 |
+| 91.08 | 95.34 |
+| 90.88 | 109 |
+| 90.75 | 113.7 |
+| 90.16 | 119.6 |
+| 90.14 | 122.8 |
+| 90.33 | 128.6 |
+| 90.41 | 128.2 |
+| 90.23 | 132.7 |
+| 89.92 | 141.1 |
+| 90.21 | 149.6 |
+| 90.16 | 152 |
+| 90.27 | 151.2 |
+| 89.72 | 157.3 |
+| 89.65 | 162.3 |
+| 90.62 | 163.1 |
+| 91.17 | 166.3 |
+| 91.05 | 172.1 |
+| 90.84 | 172.5 |
+| 91.12 | 175.7 |
+| 91.23 | 180 |
+| 91.14 | 189.2 |
+| 91.65 | 189.9 |
+| 92.02 | 191.4 |
+| 91.56 | 196.2 |
+| 92.2 | 197.3 |
+| 93.19 | 188.8 |
+| 92.86 | 192.6 |
+| 92.32 | 208 |
+| 92.91 | 218.9 |
+| 92.9 | 223.2 |
+| 92.63 | 216.7 |
+| 92.6 | 219.6 |
+| 92.04 | 216.7 |
+| 92.7 | 212.9 |
+| 91.6 | 218.4 |
+| 91.56 | 226.8 |
+| 92.07 | 244.5 |
+| 91.72 | 241.2 |
+| 91.77 | 246.5 |
+| 92.49 | 247.7 |
+| 91.84 | 240.8 |
+| 91.44 | 229.5 |
+| 91.28 | 230.2 |
+| 91.91 | 234.1 |
+| 91.15 | 229.9 |
+| 91.5 | 233.9 |
+| 91.08 | 251.5 |
+| 90.9 | 262.4 |
+| 90.83 | 272.4 |
+| 90.98 | 280.4 |
+| 91.35 | 290.8 |
+| 91.64 | 287.5 |
+| 90.92 | 291.2 |
+| 91.34 | 291 |
+| 91.45 | 293.9 |
+| 91.75 | 293.1 |
+| 91.22 | 292.8 |
+| 91.66 | 293.9 |
+| 91.01 | 310 |
+| 91.58 | 303.3 |
+| 91.43 | 310.4 |
+| 92.53 | 297.8 |
+| 92.96 | 292.4 |
+| 92.74 | 295.8 |
+| 92.67 | 293.6 |
+| 92.63 | 296.3 |
+| 91.93 | 304.6 |
+| 92.09 | 310.9 |
+| 92.41 | 313.7 |
+| 91.96 | 310.9 |
+| 92.03 | 330.5 |
+| 92.5 | 340.3 |
+| 92.55 | 338.3 |
+| 91.64 | 342.3 |
+| 92.32 | 347.5 |
+| 92.83 | 342.3 |
+| 93.65 | 355.8 |
+| 92.79 | 349.2 |
+| 92.62 | 337 |
+| 92.62 | 338.4 |
+| 92.94 | 349.3 |
+| 93.26 | 355 |
+| 92.53 | 356 |
+| 92.82 | 348.8 |
+| 91.66 | 354.9 |
+| 92.43 | 360.7 |
+| 92.69 | 375.4 |
+| 91.11 | 375.8 |
+| 92.14 | 388.3 |
+| 92.62 | 413.1 |
+| 92.44 | 415.6 |
+| 92.55 | 425.1 |
+| 93.01 | 425.4 |
+| 92.45 | 446.4 |
+| 92.98 | 456.5 |
+| 92.52 | 458.6 |
+| 93.31 | 455.4 |
+| 93.11 | 470.9 |
+| 93.88 | 456.9 |
+| 94.66 | 452.5 |
+| 93.8 | 448.3 |
+| 93.56 | 452.4 |
+| 93.61 | 455.1 |
+| 93.06 | 461.4 |
+| 93.22 | 468.8 |
+| 93.43 | 476.7 |
+| 93.66 | 479.8 |
+| 92.68 | 476.3 |
+| 93.28 | 481 |
+| 93.21 | 475.6 |
+| 92.94 | 482.8 |
+| 93.17 | 465.9 |
+| 93.17 | 469.8 |
+| 93.2 | 482.6 |
+| 91.5 | 480.4 |
+| 92.06 | 475.7 |
+| 91.75 | 474.4 |
+| 92.23 | 483.3 |
+| 91.44 | 486.2 |
+| 92.19 | 500.2 |
+| 91.44 | 500.1 |
+| 91.85 | 493 |
+| 91.8 | 495.1 |
+| 91.41 | 489.7 |
+| 92.07 | 486.6 |
+| 92.04 | 467.7 |
+| 91.97 | 450.5 |
+| 91.45 | 450.8 |
+| 91.57 | 455 |
+| 91.57 | 465.2 |
+| 91.12 | 459.2 |
+| 91.47 | 460.3 |
+| 91.44 | 462.1 |
+| 91.61 | 469.1 |
+| 91.39 | 473.1 |
+| 92.09 | 477.5 |
+| 91.82 | 471.7 |
+| 91.41 | 487.7 |
+| 91.89 | 502.6 |
+| 92.12 | 493.7 |
+| 92.62 | 485.9 |
+| 91.49 | 472.4 |
+| 91.98 | 461.4 |
+| 91.9 | 444.1 |
+| 91.94 | 437.1 |
+| 92.24 | 454.5 |
+| 91.86 | 453.5 |
+| 92.07 | 466.9 |
+| 92.9 | 467.3 |
+| 93.32 | 488.5 |
+| 92.44 | 510.5 |
+| 92.67 | 507 |
+| 92.46 | 479.3 |
+| 92.13 | 461.9 |
+| 91.67 | 465.1 |
+| 92.2 | 470.2 |
+| 92.83 | 458.5 |
+| 93.06 | 469.4 |
+| 92.42 | 468.9 |
+| 92.5 | 444.1 |
+| 92.45 | 454.7 |
+| 92.87 | 462.4 |
+| 93.25 | 446.3 |
+| 92.32 | 446.4 |
+| 92.97 | 451.2 |
+| 93.4 | 470.7 |
+| 94.07 | 483.6 |
+| 94.09 | 517.9 |
+| 94.47 | 517 |
+| 94.11 | 519.1 |
+| 94.34 | 515.5 |
+| 93.72 | 497.9 |
+| 94.36 | 498.2 |
+| 94.9 | 498.8 |
+| 93.77 | 504.2 |
+| 93.86 | 513.9 |
+| 94.07 | 509.5 |
+| 94.44 | 506.3 |
+| 94.28 | 493.8 |
+| 95.2 | 498.6 |
+| 94.57 | 509.4 |
+| 95.14 | 525.8 |
+| 94.87 | 528 |
+| 93.97 | 526.6 |
+| 94.28 | 528.6 |
+| 94.71 | 537.2 |
+| 94.53 | 531.9 |
+| 94.18 | 527.4 |
+| 93.99 | 519.7 |
+| 93.95 | 530.6 |
+| 93.94 | 527.7 |
+| 94 | 542.2 |
+| 93.58 | 524.4 |
+| 93.27 | 529.1 |
+| 93.13 | 537 |
+| 93.43 | 537.2 |
+| 93.1 | 541.8 |
+| 92.68 | 538 |
+| 93.61 | 538.3 |
+| 92.98 | 542.1 |
+| 93.77 | 553.6 |
+| 92.6 | 546.7 |
+| 92.87 | 550.1 |
+| 93.79 | 557.8 |
+| 93.1 | 561.9 |
+| 94.14 | 575.6 |
+| 94 | 565.1 |
+| 93.23 | 551.5 |
+| 94.32 | 555.6 |
+| 93.96 | 573 |
+| 92.53 | 569 |
+| 93.49 | 559.9 |
+| 93.91 | 557.3 |
+| 94.07 | 562.8 |
+| 94.25 | 566.2 |
+| 94.35 | 574.8 |
+| 93.9 | 573 |
+| 94.12 | 569.4 |
+| 93.97 | 566.8 |
+| 94.63 | 569.8 |
+| 93.96 | 566.4 |
+| 94.48 | 593.1 |
+| 94.65 | 581.9 |
+| 94.05 | 583.9 |
+| 94.63 | 578 |
+| 93.81 | 551.8 |
+| 93.64 | 544.3 |
+| 93.95 | 557.4 |
+| 93.34 | 549.6 |
+| 92.81 | 565.5 |
+| 92.68 | 573.8 |
+| 92.71 | 582.2 |
+| 92.85 | 584.1 |
+| 92.65 | 575.5 |
+| 93.17 | 580.9 |
+| 93.73 | 587.8 |
+| 93.78 | 609.9 |
+| 93.54 | 623.5 |
+| 93.03 | 611.8 |
+| 93.43 | 619.8 |
+| 93.17 | 633.1 |
+| 93.18 | 636.2 |
+| 94.14 | 621.5 |
+| 93.59 | 612.2 |
+| 93.68 | 600.2 |
+| 93.7 | 595.6 |
+| 94 | 617.6 |
+| 94.78 | 613 |
+| 94.56 | 616.5 |
+| 93.91 | 624.6 |
+| 93.92 | 616.9 |
+| 94.21 | 586.1 |
+| 93.67 | 585.2 |
+| 94.27 | 600.5 |
+| 93.79 | 600.9 |
+| 94.14 | 591.4 |
+| 94.19 | 597.2 |
+| 94.2 | 587.6 |
+| 93.73 | 576.2 |
+| 93.98 | 589.9 |
+| 93.7 | 596 |
+| 94.03 | 607.3 |
+| 93.71 | 623.3 |
+| 93.41 | 642.9 |
+| 93.83 | 631.5 |
+| 93.16 | 631.6 |
+| 93.34 | 630.1 |
+| 93.39 | 633.5 |
+| 93.41 | 631.1 |
+| 93.12 | 642.5 |
+| 93.57 | 631.2 |
+| 93.69 | 610.8 |
+| 93.98 | 619.9 |
+| 93.76 | 619.3 |
+| 93.63 | 620.1 |
+| 93.57 | 633.2 |
+| 93.24 | 624.3 |
+| 93.42 | 615.9 |
+| 93.59 | 608.9 |
+| 93.17 | 626.1 |
+| 93.8 | 623.7 |
+| 93.71 | 616.9 |
+| 93.21 | 624.8 |
+| 93.62 | 631.5 |
+| 93.64 | 625.4 |
+| 93.74 | 644.8 |
+| 93.5 | 628.3 |
+| 93.72 | 637.1 |
+| 93.6 | 643.9 |
+| 93.89 | 656.4 |
+| 93.53 | 647.3 |
+| 93.43 | 657.7 |
+| 93.39 | 647.4 |
+| 93.94 | 657.6 |
+| 94.12 | 654.3 |
+| 94.14 | 652.5 |
+| 93.24 | 642.7 |
+| 94.02 | 628.2 |
+| 94.04 | 622 |
+| 93.63 | 608.5 |
+| 93.03 | 614.7 |
+| 93.33 | 600.7 |
+| 92.57 | 582.1 |
+| 93.25 | 606.3 |
+| 92.77 | 618 |
+| 92.21 | 606.7 |
+| 91.68 | 621.5 |
+| 93.04 | 625.5 |
+| 93.02 | 640.4 |
+| 92.29 | 630.6 |
+| 92.74 | 642.8 |
+| 93.01 | 653.7 |
+| 93.37 | 650.3 |
+| 93.81 | 663.4 |
+| 93.22 | 691.1 |
+| 93.32 | 682.5 |
+| 93.57 | 685 |
+| 93.87 | 684.6 |
+| 93.49 | 678 |
+| 92.61 | 672 |
+| 92.95 | 687.3 |
+| 92.94 | 688.9 |
+| 92.9 | 687.1 |
+| 92.83 | 697.8 |
+| 92.53 | 701.6 |
+| 92.74 | 707.6 |
+| 93.13 | 715.2 |
+| 93.09 | 723.9 |
+| 93.62 | 715.4 |
+| 94.51 | 718.5 |
+| 93.49 | 719.1 |
+| 92.42 | 735.8 |
+| 93.17 | 757.4 |
+| 93.45 | 766.5 |
+| 93.6 | 761.3 |
+| 93.25 | 749.9 |
+| 93.35 | 745.7 |
+| 94.12 | 734.4 |
+| 94.34 | 728.4 |
+| 94.03 | 728.6 |
+| 94.91 | 746.7 |
+| 93.84 | 763.5 |
+| 93.56 | 780.2 |
+| 93.96 | 773.3 |
+| 93.97 | 771.4 |
+| 94.51 | 761.5 |
+| 94.44 | 752.2 |
+| 94.86 | 742.2 |
+| 94.61 | 732.7 |
+| 94.46 | 745.5 |
+| 95.31 | 745.5 |
+| 94.92 | 761.5 |
+| 95.16 | 756.5 |
+| 94.33 | 747.1 |
+| 93.69 | 745.2 |
+| 93.47 | 763.6 |
+| 93.37 | 770.9 |
+| 93.35 | 750 |
+| 93.64 | 732.9 |
+| 93.29 | 743.4 |
+| 94.04 | 755.5 |
+| 93.4 | 746.2 |
+| 94.57 | 740.2 |
+| 93.95 | 738.2 |
+| 93.43 | 746.7 |
+| 93.19 | 741.8 |
+| 93.27 | 759.4 |
+| 93.57 | 783.7 |
+| 93.36 | 778.2 |
+| 93.17 | 777.9 |
+| 92.9 | 782.5 |
+| 92.5 | 768.2 |
+| 91.83 | 750.5 |
+| 91.45 | 750.2 |
+| 92.71 | 742.7 |
+| 92.37 | 759.2 |
+| 93.3 | 780.6 |
+| 92.81 | 776 |
+| 93.6 | 772.7 |
+| 93.88 | 798.3 |
+| 93.12 | 780 |
+| 92.81 | 769.7 |
+| 92.98 | 759.2 |
+| 92.65 | 759.3 |
+| 93.14 | 769.7 |
+| 92.46 | 767.7 |
+| 93.05 | 775.2 |
+| 93.25 | 767.1 |
+| 93.23 | 769.4 |
+| 93.2 | 770.8 |
+| 93.47 | 772.8 |
+| 93.76 | 740.1 |
+| 92.93 | 802.7 |
+| 92.79 | 820.3 |
+| 93.47 | 820.3 |
+| 93.81 | 757.8 |
+| 93.32 | 740.1 |
+| 94.07 | 727.6 |
+| 93.53 | 763.3 |
+| 93.95 | 741.8 |
+| 94.4 | 762.3 |
+| 95.76 | 774.3 |
+| 93.9 | 824 |
+| 93.92 | 761.1 |
+| 94.24 | 805.3 |
+| 95.74 | 787.5 |
+| 96.14 | 819.1 |
+| 95.9 | 826.6 |
+| 95.75 | 907.8 |
+| 95.01 | 867.3 |
+| 96 | 911.3 |
+| 94.97 | 943.3 |
+| 94.99 | 973 |
+| 95.18 | 992.5 |
+| 95.31 | 1005 |
+| 94.56 | 1077 |
+| 93.95 | 1110 |
+| 96.13 | 1112 |
+| 94.56 | 1133 |
+| 96.96 | 1103 |
+| 96.08 | 1171 |
+| 96.13 | 1219 |
+| 96.2 | 1170 |
+| 96.49 | 1213 |
+| 95.62 | 1309 |
+| 96.07 | 1263 |
+| 97.04 | 1250 |
+| 95.79 | 1244 |
+| 94.78 | 1306 |
+| 96.04 | 1405 |
+| 95.72 | 1433 |
+| 95.81 | 1337 |
+| 96.17 | 1325 |
+| 95.39 | 1300 |
+| 95.85 | 1357 |
+| 96.47 | 1351 |
+| 94.35 | 1284 |
+| 94.51 | 1244 |
+| 95.69 | 1266 |
+| 95.91 | 1331 |
+| 95.35 | 1347 |
+| 97.41 | 1384 |
+| 97.56 | 1382 |
+| 96.6 | 1272 |
+| 95.07 | 1221 |
+| 95.59 | 1309 |
+| 95.83 | 1309 |
+| 96.63 | 1296 |
+| 95.98 | 1281 |
+| 96.55 | 1339 |
+| 96.76 | 1292 |
+| 96.19 | 1418 |
+| 96.96 | 1418 |
+| 96.58 | 1426 |
+| 97.69 | 1535 |
+| 98.03 | 1480 |
+| 98.34 | 1488 |
+| 97.92 | 1483 |
+| 98.39 | 1472 |
+| 95.72 | 1467 |
+| 95.89 | 1543 |
+| 95.61 | 1498 |
+| 96.01 | 1500 |
+| 96.09 | 1442 |
+| 97.47 | 1472 |
+| 97.58 | 1569 |
+| 97.6 | 1551 |
+| 97.37 | 1521 |
+| 96.43 | 1561 |
+| 95.99 | 1510 |
+| 96.47 | 1527 |
+| 97.4 | 1609 |
+| 98.09 | 1710 |
+| 96.75 | 1675 |
+| 96.33 | 1812 |
+| 96.4 | 1745 |
+| 96.1 | 1739 |
+| 96.99 | 1839 |
+| 97.45 | 1895 |
+| 98.86 | 1886 |
+| 98.85 | 1877 |
+| 98.03 | 1875 |
+| 98.11 | 1844 |
+| 98.4 | 1950 |
+| 99.23 | 1887 |
+| 99.65 | 2019 |
+| 99.2 | 2012 |
+| 99.85 | 2011 |
+| 99.67 | 1974 |
+| 98.58 | 1974 |
+| 99.08 | 2018 |
+| 99.58 | 1961 |
+| 100.8 | 1963 |
+| 100.5 | 1983 |
+| 99.02 | 2039 |
+| 100.3 | 2085 |
+| 100.2 | 2057 |
+| 99.43 | 2000 |
+| 97.47 | 1925 |
+| 97.66 | 1841 |
+| 98.34 | 1915 |
+| 100.8 | 2009 |
+| 100.1 | 1901 |
+| 99.84 | 1913 |
+| 99.62 | 1966 |
+| 99.83 | 2116 |
+| 99.75 | 2152 |
+| 100 | 2133 |
+| 99.06 | 2201 |
+| 99.2 | 2270 |
+| 98.77 | 2273 |
+| 99.33 | 2218 |
+| 98.55 | 2195 |
+| 99.64 | 2190 |
+| 98.53 | 2218 |
+| 99.56 | 2231 |
+| 99.49 | 2069 |
+| 98.81 | 2092 |
+| 99.22 | 2129 |
+| 99.36 | 2181 |
+| 98.82 | 2134 |
+| 99.21 | 2106 |
+| 98.54 | 2156 |
+| 99.44 | 2240 |
+| 100.3 | 2269 |
+| 100.3 | 2245 |
+| 99.43 | 2283 |
+| 100.6 | 2299 |
+| 98.85 | 2251 |
+| 100.5 | 2255 |
+| 98.88 | 2344 |
+| 99.51 | 2369 |
+| 99.36 | 2386 |
+| 98.38 | 2383 |
+| 100.4 | 2458 |
+| 99.65 | 2405 |
+| 99.86 | 2438 |
+| 99.42 | 2512 |
+| 98.61 | 2418 |
+| 100.6 | 2267 |
+| 100.4 | 2300 |
+| 100.8 | 2222 |
+| 100.1 | 2104 |
+| 99.63 | 2169 |
+| 98.66 | 2070 |
+| 98.25 | 2013 |
+| 99.09 | 2209 |
+| 99.53 | 2330 |
+| 100 | 2158 |
+| 100.1 | 2142 |
+| 101.8 | 2149 |
+| 101.6 | 2219 |
+| 100.5 | 2248 |
+| 99.48 | 2263 |
+| 100.5 | 2245 |
+| 100.2 | 2234 |
+| 101.2 | 2286 |
+| 100.7 | 2298 |
+| 101.2 | 2331 |
+| 100.5 | 2215 |
+| 99.92 | 2103 |
+| 101.6 | 2207 |
+| 100.7 | 2234 |
+| 100.8 | 2256 |
+| 100.6 | 2262 |
+| 101.2 | 2291 |
+| 99.94 | 2385 |
+| 99.98 | 2399 |
+| 99.92 | 2374 |
+| 99.98 | 2273 |
+| 99.66 | 2266 |
+| 99.92 | 2258 |
+| 100.1 | 2298 |
+| 101.8 | 2398 |
+| 101.7 | 2464 |
+| 100 | 2484 |
+| 100.6 | 2499 |
+| 100.8 | 2356 |
+| 100.7 | 2407 |
+| 100.4 | 2383 |
+| 99.5 | 2402 |
+| 100.7 | 2523 |
+| 101.2 | 2557 |
+| 99.8 | 2552 |
+| 100.1 | 2554 |
+| 99.55 | 2391 |
+| 101 | 2345 |
+| 101.5 | 2292 |
+| 101.2 | 2388 |
+| 102.5 | 2595 |
+| 100.5 | 2370 |
+| 100.2 | 2465 |
+| 101.7 | 2430 |
+| 102.7 | 2439 |
+| 99.98 | 2386 |
+| 99.9 | 2367 |
+| 99.83 | 2396 |
+| 100.8 | 2604 |
+| 100.8 | 2516 |
+| 101.8 | 2529 |
+| 100.8 | 2517 |
+| 100.7 | 2494 |
+| 100.1 | 2523 |
+| 101 | 2485 |
+| 100.8 | 2503 |
+| 100.5 | 2547 |
+| 99.51 | 2592 |
+| 99.32 | 2522 |
+| 99.94 | 2562 |
+| 100.1 | 2616 |
+| 99.67 | 2613 |
+| 99.01 | 2630 |
+| 100.1 | 2653 |
+| 99.38 | 2708 |
+| 100.5 | 2748 |
+| 100.7 | 2758 |
+| 100.1 | 2631 |
+| 100.6 | 2538 |
+| 100.6 | 2529 |
+| 101.4 | 2454 |
+| 99.52 | 2543 |
+| 100.4 | 2534 |
+| 100.1 | 2583 |
+| 101.7 | 2539 |
+| 101.9 | 2630 |
+| 101.7 | 2598 |
+| 100.4 | 2599 |
+| 100.3 | 2696 |
+| 100.7 | 2604 |
+| 100.6 | 2552 |
+| 100.1 | 2487 |
+| 101.4 | 2607 |
+| 100.1 | 2576 |
+| 100.1 | 2480 |
+| 100.6 | 2599 |
+| 100.9 | 2679 |
+| 100.1 | 2494 |
+| 102.1 | 2468 |
+| 101.7 | 2606 |
+| 100.9 | 2775 |
+| 101.8 | 2680 |
+| 101.9 | 2761 |
+| 101.2 | 2624 |
+| 101 | 2556 |
+| 100.1 | 2596 |
+| 101 | 2652 |
+| 100.9 | 2707 |
+| 99.98 | 2683 |
+| 101.7 | 2857 |
+| 102.5 | 2959 |
+| 101.4 | 2953 |
+| 102.2 | 3084 |
+| 101.9 | 3117 |
+| 103.1 | 3132 |
+| 102.1 | 3156 |
+| 102.9 | 3158 |
+| 102.8 | 3147 |
+| 103.5 | 3167 |
+| 103 | 3102 |
+| 102.6 | 3019 |
+| 101.8 | 2879 |
+| 102 | 2972 |
+| 101.8 | 2915 |
+| 103.6 | 2899 |
+| 103.9 | 2974 |
+| 103.1 | 2891 |
+| 102.5 | 2848 |
+| 104 | 2918 |
+| 102.9 | 2937 |
+| 102.6 | 2914 |
+| 101.6 | 2844 |
+| 101.3 | 2946 |
+| 101.6 | 3065 |
+| 101.6 | 3012 |
+| 101.6 | 2961 |
+| 101.9 | 2984 |
+| 102.8 | 2973 |
+| 101.4 | 2889 |
+| 101.5 | 2839 |
+| 103 | 2965 |
+| 102.4 | 2943 |
+| 102.3 | 2921 |
+| 103.5 | 3005 |
+| 103.9 | 3077 |
+| 102.6 | 2988 |
+| 103 | 2960 |
+| 101.7 | 3046 |
+| 103.6 | 3092 |
+| 103.2 | 3009 |
+| 103.5 | 3120 |
+| 103.3 | 3063 |
+| 103.3 | 3123 |
+| 101.6 | 3131 |
+| 103.8 | 3017 |
+| 102.4 | 2967 |
+| 103.1 | 2973 |
+| 102.6 | 2757 |
+| 101.1 | 2818 |
+| 102.5 | 2870 |
+| 102.2 | 2926 |
+| 102.7 | 2955 |
+| 101.7 | 2900 |
+| 101.3 | 2988 |
+| 102.7 | 2979 |
+| 102.3 | 2967 |
+| 102.7 | 2978 |
+| 102.7 | 2976 |
+| 101.2 | 2916 |
+| 102.3 | 2983 |
+| 102.5 | 2876 |
+| 102.6 | 2902 |
+| 102.2 | 3030 |
+| 103.8 | 3129 |
+| 104.2 | 3027 |
+| 104.8 | 3080 |
+| 104.5 | 2990 |
+| 105.3 | 3109 |
+| 104.8 | 3172 |
+| 104.5 | 3103 |
+| 103.3 | 3113 |
+| 104.1 | 3138 |
+| 102.7 | 3144 |
+| 103.9 | 3258 |
+| 104.4 | 3186 |
+| 104.3 | 3089 |
+| 104.4 | 3224 |
+| 104.1 | 3187 |
+| 102.7 | 3109 |
+| 103 | 3085 |
+| 103.1 | 3157 |
+| 103.7 | 3302 |
+| 104 | 3217 |
+| 102.7 | 3100 |
+| 103 | 3179 |
+| 102.8 | 3271 |
+| 103.4 | 3200 |
+| 104.2 | 3213 |
+| 104.3 | 3288 |
+| 104.2 | 3274 |
+| 103.4 | 3265 |
+| 103.7 | 3214 |
+| 102.2 | 3135 |
+| 102.3 | 3343 |
+| 102.1 | 3490 |
+| 101.7 | 3491 |
+| 101.2 | 3429 |
+| 100.2 | 3511 |
+| 101.4 | 3550 |
+| 103.8 | 3618 |
+| 104 | 3636 |
+| 103.3 | 3633 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
 
 </details>
 
 ### `pe_cg_hole_r3nm_25C_n640_c240_s1_rep441`
 
-PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_25C.data`). Stage now: hole (not started).
+PE CG, film with a 3 nm-radius cylindrical hole at 25 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_25C.data`). Status: finished: `hole_free`.
 
-No analysed properties yet; pending: hole not started. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6654,11 +24139,11 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Stages**
 
-- No runs found.
+- **`hole_free`** (rdyu-rog): finished; started 2026-11-11 21:03 UTC, ended 2026-11-14 00:05 UTC; reads `systems/pe_cg_hole_r3nm_25C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | hole: not started | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | finished: `hole_free` | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6666,9 +24151,9 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 ### `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`
 
-PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (running, 32.8% (1/3 segments, Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 40 A); ETA 2026-11-15 12:43 UTC).
+PE CG, film with a 4 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (cancelled/killed?, 77.2%).
 
-No analysed properties yet; pending: `hole_free`: running, 32.8% (1/3 segments, Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 40 A); ETA 2026-11-15 12:43 UTC. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet; pending: `hole_free`: cancelled/killed?, 77.2%. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6687,11 +24172,11 @@ No analysed properties yet; pending: `hole_free`: running, 32.8% (1/3 segments, 
 **Stages**
 
 - **`hole_free_gap5nm`** (rdyu-server): cancelled/killed?, 8.6%; started 2026-11-09 07:12 UTC; reads `systems/pe_cg_hole_r4nm_160C_n640_c240_s1_rep441/data.lmp`
-- **`hole_free`** (rdyu-server): running, 32.8% (1/3 segments, Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 40 A); ETA 2026-11-15 12:43 UTC; started 2026-11-09 19:02 UTC; reads `systems/pe_cg_hole_r4nm_160C_n640_c240_s1_rep441/data.lmp`
+- **`hole_free`** (rdyu-server): cancelled/killed?, 77.2%; started 2026-11-09 19:02 UTC; reads `systems/pe_cg_hole_r4nm_160C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: running, 32.8% (1/3 segments, Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 40 A); ETA 2026-11-15 12:43 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: cancelled/killed?, 77.2% | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6699,9 +24184,9 @@ No analysed properties yet; pending: `hole_free`: running, 32.8% (1/3 segments, 
 
 ### `pe_cg_hole_r5nm_160C_n640_c240_s1_rep441`
 
-PE CG, film with a 5 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (running, 85.7% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:10 UTC).
+PE CG, film with a 5 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Status: finished: `hole_free_gap5nm` (cancelled/killed?, 18.3%), `hole_free`.
 
-No analysed properties yet; pending: `hole_free`: running, 85.7% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:10 UTC. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6719,22 +24204,1225 @@ No analysed properties yet; pending: `hole_free`: running, 85.7% (2/3 segments, 
 
 **Stages**
 
-- **`hole_free_gap5nm`** (rdyu-rog): cancelled/killed?, 18.3%; started 2026-11-09 07:13 UTC
-- **`hole_free`** (rdyu-rog): running, 85.7% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:10 UTC; started 2026-11-09 19:02 UTC
+- **`hole_free_gap5nm`** (rdyu-rog): cancelled/killed?, 18.3%; started 2026-11-09 07:13 UTC; reads `systems/pe_cg_hole_r5nm_160C_n640_c240_s1_rep441/data.lmp`
+- **`hole_free`** (rdyu-rog): finished; started 2026-11-09 19:02 UTC, ended 2026-11-11 21:12 UTC; reads `systems/pe_cg_hole_r5nm_160C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: running, 85.7% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 21:10 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | finished: `hole_free_gap5nm` (cancelled/killed?, 18.3%), `hole_free` | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
+
+**`hole_free` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 66.59
+- `free_shell.areal_density_ratio`: 0.1571
+- `free_shell.msd.1 ns`: 606.3
+- `free_shell.msd.10 ns`: 2024
+- `free_shell.msd.end`: 2665
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: none
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `plateau.r_eff`: 85.44
+- `plateau.r_eff_sd`: 0.9926
+- `plateau.r_min`: 75.93
+- T (°C): 160
+- `thickness_final`: 104.7
+- `thickness_t0`: 95.68
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 67.25 | — |
+| 66.82 | — |
+| 66.87 | — |
+| 66.86 | — |
+| 67.15 | — |
+| 67.11 | — |
+| 66.84 | — |
+| 67.17 | — |
+| 67.09 | — |
+| 66.96 | — |
+| 66.97 | — |
+| 67.22 | — |
+| 67.28 | — |
+| 67.55 | — |
+| 67.27 | — |
+| 67 | — |
+| 67.18 | — |
+| 67.12 | — |
+| 67.34 | — |
+| 67.25 | — |
+| 67.12 | — |
+| 67.06 | — |
+| 67.34 | — |
+| 67.03 | — |
+| 67.2 | — |
+| 67.21 | — |
+| 67.24 | — |
+| 67.46 | — |
+| 67.25 | — |
+| 67.4 | — |
+| 67.58 | — |
+| 67.87 | — |
+| 67.85 | — |
+| 67.69 | — |
+| 67.66 | — |
+| 67.96 | — |
+| 67.72 | — |
+| 68.36 | — |
+| 68.08 | — |
+| 68.16 | — |
+| 68.1 | — |
+| 68.01 | — |
+| 68.2 | — |
+| 67.86 | — |
+| 68.3 | — |
+| 68.19 | — |
+| 68.44 | — |
+| 68.07 | — |
+| 68.13 | — |
+| 68.27 | — |
+| 68.42 | — |
+| 68.36 | — |
+| 68.36 | — |
+| 67.86 | — |
+| 68.79 | — |
+| 68.13 | — |
+| 68.14 | — |
+| 68.84 | — |
+| 68.41 | — |
+| 68.79 | — |
+| 69.28 | — |
+| 68.86 | — |
+| 68.95 | — |
+| 69.09 | — |
+| 68.74 | — |
+| 68.59 | — |
+| 69.02 | — |
+| 68.79 | — |
+| 68.73 | — |
+| 68.53 | — |
+| 68.77 | — |
+| 69.5 | — |
+| 69.92 | — |
+| 69.65 | — |
+| 70.22 | — |
+| 70.02 | — |
+| 69.98 | — |
+| 69.98 | — |
+| 69.96 | — |
+| 69.54 | — |
+| 69.64 | — |
+| 70.36 | — |
+| 69.93 | — |
+| 70.37 | — |
+| 70.69 | — |
+| 70.94 | — |
+| 70.8 | — |
+| 71.31 | — |
+| 70.59 | — |
+| 70.68 | — |
+| 71.31 | — |
+| 71.42 | — |
+| 70.85 | — |
+| 71.42 | — |
+| 71.28 | — |
+| 71.64 | — |
+| 71.3 | — |
+| 71.33 | — |
+| 71.35 | — |
+| 71.23 | — |
+| 71.87 | — |
+| 71.25 | — |
+| 71.74 | — |
+| 71.92 | — |
+| 72.04 | — |
+| 71.93 | — |
+| 73.03 | — |
+| 72.42 | — |
+| 73.01 | — |
+| 72.81 | — |
+| 72.91 | — |
+| 73.05 | — |
+| 73.11 | — |
+| 72.58 | — |
+| 72.73 | — |
+| 73.18 | — |
+| 73.34 | — |
+| 72.71 | — |
+| 72.91 | — |
+| 73.58 | — |
+| 73.67 | — |
+| 73.68 | — |
+| 74.12 | — |
+| 74.18 | — |
+| 74.59 | — |
+| 74.07 | — |
+| 73.76 | — |
+| 74.97 | — |
+| 74.31 | — |
+| 74.63 | — |
+| 75.91 | — |
+| 75.03 | — |
+| 74.92 | — |
+| 74.61 | — |
+| 74.78 | — |
+| 75.55 | — |
+| 75.43 | — |
+| 75.51 | — |
+| 76 | — |
+| 76.18 | — |
+| 77.01 | — |
+| 76.62 | — |
+| 76.9 | — |
+| 77.31 | — |
+| 76.98 | — |
+| 76.96 | — |
+| 77 | — |
+| 78.11 | — |
+| 77.63 | — |
+| 77.71 | — |
+| 77.26 | — |
+| 77.37 | — |
+| 77.03 | — |
+| 76.54 | — |
+| 77.82 | — |
+| 77.82 | — |
+| 78.49 | — |
+| 79.23 | — |
+| 79.16 | — |
+| 79.12 | — |
+| 79.47 | — |
+| 80.03 | — |
+| 80.7 | — |
+| 80.49 | — |
+| 80.06 | — |
+| 78.53 | — |
+| 79.22 | — |
+| 79.88 | — |
+| 80.03 | — |
+| 79.61 | — |
+| 79.54 | — |
+| 80.54 | — |
+| 79.72 | — |
+| 80.1 | — |
+| 80.24 | — |
+| 80.54 | — |
+| 81.14 | — |
+| 80.7 | — |
+| 81.48 | — |
+| 81.24 | — |
+| 82.07 | — |
+| 81.54 | — |
+| 81.57 | — |
+| 81.27 | — |
+| 81.78 | — |
+| 82.16 | — |
+| 82.11 | — |
+| 82.7 | — |
+| 82.07 | — |
+| 82.25 | — |
+| 82 | — |
+| 81.65 | — |
+| 82.13 | — |
+| 81.47 | — |
+| 82.35 | — |
+| 82.88 | — |
+| 84.01 | — |
+| 82.89 | — |
+| 83.57 | — |
+| 82.68 | — |
+| 82.5 | — |
+| 84.03 | — |
+| 82.61 | — |
+| 82.95 | — |
+| 83.52 | — |
+| 83.16 | — |
+| 84.01 | — |
+| 84 | — |
+| 84.69 | — |
+| 84.75 | — |
+| 84.63 | — |
+| 84.83 | — |
+| 84.1 | — |
+| 85.47 | — |
+| 84.4 | — |
+| 83.88 | — |
+| 84.8 | — |
+| 85.77 | — |
+| 85.41 | — |
+| 85.3 | — |
+| 85.35 | — |
+| 85.48 | — |
+| 85.61 | — |
+| 84.93 | — |
+| 85.51 | — |
+| 85.84 | — |
+| 85.45 | — |
+| 85.83 | — |
+| 85.3 | — |
+| 86.46 | — |
+| 86.48 | — |
+| 86.1 | — |
+| 86.36 | — |
+| 85.51 | — |
+| 85.32 | — |
+| 86.08 | — |
+| 85.77 | — |
+| 87.31 | — |
+| 86.33 | — |
+| 86.19 | — |
+| 87.76 | — |
+| 87.94 | — |
+| 88.17 | — |
+| 87.55 | — |
+| 88.01 | — |
+| 86.93 | — |
+| 87.31 | — |
+| 87.79 | — |
+| 87.41 | — |
+| 87.43 | — |
+| 87.46 | — |
+| 87.54 | — |
+| 88.23 | — |
+| 88.24 | — |
+| 89.2 | — |
+| 88.79 | — |
+| 88.78 | — |
+| 88.62 | — |
+| 87.19 | — |
+| 86.73 | — |
+| 86.54 | — |
+| 87.05 | — |
+| 87.32 | — |
+| 86.95 | — |
+| 87.29 | — |
+| 87.26 | — |
+| 88.11 | — |
+| 87.44 | — |
+| 87.46 | — |
+| 87.45 | — |
+| 86.69 | — |
+| 87.36 | — |
+| 87.05 | — |
+| 88.11 | — |
+| 87.9 | — |
+| 88.1 | — |
+| 87.92 | — |
+| 87.11 | — |
+| 87.81 | — |
+| 88.5 | — |
+| 88.33 | — |
+| 88.75 | — |
+| 89.18 | — |
+| 89.15 | — |
+| 90.02 | — |
+| 89.66 | — |
+| 90.19 | — |
+| 88.76 | — |
+| 89.13 | — |
+| 89.18 | — |
+| 88.51 | — |
+| 89.44 | — |
+| 89.32 | — |
+| 88.94 | — |
+| 88.42 | — |
+| 87.86 | — |
+| 88.07 | — |
+| 88.21 | — |
+| 88.93 | — |
+| 89.98 | — |
+| 89.97 | — |
+| 89.62 | — |
+| 89.74 | — |
+| 90.8 | — |
+| 90.25 | — |
+| 89.01 | — |
+| 89.62 | — |
+| 89.61 | — |
+| 88.59 | — |
+| 87.3 | — |
+| 87.86 | — |
+| 89.06 | — |
+| 90.08 | — |
+| 89.39 | — |
+| 89.35 | — |
+| 91.52 | — |
+| 90.83 | — |
+| 91.01 | — |
+| 91.65 | — |
+| 90.99 | — |
+| 90.17 | — |
+| 91.13 | — |
+| 89.91 | — |
+| 90.45 | — |
+| 90.33 | — |
+| 89.65 | — |
+| 89.32 | — |
+| 90.27 | — |
+| 90.02 | — |
+| 90.64 | — |
+| 91.55 | — |
+| 90.95 | — |
+| 91 | — |
+| 89.96 | — |
+| 90.68 | — |
+| 90.84 | — |
+| 92.2 | — |
+| 91.92 | — |
+| 92.02 | — |
+| 91.89 | — |
+| 91.95 | — |
+| 92.74 | — |
+| 91.57 | — |
+| 91.73 | — |
+| 91.88 | — |
+| 91.36 | — |
+| 90.38 | — |
+| 91.26 | — |
+| 90.6 | — |
+| 91.24 | — |
+| 91.32 | — |
+| 91.52 | — |
+| 91.68 | — |
+| 92.91 | — |
+| 92.95 | — |
+| 93.3 | — |
+| 90.91 | — |
+| 92.04 | — |
+| 91.9 | — |
+| 92.57 | — |
+| 91.21 | — |
+| 91.83 | — |
+| 91.61 | — |
+| 91.7 | — |
+| 91.87 | — |
+| 92.47 | — |
+| 92.37 | — |
+| 93.26 | — |
+| 92.54 | — |
+| 93.01 | — |
+| 93.14 | — |
+| 93.06 | — |
+| 92.38 | — |
+| 92.6 | — |
+| 92.54 | — |
+| 92.02 | — |
+| 92.01 | — |
+| 93.7 | — |
+| 92.99 | — |
+| 91.31 | — |
+| 91.6 | — |
+| 92.73 | — |
+| 92 | — |
+| 93.66 | — |
+| 93.67 | — |
+| 93.4 | — |
+| 93.74 | — |
+| 92.58 | — |
+| 94.1 | — |
+| 93.39 | — |
+| 94.12 | — |
+| 93.93 | — |
+| 95.34 | — |
+| 95.39 | — |
+| 93.78 | — |
+| 93.51 | — |
+| 94.6 | — |
+| 95.55 | — |
+| 94.67 | — |
+| 95.51 | — |
+| 95.68 | 0 |
+| 95.12 | 27.39 |
+| 95.4 | 41.31 |
+| 95.42 | 56.22 |
+| 95.51 | 73.18 |
+| 95.83 | 93.61 |
+| 95.09 | 102.1 |
+| 95.8 | 111.8 |
+| 96.05 | 115.8 |
+| 95.75 | 123.6 |
+| 95.73 | 131.5 |
+| 95.99 | 137.5 |
+| 95.05 | 146.2 |
+| 95.12 | 153.2 |
+| 95.02 | 153.5 |
+| 95.24 | 159.8 |
+| 94.44 | 173 |
+| 93.9 | 182.8 |
+| 93.27 | 181.1 |
+| 94.22 | 185.2 |
+| 94.02 | 190.5 |
+| 94.23 | 198.2 |
+| 94.22 | 210.4 |
+| 93.8 | 225.6 |
+| 93.7 | 241.9 |
+| 94.07 | 250.9 |
+| 94.02 | 262.5 |
+| 93.92 | 269.8 |
+| 95.09 | 276.7 |
+| 94.64 | 270.1 |
+| 94.46 | 276 |
+| 94.38 | 277.3 |
+| 94.65 | 279.1 |
+| 94.54 | 284.9 |
+| 95.14 | 280 |
+| 95.6 | 282.5 |
+| 94.79 | 284.6 |
+| 94.96 | 295.2 |
+| 95.66 | 292.6 |
+| 95.33 | 294.9 |
+| 94.43 | 302.3 |
+| 94.49 | 307.3 |
+| 94.97 | 314.9 |
+| 94.89 | 316.9 |
+| 94.84 | 328.3 |
+| 95.02 | 337.7 |
+| 95.41 | 331.6 |
+| 95.57 | 326.9 |
+| 95.64 | 329.7 |
+| 95.8 | 333.1 |
+| 95.82 | 335.1 |
+| 95.72 | 336.9 |
+| 95.97 | 333.4 |
+| 96 | 331.7 |
+| 95.04 | 336.8 |
+| 94.71 | 348.4 |
+| 95 | 355.9 |
+| 94.66 | 367.9 |
+| 94.81 | 386.4 |
+| 95.27 | 400.3 |
+| 96.3 | 406.8 |
+| 94.99 | 413.4 |
+| 95.17 | 410.1 |
+| 95.25 | 393.7 |
+| 94.85 | 391 |
+| 94.6 | 383.7 |
+| 95.8 | 387.4 |
+| 95.8 | 400.8 |
+| 96.08 | 425.3 |
+| 95.66 | 429.4 |
+| 94.99 | 437.6 |
+| 94.85 | 444.6 |
+| 94.77 | 435.6 |
+| 94.41 | 442.9 |
+| 94.88 | 448.4 |
+| 94.44 | 452.1 |
+| 95.07 | 449.9 |
+| 94.81 | 441.1 |
+| 94.74 | 444.6 |
+| 94.91 | 435.7 |
+| 94.84 | 445 |
+| 94.96 | 447.5 |
+| 94.92 | 441 |
+| 95.05 | 434.8 |
+| 95.48 | 426.1 |
+| 95.11 | 431.7 |
+| 95.38 | 451 |
+| 95.35 | 449 |
+| 94.9 | 438.4 |
+| 94.85 | 444.5 |
+| 94.44 | 447.7 |
+| 94.74 | 461.1 |
+| 94.45 | 471.3 |
+| 93.67 | 478.9 |
+| 94.4 | 489 |
+| 94.97 | 485.8 |
+| 94.04 | 476.4 |
+| 94.34 | 472.7 |
+| 94.23 | 473 |
+| 94.51 | 467.7 |
+| 94.34 | 477 |
+| 94.57 | 473.6 |
+| 94.91 | 486.9 |
+| 94.59 | 498.3 |
+| 94.24 | 491.5 |
+| 94.27 | 468.9 |
+| 93.64 | 460.8 |
+| 93.82 | 459.4 |
+| 94.91 | 465.7 |
+| 94.91 | 470.1 |
+| 95.05 | 471.9 |
+| 95.05 | 477.4 |
+| 94.99 | 474.8 |
+| 95.24 | 476 |
+| 94.83 | 470.2 |
+| 94.99 | 462.7 |
+| 94.59 | 461.2 |
+| 94.44 | 457.4 |
+| 94.98 | 460.3 |
+| 94.82 | 456.5 |
+| 94.79 | 464.1 |
+| 94.34 | 468.1 |
+| 94.23 | 478.4 |
+| 93.88 | 474.9 |
+| 94.66 | 474.2 |
+| 94.41 | 483 |
+| 94.78 | 501.3 |
+| 94.85 | 513.2 |
+| 94.77 | 505.4 |
+| 94.73 | 504.6 |
+| 95.01 | 511.8 |
+| 94.97 | 512.5 |
+| 94.91 | 501.5 |
+| 94.93 | 497.6 |
+| 94.77 | 503.6 |
+| 94.94 | 493.7 |
+| 95.29 | 505.3 |
+| 94.7 | 510.1 |
+| 94.36 | 497.5 |
+| 95.06 | 503.3 |
+| 94.63 | 506 |
+| 94.76 | 514.6 |
+| 94.79 | 510.6 |
+| 94.07 | 507.9 |
+| 94.39 | 508.3 |
+| 94.86 | 500.9 |
+| 94.48 | 494.8 |
+| 94.3 | 487 |
+| 94.6 | 506.5 |
+| 94.69 | 512.1 |
+| 95.02 | 514.4 |
+| 95.62 | 521.3 |
+| 95.66 | 524.1 |
+| 94.57 | 523.8 |
+| 94.83 | 527.1 |
+| 95.53 | 526.3 |
+| 94.76 | 535.9 |
+| 94.85 | 536.7 |
+| 95.09 | 541.6 |
+| 94.17 | 541.2 |
+| 94.27 | 546.1 |
+| 93.74 | 538.6 |
+| 92.87 | 544.7 |
+| 93.71 | 551 |
+| 92.79 | 557.2 |
+| 92.51 | 546.7 |
+| 93.2 | 552.9 |
+| 92.9 | 565.6 |
+| 93.39 | 568.1 |
+| 93.5 | 582.6 |
+| 93.92 | 585 |
+| 93.78 | 596.3 |
+| 93.85 | 583.3 |
+| 94.3 | 596.5 |
+| 94.46 | 596 |
+| 93.94 | 592.3 |
+| 94.26 | 592.4 |
+| 94.44 | 579 |
+| 92.91 | 561.5 |
+| 93.28 | 552.1 |
+| 92.85 | 545.6 |
+| 93.43 | 545.3 |
+| 93.55 | 546.2 |
+| 93.34 | 560.3 |
+| 93.82 | 567.5 |
+| 93.32 | 573.5 |
+| 94.38 | 586.1 |
+| 94.44 | 588.9 |
+| 94.51 | 578.6 |
+| 94.01 | 579.7 |
+| 94.65 | 588.5 |
+| 94.37 | 594.9 |
+| 94.67 | 584.2 |
+| 95.16 | 591.6 |
+| 94.8 | 583.9 |
+| 95.53 | 579.9 |
+| 94.93 | 583.3 |
+| 95.76 | 594 |
+| 95 | 596.2 |
+| 94.91 | 596 |
+| 95.67 | 606.3 |
+| 95.31 | 616 |
+| 95.71 | 632.3 |
+| 95.27 | 633.6 |
+| 95.81 | 627.3 |
+| 95.45 | 649.8 |
+| 95.28 | 650.9 |
+| 95.56 | 655.9 |
+| 95.68 | 673.6 |
+| 95.75 | 681.6 |
+| 95.43 | 667.9 |
+| 95.67 | 671.1 |
+| 95.8 | 658.2 |
+| 95.09 | 682.5 |
+| 95.15 | 672.7 |
+| 95.28 | 694.7 |
+| 95.31 | 698 |
+| 95.3 | 696.8 |
+| 94.79 | 693.7 |
+| 95.34 | 682.4 |
+| 94.39 | 676.6 |
+| 95.13 | 678.5 |
+| 95.73 | 680.8 |
+| 94.58 | 692.4 |
+| 95.14 | 710.1 |
+| 94.61 | 713.8 |
+| 93.92 | 709.6 |
+| 93.82 | 695.8 |
+| 93.78 | 688.6 |
+| 92.93 | 689 |
+| 93.75 | 693.4 |
+| 94.28 | 701.8 |
+| 94.2 | 702.3 |
+| 94.22 | 704.5 |
+| 94.82 | 721.3 |
+| 95.32 | 721.1 |
+| 95.1 | 713.2 |
+| 95.21 | 717.7 |
+| 94.97 | 703.8 |
+| 94.99 | 696.2 |
+| 94.99 | 693.6 |
+| 94.77 | 697.6 |
+| 94.14 | 687.7 |
+| 94.33 | 680.3 |
+| 94.24 | 678.2 |
+| 94.24 | 690.6 |
+| 93.9 | 687.6 |
+| 94.33 | 677.6 |
+| 93.85 | 688.7 |
+| 94.25 | 700.7 |
+| 93.62 | 703.2 |
+| 94.33 | 716.4 |
+| 94.18 | 733 |
+| 94.15 | 750.4 |
+| 94.13 | 755.5 |
+| 93.8 | 756 |
+| 95.02 | 772.9 |
+| 94.68 | 781.8 |
+| 93.85 | 787.5 |
+| 93.95 | 791.7 |
+| 95.2 | 777 |
+| 95.11 | 782.6 |
+| 95.04 | 773.2 |
+| 94.88 | 766.9 |
+| 94.46 | 764.4 |
+| 94.58 | 750.8 |
+| 94.59 | 742.8 |
+| 94.77 | 732.9 |
+| 94.95 | 721.9 |
+| 95.34 | 716.3 |
+| 95.34 | 717.4 |
+| 95.9 | 734.9 |
+| 95.04 | 715.2 |
+| 94.79 | 699.6 |
+| 94.92 | 695.2 |
+| 95.03 | 689.4 |
+| 94.77 | 689.9 |
+| 95.07 | 692.7 |
+| 94.86 | 678 |
+| 94.67 | 678.5 |
+| 94.32 | 685.2 |
+| 94.63 | 687.6 |
+| 95.6 | 682.1 |
+| 95.03 | 691.1 |
+| 95.62 | 699.4 |
+| 95.76 | 719.9 |
+| 95.64 | 715.2 |
+| 95.2 | 718.6 |
+| 96.29 | 731.5 |
+| 95.56 | 737.2 |
+| 96.51 | 727.7 |
+| 96.15 | 724.6 |
+| 96.54 | 724.5 |
+| 95.46 | 717.2 |
+| 96.29 | 716.4 |
+| 95.41 | 704.7 |
+| 95 | 696.7 |
+| 95.04 | 682.8 |
+| 94.85 | 690.9 |
+| 94.84 | 698.7 |
+| 96.3 | 696.6 |
+| 95.28 | 696.1 |
+| 97.12 | 704 |
+| 96.87 | 693.2 |
+| 96.21 | 697.1 |
+| 95.69 | 697.1 |
+| 95.61 | 699.6 |
+| 95.73 | 702 |
+| 95.37 | 711.4 |
+| 95.79 | 711 |
+| 95.48 | 712.8 |
+| 95.93 | 724.8 |
+| 95.61 | 735.7 |
+| 96.15 | 739.9 |
+| 97.12 | 751.8 |
+| 97.25 | 756 |
+| 97.39 | 742.3 |
+| 97.83 | 734.7 |
+| 97.56 | 727.6 |
+| 97.27 | 740.2 |
+| 97.13 | 747.7 |
+| 97.49 | 752.1 |
+| 97.62 | 755.9 |
+| 96.67 | 768.4 |
+| 97.22 | 767.6 |
+| 96.85 | 769.5 |
+| 96.64 | 760.5 |
+| 96.34 | 772.9 |
+| 96.22 | 785.1 |
+| 96.07 | 788.9 |
+| 96.31 | 783.8 |
+| 95.53 | 788.9 |
+| 95.54 | 800.9 |
+| 96.02 | 803.5 |
+| 95.86 | 826.6 |
+| 96.21 | 828.5 |
+| 95.6 | 840.2 |
+| 95.91 | 849.3 |
+| 95.31 | 870.8 |
+| 94.93 | 881.1 |
+| 94.84 | 858 |
+| 94.89 | 850.6 |
+| 94.62 | 854.6 |
+| 94.65 | 858.7 |
+| 95.27 | 850.8 |
+| 95.41 | 842 |
+| 94.95 | 834.5 |
+| 95.46 | 827.3 |
+| 95.7 | 820.7 |
+| 94.48 | 812 |
+| 95.11 | 813.3 |
+| 95.95 | 803.3 |
+| 94.69 | 808.7 |
+| 95.28 | 824 |
+| 95.7 | 805.8 |
+| 95.81 | 812.2 |
+| 95.38 | 823.2 |
+| 95.54 | 820.9 |
+| 95.73 | 817.7 |
+| 95.17 | 827.1 |
+| 95.28 | 834.4 |
+| 95.38 | 820.7 |
+| 94.97 | 807.7 |
+| 94.47 | 814.7 |
+| 94.47 | 815.6 |
+| 94.17 | 809.5 |
+| 93.96 | 801.4 |
+| 94.22 | 813.4 |
+| 95.05 | 791.6 |
+| 95.63 | 783.1 |
+| 95.48 | 769.8 |
+| 95.87 | 767.5 |
+| 96.51 | 762.3 |
+| 96.23 | 753.6 |
+| 96.54 | 753.1 |
+| 96.32 | 750.3 |
+| 96.69 | 752.4 |
+| 96.55 | 745.2 |
+| 97.07 | 761.2 |
+| 97.36 | 741.9 |
+| 97.75 | 727.9 |
+| 96.91 | 737.7 |
+| 96.61 | 745.8 |
+| 96.68 | 748.6 |
+| 96.19 | 743.5 |
+| 95.93 | 738.7 |
+| 96.76 | 742 |
+| 96.65 | 751.7 |
+| 96.09 | 764.6 |
+| 95.95 | 778.5 |
+| 96.81 | 775.8 |
+| 96.17 | 778.7 |
+| 96.03 | 779.3 |
+| 94.92 | 773.1 |
+| 94.85 | 783.5 |
+| 95.13 | 770.8 |
+| 95.15 | 777.6 |
+| 95.6 | 784.8 |
+| 95.72 | 789 |
+| 95.35 | 795.8 |
+| 94.81 | 804.8 |
+| 94.9 | 837.8 |
+| 94.89 | 819 |
+| 95.23 | 898.7 |
+| 94.63 | 949.1 |
+| 94.53 | 954.1 |
+| 96.44 | 1100 |
+| 96.36 | 1034 |
+| 95.51 | 1012 |
+| 96.69 | 960 |
+| 96.84 | 1013 |
+| 96.94 | 1024 |
+| 95.99 | 1047 |
+| 95.82 | 1018 |
+| 96.06 | 1031 |
+| 95.85 | 1070 |
+| 97.18 | 1088 |
+| 96.33 | 1036 |
+| 96.51 | 1124 |
+| 97.68 | 1112 |
+| 96.16 | 1067 |
+| 96.85 | 1054 |
+| 98.74 | 988.4 |
+| 97.3 | 996.8 |
+| 98.05 | 1110 |
+| 96.99 | 1083 |
+| 96.44 | 1061 |
+| 97.62 | 1127 |
+| 98.61 | 1020 |
+| 97.42 | 941.4 |
+| 98.14 | 1021 |
+| 97.83 | 1065 |
+| 96.58 | 1081 |
+| 97.57 | 1097 |
+| 97.67 | 1165 |
+| 97.01 | 1079 |
+| 95.81 | 1002 |
+| 97.84 | 1040 |
+| 97.29 | 1110 |
+| 96.89 | 1167 |
+| 97.27 | 1170 |
+| 96.74 | 1197 |
+| 97.04 | 1150 |
+| 96.77 | 1166 |
+| 97.32 | 1193 |
+| 97.97 | 1242 |
+| 97.19 | 1192 |
+| 98.18 | 1235 |
+| 97.16 | 1279 |
+| 97.44 | 1298 |
+| 96.28 | 1375 |
+| 98.3 | 1341 |
+| 97.8 | 1334 |
+| 97.49 | 1370 |
+| 97.66 | 1442 |
+| 97.98 | 1559 |
+| 96.98 | 1509 |
+| 98.76 | 1450 |
+| 98.03 | 1403 |
+| 97.13 | 1370 |
+| 97.62 | 1407 |
+| 98.11 | 1404 |
+| 97.88 | 1364 |
+| 96.98 | 1378 |
+| 96.13 | 1370 |
+| 96.99 | 1398 |
+| 97.49 | 1471 |
+| 98.02 | 1508 |
+| 97.83 | 1508 |
+| 97.3 | 1491 |
+| 97.74 | 1515 |
+| 98.19 | 1445 |
+| 98.27 | 1531 |
+| 97.32 | 1527 |
+| 97.62 | 1515 |
+| 97.91 | 1412 |
+| 97.97 | 1342 |
+| 98.97 | 1377 |
+| 99.13 | 1416 |
+| 98.8 | 1407 |
+| 99.3 | 1312 |
+| 98.34 | 1351 |
+| 99.39 | 1393 |
+| 99.84 | 1402 |
+| 97.7 | 1366 |
+| 96.76 | 1334 |
+| 97.25 | 1353 |
+| 96.52 | 1451 |
+| 98.09 | 1506 |
+| 97.78 | 1514 |
+| 97.86 | 1474 |
+| 97.07 | 1523 |
+| 98.74 | 1531 |
+| 98.89 | 1506 |
+| 99.93 | 1507 |
+| 99.41 | 1510 |
+| 98.06 | 1519 |
+| 99.27 | 1670 |
+| 99.45 | 1646 |
+| 98.82 | 1623 |
+| 99.57 | 1579 |
+| 97.71 | 1523 |
+| 96.44 | 1532 |
+| 98.21 | 1589 |
+| 98.26 | 1599 |
+| 97.97 | 1670 |
+| 98.45 | 1729 |
+| 97.59 | 1699 |
+| 98.9 | 1837 |
+| 99.01 | 1755 |
+| 97.9 | 1807 |
+| 98.05 | 1820 |
+| 97.99 | 1749 |
+| 98.15 | 1678 |
+| 98.43 | 1632 |
+| 97.59 | 1689 |
+| 99.11 | 1747 |
+| 98.25 | 1731 |
+| 97.59 | 1730 |
+| 97.94 | 1726 |
+| 98.78 | 1748 |
+| 98.71 | 1763 |
+| 99.8 | 1735 |
+| 100.6 | 1730 |
+| 99.78 | 1740 |
+| 99.76 | 1723 |
+| 98.85 | 1678 |
+| 97.28 | 1795 |
+| 98.03 | 1811 |
+| 97.53 | 1844 |
+| 98.19 | 1783 |
+| 100.2 | 1767 |
+| 99.48 | 1773 |
+| 97.44 | 1770 |
+| 98.52 | 1798 |
+| 98.95 | 1778 |
+| 99.33 | 1776 |
+| 98.65 | 1810 |
+| 97.83 | 1883 |
+| 98.33 | 1943 |
+| 99.69 | 1931 |
+| 99.06 | 1885 |
+| 98.71 | 1951 |
+| 99.33 | 1935 |
+| 99.56 | 1957 |
+| 99.34 | 1959 |
+| 99.37 | 1908 |
+| 99.93 | 1925 |
+| 99.18 | 1932 |
+| 100.1 | 1998 |
+| 100.1 | 1923 |
+| 99.86 | 1991 |
+| 101.4 | 2074 |
+| 99.07 | 2061 |
+| 99.37 | 2104 |
+| 99.17 | 2103 |
+| 100.1 | 2074 |
+| 99.02 | 2041 |
+| 99.29 | 1980 |
+| 99.23 | 2040 |
+| 98.74 | 2024 |
+| 99.47 | 2062 |
+| 97.67 | 1975 |
+| 98.81 | 1991 |
+| 97.48 | 1924 |
+| 98.44 | 1904 |
+| 98.52 | 1940 |
+| 99.71 | 2011 |
+| 99.57 | 2078 |
+| 98.54 | 2116 |
+| 98.7 | 2172 |
+| 98.4 | 2071 |
+| 98.3 | 2021 |
+| 97.68 | 1950 |
+| 100.3 | 1989 |
+| 99 | 1966 |
+| 98.19 | 1962 |
+| 99.04 | 2045 |
+| 99.07 | 2045 |
+| 99.97 | 2136 |
+| 101.7 | 2178 |
+| 102 | 2213 |
+| 100.7 | 2077 |
+| 100.4 | 2043 |
+| 99.98 | 1998 |
+| 99.33 | 2091 |
+| 99.73 | 2168 |
+| 101.2 | 2203 |
+| 99.95 | 2252 |
+| 101.5 | 2202 |
+| 99.19 | 2199 |
+| 98.78 | 2103 |
+| 97.91 | 2078 |
+| 97.25 | 2130 |
+| 98.13 | 2194 |
+| 99.3 | 2235 |
+| 100.6 | 2171 |
+| 99.33 | 2185 |
+| 98.32 | 2221 |
+| 101.2 | 2243 |
+| 101.3 | 2216 |
+| 99.12 | 2217 |
+| 99.48 | 2163 |
+| 100.5 | 2238 |
+| 100.2 | 2265 |
+| 100.5 | 2308 |
+| 101.3 | 2262 |
+| 100.6 | 2216 |
+| 99.58 | 2088 |
+| 99.47 | 2036 |
+| 99.37 | 2089 |
+| 99.43 | 2202 |
+| 100.2 | 2168 |
+| 100.5 | 2133 |
+| 100.5 | 2149 |
+| 99.88 | 2206 |
+| 99.8 | 2285 |
+| 99.48 | 2357 |
+| 99.96 | 2320 |
+| 100.3 | 2275 |
+| 99.28 | 2247 |
+| 99.27 | 2352 |
+| 101.2 | 2423 |
+| 99.35 | 2466 |
+| 98.7 | 2332 |
+| 99 | 2296 |
+| 100.7 | 2519 |
+| 102.3 | 2493 |
+| 99.8 | 2349 |
+| 101.6 | 2332 |
+| 100.8 | 2402 |
+| 100.8 | 2443 |
+| 100.3 | 2327 |
+| 101.7 | 2434 |
+| 104.3 | 2461 |
+| 103.7 | 2514 |
+| 103.2 | 2413 |
+| 101.4 | 2320 |
+| 101.8 | 2346 |
+| 102.4 | 2236 |
+| 102.3 | 2225 |
+| 100.9 | 2235 |
+| 100.9 | 2281 |
+| 101 | 2315 |
+| 104.3 | 2422 |
+| 103 | 2476 |
+| 103.4 | 2510 |
+| 103 | 2484 |
+| 103.1 | 2429 |
+| 102.5 | 2421 |
+| 101.6 | 2404 |
+| 101.4 | 2339 |
+| 102.4 | 2309 |
+| 101 | 2448 |
+| 103.6 | 2505 |
+| 101.9 | 2536 |
+| 100.9 | 2490 |
+| 102 | 2532 |
+| 101.5 | 2552 |
+| 102.5 | 2604 |
+| 100.6 | 2535 |
+| 101.3 | 2544 |
+| 100.4 | 2588 |
+| 102.1 | 2622 |
+| 102.1 | 2682 |
+| 101.8 | 2628 |
+| 101 | 2620 |
+| 100.3 | 2623 |
+| 101.7 | 2638 |
+| 100.7 | 2618 |
+| 102.2 | 2583 |
+| 100.7 | 2552 |
+| 100.3 | 2565 |
+| 101.1 | 2566 |
+| 101.1 | 2584 |
+| 101.9 | 2562 |
+| 100.7 | 2628 |
+| 102.6 | 2646 |
+| 102.5 | 2669 |
+| 102.9 | 2676 |
+| 102.2 | 2595 |
+| 100.3 | 2559 |
+| 101.4 | 2572 |
+| 101.2 | 2585 |
+| 101.6 | 2649 |
+| 100.8 | 2624 |
+| 99.82 | 2513 |
+| 100 | 2607 |
+| 100 | 2565 |
+| 99.87 | 2506 |
+| 99.36 | 2483 |
+| 99.53 | 2451 |
+| 100.3 | 2417 |
+| 100.3 | 2456 |
+| 99.98 | 2500 |
+| 100.7 | 2482 |
+| 101.2 | 2497 |
+| 100.2 | 2526 |
+| 101.1 | 2541 |
+| 102.3 | 2553 |
+| 102 | 2481 |
+| 102.1 | 2400 |
+| 101.8 | 2361 |
+| 101.8 | 2441 |
+| 100.5 | 2431 |
+| 103.1 | 2502 |
+| 102 | 2526 |
+| 101.5 | 2582 |
+| 101.1 | 2655 |
+| 102.1 | 2649 |
+| 103 | 2630 |
+| 101.9 | 2565 |
+| 102 | 2695 |
+| 102.3 | 2592 |
+| 101.6 | 2630 |
+| 103.5 | 2612 |
+| 102.8 | 2525 |
+| 102.8 | 2582 |
+| 101.9 | 2534 |
+| 102.9 | 2553 |
+| 104.1 | 2676 |
+| 103 | 2680 |
+| 103.9 | 2628 |
+| 103.3 | 2592 |
+| 102.9 | 2490 |
+| 103.1 | 2479 |
+| 104.3 | 2575 |
+| 103.2 | 2562 |
+| 103 | 2463 |
+| 102 | 2501 |
+| 104.1 | 2408 |
+| 103.1 | 2479 |
+| 101.8 | 2449 |
+| 101.2 | 2475 |
+| 102.9 | 2512 |
+| 102.3 | 2587 |
+| 103.6 | 2499 |
+| 102.3 | 2451 |
+| 103.8 | 2545 |
+| 103.4 | 2552 |
+| 103.1 | 2683 |
+| 102.8 | 2657 |
+| 104.8 | 2746 |
+| 103.4 | 2855 |
+| 103.7 | 2835 |
+| 103.2 | 2759 |
+| 101.7 | 2619 |
+| 102.1 | 2687 |
+| 102 | 2682 |
+| 103.7 | 2708 |
+| 103.1 | 2618 |
+| 104.4 | 2660 |
+| 104 | 2634 |
+| 103.6 | 2731 |
+| 103.7 | 2654 |
+| 103.8 | 2680 |
+| 104.2 | 2663 |
+| 103.8 | 2650 |
+| 103.6 | 2653 |
+| 102.6 | 2598 |
+| 104.7 | 2665 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
 
 </details>
 
 ### `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441`
 
-PE CG, film with a 5 nm-radius cylindrical hole at 25 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_25C.data`). Stage now: hole (not started).
+PE CG, film with a 5 nm-radius cylindrical hole at 25 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_25C.data`). Status: finished: `hole_free`.
 
-No analysed properties yet; pending: hole not started. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6752,11 +25440,11 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 **Stages**
 
-- No runs found.
+- **`hole_free`** (rdyu-rog): finished; started 2026-11-11 21:12 UTC, ended 2026-11-14 00:25 UTC; reads `systems/pe_cg_hole_r5nm_25C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | hole: not started | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | finished: `hole_free` | no |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
 
@@ -6764,9 +25452,9 @@ No analysed properties yet; pending: hole not started. Equilibration: from `pe_c
 
 ### `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441`
 
-PE CG, film with a 6 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Stage now: `hole_free` (running, 82.3% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 22:33 UTC).
+PE CG, film with a 6 nm-radius cylindrical hole at 160 °C, 640 chains × C240, 51,200 beads; built from `pe_cg_pore_w5nm_n640_c240_s1_rep441` (`pore/hold_160C.data`). Status: finished: `hole_free_gap5nm` (cancelled/killed?, 18.4%), `hole_free`.
 
-No analysed properties yet; pending: `hole_free`: running, 82.3% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 22:33 UTC. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
+No analysed properties yet. Equilibration: from `pe_cg_pore_w5nm_n640_c240_s1_rep441` ← `pe_cg_pore500k_w12nm_n640_c240_s1_rep441` ← `pe_cg_amorph_n640_c240_s1_rep441`: D47 PASS; ACF 0.06 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 3.35; 80.0 ns at 500 K; accepted.
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6784,14 +25472,1217 @@ No analysed properties yet; pending: `hole_free`: running, 82.3% (2/3 segments, 
 
 **Stages**
 
-- **`hole_free_gap5nm`** (rdyu-rog): cancelled/killed?, 18.4%; started 2026-11-09 07:14 UTC
-- **`hole_free`** (rdyu-rog): running, 82.3% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 22:33 UTC; started 2026-11-09 19:02 UTC
+- **`hole_free_gap5nm`** (rdyu-rog): cancelled/killed?, 18.4%; started 2026-11-09 07:14 UTC; reads `systems/pe_cg_hole_r6nm_160C_n640_c240_s1_rep441/data.lmp`
+- **`hole_free`** (rdyu-rog): finished; started 2026-11-09 19:02 UTC, ended 2026-11-11 22:34 UTC; reads `systems/pe_cg_hole_r6nm_160C_n640_c240_s1_rep441/data.lmp`
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
 |---|---|---|---|---|---|---|---|
-| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | `hole_free`: running, 82.3% (2/3 segments, Stage 3: hold at 160 C); ETA 2026-11-11 22:33 UTC | no |
+| narrow | 5 nm (at 25 °C) | 4.69 nm | 6.5 nm | 25.8 × 25.8 nm (25 °C) | — | finished: `hole_free_gap5nm` (cancelled/killed?, 18.4%), `hole_free` | `hole_free` |
 
 γ here is the `sepsim progress` second-half mean ± SEM of each hold segment (γ = (L<sub>z</sub>/2)[P<sub>zz</sub> − (P<sub>xx</sub>+P<sub>yy</sub>)/2]).
+
+**`hole_free` analysis**
+
+Pore analysis (`sepsim analyze pore`, generated — on —):
+
+- `film_thickness_angstrom`: 66.59
+- `free_shell.areal_density_ratio`: 0.2484
+- `free_shell.msd.1 ns`: 565.3
+- `free_shell.msd.10 ns`: 1620
+- `free_shell.msd.end`: 2862
+- `free_shell.msd.end_ns`: 20
+- `params.hole_grid_c`: 
+- `params.hole_hold_ps`: 2e+04
+- `params.release_t_c`: none
+- `params.scaffold_d_nm`: 2.5
+- `params.scaffold_hold_ps`: 0
+- `params.scaffold_k`: 5
+- `params.wall_hold_ps`: 1e+04
+- `plateau.r_eff`: 87.58
+- `plateau.r_eff_sd`: 1.106
+- `plateau.r_min`: 77.96
+- T (°C): 160
+- `thickness_final`: 106.8
+- `thickness_t0`: 98.2
+
+`frames`:
+
+| `thickness` | `shell_msd` |
+|---|---|
+| 67.26 | — |
+| 67.21 | — |
+| 67.75 | — |
+| 67.25 | — |
+| 67.78 | — |
+| 66.96 | — |
+| 67.21 | — |
+| 67.01 | — |
+| 67.39 | — |
+| 67.27 | — |
+| 66.93 | — |
+| 67.56 | — |
+| 67.03 | — |
+| 66.9 | — |
+| 67.06 | — |
+| 67.41 | — |
+| 67.47 | — |
+| 67.54 | — |
+| 67.41 | — |
+| 67.59 | — |
+| 67.56 | — |
+| 67.6 | — |
+| 67.19 | — |
+| 67.65 | — |
+| 67.46 | — |
+| 67.21 | — |
+| 67.72 | — |
+| 67.59 | — |
+| 67.47 | — |
+| 67.68 | — |
+| 67.47 | — |
+| 67.34 | — |
+| 67.77 | — |
+| 67.93 | — |
+| 68.3 | — |
+| 67.81 | — |
+| 68.32 | — |
+| 68.32 | — |
+| 68.12 | — |
+| 68.55 | — |
+| 67.69 | — |
+| 67.61 | — |
+| 68.24 | — |
+| 68.91 | — |
+| 68.8 | — |
+| 68.29 | — |
+| 68.07 | — |
+| 68.61 | — |
+| 68.59 | — |
+| 68.53 | — |
+| 68.65 | — |
+| 68.63 | — |
+| 68.85 | — |
+| 68.49 | — |
+| 68.69 | — |
+| 69.17 | — |
+| 69.14 | — |
+| 69.19 | — |
+| 69.28 | — |
+| 69.47 | — |
+| 69.25 | — |
+| 69.29 | — |
+| 68.91 | — |
+| 69.07 | — |
+| 69.38 | — |
+| 69.36 | — |
+| 69.27 | — |
+| 69.23 | — |
+| 69.56 | — |
+| 69.75 | — |
+| 69.93 | — |
+| 69.73 | — |
+| 70.24 | — |
+| 70.15 | — |
+| 69.83 | — |
+| 71.28 | — |
+| 71.16 | — |
+| 70.89 | — |
+| 71.18 | — |
+| 70.9 | — |
+| 71.26 | — |
+| 70.87 | — |
+| 71 | — |
+| 70.81 | — |
+| 71.38 | — |
+| 71.6 | — |
+| 71.42 | — |
+| 71.54 | — |
+| 71.5 | — |
+| 71.9 | — |
+| 72.62 | — |
+| 72.46 | — |
+| 72.64 | — |
+| 72.31 | — |
+| 72.93 | — |
+| 72.94 | — |
+| 72.59 | — |
+| 72.51 | — |
+| 73.06 | — |
+| 73.06 | — |
+| 73.23 | — |
+| 72.74 | — |
+| 72.99 | — |
+| 73.16 | — |
+| 73.3 | — |
+| 73.43 | — |
+| 73.22 | — |
+| 73.98 | — |
+| 74.1 | — |
+| 73.75 | — |
+| 73.69 | — |
+| 73.94 | — |
+| 74.24 | — |
+| 74.35 | — |
+| 74.06 | — |
+| 74.88 | — |
+| 74.64 | — |
+| 74.25 | — |
+| 74.57 | — |
+| 75.3 | — |
+| 75.19 | — |
+| 75.21 | — |
+| 75.21 | — |
+| 75.92 | — |
+| 75.42 | — |
+| 75.22 | — |
+| 75.81 | — |
+| 75.84 | — |
+| 76.4 | — |
+| 76.38 | — |
+| 76.67 | — |
+| 76.65 | — |
+| 77.23 | — |
+| 76.65 | — |
+| 76.15 | — |
+| 77.25 | — |
+| 76.66 | — |
+| 76.99 | — |
+| 77.37 | — |
+| 78.21 | — |
+| 78.66 | — |
+| 78.47 | — |
+| 78.57 | — |
+| 77.74 | — |
+| 78.53 | — |
+| 78.99 | — |
+| 79.18 | — |
+| 79.08 | — |
+| 79.19 | — |
+| 78.69 | — |
+| 79.57 | — |
+| 80.24 | — |
+| 80.38 | — |
+| 80.7 | — |
+| 80.36 | — |
+| 80.51 | — |
+| 80.92 | — |
+| 81.07 | — |
+| 81.77 | — |
+| 81.96 | — |
+| 81.68 | — |
+| 81.43 | — |
+| 82.06 | — |
+| 82.42 | — |
+| 82.12 | — |
+| 82.84 | — |
+| 83.11 | — |
+| 83.17 | — |
+| 82.17 | — |
+| 82.01 | — |
+| 82.72 | — |
+| 82.44 | — |
+| 82.31 | — |
+| 83.14 | — |
+| 83.04 | — |
+| 83.14 | — |
+| 83.76 | — |
+| 83.81 | — |
+| 84.5 | — |
+| 84.29 | — |
+| 84.34 | — |
+| 85.09 | — |
+| 85.43 | — |
+| 85.68 | — |
+| 86.29 | — |
+| 85.8 | — |
+| 85.96 | — |
+| 85.37 | — |
+| 84.64 | — |
+| 85.17 | — |
+| 85.65 | — |
+| 85.67 | — |
+| 85.32 | — |
+| 85.49 | — |
+| 86.27 | — |
+| 87.24 | — |
+| 86.82 | — |
+| 87.3 | — |
+| 87.54 | — |
+| 86.53 | — |
+| 87.22 | — |
+| 87.44 | — |
+| 87.82 | — |
+| 87.91 | — |
+| 88.13 | — |
+| 88.45 | — |
+| 87.7 | — |
+| 87.74 | — |
+| 88.35 | — |
+| 89.01 | — |
+| 88.24 | — |
+| 89.09 | — |
+| 88.76 | — |
+| 88.29 | — |
+| 88.58 | — |
+| 87.87 | — |
+| 88.56 | — |
+| 88.72 | — |
+| 88.9 | — |
+| 88.95 | — |
+| 88.57 | — |
+| 88.23 | — |
+| 88.47 | — |
+| 89.01 | — |
+| 89.36 | — |
+| 90.37 | — |
+| 89.59 | — |
+| 89.95 | — |
+| 89.85 | — |
+| 90.11 | — |
+| 90.64 | — |
+| 91.03 | — |
+| 90.27 | — |
+| 91.06 | — |
+| 90.34 | — |
+| 90.22 | — |
+| 91.05 | — |
+| 90.86 | — |
+| 90.98 | — |
+| 91.31 | — |
+| 90.43 | — |
+| 90.32 | — |
+| 89.95 | — |
+| 90.63 | — |
+| 90.9 | — |
+| 90.9 | — |
+| 91.51 | — |
+| 91.59 | — |
+| 91.51 | — |
+| 90.7 | — |
+| 90.49 | — |
+| 91.84 | — |
+| 91.57 | — |
+| 91.41 | — |
+| 90.62 | — |
+| 91.51 | — |
+| 90.7 | — |
+| 91.97 | — |
+| 90.88 | — |
+| 92.6 | — |
+| 93.18 | — |
+| 92.28 | — |
+| 92.19 | — |
+| 92.29 | — |
+| 91.89 | — |
+| 92.37 | — |
+| 91.62 | — |
+| 91.15 | — |
+| 91.32 | — |
+| 90.99 | — |
+| 91.22 | — |
+| 90.21 | — |
+| 91.26 | — |
+| 91.46 | — |
+| 93.67 | — |
+| 92.21 | — |
+| 92.62 | — |
+| 93.25 | — |
+| 93.21 | — |
+| 92.17 | — |
+| 92.67 | — |
+| 92.89 | — |
+| 92.82 | — |
+| 92.25 | — |
+| 92.02 | — |
+| 92.02 | — |
+| 91.51 | — |
+| 92.67 | — |
+| 92.92 | — |
+| 93.15 | — |
+| 93.95 | — |
+| 92.1 | — |
+| 93.33 | — |
+| 93.27 | — |
+| 92.92 | — |
+| 92.9 | — |
+| 93.34 | — |
+| 92.23 | — |
+| 93.16 | — |
+| 92.33 | — |
+| 93.18 | — |
+| 93.27 | — |
+| 92.98 | — |
+| 93.18 | — |
+| 94.54 | — |
+| 94.31 | — |
+| 94.83 | — |
+| 94.51 | — |
+| 94.65 | — |
+| 93.84 | — |
+| 93.06 | — |
+| 92.86 | — |
+| 93.19 | — |
+| 94.05 | — |
+| 92.26 | — |
+| 93.32 | — |
+| 93.63 | — |
+| 93.22 | — |
+| 93.04 | — |
+| 93.32 | — |
+| 93.63 | — |
+| 93.91 | — |
+| 93.76 | — |
+| 94.36 | — |
+| 94.48 | — |
+| 93.94 | — |
+| 93.95 | — |
+| 93.75 | — |
+| 93.6 | — |
+| 94.25 | — |
+| 94.82 | — |
+| 93.35 | — |
+| 94.35 | — |
+| 94.31 | — |
+| 95.1 | — |
+| 94.9 | — |
+| 95.15 | — |
+| 95.53 | — |
+| 95.36 | — |
+| 95.93 | — |
+| 94.88 | — |
+| 93.74 | — |
+| 94.96 | — |
+| 94.84 | — |
+| 95.08 | — |
+| 96.37 | — |
+| 96.41 | — |
+| 95.84 | — |
+| 95.69 | — |
+| 95.51 | — |
+| 93.98 | — |
+| 94.57 | — |
+| 95.56 | — |
+| 94.26 | — |
+| 95.89 | — |
+| 95.15 | — |
+| 95.11 | — |
+| 95.08 | — |
+| 95.44 | — |
+| 94.93 | — |
+| 94.57 | — |
+| 95.02 | — |
+| 94.69 | — |
+| 93.65 | — |
+| 93.52 | — |
+| 93.89 | — |
+| 96.22 | — |
+| 95.48 | — |
+| 95.5 | — |
+| 94.79 | — |
+| 95.55 | — |
+| 96.16 | — |
+| 97.27 | — |
+| 97.34 | — |
+| 97.22 | — |
+| 98.24 | — |
+| 98.14 | — |
+| 97.82 | — |
+| 96.35 | — |
+| 97.12 | — |
+| 97.32 | — |
+| 97.64 | — |
+| 97.92 | — |
+| 96.12 | — |
+| 96.74 | — |
+| 97.01 | — |
+| 97.04 | — |
+| 97.8 | — |
+| 98.5 | — |
+| 97.1 | — |
+| 98.43 | — |
+| 98.42 | — |
+| 97.46 | — |
+| 96.63 | — |
+| 96.69 | — |
+| 97.44 | — |
+| 97.97 | — |
+| 99.27 | — |
+| 98.41 | — |
+| 98.59 | — |
+| 98.2 | 0 |
+| 98.33 | 26.23 |
+| 98.86 | 42.43 |
+| 98.2 | 57.38 |
+| 97.54 | 68.82 |
+| 97.65 | 77.65 |
+| 97.6 | 86.06 |
+| 96.31 | 95.61 |
+| 96.99 | 103.3 |
+| 96.47 | 112 |
+| 96.64 | 118.8 |
+| 96.93 | 125.8 |
+| 96.5 | 126.4 |
+| 96.9 | 134.8 |
+| 97.02 | 135.9 |
+| 96.29 | 147.5 |
+| 95.81 | 155.2 |
+| 96.71 | 162.9 |
+| 96.96 | 173.4 |
+| 95.97 | 176.8 |
+| 95.98 | 180.7 |
+| 97.1 | 185.4 |
+| 97.28 | 194.5 |
+| 97.47 | 194.7 |
+| 96.62 | 198.9 |
+| 96.12 | 201.3 |
+| 96.62 | 211 |
+| 96.85 | 218.2 |
+| 97.67 | 219.3 |
+| 97.57 | 220.3 |
+| 97.74 | 231.5 |
+| 97.06 | 242.6 |
+| 97.48 | 248.9 |
+| 97.29 | 254.3 |
+| 96.7 | 259 |
+| 97.64 | 266 |
+| 97.42 | 274.2 |
+| 97.12 | 274.2 |
+| 97.8 | 266.6 |
+| 97.05 | 270 |
+| 97.37 | 262.1 |
+| 97.02 | 260.4 |
+| 97.5 | 262.2 |
+| 97.19 | 263 |
+| 96.3 | 260.7 |
+| 97.55 | 259.6 |
+| 97.69 | 268.6 |
+| 97.37 | 273.8 |
+| 97.88 | 280 |
+| 97.46 | 282.3 |
+| 97.08 | 289.6 |
+| 96.51 | 298.9 |
+| 96.31 | 299.8 |
+| 96.79 | 307.7 |
+| 96.39 | 313.8 |
+| 96.45 | 310.5 |
+| 96.72 | 311.8 |
+| 96.87 | 309.6 |
+| 96.39 | 308.8 |
+| 96.29 | 309.3 |
+| 96.43 | 310.7 |
+| 96.12 | 314.5 |
+| 96.78 | 321.4 |
+| 97.21 | 320.5 |
+| 96.67 | 326.6 |
+| 97.96 | 329.1 |
+| 97.77 | 336.7 |
+| 98.02 | 334.5 |
+| 97.71 | 337.4 |
+| 97.6 | 343.1 |
+| 98.37 | 346 |
+| 98.66 | 350 |
+| 98.18 | 345.5 |
+| 98.19 | 341.2 |
+| 97.72 | 334.7 |
+| 97.02 | 335.1 |
+| 97.32 | 335.6 |
+| 96.9 | 331.8 |
+| 96.97 | 336.8 |
+| 96.53 | 339.1 |
+| 96.67 | 337.5 |
+| 96.63 | 342.8 |
+| 97.22 | 345.4 |
+| 97.55 | 344.2 |
+| 96.88 | 344 |
+| 97.15 | 355.9 |
+| 96.88 | 355.8 |
+| 97.49 | 362.4 |
+| 98.03 | 362.7 |
+| 97.58 | 366 |
+| 97.56 | 367.4 |
+| 97.05 | 371.6 |
+| 97.8 | 373.2 |
+| 97.17 | 371.4 |
+| 97.14 | 368.1 |
+| 97.08 | 364.1 |
+| 97.24 | 370.2 |
+| 97.22 | 379.8 |
+| 97.18 | 383.3 |
+| 97.34 | 387 |
+| 97.09 | 378.9 |
+| 97.22 | 381.2 |
+| 97.28 | 385.5 |
+| 96.59 | 391.8 |
+| 96.73 | 392.7 |
+| 96.51 | 392.8 |
+| 95.89 | 397.6 |
+| 97.03 | 404.6 |
+| 96.44 | 409.7 |
+| 97.07 | 418.1 |
+| 96.54 | 428.4 |
+| 96.21 | 433 |
+| 95.65 | 431.3 |
+| 96.24 | 437.2 |
+| 96.55 | 428.3 |
+| 95.84 | 430.6 |
+| 96.61 | 434 |
+| 96.81 | 434.9 |
+| 95.5 | 442.5 |
+| 95.89 | 442.3 |
+| 95.97 | 440.3 |
+| 97.2 | 436.1 |
+| 97.15 | 436.7 |
+| 97.3 | 438.7 |
+| 98.21 | 434.2 |
+| 97.08 | 437.1 |
+| 96.76 | 442.6 |
+| 97.2 | 445.2 |
+| 97.24 | 451.7 |
+| 96.95 | 455.4 |
+| 97.49 | 463.1 |
+| 97.35 | 465.7 |
+| 97.34 | 459.7 |
+| 97.37 | 458.4 |
+| 96.08 | 456.5 |
+| 96.53 | 461.5 |
+| 96.16 | 469.7 |
+| 97.21 | 467.9 |
+| 96.58 | 463.5 |
+| 96.47 | 466.2 |
+| 95.79 | 465.5 |
+| 96.32 | 459.7 |
+| 96.26 | 467.7 |
+| 96.59 | 478.9 |
+| 96.31 | 477.4 |
+| 96.4 | 482.8 |
+| 96.94 | 484.3 |
+| 96.16 | 487.7 |
+| 96.12 | 482.1 |
+| 96.06 | 486.6 |
+| 96.77 | 487.8 |
+| 96.38 | 481.5 |
+| 96.23 | 475.4 |
+| 96.8 | 472.5 |
+| 96.59 | 480.5 |
+| 96.9 | 488.4 |
+| 96.86 | 489.4 |
+| 95.99 | 486 |
+| 96.49 | 492.5 |
+| 95.84 | 487.8 |
+| 96.32 | 492.2 |
+| 96.41 | 492.3 |
+| 97.33 | 501.1 |
+| 96.69 | 503.6 |
+| 96.35 | 516.6 |
+| 97.17 | 516.7 |
+| 96.42 | 511.8 |
+| 96.56 | 512.5 |
+| 96.75 | 514.6 |
+| 96.56 | 515.4 |
+| 96.83 | 517.4 |
+| 96.95 | 523.7 |
+| 96.19 | 522 |
+| 96.62 | 529.4 |
+| 96.92 | 535.7 |
+| 96.47 | 541.4 |
+| 97.09 | 543.5 |
+| 96.89 | 539 |
+| 96.36 | 542.5 |
+| 95.81 | 548.6 |
+| 96.3 | 551.5 |
+| 96.83 | 555.3 |
+| 97.65 | 556.8 |
+| 96.86 | 552.3 |
+| 96.8 | 541.5 |
+| 96.53 | 552.9 |
+| 96.84 | 554.8 |
+| 96.26 | 552.5 |
+| 97.58 | 560.7 |
+| 97.03 | 565.7 |
+| 97.87 | 561.2 |
+| 97.77 | 559.6 |
+| 96.68 | 559.4 |
+| 96.92 | 565.1 |
+| 96.79 | 564.9 |
+| 97.03 | 570.2 |
+| 97.66 | 579 |
+| 97.73 | 580 |
+| 97.2 | 568.9 |
+| 97.19 | 564.9 |
+| 97.92 | 565.3 |
+| 97.43 | 566.3 |
+| 97.59 | 567.4 |
+| 97.43 | 577.2 |
+| 97.13 | 579.5 |
+| 97.41 | 581.2 |
+| 97.58 | 586.4 |
+| 97.23 | 583.2 |
+| 97.52 | 583.1 |
+| 98.16 | 581.3 |
+| 97.47 | 581.8 |
+| 98.32 | 589.3 |
+| 97.59 | 588.5 |
+| 97.05 | 592.8 |
+| 96.44 | 592.5 |
+| 97.38 | 590.2 |
+| 97.21 | 594.3 |
+| 96.92 | 598.9 |
+| 97.26 | 603.4 |
+| 97.42 | 602.9 |
+| 96.9 | 606.5 |
+| 96.76 | 607 |
+| 96.93 | 616.6 |
+| 97.29 | 610.6 |
+| 97.01 | 605.2 |
+| 97.25 | 603.8 |
+| 97.05 | 602.2 |
+| 96.88 | 602.7 |
+| 97.07 | 599.5 |
+| 96.95 | 606.2 |
+| 96.38 | 606.7 |
+| 96.59 | 611.8 |
+| 97.36 | 612.1 |
+| 97.85 | 611.5 |
+| 97.72 | 617.1 |
+| 97.75 | 630.1 |
+| 97.49 | 624.7 |
+| 96.95 | 623.6 |
+| 97.17 | 623.8 |
+| 97.49 | 629.4 |
+| 97.01 | 628.7 |
+| 97.31 | 633.1 |
+| 97.61 | 634.1 |
+| 97.2 | 632.8 |
+| 96.68 | 628.9 |
+| 97.04 | 631.9 |
+| 96.78 | 631.1 |
+| 97.21 | 636.8 |
+| 97.48 | 637.4 |
+| 97.45 | 630 |
+| 97.47 | 635.6 |
+| 97.16 | 630.5 |
+| 96.53 | 623.4 |
+| 97.07 | 626.5 |
+| 96.08 | 628.6 |
+| 96.22 | 626.5 |
+| 96.55 | 641.3 |
+| 96.71 | 643.3 |
+| 96.95 | 642.5 |
+| 97.15 | 638.2 |
+| 97.46 | 643.6 |
+| 98.2 | 643.4 |
+| 97.73 | 651 |
+| 97.34 | 647.5 |
+| 97.27 | 650.3 |
+| 97.21 | 651.4 |
+| 97.65 | 662.4 |
+| 97.54 | 666.7 |
+| 97.52 | 672.5 |
+| 97.42 | 676.8 |
+| 97.71 | 676.3 |
+| 97.63 | 691.9 |
+| 97.85 | 695.7 |
+| 97.32 | 696.6 |
+| 96.36 | 687 |
+| 96.59 | 687.1 |
+| 97.14 | 686.1 |
+| 96.78 | 690.9 |
+| 96.81 | 689.7 |
+| 96.78 | 685 |
+| 96.78 | 685.7 |
+| 96.99 | 676.6 |
+| 96.24 | 670.2 |
+| 96.8 | 665.4 |
+| 97.01 | 668.7 |
+| 96.62 | 667.9 |
+| 96.87 | 664.1 |
+| 97.26 | 669.5 |
+| 97.22 | 675 |
+| 96.58 | 675.8 |
+| 97.35 | 667.3 |
+| 97.64 | 659 |
+| 97.02 | 655.6 |
+| 97.1 | 661.7 |
+| 96.95 | 659.1 |
+| 96.95 | 654.7 |
+| 96.47 | 658.9 |
+| 97.34 | 659.8 |
+| 97.42 | 657.4 |
+| 97.18 | 662 |
+| 97.39 | 668.8 |
+| 98.42 | 667.6 |
+| 99.03 | 666.1 |
+| 98.23 | 664.7 |
+| 98.75 | 665.9 |
+| 98.71 | 680.9 |
+| 98.31 | 677.2 |
+| 98 | 674.6 |
+| 98.16 | 674.4 |
+| 97.98 | 670.7 |
+| 97.8 | 668.3 |
+| 98.82 | 662.9 |
+| 98.54 | 663.6 |
+| 98.53 | 665.6 |
+| 98.08 | 667.6 |
+| 97.8 | 664.5 |
+| 97.69 | 656.7 |
+| 97.3 | 649.1 |
+| 96.67 | 636.8 |
+| 97.04 | 645 |
+| 96.88 | 646.8 |
+| 96.83 | 636.9 |
+| 96.9 | 636.9 |
+| 96.57 | 643.3 |
+| 97.08 | 641.4 |
+| 97.16 | 636.3 |
+| 95.71 | 634.6 |
+| 97 | 641.1 |
+| 97.18 | 637.2 |
+| 96.76 | 631.3 |
+| 96.97 | 634.1 |
+| 96.81 | 628.6 |
+| 97.65 | 636 |
+| 97.72 | 631.7 |
+| 97.75 | 634.5 |
+| 97.76 | 633.6 |
+| 97.13 | 643.1 |
+| 97.24 | 647.3 |
+| 97.41 | 650.8 |
+| 96.82 | 651.2 |
+| 96.98 | 641.9 |
+| 97.08 | 645.6 |
+| 96.02 | 643 |
+| 96.64 | 640.7 |
+| 96.88 | 647 |
+| 96.71 | 643.1 |
+| 96.15 | 644.3 |
+| 96.55 | 653.3 |
+| 96.37 | 656.8 |
+| 96.07 | 653.7 |
+| 96.61 | 664.9 |
+| 96.14 | 663.5 |
+| 96.63 | 671.4 |
+| 97.42 | 676.7 |
+| 96.87 | 687.5 |
+| 97.71 | 693.6 |
+| 98.25 | 692.6 |
+| 98.01 | 695.2 |
+| 98.38 | 707.4 |
+| 98.28 | 704.8 |
+| 98.66 | 704.7 |
+| 98.38 | 706.5 |
+| 97.97 | 719.1 |
+| 98.06 | 727.8 |
+| 98.69 | 725.9 |
+| 98.49 | 727.6 |
+| 98 | 723.1 |
+| 98.27 | 714.2 |
+| 98.02 | 700.5 |
+| 97.48 | 690.8 |
+| 97.9 | 684.6 |
+| 97.64 | 678.1 |
+| 97.21 | 681.3 |
+| 96.94 | 682.9 |
+| 97.11 | 693.9 |
+| 96.76 | 688.4 |
+| 97.12 | 679.5 |
+| 97.04 | 683.4 |
+| 97.11 | 689.8 |
+| 97.62 | 692.2 |
+| 97.9 | 691.9 |
+| 97.24 | 690.7 |
+| 97.4 | 689 |
+| 97.22 | 695.7 |
+| 97.37 | 693.9 |
+| 97.23 | 687.5 |
+| 97.83 | 682.7 |
+| 96.81 | 680.5 |
+| 96.82 | 679.1 |
+| 96.82 | 682.8 |
+| 96.21 | 680.4 |
+| 96.29 | 685.6 |
+| 96.7 | 671.5 |
+| 96.5 | 673.9 |
+| 97.29 | 682.5 |
+| 96.92 | 684.3 |
+| 97.07 | 693.7 |
+| 96.94 | 699.9 |
+| 97.3 | 696.7 |
+| 96.7 | 697.3 |
+| 97.21 | 700.8 |
+| 98.06 | 729.4 |
+| 96.87 | 729.2 |
+| 97.41 | 762 |
+| 97.34 | 760.5 |
+| 99 | 771.7 |
+| 98.57 | 805.3 |
+| 98.89 | 804.6 |
+| 97.82 | 804.8 |
+| 99.19 | 837.4 |
+| 99.05 | 828.2 |
+| 99.21 | 862.8 |
+| 99.16 | 858.7 |
+| 97.77 | 837.7 |
+| 98.19 | 836.5 |
+| 97.82 | 849.3 |
+| 98.05 | 839.6 |
+| 97.15 | 848 |
+| 98.88 | 869.6 |
+| 99.08 | 906.5 |
+| 98.83 | 883.5 |
+| 98.92 | 920.3 |
+| 98.92 | 898.3 |
+| 97.72 | 915.3 |
+| 98.27 | 920.8 |
+| 98.39 | 916.3 |
+| 98.65 | 921.1 |
+| 98.61 | 925.6 |
+| 97.92 | 949.7 |
+| 97.66 | 976.4 |
+| 99.09 | 995.8 |
+| 97.82 | 978.5 |
+| 97.9 | 972.3 |
+| 98.32 | 999.1 |
+| 98.89 | 998.2 |
+| 98.2 | 1019 |
+| 97.34 | 1026 |
+| 97.48 | 1018 |
+| 98.3 | 1045 |
+| 97.58 | 1021 |
+| 98.65 | 1043 |
+| 99.19 | 1042 |
+| 98.81 | 1029 |
+| 98.72 | 1016 |
+| 98.9 | 1076 |
+| 100.3 | 1119 |
+| 100 | 1098 |
+| 99.34 | 1090 |
+| 100 | 1128 |
+| 99.2 | 1127 |
+| 99.75 | 1143 |
+| 99.93 | 1168 |
+| 99.84 | 1191 |
+| 99.95 | 1176 |
+| 99.11 | 1182 |
+| 99.09 | 1190 |
+| 98.9 | 1163 |
+| 99.53 | 1166 |
+| 99.35 | 1180 |
+| 99.56 | 1185 |
+| 98.31 | 1165 |
+| 99.53 | 1180 |
+| 100.3 | 1171 |
+| 99.37 | 1176 |
+| 97.83 | 1116 |
+| 97.7 | 1109 |
+| 99.65 | 1150 |
+| 98.24 | 1136 |
+| 99.58 | 1165 |
+| 97.94 | 1152 |
+| 100.1 | 1200 |
+| 98.7 | 1165 |
+| 100 | 1192 |
+| 98.88 | 1205 |
+| 98.91 | 1200 |
+| 98.52 | 1235 |
+| 99.42 | 1250 |
+| 99.32 | 1269 |
+| 100.2 | 1309 |
+| 100.7 | 1283 |
+| 99.44 | 1221 |
+| 99.41 | 1224 |
+| 100.6 | 1206 |
+| 99.46 | 1196 |
+| 99.11 | 1224 |
+| 99.05 | 1256 |
+| 98.98 | 1268 |
+| 100.1 | 1266 |
+| 98.85 | 1260 |
+| 99.26 | 1278 |
+| 100.9 | 1338 |
+| 101.4 | 1332 |
+| 100.9 | 1332 |
+| 100.9 | 1338 |
+| 102.1 | 1401 |
+| 101.5 | 1425 |
+| 100.5 | 1373 |
+| 99.46 | 1349 |
+| 102.1 | 1387 |
+| 102.3 | 1403 |
+| 102.4 | 1388 |
+| 100.8 | 1361 |
+| 101 | 1404 |
+| 100.5 | 1366 |
+| 99.55 | 1380 |
+| 99.1 | 1370 |
+| 99.34 | 1385 |
+| 101.5 | 1431 |
+| 100 | 1407 |
+| 100 | 1453 |
+| 100.1 | 1475 |
+| 101 | 1474 |
+| 101.3 | 1519 |
+| 100.3 | 1508 |
+| 98.76 | 1500 |
+| 100.5 | 1466 |
+| 99.53 | 1486 |
+| 99.75 | 1500 |
+| 100.3 | 1531 |
+| 98.75 | 1499 |
+| 99.69 | 1517 |
+| 99.43 | 1564 |
+| 100.2 | 1568 |
+| 99.73 | 1568 |
+| 98.68 | 1513 |
+| 100.5 | 1515 |
+| 99.51 | 1522 |
+| 100.3 | 1552 |
+| 100 | 1495 |
+| 98.48 | 1482 |
+| 100.1 | 1489 |
+| 98.87 | 1550 |
+| 98.84 | 1523 |
+| 99.93 | 1574 |
+| 100.5 | 1568 |
+| 100.5 | 1552 |
+| 99.51 | 1530 |
+| 99.99 | 1558 |
+| 98.8 | 1549 |
+| 98.16 | 1602 |
+| 100.2 | 1612 |
+| 99.52 | 1633 |
+| 98.96 | 1616 |
+| 100.4 | 1646 |
+| 99.98 | 1651 |
+| 100.3 | 1669 |
+| 101.7 | 1668 |
+| 100.9 | 1685 |
+| 101.3 | 1698 |
+| 103.1 | 1696 |
+| 100.9 | 1624 |
+| 101.4 | 1620 |
+| 99.99 | 1603 |
+| 100.4 | 1634 |
+| 100.6 | 1652 |
+| 99.97 | 1664 |
+| 100 | 1655 |
+| 99.58 | 1664 |
+| 101.1 | 1644 |
+| 100.6 | 1611 |
+| 102.3 | 1620 |
+| 102.3 | 1640 |
+| 102.9 | 1634 |
+| 102.3 | 1696 |
+| 104.1 | 1716 |
+| 102.8 | 1723 |
+| 100.9 | 1719 |
+| 100.8 | 1708 |
+| 100.8 | 1739 |
+| 101.7 | 1754 |
+| 100.8 | 1756 |
+| 101.3 | 1752 |
+| 99.74 | 1726 |
+| 101.2 | 1726 |
+| 100.8 | 1711 |
+| 101.6 | 1769 |
+| 101.3 | 1719 |
+| 101.9 | 1695 |
+| 100.4 | 1672 |
+| 99.92 | 1668 |
+| 101.2 | 1695 |
+| 99.79 | 1658 |
+| 100.6 | 1684 |
+| 100.5 | 1662 |
+| 99.45 | 1667 |
+| 101.9 | 1730 |
+| 101.9 | 1696 |
+| 100.7 | 1684 |
+| 99.84 | 1686 |
+| 100.7 | 1713 |
+| 100.2 | 1736 |
+| 101 | 1738 |
+| 101 | 1712 |
+| 101.1 | 1718 |
+| 101.1 | 1764 |
+| 100.7 | 1759 |
+| 101.3 | 1757 |
+| 102.4 | 1803 |
+| 102.4 | 1812 |
+| 103.5 | 1823 |
+| 102 | 1876 |
+| 102 | 1848 |
+| 102.5 | 1838 |
+| 101.3 | 1838 |
+| 101.1 | 1787 |
+| 101.4 | 1827 |
+| 101.2 | 1843 |
+| 100.7 | 1834 |
+| 102.5 | 1867 |
+| 102 | 1892 |
+| 101.2 | 1856 |
+| 103.8 | 1836 |
+| 103.6 | 1949 |
+| 102.6 | 1906 |
+| 101.9 | 1932 |
+| 101.7 | 1920 |
+| 101.6 | 1916 |
+| 101.7 | 1901 |
+| 101.7 | 1927 |
+| 102 | 1934 |
+| 103.9 | 1935 |
+| 102.7 | 1937 |
+| 102.5 | 1951 |
+| 101.8 | 1953 |
+| 102.7 | 1993 |
+| 102.8 | 2009 |
+| 103 | 2046 |
+| 103.1 | 2035 |
+| 103 | 2053 |
+| 102.8 | 2077 |
+| 103.5 | 2064 |
+| 102.8 | 2121 |
+| 101.7 | 2128 |
+| 101.5 | 2129 |
+| 104.2 | 2126 |
+| 101 | 2079 |
+| 100.6 | 2105 |
+| 102.6 | 2089 |
+| 101.9 | 2047 |
+| 102.1 | 2056 |
+| 100.5 | 2081 |
+| 101.9 | 2107 |
+| 103.1 | 2082 |
+| 102.5 | 2088 |
+| 101.5 | 2092 |
+| 102 | 2111 |
+| 102.1 | 2086 |
+| 100.6 | 2122 |
+| 103.1 | 2152 |
+| 102.9 | 2163 |
+| 102.5 | 2193 |
+| 102.8 | 2176 |
+| 102.4 | 2154 |
+| 101.9 | 2175 |
+| 103 | 2166 |
+| 102.2 | 2148 |
+| 102.6 | 2120 |
+| 103.2 | 2177 |
+| 103.1 | 2166 |
+| 102.3 | 2175 |
+| 104.2 | 2244 |
+| 103.4 | 2240 |
+| 103.9 | 2294 |
+| 103.9 | 2259 |
+| 103.8 | 2270 |
+| 104.5 | 2262 |
+| 103.8 | 2297 |
+| 102.2 | 2219 |
+| 102.3 | 2235 |
+| 103.9 | 2266 |
+| 103.4 | 2256 |
+| 103.1 | 2261 |
+| 102.8 | 2298 |
+| 103.5 | 2323 |
+| 103.3 | 2341 |
+| 102.6 | 2395 |
+| 103.8 | 2416 |
+| 104.8 | 2433 |
+| 104.8 | 2389 |
+| 104.2 | 2400 |
+| 102.5 | 2335 |
+| 102.5 | 2341 |
+| 103.7 | 2365 |
+| 105.2 | 2364 |
+| 103.8 | 2372 |
+| 103.7 | 2343 |
+| 103.2 | 2386 |
+| 105.5 | 2477 |
+| 103.7 | 2481 |
+| 103.7 | 2485 |
+| 103.5 | 2495 |
+| 103.3 | 2436 |
+| 103.2 | 2472 |
+| 103.8 | 2482 |
+| 102.9 | 2476 |
+| 104.2 | 2509 |
+| 104.7 | 2554 |
+| 104.1 | 2514 |
+| 103.8 | 2532 |
+| 104 | 2619 |
+| 104.1 | 2632 |
+| 103.5 | 2616 |
+| 103.9 | 2530 |
+| 103.2 | 2528 |
+| 104.8 | 2505 |
+| 103.4 | 2532 |
+| 104 | 2554 |
+| 102.7 | 2525 |
+| 103.7 | 2579 |
+| 103.4 | 2556 |
+| 103.7 | 2525 |
+| 104.6 | 2506 |
+| 104.8 | 2502 |
+| 104.1 | 2557 |
+| 103.3 | 2574 |
+| 103.8 | 2603 |
+| 104.4 | 2565 |
+| 104.1 | 2539 |
+| 103.9 | 2525 |
+| 102.6 | 2505 |
+| 103.1 | 2518 |
+| 102.9 | 2609 |
+| 103.4 | 2545 |
+| 102.7 | 2529 |
+| 103.5 | 2570 |
+| 104.5 | 2583 |
+| 104.4 | 2574 |
+| 105.3 | 2615 |
+| 106 | 2618 |
+| 105 | 2641 |
+| 105.1 | 2630 |
+| 105.5 | 2582 |
+| 105.7 | 2629 |
+| 106.5 | 2676 |
+| 104.4 | 2650 |
+| 104.8 | 2658 |
+| 104.8 | 2650 |
+| 105.3 | 2658 |
+| 106.2 | 2676 |
+| 106 | 2667 |
+| 105.3 | 2692 |
+| 105.8 | 2687 |
+| 105.8 | 2697 |
+| 106.2 | 2735 |
+| 107 | 2728 |
+| 107.2 | 2678 |
+| 108.2 | 2713 |
+| 106.3 | 2753 |
+| 106.4 | 2718 |
+| 106.8 | 2698 |
+| 106.8 | 2704 |
+| 106.6 | 2745 |
+| 107.6 | 2719 |
+| 105 | 2663 |
+| 105.2 | 2715 |
+| 104.6 | 2697 |
+| 107.7 | 2793 |
+| 106.1 | 2783 |
+| 106.4 | 2800 |
+| 106.9 | 2840 |
+| 106.8 | 2862 |
+
+`per_segment`:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
+Per segment:
+
+| `end_ns` | T (°C) |
+|---|---|
+| 20 | 160 |
+
 
 </details>
 
@@ -6845,7 +26736,7 @@ PE CG, 5 nm dry slit pore, 640 chains × C240, 51,200 beads; built from `pe_cg_p
 
 **Stages**
 
-- **pore** (rdyu-rog): finished; started 2026-11-06 14:43 UTC, ended 2026-11-09 07:03 UTC
+- **pore** (rdyu-rog): finished; started 2026-11-06 14:43 UTC, ended 2026-11-09 07:03 UTC; reads `systems/pe_cg_pore_w5nm_n640_c240_s1_rep441/data.lmp`
   - γ per hold (monitor, second half of each segment, mN/m): 25 °C 34.3 ± 0.5; 90 °C 30.5 ± 0.4; 130 °C 28.0 ± 0.1; 160 °C 26.3 ± 0.2
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
@@ -6927,6 +26818,398 @@ Per segment:
 
 </details>
 
+### `pe_ua_crystal_7x10x40_s1`
+
+PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 chains × C80, 11,200 united atoms; provenance not recorded. Status: finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C_r1e9`, `tensile_90C_r1e9`, `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`.
+
+| Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
+|---|---|---|---|---|---|---|---|
+| ρ (g/cm³) | 1.01447 ± 0.00047 | 0.99779 ± 0.00028 | 0.98689 ± 0.00006 | 0.97640 ± 0.00020 | 35 °C: 1.01239 ± 0.00024; 45 °C: 1.00893 ± 0.00011; 55 °C: 1.00593 ± 0.00007; 65 °C: 1.00354 ± 0.00006; 75 °C: 1.00280 ± 0.00031; 85 °C: 0.99926 ± 0.00011; 100 °C: 0.99474 ± 0.00013; 110 °C: 0.99257 ± 0.00010; 120 °C: 0.99076 ± 0.00054; 140 °C: 0.98367 ± 0.00009; 150 °C: 0.98024 ± 0.00041 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 2.791 ± 0.137; 35–65 °C: 2.948 ± 0.157; 75–110 °C: 2.936 ± 0.177; 120–150 °C: 3.537 ± 0.013 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| crystallinity (ordered-site fraction) | 1.000 | 1.000 | 0.999 | 0.998 | 35 °C: 1.000; 45 °C: 1.000; 55 °C: 1.000; 65 °C: 1.000; 75 °C: 1.000; 85 °C: 1.000; 100 °C: 1.000; 110 °C: 1.000; 120 °C: 1.000; 140 °C: 0.999; 150 °C: 0.999 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| E<sub>app</sub> (MPa), 10⁹ s⁻¹, mean ± SD | 4.11e+03 ± 276 | 3.17e+03 ± 242 | 3.03e+03 ± 343 | 2.58e+03 ± 125 | 3.13e+03 ± 224; 2.92e+03 ± 455; 2.84e+03 ± 506; 2.74e+03 ± 20; 2.68e+03 ± 14.5; 3.97e+03 ± 236; 3.61e+03 ± 455; 3.58e+03 ± 140; 3.38e+03 ± 32.3; 3.23e+03 ± 238; 3.21e+03 ± 367 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
+| ν, fit up to the E<sub>app</sub> strain, 10⁹ s⁻¹, mean ± SD | 0.25 ± 0.05 | 0.24 ± 0.13 | 0.27 ± 0.00 | 0.33 ± 0.04 | 0.26 ± 0.08; 0.24 ± 0.03; 0.29 ± 0.05; 0.22 ± 0.03; 0.28 ± 0.06; 0.26 ± 0.00; 0.31 ± 0.11; 0.23 ± 0.04; 0.31 ± 0.04; 0.24 ± 0.08; 0.19 ± 0.06 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
+| ν, whole run, 10⁹ s⁻¹, mean ± SD | 0.49 ± 0.02 | 0.47 ± 0.00 | 0.46 ± 0.01 | 0.43 ± 0.01 | 0.47 ± 0.01; 0.49 ± 0.04; 0.46 ± 0.00; 0.45 ± 0.00; 0.45 ± 0.01; 0.48 ± 0.01; 0.50 ± 0.02; 0.48 ± 0.01; 0.50 ± 0.03; 0.49 ± 0.02; 0.49 ± 0.02 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
+| σ<sub>peak</sub> (MPa), 10⁹ s⁻¹, mean ± SD | 3.1e+02 ± 40 | 2.6e+02 ± 33 | 2.1e+02 ± 13 | 1.4e+02 ± 12 | 2.4e+02 ± 13; 2.4e+02 ± 14; 2.4e+02 ± 25; 1.9e+02 ± 19; 1.6e+02 ± 24; 2.9e+02 ± 9.4; 2.8e+02 ± 29; 2.9e+02 ± 19; 2.7e+02 ± 29; 2.6e+02 ± 21; 2.6e+02 ± 25 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
+| ε<sub>peak</sub>, 10⁹ s⁻¹, mean ± SD | 0.137 ± 0.013 | 0.120 ± 0.009 | 0.101 ± 0.009 | 0.091 ± 0.006 | 0.119 ± 0.011; 0.118 ± 0.011; 0.116 ± 0.006; 0.090 ± 0.006; 0.089 ± 0.006; 0.306 ± 0.265; 0.127 ± 0.007; 0.307 ± 0.238; 0.125 ± 0.002; 0.125 ± 0.016; 0.122 ± 0.018 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
+| flow σ (MPa), 10⁹ s⁻¹, mean ± SD | 96 ± 11 | 69 ± 6.2 | 56 ± 4.8 | 43 ± 3.3 | 67 ± 6.8; 45 ± 30; 60 ± 6; 53 ± 6.4; 48 ± 3.5; 1.2e+02 ± 23; 63 ± 43; 1.2e+02 ± 40; 59 ± 40; 78 ± 3.9; 76 ± 0.21 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
+
+<details><summary>Full analysis tables and checks</summary>
+
+**Provenance**
+
+- PE UA, 140 chains × C80 (C80H160), 11,200 atoms/beads, force field `trappe_ua`, box density 0.9963 g/cm³ (as built)
+
+**Equilibration**
+
+- Verdict: crystal (no 500 K melt): 15/15 holds stable, 25–160 °C
+- C<sub>n</sub> plateau (D37): —
+
+**Stages**
+
+- **crystal** (rdyu-rog): finished; started 2026-11-17 13:48 UTC, ended 2026-11-18 06:36 UTC; reads `systems/pe_ua_crystal_7x10x40_s1/data.lmp`
+  - monitor flags: drift seg 5
+- **`crystal_fine_a`** (rdyu-rog): finished; started 2026-11-21 00:01 UTC, ended 2026-11-21 03:40 UTC; reads `systems/pe_ua_crystal_7x10x40_s1/data.lmp`
+  - monitor flags: drift seg 2
+- **`crystal_fine_b`** (rdyu-rog): finished; started 2026-11-21 03:40 UTC, ended 2026-11-21 07:19 UTC; reads `systems/pe_ua_crystal_7x10x40_s1/data.lmp`
+  - monitor flags: drift seg 2,3,4
+- **`crystal_fine_c`** (rdyu-rog): finished; started 2026-11-21 07:19 UTC, ended 2026-11-21 10:03 UTC; reads `systems/pe_ua_crystal_7x10x40_s1/data.lmp`
+  - monitor flags: drift seg 4
+- **`tensile_25C_r1e9`** (rdyu-rog): finished; started 2026-11-18 06:36 UTC, ended 2026-11-18 10:51 UTC; reads `../crystal/hold_25C.data`
+  - monitor flags: drift seg 1
+- **`tensile_90C_r1e9`** (rdyu-rog): finished; started 2026-11-18 10:51 UTC, ended 2026-11-18 15:01 UTC; reads `../crystal/hold_90C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_130C_r1e9`** (rdyu-rog): finished; started 2026-11-18 15:01 UTC, ended 2026-11-18 19:08 UTC; reads `../crystal/hold_130C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_160C_r1e9`** (rdyu-rog): finished; started 2026-11-18 19:08 UTC, ended 2026-11-18 23:17 UTC; reads `../crystal/hold_160C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_35C_r1e9`** (rdyu-rog): finished; started 2026-11-21 10:03 UTC, ended 2026-11-21 10:47 UTC; reads `../crystal_fine_a/hold_35C.data`
+  - monitor flags: drift seg 1
+- **`tensile_45C_r1e9`** (rdyu-rog): finished; started 2026-11-21 10:47 UTC, ended 2026-11-21 11:30 UTC; reads `../crystal_fine_a/hold_45C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_55C_r1e9`** (rdyu-rog): finished; started 2026-11-21 11:31 UTC, ended 2026-11-21 12:13 UTC; reads `../crystal_fine_a/hold_55C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_65C_r1e9`** (rdyu-rog): finished; started 2026-11-21 12:13 UTC, ended 2026-11-21 12:55 UTC; reads `../crystal_fine_a/hold_65C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_75C_r1e9`** (rdyu-rog): finished; started 2026-11-21 12:55 UTC, ended 2026-11-21 13:37 UTC; reads `../crystal_fine_b/hold_75C.data`
+  - monitor flags: drift seg 1
+- **`tensile_85C_r1e9`** (rdyu-rog): finished; started 2026-11-21 13:37 UTC, ended 2026-11-21 14:18 UTC; reads `../crystal_fine_b/hold_85C.data`
+  - monitor flags: drift seg 1
+- **`tensile_100C_r1e9`** (rdyu-rog): finished; started 2026-11-21 14:18 UTC, ended 2026-11-21 14:59 UTC; reads `../crystal_fine_b/hold_100C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_110C_r1e9`** (rdyu-rog): finished; started 2026-11-21 14:59 UTC, ended 2026-11-21 15:39 UTC; reads `../crystal_fine_b/hold_110C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_120C_r1e9`** (rdyu-rog): finished; started 2026-11-21 15:39 UTC, ended 2026-11-21 16:20 UTC; reads `../crystal_fine_c/hold_120C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_140C_r1e9`** (rdyu-rog): finished; started 2026-11-21 16:20 UTC, ended 2026-11-21 17:00 UTC; reads `../crystal_fine_c/hold_140C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_150C_r1e9`** (rdyu-rog): finished; started 2026-11-21 17:00 UTC, ended 2026-11-21 17:40 UTC; reads `../crystal_fine_c/hold_150C.data`
+  - monitor flags: drift seg 1,2
+
+**`crystal` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-20 17:28 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 25 | yes | 1.000 | 1.01447 ± 0.00047 | 7.877 ± 0.006 | 4.550 ± 0.003 | 2.5623 ± 9e-05 | `c_A`, density, `volume_A3`, `area_per_chain_A2` |
+| 90 | yes | 1.000 | 0.99779 ± 0.00028 | 7.952 ± 0.001 | 4.592 ± 0.001 | 2.5569 ± 7e-05 | density, `volume_A3`, `area_per_chain_A2` |
+| 130 | yes | 0.999 | 0.98689 ± 0.00006 | 8.004 ± 0.0008 | 4.622 ± 0.0004 | 2.5521 ± 0.0001 | — |
+| 160 | yes | 0.998 | 0.97640 ± 0.00020 | 8.058 ± 0.001 | 4.652 ± 0.0007 | 2.5455 ± 0.0002 | — |
+
+- α<sub>V</sub> 2.791 ± 0.137 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`crystal_fine_a` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-21 18:25 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 35 | yes | 1.000 | 1.01239 ± 0.00024 | 7.879 ± 0.004 | 4.560 ± 0.002 | 2.5619 ± 8e-05 | density, `volume_A3`, `area_per_chain_A2` |
+| 45 | yes | 1.000 | 1.00893 ± 0.00011 | 7.901 ± 0.002 | 4.564 ± 0.0007 | 2.5609 ± 4e-05 | — |
+| 55 | yes | 1.000 | 1.00593 ± 0.00007 | 7.920 ± 0.003 | 4.568 ± 0.002 | 2.5600 ± 4e-05 | density, `volume_A3`, `area_per_chain_A2` |
+| 65 | yes | 1.000 | 1.00354 ± 0.00006 | 7.923 ± 0.0009 | 4.579 ± 0.0008 | 2.5592 ± 3e-05 | — |
+
+- α<sub>V</sub> 2.948 ± 0.157 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`crystal_fine_b` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-21 18:26 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 75 | yes | 1.000 | 1.00280 ± 0.00031 | 7.929 ± 0.001 | 4.580 ± 0.001 | 2.5586 ± 6e-05 | density, `volume_A3`, `area_per_chain_A2` |
+| 85 | yes | 1.000 | 0.99926 ± 0.00011 | 7.946 ± 0.001 | 4.588 ± 0.0005 | 2.5577 ± 8e-05 | — |
+| 100 | yes | 1.000 | 0.99474 ± 0.00013 | 7.967 ± 0.001 | 4.600 ± 0.0006 | 2.5558 ± 3e-05 | — |
+| 110 | yes | 1.000 | 0.99257 ± 0.00010 | 7.977 ± 0.001 | 4.606 ± 0.0009 | 2.5549 ± 0.0001 | `c_A`, `area_per_chain_A2` |
+
+- α<sub>V</sub> 2.936 ± 0.177 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`crystal_fine_c` analysis**
+
+`sepsim analyze crystal`, generated 2026-11-21 18:26 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+
+| T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
+|---|---|---|---|---|---|---|---|
+| 120 | yes | 1.000 | 0.99076 ± 0.00054 | 7.987 ± 0.003 | 4.610 ± 0.002 | 2.5538 ± 0.0004 | `a_A`, `b_A`, `c_A`, density, `volume_A3`, `area_per_chain_A2` |
+| 140 | yes | 0.999 | 0.98367 ± 0.00009 | 8.021 ± 0.001 | 4.630 ± 0.0004 | 2.5505 ± 9e-05 | — |
+| 150 | yes | 0.999 | 0.98024 ± 0.00041 | 8.038 ± 0.002 | 4.640 ± 0.001 | 2.5483 ± 0.0003 | `a_A`, `b_A`, `c_A`, density, `volume_A3`, `area_per_chain_A2` |
+
+- α<sub>V</sub> 3.537 ± 0.013 × 10⁻⁴ K⁻¹ (from the volume)
+
+- Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
+- Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
+- Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+
+**`tensile_100C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+100 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.28e+03 ± 2.1e+02 | 0.21 | 0.47 | 2.5e+02 | 0.111 | 72 | 373.2 |
+| y | 0.500 | 2.97e+03 ± 2.2e+02 | 0.31 | 0.48 | 2.3e+02 | 0.127 | 62 | 373.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_110C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+110 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.25e+03 ± 1.7e+02 | 0.22 | 0.46 | 2.5e+02 | 0.110 | 66 | 383.2 |
+| y | 0.500 | 2.6e+03 ± 2.3e+02 | 0.27 | 0.52 | 2.3e+02 | 0.126 | 24 | 383.3 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_120C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+120 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.2e+03 ± 2.5e+02 | 0.26 | 0.46 | 2.6e+02 | 0.112 | 64 | 393.1 |
+| y | 0.500 | 2.48e+03 ± 2.6e+02 | 0.33 | 0.47 | 2.2e+02 | 0.121 | 56 | 393.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_130C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+130 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.27e+03 ± 2.5e+02 | 0.27 | 0.45 | 2.2e+02 | 0.095 | 60 | 403.1 |
+| y | 0.500 | 2.79e+03 ± 2.8e+02 | 0.27 | 0.46 | 2e+02 | 0.108 | 53 | 403.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_140C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+140 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 2.75e+03 ± 2.4e+02 | 0.20 | 0.45 | 2e+02 | 0.094 | 57 | 413.1 |
+| y | 0.500 | 2.73e+03 ± 2.4e+02 | 0.24 | 0.45 | 1.7e+02 | 0.086 | 48 | 413.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_150C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+150 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 2.67e+03 ± 2.2e+02 | 0.32 | 0.45 | 1.8e+02 | 0.093 | 51 | 423.1 |
+| y | 0.500 | 2.69e+03 ± 2.5e+02 | 0.24 | 0.45 | 1.5e+02 | 0.085 | 46 | 423.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_160C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+160 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 2.67e+03 ± 2.5e+02 | 0.36 | 0.43 | 1.5e+02 | 0.096 | 45 | 433.2 |
+| y | 0.500 | 2.49e+03 ± 2.9e+02 | 0.31 | 0.44 | 1.4e+02 | 0.087 | 40 | 433.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_25C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+25 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 4.3e+03 ± 1.3e+02 | 0.21 | 0.48 | 3.3e+02 | 0.147 | 1e+02 | 298.3 |
+| y | 0.500 | 3.91e+03 ± 1.8e+02 | 0.28 | 0.51 | 2.8e+02 | 0.128 | 89 | 298.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_35C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+35 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 4.14e+03 ± 2e+02 | 0.26 | 0.48 | 3e+02 | 0.119 | 99 | 308.1 |
+| y | 0.500 | 3.8e+03 ± 1.4e+02 | 0.26 | 0.49 | 2.9e+02 | 0.494 | 1.3e+02 | 308.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_45C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+45 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.93e+03 ± 2.6e+02 | 0.23 | 0.48 | 3e+02 | 0.122 | 94 | 318.1 |
+| y | 0.500 | 3.29e+03 ± 2.2e+02 | 0.38 | 0.51 | 2.6e+02 | 0.132 | 33 | 318.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_55C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+55 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.68e+03 ± 2.1e+02 | 0.20 | 0.48 | 3.1e+02 | 0.139 | 92 | 328.2 |
+| y | 0.500 | 3.48e+03 ± 1.6e+02 | 0.26 | 0.49 | 2.8e+02 | 0.475 | 1.5e+02 | 328.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_65C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+65 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.41e+03 ± 2.1e+02 | 0.34 | 0.48 | 3e+02 | 0.127 | 87 | 338.2 |
+| y | 0.500 | 3.36e+03 ± 2.2e+02 | 0.28 | 0.52 | 2.5e+02 | 0.124 | 31 | 338.3 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_75C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+75 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.4e+03 ± 2.3e+02 | 0.18 | 0.47 | 2.8e+02 | 0.114 | 81 | 348.1 |
+| y | 0.500 | 3.07e+03 ± 2.3e+02 | 0.30 | 0.50 | 2.5e+02 | 0.136 | 75 | 348.2 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_85C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+85 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.47e+03 ± 2.2e+02 | 0.15 | 0.47 | 2.8e+02 | 0.110 | 76 | 358.1 |
+| y | 0.500 | 2.95e+03 ± 2.1e+02 | 0.23 | 0.51 | 2.5e+02 | 0.135 | 76 | 358.3 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+**`tensile_90C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+90 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 3.34e+03 ± 1.7e+02 | 0.15 | 0.47 | 2.8e+02 | 0.114 | 74 | 363.1 |
+| y | 0.500 | 3e+03 ± 2e+02 | 0.34 | 0.48 | 2.3e+02 | 0.127 | 65 | 363.1 |
+
+- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
+- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
+- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+
+</details>
+
 ### `pe_ua_amorph_n40_c240_s1`
 
 PE UA, bulk amorphous box, 40 chains × C240, 9,600 united atoms; grown chains (seed 1). Status: finished: prep, extend (stopped after D47 PASS), cool, sweep.
@@ -6934,25 +27217,25 @@ PE UA, bulk amorphous box, 40 chains × C240, 9,600 united atoms; grown chains (
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
 | 500 K equilibration (D47) | — | — | — | — | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | — | `extend` progress |
-| ρ (g/cm³) | 0.86142 ± 0.00045 | 0.82268 ± 0.00035 | 0.80014 ± 0.00016 | 0.78336 ± 0.00025 | 500 K: 0.74581 ± 0.00008 | comp | `extend`, `sweep` |
-| κ<sub>T</sub> (GPa⁻¹) | 0.681 ± 0.036 | 0.884 ± 0.026 | 1.117 ± 0.023 | 1.192 ± 0.024 | 500 K: 1.632 ± 0.012 | comp | `extend`, `sweep` |
+| ρ (g/cm³) | 0.86142 ± 0.00045 | 0.82268 ± 0.00035 | 0.80014 ± 0.00016 | 0.78336 ± 0.00025 | 500 K: 0.74581 ± 0.00008; 0.81729 ± 0.00018; 0.81170 ± 0.00026; 0.80559 ± 0.00021; 0.79360 ± 0.00026; 0.78838 ± 0.00023; 0.85720 ± 0.00021; 0.85081 ± 0.00028; 0.84468 ± 0.00034; 0.83691 ± 0.00023; 0.83182 ± 0.00023; 0.82523 ± 0.00033 | comp | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| κ<sub>T</sub> (GPa⁻¹) | 0.681 ± 0.036 | 0.884 ± 0.026 | 1.117 ± 0.023 | 1.192 ± 0.024 | 500 K: 1.632 ± 0.012; 0.900 ± 0.023; 1.029 ± 0.026; 1.018 ± 0.029; 1.178 ± 0.029; 1.199 ± 0.030; 0.662 ± 0.026; 0.716 ± 0.026; 0.789 ± 0.042; 0.794 ± 0.031; 0.801 ± 0.039; 0.895 ± 0.032 | comp | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 7.151 ± 0.057 (χ²<sub>red</sub> 5.03); 25–90 °C: 6.946 ± 0.200 (χ²<sub>red</sub> 6.04); 90–160 °C: 7.007 ± 0.067 (χ²<sub>red</sub> 1.19) | comp | `sweep` |
 | C<sub>p</sub>, classical (J g⁻¹ K⁻¹) | — | — | — | — | 25–160 °C: 2.431 ± 0.011 (χ²<sub>red</sub> 18.7); 25–90 °C: 2.439 ± 0.041 (χ²<sub>red</sub> 26.4); 90–160 °C: 2.385 ± 0.019 (χ²<sub>red</sub> 9.98) | no | `sweep` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 8.19 (melt 6.7) | comp | `extend` progress |
-| R<sub>g</sub> (Å) | 29.33 ± 0.07 | 29.95 ± 0.10 | 30.91 ± 0.34 | 29.59 ± 0.14 | — | trend | `sweep` |
+| R<sub>g</sub> (Å) | 29.33 ± 0.07 | 29.95 ± 0.10 | 30.91 ± 0.34 | 29.59 ± 0.14 | 29.22 ± 0.10; 29.78 ± 0.13; 30.81 ± 0.18; 30.27 ± 0.15; 28.89 ± 0.41; 29.66 ± 0.05; 29.49 ± 0.06; 29.73 ± 0.05; 30.14 ± 0.07; 29.99 ± 0.06; 30.03 ± 0.08 | trend | `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 27.32 ± 0.46 | comp | `extend` |
-| R<sub>ee</sub> (Å) | 72.9 ± 0.4 | 74.3 ± 1.3 | 78.9 ± 1.9 | 75.7 ± 0.8 | — | trend | `sweep` |
+| R<sub>ee</sub> (Å) | 72.9 ± 0.4 | 74.3 ± 1.3 | 78.9 ± 1.9 | 75.7 ± 0.8 | 73.4 ± 0.5; 76.4 ± 0.7; 80.1 ± 0.9; 77.3 ± 0.5; 70.8 ± 1.0; 71.8 ± 0.4; 72.7 ± 0.3; 73.2 ± 0.2; 78.3 ± 0.6; 78.5 ± 0.7; 75.5 ± 0.8 | trend | `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | R<sub>ee</sub> (Å), 500 K hold | — | — | — | — | 500 K: 68.7 ± 1.4 | comp | `extend` |
-| C<sub>n</sub> | 9.21 ± 0.01 | 9.86 ± 0.14 | 10.86 ± 0.34 | 9.85 ± 0.10 | — | trend | `sweep` |
+| C<sub>n</sub> | 9.21 ± 0.01 | 9.86 ± 0.14 | 10.86 ± 0.34 | 9.85 ± 0.10 | 9.35 ± 0.12; 9.92 ± 0.09; 10.81 ± 0.20; 10.39 ± 0.13; 9.11 ± 0.31; 9.34 ± 0.04; 9.26 ± 0.06; 9.49 ± 0.03; 10.19 ± 0.07; 10.07 ± 0.05; 9.97 ± 0.05 | trend | `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | C<sub>n</sub>, 500 K hold | — | — | — | — | 500 K: 8.19 ± 0.35 | comp | `extend` |
-| P2 1/e time (ps) | 60.1 | 11.1 | 5.43 | 3.6 | 500 K: 6.96 | corr | `extend`, `sweep` |
-| segment MSD at 1 ns lag (Å²) | 28.3 | 117.7 | 177.6 | 237.4 | 500 K: 365.1 | corr | `extend`, `sweep` |
-| max chain COM MSD (Å²) at lag | 7.53 at 5 ns | 47.79 at 5 ns | 91.35 at 5 ns | 121.5 at 5 ns | 500 K: 1699 at 49.1 ns | todo | `extend`, `sweep` |
-| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.01 | 0.05 | 0.10 | 0.14 | 500 K: 2.28 | todo | `extend`, `sweep` |
-| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.84) | not diffusive (slope 0.83) | not diffusive (slope 0.89) | not diffusive (slope 0.96) | 500 K: not diffusive (slope 0.89) | todo | `extend`, `sweep` |
-| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached (extrap. 49.2) | not reached (extrap. 29.4) | not reached (extrap. 28.1) | 500 K: 19.3 | todo | `extend`, `sweep` |
-| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | 500 K: 25.9 | todo | `extend`, `sweep` |
-| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.122 | 0.053 | 0.036 | 0.030 | 500 K: 0.021 | — | `extend`, `sweep` |
+| P2 1/e time (ps) | 60.1 | 11.1 | 5.43 | 3.6 | 500 K: 6.96; 8.8; 7.76; 6.46; 4.83; 4.12; 43.2; 32; 24.6; 18.9; 15.6; 12.7 | corr | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| segment MSD at 1 ns lag (Å²) | 28.3 | 117.7 | 177.6 | 237.4 | 500 K: 365.1; 128; 150.5; 167.3; 204.1; 223.6; 36.62; 47.32; 60.99; 75.1; 89.86; 102.9 | corr | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| max chain COM MSD (Å²) at lag | 7.53 at 5 ns | 47.79 at 5 ns | 91.35 at 5 ns | 121.5 at 5 ns | 500 K: 1699 at 49.1 ns; 51.52 at 5 ns; 59.96 at 5 ns; 74.06 at 5 ns; 88.79 at 5 ns; 101.8 at 5 ns; 10.57 at 5 ns; 14.94 at 5 ns; 20.07 at 5 ns; 28.63 at 5 ns; 32.17 at 5 ns; 40.92 at 5 ns | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.01 | 0.05 | 0.10 | 0.14 | 500 K: 2.28; 0.06; 0.07; 0.08; 0.10; 0.12; 0.01; 0.02; 0.02; 0.03; 0.04; 0.05 | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.84) | not diffusive (slope 0.83) | not diffusive (slope 0.89) | not diffusive (slope 0.96) | 500 K: not diffusive (slope 0.89); not diffusive (slope 0.83); not diffusive (slope 0.93); not diffusive (slope 0.81); not diffusive (slope 0.66); not diffusive (slope 0.92); not diffusive (slope 0.69); not diffusive (slope 0.84); not diffusive (slope 0.54); not diffusive (slope 0.61); not diffusive (slope 0.49); not diffusive (slope 0.93) | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached (extrap. 49.2) | not reached (extrap. 29.4) | not reached (extrap. 28.1) | 500 K: 19.3; not reached (extrap. 42.7); not reached (extrap. 39.7); not reached (extrap. 48.1); not reached (extrap. 28.9); not reached (extrap. 18.2); not reached; not reached; not reached; not reached; not reached; not reached (extrap. 165) | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | 500 K: 25.9; not reached; not reached; not reached; not reached; not reached (extrap. 89.8); not reached; not reached; not reached; not reached; not reached; not reached | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.122 | 0.053 | 0.036 | 0.030 | 500 K: 0.021; 0.045; 0.045; 0.036; 0.032; 0.029; 0.141; 0.116; 0.105; 0.064; 0.063; 0.050 | — | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -6986,6 +27269,149 @@ PE UA, bulk amorphous box, 40 chains × C240, 9,600 united atoms; grown chains (
 - Note: Relaxation times use lags up to half the analysed hold (49.1 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
 - Note: hold not complete: thermo and trajectory over the part run
 - Note: no burst DCDs (deck without D46 bursts): lags from the hold DCD only
+
+**`fine_100C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:37 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 100 | 0.81729 ± 0.00018 | 0.900 ± 0.023 | 29.22 ± 0.10 | 73.4 ± 0.5 | 9.35 ± 0.12 | 8.8 | 51.52 at 5 ns | not diffusive (slope 0.83) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_110C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:37 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 110 | 0.81170 ± 0.00026 | 1.029 ± 0.026 | 29.78 ± 0.13 | 76.4 ± 0.7 | 9.92 ± 0.09 | 7.76 | 59.96 at 5 ns | not diffusive (slope 0.93) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_120C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:37 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 120 | 0.80559 ± 0.00021 | 1.018 ± 0.029 | 30.81 ± 0.18 | 80.1 ± 0.9 | 10.81 ± 0.20 | 6.46 | 74.06 at 5 ns | not diffusive (slope 0.81) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_140C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:37 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 140 | 0.79360 ± 0.00026 | 1.178 ± 0.029 | 30.27 ± 0.15 | 77.3 ± 0.5 | 10.39 ± 0.13 | 4.83 | 88.79 at 5 ns | not diffusive (slope 0.66) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_150C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:38 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 150 | 0.78838 ± 0.00023 | 1.199 ± 0.030 | 28.89 ± 0.41 | 70.8 ± 1.0 | 9.11 ± 0.31 | 4.12 | 101.8 at 5 ns | not diffusive (slope 0.92) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_35C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:35 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 35 | 0.85720 ± 0.00021 | 0.662 ± 0.026 | 29.66 ± 0.05 | 71.8 ± 0.4 | 9.34 ± 0.04 | 43.2 | 10.57 at 5 ns | not diffusive (slope 0.69) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_45C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:35 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 45 | 0.85081 ± 0.00028 | 0.716 ± 0.026 | 29.49 ± 0.06 | 72.7 ± 0.3 | 9.26 ± 0.06 | 32 | 14.94 at 5 ns | not diffusive (slope 0.84) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_55C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:35 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 55 | 0.84468 ± 0.00034 | 0.789 ± 0.042 | 29.73 ± 0.05 | 73.2 ± 0.2 | 9.49 ± 0.03 | 24.6 | 20.07 at 5 ns | not diffusive (slope 0.54) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_65C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:36 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 65 | 0.83691 ± 0.00023 | 0.794 ± 0.031 | 30.14 ± 0.07 | 78.3 ± 0.6 | 10.19 ± 0.07 | 18.9 | 28.63 at 5 ns | not diffusive (slope 0.61) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_75C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:36 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 75 | 0.83182 ± 0.00023 | 0.801 ± 0.039 | 29.99 ± 0.06 | 78.5 ± 0.7 | 10.07 ± 0.05 | 15.6 | 32.17 at 5 ns | not diffusive (slope 0.49) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_85C` analysis** (UA PE C240, 98.2 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-22 18:36 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 85 | 0.82523 ± 0.00033 | 0.895 ± 0.032 | 30.03 ± 0.08 | 75.5 ± 0.8 | 9.97 ± 0.05 | 12.7 | 40.92 at 5 ns | not diffusive (slope 0.93) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.47 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.63, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 7.31 vs melt 6.7 ±10% (drift).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
 
 **`sweep` analysis** (UA PE C240, 98.2 ns at 500 K)
 
@@ -7271,25 +27697,25 @@ iPP UA, bulk amorphous box, 40 chains × C240, 12,760 united atoms; grown chains
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
 | 500 K equilibration (D47) | — | — | — | — | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | — | `extend` progress |
-| ρ (g/cm³) | 0.86029 ± 0.00022 | 0.83585 ± 0.00025 | 0.81456 ± 0.00045 | 0.79855 ± 0.00024 | 500 K: 0.76325 ± 0.00009 | comp | `extend`, `sweep` |
-| κ<sub>T</sub> (GPa⁻¹) | 0.582 ± 0.025 | 0.803 ± 0.026 | 1.122 ± 0.063 | 1.190 ± 0.034 | 500 K: 1.620 ± 0.020 | comp | `extend`, `sweep` |
+| ρ (g/cm³) | 0.86029 ± 0.00022 | 0.83585 ± 0.00025 | 0.81456 ± 0.00045 | 0.79855 ± 0.00024 | 500 K: 0.76325 ± 0.00009; 0.83081 ± 0.00052; 0.82536 ± 0.00027; 0.81999 ± 0.00038; 0.80920 ± 0.00037; 0.80333 ± 0.00029; 0.85946 ± 0.00030; 0.85664 ± 0.00049; 0.85065 ± 0.00052; 0.84700 ± 0.00043; 0.84259 ± 0.00019; 0.83892 ± 0.00068 | comp | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| κ<sub>T</sub> (GPa⁻¹) | 0.582 ± 0.025 | 0.803 ± 0.026 | 1.122 ± 0.063 | 1.190 ± 0.034 | 500 K: 1.620 ± 0.020; 0.966 ± 0.057; 0.936 ± 0.033; 1.016 ± 0.058; 1.118 ± 0.053; 1.181 ± 0.045; 0.598 ± 0.025; 0.640 ± 0.021; 0.703 ± 0.034; 0.718 ± 0.033; 0.689 ± 0.025; 0.914 ± 0.116 | comp | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 5.755 ± 0.223 (χ²<sub>red</sub> 106); 25–90 °C: 4.434 ± 0.372 (χ²<sub>red</sub> 52.9); 90–160 °C: 6.619 ± 0.103 (χ²<sub>red</sub> 3.45) | comp | `sweep` |
 | C<sub>p</sub>, classical (J g⁻¹ K⁻¹) | — | — | — | — | 25–160 °C: 2.511 ± 0.021 (χ²<sub>red</sub> 84); 25–90 °C: 2.409 ± 0.027 (χ²<sub>red</sub> 32.4); 90–160 °C: 2.657 ± 0.019 (χ²<sub>red</sub> 6.44) | no | `sweep` |
 | C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 5.66 (melt 6.15) | comp | `extend` progress |
-| R<sub>g</sub> (Å) | 19.47 ± 0.01 | 19.80 ± 0.01 | 19.75 ± 0.04 | 19.63 ± 0.06 | — | trend | `sweep` |
+| R<sub>g</sub> (Å) | 19.47 ± 0.01 | 19.80 ± 0.01 | 19.75 ± 0.04 | 19.63 ± 0.06 | 19.79 ± 0.03; 19.70 ± 0.03; 19.84 ± 0.03; 19.81 ± 0.03; 19.25 ± 0.10; 19.48 ± 0.01; 19.48 ± 0.01; 19.57 ± 0.02; 19.71 ± 0.01; 19.75 ± 0.01; 19.79 ± 0.02 | trend | `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | R<sub>g</sub> (Å), 500 K hold | — | — | — | — | 500 K: 18.51 ± 0.49 | comp | `extend` |
-| R<sub>ee</sub> (Å) | 50.3 ± 0.1 | 50.8 ± 0.4 | 49.1 ± 0.2 | 49.7 ± 0.3 | — | trend | `sweep` |
+| R<sub>ee</sub> (Å) | 50.3 ± 0.1 | 50.8 ± 0.4 | 49.1 ± 0.2 | 49.7 ± 0.3 | 50.1 ± 0.2; 49.3 ± 0.4; 49.9 ± 0.2; 49.7 ± 0.3; 46.5 ± 0.5; 50.2 ± 0.1; 50.2 ± 0.1; 50.6 ± 0.1; 49.4 ± 0.1; 49.4 ± 0.1; 49.8 ± 0.3 | trend | `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | R<sub>ee</sub> (Å), 500 K hold | — | — | — | — | 500 K: 46.3 ± 1.7 | comp | `extend` |
-| C<sub>n</sub> | 6.46 ± 0.00 | 6.64 ± 0.03 | 6.33 ± 0.03 | 6.32 ± 0.03 | — | trend | `sweep` |
+| C<sub>n</sub> | 6.46 ± 0.00 | 6.64 ± 0.03 | 6.33 ± 0.03 | 6.32 ± 0.03 | 6.58 ± 0.02; 6.36 ± 0.08; 6.46 ± 0.05; 6.45 ± 0.03; 5.84 ± 0.13; 6.45 ± 0.01; 6.44 ± 0.01; 6.54 ± 0.02; 6.50 ± 0.01; 6.48 ± 0.01; 6.51 ± 0.03 | trend | `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 | C<sub>n</sub>, 500 K hold | — | — | — | — | 500 K: 5.64 ± 0.45 | comp | `extend` |
-| P2 1/e time (ps) | — | 1.78e+03 | 237 | 79.3 | 500 K: 17.2 | corr | `extend`, `sweep` |
-| segment MSD at 1 ns lag (Å²) | 2.8 | 10.47 | 33.83 | 69.23 | 500 K: 179.4 | corr | `extend`, `sweep` |
-| max chain COM MSD (Å²) at lag | 0.5077 at 5 ns | 2.678 at 5 ns | 14.66 at 5 ns | 37.52 at 5 ns | 500 K: 705.3 at 30.01 ns | todo | `extend`, `sweep` |
-| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.00 | 0.01 | 0.04 | 0.10 | 500 K: 2.06 | todo | `extend`, `sweep` |
-| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.68) | not diffusive (slope 0.48) | not diffusive (slope 0.75) | not diffusive (slope 0.56) | 500 K: not diffusive (slope 0.91) | todo | `extend`, `sweep` |
-| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached | not reached (extrap. 24.3) | 500 K: 14.7 | todo | `extend`, `sweep` |
-| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | 500 K: 19.9 | todo | `extend`, `sweep` |
-| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.137 | 0.138 | 0.143 | 0.134 | 500 K: 0.138 | — | `extend`, `sweep` |
+| P2 1/e time (ps) | — | 1.78e+03 | 237 | 79.3 | 500 K: 17.2; 1.08e+03; 650; 387; 170; 110; 4.07e+03; 2.85e+03 | corr | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_75C`, `fine_85C`, `sweep` |
+| segment MSD at 1 ns lag (Å²) | 2.8 | 10.47 | 33.83 | 69.23 | 500 K: 179.4; 13.86; 18.53; 24.56; 40.74; 54.85; 2.998; 3.275; 4.253; 5.587; 6.999; 8.857 | corr | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| max chain COM MSD (Å²) at lag | 0.5077 at 5 ns | 2.678 at 5 ns | 14.66 at 5 ns | 37.52 at 5 ns | 500 K: 705.3 at 30.01 ns; 4.602 at 5 ns; 6.978 at 5 ns; 10.74 at 5 ns; 18.44 at 5 ns; 25.32 at 5 ns; 0.4589 at 5 ns; 0.597 at 5 ns; 0.8763 at 5 ns; 1.077 at 5 ns; 1.435 at 5 ns; 1.979 at 5 ns | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.00 | 0.01 | 0.04 | 0.10 | 500 K: 2.06; 0.01; 0.02; 0.03; 0.05; 0.07; 0.00; 0.00; 0.00; 0.00; 0.00; 0.01 | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.68) | not diffusive (slope 0.48) | not diffusive (slope 0.75) | not diffusive (slope 0.56) | 500 K: not diffusive (slope 0.91); not diffusive (slope 0.80); not diffusive (slope 0.80); not diffusive (slope 1.11); not diffusive (slope 0.71); not diffusive (slope 0.74); not diffusive (slope 0.35); not diffusive (slope 0.58); not diffusive (slope 0.79); not diffusive (slope 0.51); not diffusive (slope 0.37); not diffusive (slope 0.53) | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached | not reached (extrap. 24.3) | 500 K: 14.7; not reached; not reached; not reached; not reached (extrap. 116); not reached (extrap. 46); not reached; not reached; not reached; not reached; not reached; not reached | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | 500 K: 19.9; not reached; not reached; not reached; not reached; not reached; not reached; not reached; not reached; not reached; not reached; not reached | todo | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
+| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.137 | 0.138 | 0.143 | 0.134 | 500 K: 0.138; 0.138; 0.140; 0.148; 0.143; 0.136; 0.143; 0.143; 0.140; 0.136; 0.140; 0.137 | — | `extend`, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, `sweep` |
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -7323,6 +27749,149 @@ iPP UA, bulk amorphous box, 40 chains × C240, 12,760 united atoms; grown chains
 - Note: Relaxation times use lags up to half the analysed hold (30.01 ns); a time beyond that is 'not reached' and only the extrapolated exponential fit is given.
 - Note: hold not complete: thermo and trajectory over the part run
 - Note: no burst DCDs (deck without D46 bursts): lags from the hold DCD only
+
+**`fine_100C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:32 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 100 | 0.83081 ± 0.00052 | 0.966 ± 0.057 | 19.79 ± 0.03 | 50.1 ± 0.2 | 6.58 ± 0.02 | 1.08e+03 | 4.602 at 5 ns | not diffusive (slope 0.80) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_110C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:33 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 110 | 0.82536 ± 0.00027 | 0.936 ± 0.033 | 19.70 ± 0.03 | 49.3 ± 0.4 | 6.36 ± 0.08 | 650 | 6.978 at 5 ns | not diffusive (slope 0.80) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_120C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:33 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 120 | 0.81999 ± 0.00038 | 1.016 ± 0.058 | 19.84 ± 0.03 | 49.9 ± 0.2 | 6.46 ± 0.05 | 387 | 10.74 at 5 ns | not diffusive (slope 1.11) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_140C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:33 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 140 | 0.80920 ± 0.00037 | 1.118 ± 0.053 | 19.81 ± 0.03 | 49.7 ± 0.3 | 6.45 ± 0.03 | 170 | 18.44 at 5 ns | not diffusive (slope 0.71) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_150C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:33 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 150 | 0.80333 ± 0.00029 | 1.181 ± 0.045 | 19.25 ± 0.10 | 46.5 ± 0.5 | 5.84 ± 0.13 | 110 | 25.32 at 5 ns | not diffusive (slope 0.74) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_35C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:31 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 35 | 0.85946 ± 0.00030 | 0.598 ± 0.025 | 19.48 ± 0.01 | 50.2 ± 0.1 | 6.45 ± 0.01 | — | 0.4589 at 5 ns | not diffusive (slope 0.35) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_45C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:32 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 45 | 0.85664 ± 0.00049 | 0.640 ± 0.021 | 19.48 ± 0.01 | 50.2 ± 0.1 | 6.44 ± 0.01 | — | 0.597 at 5 ns | not diffusive (slope 0.58) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_55C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:32 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 55 | 0.85065 ± 0.00052 | 0.703 ± 0.034 | 19.57 ± 0.02 | 50.6 ± 0.1 | 6.54 ± 0.02 | — | 0.8763 at 5 ns | not diffusive (slope 0.79) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_65C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:32 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 65 | 0.84700 ± 0.00043 | 0.718 ± 0.033 | 19.71 ± 0.01 | 49.4 ± 0.1 | 6.50 ± 0.01 | — | 1.077 at 5 ns | not diffusive (slope 0.51) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_75C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:32 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 75 | 0.84259 ± 0.00019 | 0.689 ± 0.025 | 19.75 ± 0.01 | 49.4 ± 0.1 | 6.48 ± 0.01 | 4.07e+03 | 1.435 at 5 ns | not diffusive (slope 0.37) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
+
+**`fine_85C` analysis** (UA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-23 03:32 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 85 | 0.83892 ± 0.00068 | 0.914 ± 0.116 | 19.79 ± 0.02 | 49.8 ± 0.3 | 6.51 ± 0.03 | 2.85e+03 | 1.979 at 5 ns | not diffusive (slope 0.53) | yes |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term; UA also drops degrees of freedom (the hydrogens), so its C<sub>p</sub> per gram is not a property of the real polymer at all (reported for completeness and resolution comparisons only).
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.45 at 10.0 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 1.05, needs >= 2).
+- Note: D37 chain check FAIL on the prep 500 K hold: C<sub>n</sub> plateau 4.77 vs melt 6.15 ±10%.
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
 
 **`sweep` analysis** (UA iPP C240, 60.0 ns at 500 K)
 
@@ -7428,7 +27997,7 @@ iPP UA, 5 nm dry slit pore, 40 chains × C240, 12,760 united atoms; built from `
 
 **Stages**
 
-- **pore** (rdyu-rog): finished; started 2026-11-04 10:09 UTC, ended 2026-11-08 15:24 UTC
+- **pore** (rdyu-rog): finished; started 2026-11-04 10:09 UTC, ended 2026-11-08 15:24 UTC; reads `systems/ipp_ua_pore_w5nm_n40_c240_s1/data.lmp`
   - γ per hold (monitor, second half of each segment, mN/m): 25 °C 20.1 ± 3.2; 90 °C 22.3 ± 3.5; 130 °C 27.3 ± 2.8; 160 °C 17.2 ± 3.8
 
 | Kind | Gap (nominal) | Gap at 500 K | Wall thickness | Lateral box | γ per hold (mN/m, monitor) | Status | Analysis |
@@ -7533,9 +28102,9 @@ Per segment:
 
 ### `ipp_aa_amorph_n40_c240_s1_from_ua`
 
-iPP AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `ipp_ua_amorph_n40_c240_s1` (`hold_ext_40ns.data`). Stage now: `sweep_failed_20261102` (failed, 0.0%).
+iPP AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `ipp_ua_amorph_n40_c240_s1` (`hold_ext_40ns.data`). Status: finished: prep, `sweep_failed_20261102` (failed, 0.0%), sweep.
 
-No analysed properties yet; pending: `sweep_failed_20261102`: failed, 0.0%. Equilibration: from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+No analysed properties yet; pending: sweep analysis not run. Equilibration: from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -7555,9 +28124,10 @@ No analysed properties yet; pending: `sweep_failed_20261102`: failed, 0.0%. Equi
 
 - **prep** (rdyu-rog): finished; started 2026-10-26 18:04 UTC, ended 2026-10-29 11:25 UTC; reads `systems/ipp_aa_amorph_n40_c240_s1_from_ua/data.lmp`
   - 500 K hold 5.0 ns: D47 criteria on this hold FAIL (R<sub>ee</sub> ACF 0.72 at 2.5 ns, 1/e not reached; COM MSD/⟨R<sub>g</sub>²⟩ 0.25); C<sub>n</sub> 5.58 vs 6.15 (in band, info); no drift (Δ -0.01 ± 0.16)
-  - monitor flags: R<sub>ee</sub> not decorrelated (0.72 at 2.5 ns); MSD/R<sub>g</sub>² 0.25; drift seg 9,12
-- **sweep** (rdyu-rog): failed, 0.0%; started 2026-11-02 14:06 UTC, ended 2026-11-02 14:06 UTC; reads `../prep/cooled.data`
-- **`sweep_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 14:06 UTC, ended 2026-11-02 14:06 UTC
+  - monitor flags: R<sub>ee</sub> not decorrelated (0.72 at 2.5 ns); MSD/R<sub>g</sub>² 0.25; drift seg 9,12; hyst max 0.33%
+- **`sweep_failed_20261102`** (rdyu-rog): failed, 0.0%; started 2026-11-02 14:06 UTC, ended 2026-11-02 14:06 UTC; reads `../prep/cooled.data`
+- **sweep** (rdyu-rog): finished; started 2026-11-13 04:34 UTC, ended 2026-11-20 06:02 UTC; reads `../prep/cooled.data`
+  - monitor flags: drift seg 3,6,8; step!=hold 90 C,130 C,160 C; hyst max 0.33%
 - Superseded (not used): `sweep_cancelled_pe_first` (cancelled/killed?)
 
 - Sweep analysis: not analysed yet.
