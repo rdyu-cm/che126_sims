@@ -1,0 +1,135 @@
+{
+ "cache": {},
+ "current": {
+  "index": 2,
+  "name": "Stage 2: indent at 1 m/s, R 2 nm, travel 20 nm"
+ },
+ "end_time": "2026-11-16T13:10:27.094366+00:00",
+ "errors": [
+  "ERROR on proc 0: Too many neighbor bins"
+ ],
+ "flags": [
+  "ERROR in log"
+ ],
+ "generated": "2026-11-23T10:50:03-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 625176.7256910801,
+ "log_mtime": "2026-11-16T05:10:27-08:00",
+ "manifest_status": "failed",
+ "n_done": 1,
+ "n_segments": 2,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 6.899288001758432,
+ "percent": 52.21782178217822,
+ "plots": {},
+ "protocol": "puncture",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_160C_n640_c240_s1_rep441/puncture_160C_v1_R2nm_c3",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "settle.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    20000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: settle 200 ps NVT at 433.15 K, indenter clear of the film",
+   "run_steps": [
+    20000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.43380957,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -11497.15604257426,
+     "sem": 84.21413326549593,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 65.47105833062702,
+     "sem": 0.6608102487897887,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.2430233143243754,
+     "drift": false,
+     "first": 65.55296920759316,
+     "second": 65.30994589326879,
+     "sem": 1.4487914667849908
+    },
+    "rows": 201,
+    "t_c": {
+     "mean": 160.00803851485148,
+     "sem": 0.16026407597961725,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 20000,
+   "steps_done": 20000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "puncture.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    20000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: indent at 1 m/s, R 2 nm, travel 20 nm",
+   "run_steps": [
+    2000000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 2000000,
+   "steps_done": 1034800,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   4084,
+   1794717395100523022
+  ],
+  "log.lammps": [
+   3616720,
+   1794834627043886953
+  ],
+  "run_manifest.json": [
+   2525,
+   1794834627094592256
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "puncture_160C_v1_R2nm_c3",
+ "start_time": "2026-11-15T04:36:36.966408+00:00",
+ "status": "failed",
+ "steps_done": 1054800,
+ "steps_per_s": 7.985287039072259,
+ "steps_total": 2020000,
+ "system": "pe_cg_film_160C_n640_c240_s1_rep441",
+ "version": 2
+}

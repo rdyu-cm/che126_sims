@@ -1,0 +1,165 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-22T02:33:50.752509+00:00",
+ "errors": [],
+ "flags": [
+  "drift seg 1,2"
+ ],
+ "generated": "2026-11-23T18:50:02+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 144971.75001120567,
+ "log_mtime": "2026-11-22T02:33:50+00:00",
+ "manifest_status": "finished",
+ "n_done": 2,
+ "n_segments": 2,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 72.855936,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "tensile",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_crystal_7x10x27_s1/tensile_100C",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_x.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 1,
+   "name": "Segment 1: tensile along x at 100 C, 1e8 /s",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8465586968332667,
+     "sem": 0.0033163378033830727,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.009482436656000126,
+     "drift": true,
+     "first": 0.8512938086720001,
+     "second": 0.841811372016,
+     "sem": 0.002463418656511424
+    },
+    "enthalpy": {
+     "mean": -6077.967608236706,
+     "sem": 108.13956151409275,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -10.465833643313815,
+     "drift": true,
+     "first": 72.45697074535188,
+     "second": 61.99113710203807,
+     "sem": 4.496391174109454
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 100.22217679328276,
+     "sem": 0.1112875878813125,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 373.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_y.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 2,
+   "name": "Segment 2: tensile along y at 100 C, 1e8 /s",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8496370408316674,
+     "sem": 0.002609975983971273,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.0070009894400002715,
+     "drift": true,
+     "first": 0.8531325478880001,
+     "second": 0.8461315584479998,
+     "sem": 0.0026200431720494696
+    },
+    "enthalpy": {
+     "mean": -6133.776053538585,
+     "sem": 86.56324424721117,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -9.81937803794169,
+     "drift": true,
+     "first": 68.77851404901992,
+     "second": 58.95913601107823,
+     "sem": 3.753517329903825
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 99.83938583366654,
+     "sem": 0.101035624886148,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 373.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3878,
+   1795302978031264712
+  ],
+  "log.lammps": [
+   3432703,
+   1795314830627288814
+  ],
+  "run_manifest.json": [
+   2416,
+   1795314830752838397
+  ]
+ },
+ "speed_source": "Performance line of segment 2",
+ "stage": "tensile_100C",
+ "start_time": "2026-11-21T23:16:19.654031+00:00",
+ "status": "finished",
+ "steps_done": 1000000,
+ "steps_per_s": 84.324,
+ "steps_total": 1000000,
+ "system": "pe_cg_crystal_7x10x27_s1",
+ "version": 2
+}

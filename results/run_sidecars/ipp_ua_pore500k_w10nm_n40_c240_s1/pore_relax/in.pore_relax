@@ -1,0 +1,86 @@
+# sepsim 0.1.0 deck: pore_relax
+# system ipp_ua_pore500k_w10nm_n40_c240_s1 (ua), seed 1
+# manifest.yaml sha256 8d4bce8778d1b8fe80803e944c56c34d6db3890923f598465e1efbeb956a90c7
+# data ../../../../systems/ipp_ua_pore500k_w10nm_n40_c240_s1/data.lmp sha256 483097d3a74d7f881ec9e5973ca5c7e5985e00de945b84f03ebe147fc8150a47
+# forcefield trappe_ua.yaml sha256 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   dt_fs = 2.0
+#   hold_dump_ps = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 14.0
+#   min_etol = 0.0001
+#   min_ftol = 1e-06
+#   min_maxeval = 100000
+#   min_maxiter = 10000
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   relax_ps = 2000.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   t_melt = 500.0
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+# Pore (D48 wide): width 10 nm at 500 K (mass-equivalent), wall 66.5576357386 A (replicate_z 1), box fixed: Lz 166.557635739 A
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../systems/ipp_ua_pore500k_w10nm_n40_c240_s1/data.lmp nocoeff
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 15.035  # CH3
+mass 2 14.027  # CH2
+mass 3 12.011  # CH
+mass 4 1.008  # H
+pair_style lj/cut 14
+pair_modify mix arithmetic tail no
+pair_coeff 1 1 0.1947460214 3.75  # CH3
+pair_coeff 2 2 0.0914113978 3.95  # CH2
+pair_coeff 3 3 0.019872043 4.68  # CH
+pair_coeff 4 4 0 0  # H
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+bond_coeff 2 340 1.09  # CH-H
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+angle_coeff 2 62.100134375 112  # CHx-CH-CHy
+angle_coeff 3 37.5 110.7  # H-CH-CHx
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+dihedral_coeff 2 1.70394819908 -0.44453760191 1.75378728292 0  # CHx-CH2-CH-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart 500000 restart.a restart.b
+
+# ---- Stage 1: minimize the opened slab
+thermo 100
+minimize 0.0001 1e-06 10000 100000
+write_data minimized.data
+write_restart minimized.restart
+# the minimizer advanced the step counter: restart it so dump intervals line up
+reset_timestep 0
+
+# ---- SHAKE on the constrained bond types (after the minimization)
+fix shake all shake 0.0001 20 0 b 2
+
+# ---- Stage 2: surface relaxation 2000 ps NVT at 500 K, box fixed -> relaxed.data, relax.dcd
+# velocities come from the data file (no velocity create)
+thermo 500
+fix md all nvt temp 500 500 200
+dump relax all dcd 5000 relax.dcd
+dump_modify relax unwrap yes
+run 1000000
+undump relax
+unfix md
+write_data relaxed.data
+write_restart relaxed.restart

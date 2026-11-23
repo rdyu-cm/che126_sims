@@ -1,0 +1,73 @@
+{
+  "command": [
+    "apptainer",
+    "exec",
+    "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+    "lmp",
+    "-sf",
+    "omp",
+    "-pk",
+    "omp",
+    "2",
+    "-in",
+    "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_130C_n640_c240_s1_rep441/puncture_130C_v10_R2nm_w1/in.puncture"
+  ],
+  "cwd": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_130C_n640_c240_s1_rep441/puncture_130C_v10_R2nm_w1",
+  "deck": {
+    "path": "in.puncture",
+    "resolved": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_130C_n640_c240_s1_rep441/puncture_130C_v10_R2nm_w1/in.puncture",
+    "sha256": "6213b1014ee7954f0fd01895f23d0162d61c87e24d06f462c9d76fa8cfe1e311"
+  },
+  "deck_git": null,
+  "end_time": "2026-11-17T12:12:16.974693+00:00",
+  "exit_code": 0,
+  "git": {
+    "branch": "main",
+    "commit": "70111966f1d2e2bf1ec2a5d6f83197378c55015a",
+    "dirty": true
+  },
+  "hostname": "rdyu-server",
+  "inputs": {
+    "files": [
+      {
+        "arg": "../../../../systems/pe_cg_film_130C_n640_c240_s1_rep441/data.lmp",
+        "command": "read_data",
+        "from": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_130C_n640_c240_s1_rep441/puncture_130C_v10_R2nm_w1/in.puncture",
+        "path": "/home/rdyu/projects/che126_sims/systems/pe_cg_film_130C_n640_c240_s1_rep441/data.lmp",
+        "sha256": "be648fc17c12ccf626d5ced6a236f27e2bc3daf260d825b46c2fec447519832f"
+      }
+    ],
+    "missing": [],
+    "unresolved": []
+  },
+  "lammps": {
+    "executable": "apptainer exec /home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif lmp",
+    "git": "HEAD / stable_22Jul2025_update6 / 9c5ab448c78a14fd534619622162ba418d6a1fb1",
+    "info_file": "lmp_info.txt",
+    "info_sha256": "be7e10c8d73f6cf40da548463772645fc8b3e574621b519c200d3b75185636c5",
+    "packages": [
+      "CG-SPICA",
+      "EXTRA-DUMP",
+      "EXTRA-MOLECULE",
+      "GPU",
+      "KOKKOS",
+      "KSPACE",
+      "MOLECULE",
+      "OPENMP",
+      "RIGID"
+    ],
+    "probe": [
+      "apptainer",
+      "exec",
+      "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+      "lmp"
+    ],
+    "version": "LAMMPS (22 Jul 2025 - Update 6)"
+  },
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+  "python": "3.13.14 (main, Jul 18 2026, 17:02:37) [Clang 22.1.3 ]",
+  "sepsim_version": "0.1.0",
+  "start_time": "2026-11-17T06:59:27.097611+00:00",
+  "status": "finished",
+  "wall_time_s": 18769.877
+}

@@ -1,0 +1,215 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-12T18:20:59.070445+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 952145.0882065296,
+ "log_mtime": "2026-11-12T10:20:58-08:00",
+ "manifest_status": "finished",
+ "n_done": 3,
+ "n_segments": 3,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 299.47708800000004,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "hole",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r3nm_130C_n320_c240_s1_rep222/hole_free",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: inflate 10000 ps NVT at 403.15 K, radial push r0 0",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.29036435,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -12787.339423595282,
+     "sem": 100.4591674485848,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 12.89546002556211,
+     "sem": 3.2142648771528304,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -9.399723170981646,
+     "drift": true,
+     "first": 17.598980405665248,
+     "second": 8.199257234683602,
+     "sem": 2.4918468664189213
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 130.01435532493502,
+     "sem": 0.028657526894888503,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: hold at R 10000 ps NVT at 403.15 K, push at r0 = 30 A",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.29036435,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -12176.853705618876,
+     "sem": 13.571420455965022,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 6.821004807371404,
+     "sem": 0.3544599547154602,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.24535142836564638,
+     "drift": false,
+     "first": 6.943085491026929,
+     "second": 6.697734062661283,
+     "sem": 0.7373552220398762
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 129.93843065186962,
+     "sem": 0.02981320523940479,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd",
+    "hole_dense_s01.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000,
+    500
+   ],
+   "ensemble": "nvt",
+   "index": 3,
+   "name": "Stage 3: hold at 130 C",
+   "run_steps": [
+    200000,
+    1800000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.29036435,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -14063.617244775522,
+     "sem": 21.578910119879843,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": false
+    },
+    "gamma": {
+     "mean": 29.723612089394948,
+     "sem": 0.26489731521673965,
+     "sem_lower_bound": false
+    },
+    "gamma_drift": {
+     "delta": -0.0964781304700999,
+     "drift": false,
+     "first": 29.773533129699725,
+     "second": 29.677054999229625,
+     "sem": 0.5479480095972692
+    },
+    "rows": 20001,
+    "t_c": {
+     "mean": 130.00199718228185,
+     "sem": 0.030480475348576806,
+     "sem_lower_bound": false
+    }
+   },
+   "steps": 2000000,
+   "steps_done": 2000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3874,
+   1794492142067337797
+  ],
+  "log.lammps": [
+   13695418,
+   1794507658941661328
+  ],
+  "run_manifest.json": [
+   2597,
+   1794507659070749491
+  ]
+ },
+ "speed_source": "Performance line of segment 3",
+ "stage": "hole_free",
+ "start_time": "2026-11-12T14:02:23.324917+00:00",
+ "status": "finished",
+ "steps_done": 4000000,
+ "steps_per_s": 346.617,
+ "steps_total": 4000000,
+ "system": "pe_cg_hole_r3nm_130C_n320_c240_s1_rep222",
+ "version": 2
+}

@@ -1,0 +1,165 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-18T12:20:30.991343+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T18:50:02+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 455371.57816028595,
+ "log_mtime": "2026-11-18T12:20:30+00:00",
+ "manifest_status": "finished",
+ "n_done": 2,
+ "n_segments": 2,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 5.698944000000001,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "puncture",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_160C_n640_c240_s1_rep441/puncture_160C_v3_R2nm_w1",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "settle.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    6667
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: settle 200 ps NVT at 433.15 K, indenter clear of the film",
+   "run_steps": [
+    20000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.43380957,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -12005.441590099008,
+     "sem": 58.27871012283323,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 64.23075624739742,
+     "sem": 0.6989483939034794,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -1.9178303292986527,
+     "drift": false,
+     "first": 65.13953614597011,
+     "second": 63.22170581667146,
+     "sem": 1.4322195546836818
+    },
+    "rows": 201,
+    "t_c": {
+     "mean": 159.87565366336622,
+     "sem": 0.15531464328703984,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 20000,
+   "steps_done": 20000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "puncture.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    6667
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: indent at 3 m/s, R 2 nm, travel 20.00001 nm",
+   "run_steps": [
+    666667
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.43380477639472115,
+     "sem": 4.842993939395287e-06,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -9.587210557937542e-06,
+     "drift": false,
+     "first": 0.43380957000000014,
+     "second": 0.4337999827894422,
+     "sem": 9.627638554216e-06
+    },
+    "enthalpy": {
+     "mean": -10429.490864727053,
+     "sem": 24.562320064905858,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 60.97093369314525,
+     "sem": 0.26104296959238876,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.1324360544739278,
+     "drift": false,
+     "first": 61.037151720382205,
+     "second": 60.90471566590828,
+     "sem": 0.528256100562323
+    },
+    "rows": 6668,
+    "t_c": {
+     "mean": 160.01378760947813,
+     "sem": 0.027517943700044924,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 666667,
+   "steps_done": 666667,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   4690,
+   1794900343234048898
+  ],
+  "log.lammps": [
+   2359738,
+   1795004430838445499
+  ],
+  "run_manifest.json": [
+   2530,
+   1795004430991447020
+  ]
+ },
+ "speed_source": "Performance line of segment 2",
+ "stage": "puncture_160C_v3_R2nm_w1",
+ "start_time": "2026-11-17T07:25:51.346837+00:00",
+ "status": "finished",
+ "steps_done": 686667,
+ "steps_per_s": 6.596,
+ "steps_total": 686667,
+ "system": "pe_cg_film_160C_n640_c240_s1_rep441",
+ "version": 2
+}

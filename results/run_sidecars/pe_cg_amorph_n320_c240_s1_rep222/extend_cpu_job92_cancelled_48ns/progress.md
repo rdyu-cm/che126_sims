@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-server, started 2026-10-26 23:51 UTC
 - progress: 61.5% of 8,000,000 MD steps; 0/1 segments done; current: 1 Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm
 - speed: 20.03 ns/day (23.2 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-29 11:28 UTC (29.9 h ago); report 2026-10-30 17:20 UTC on rdyu-server
+- log updated 2026-10-29 11:28 UTC (25.3 d ago); report 2026-11-23 18:50 UTC on rdyu-server
 - checks: D37 FAIL C_n 9.06 (vs 6.7); D47 FAIL (ACF 0.15 at 24.6 ns; MSD/Rg2 1.81; 49.2 ns)
 - note: ../prep/hold.dcd not found: chain checks use the extension alone
 

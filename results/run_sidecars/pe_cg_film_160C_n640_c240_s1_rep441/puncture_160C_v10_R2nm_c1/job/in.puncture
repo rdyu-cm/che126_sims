@@ -1,0 +1,104 @@
+# sepsim 0.1.0 deck: puncture
+# system pe_cg_film_160C_n640_c240_s1_rep441 (cg), seed 1
+# manifest.yaml sha256 1c9b040a5a04abdffcc099e8219be63e290d0b9f3b39e171acaa1bc408b40dfb
+# data ../../../../systems/pe_cg_film_160C_n640_c240_s1_rep441/data.lmp sha256 c3722a15dbe04a2e571ca346dad6b2fcbd180f85af7def35d4868c59b70439d5
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   avg_ps = 10.0
+#   boundary = p p m
+#   clamp_k = 5.0
+#   clamp_r_nm = 8.0
+#   clearance_nm = 1.0
+#   dt_fs = 10.0
+#   indent_k = 1.0
+#   indent_r_nm = 2.0
+#   indent_v_m_s = 10.0
+#   indent_x_nm = 0.0
+#   indent_y_nm = 0.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   overshoot_nm = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   puncture_dump_ps = 20.0
+#   restart_ps = 1000.0
+#   settle_ps = 200.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   tag = c1
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+#   thermostat = nvt
+#   travel_nm = 20.0
+# Puncture (D57): film at 160 C, 66.59 A thick, z extent 23.74..112.69 A (build); boundary p p m
+# Indenter: R 2 nm (20 A), axis x 146.4652 y 146.4652 A, K 1 kcal/mol/A^3; 10 m/s = 0.0001 A/fs; tip centre z 142.6949 -> -57.3051 A (travel 200.0000 A) in 200000 steps
+units real
+atom_style full
+boundary p p m
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../systems/pe_cg_film_160C_n640_c240_s1_rep441/data.lmp nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_modify tail no
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+
+# rolling restart files (alternating restart.a / restart.b)
+restart 100000 restart.a restart.b
+thermo 100
+# velocities come from the data file (no velocity create)
+fix md all nvt temp 433.15 433.15 1000
+
+# indenter: sphere (tip) + cylinder above it (cone with equal radii), tip centre at v_zc
+variable zc equal 142.69485378
+variable zs equal v_zc+200
+fix tip all indent 1 sphere 146.46522462 146.46522462 v_zc 20 units box
+fix shaft all indent 1 cone z 146.46522462 146.46522462 20 20 v_zc v_zs units box
+fix_modify tip energy yes
+fix_modify shaft energy yes
+# clamp: beads beyond 8 nm of the axis now, tethered in z to their start (x, y free)
+region clampr cylinder z 146.46522462 146.46522462 80 INF INF side out units box
+group clamped region clampr
+fix clamp clamped spring/self 5 z
+# diagnostics: T near the axis (r < R + 10 A) and in the far field (r > R + 50 A), bead z range
+region near cylinder z 146.46522462 146.46522462 30 INF INF units box
+region far cylinder z 146.46522462 146.46522462 70 INF INF side out units box
+compute tnear all temp/region near
+compute tfar all temp/region far
+compute zmin all reduce min z
+compute zmax all reduce max z
+fix pave all ave/time 1 1000 1000 v_zc f_tip[1] f_tip[2] f_tip[3] f_shaft[1] f_shaft[2] f_shaft[3] f_tip f_shaft c_thermo_temp c_tnear c_tfar c_zmin c_zmax c_thermo_press[3] file puncture.txt
+
+# ---- Stage 1: settle 200 ps NVT at 433.15 K, indenter clear of the film (tip bottom 1 nm above it) -> settle.dcd
+dump settle all dcd 2000 settle.dcd
+dump_modify settle unwrap yes
+run 20000
+undump settle
+
+# ---- Stage 2: indent at 10 m/s, R 2 nm, travel 20 nm (NVT at 433.15 K) -> puncture.dcd, punctured.data
+variable zc equal ramp(142.69485378,-57.30514622)
+dump puncture all dcd 2000 puncture.dcd
+dump_modify puncture unwrap yes
+run 200000
+undump puncture
+unfix pave
+write_data punctured.data pair ij

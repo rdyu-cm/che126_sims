@@ -1,0 +1,74 @@
+{
+  "command": [
+    "apptainer",
+    "exec",
+    "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+    "lmp",
+    "-sf",
+    "omp",
+    "-pk",
+    "omp",
+    "2",
+    "-in",
+    "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/diffuse_90C/in.diffuse"
+  ],
+  "cwd": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/diffuse_90C",
+  "deck": {
+    "path": "in.diffuse",
+    "resolved": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/diffuse_90C/in.diffuse",
+    "sha256": "f4943417f6b20b0ea4dee74b6537b42826d00a8a9204f7084326b1436f3ac6ed"
+  },
+  "deck_git": null,
+  "end_time": "2026-11-02T05:57:00-08:00",
+  "exit_code": null,
+  "git": {
+    "branch": "main",
+    "commit": "496d05cea36cbb537ce0e1d9093bb4a51e80c0b6",
+    "dirty": true
+  },
+  "hostname": "rdyu-rog",
+  "inputs": {
+    "files": [
+      {
+        "arg": "../sweep/hold_90C.data",
+        "command": "read_data",
+        "from": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/diffuse_90C/in.diffuse",
+        "path": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/sweep/hold_90C.data",
+        "sha256": "aae0fe88f610110a9b892a53176b8152432c5d1da2deabf4d32512ba69d87ce5"
+      }
+    ],
+    "missing": [],
+    "unresolved": []
+  },
+  "lammps": {
+    "executable": "apptainer exec /home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif lmp",
+    "git": "HEAD / stable_22Jul2025_update6 / 9c5ab448c78a14fd534619622162ba418d6a1fb1",
+    "info_file": "lmp_info.txt",
+    "info_sha256": "6069ea85fb1748558c9ee3819a564ad4030f455b3967eb9eaa230133dcb8d3bb",
+    "packages": [
+      "CG-SPICA",
+      "EXTRA-DUMP",
+      "EXTRA-MOLECULE",
+      "GPU",
+      "KOKKOS",
+      "KSPACE",
+      "MOLECULE",
+      "OPENMP",
+      "RIGID"
+    ],
+    "probe": [
+      "apptainer",
+      "exec",
+      "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+      "lmp"
+    ],
+    "version": "LAMMPS (22 Jul 2025 - Update 6)"
+  },
+  "platform": "Linux-7.0.0-30-generic-x86_64-with-glibc2.43",
+  "python": "3.13.16 (main, Oct 14 2026, 01:04:01) [Clang 23.1.3 ]",
+  "sepsim_version": "0.1.0",
+  "start_time": "2026-10-31T17:54:35.302390+00:00",
+  "status": "interrupted",
+  "wall_time_s": null,
+  "note": "rdyu-rog rebooted 2026-11-02 ~05:57 PST; job killed, not resumed (trajectory to the crash analysed with sepsim analyze hold)"
+}

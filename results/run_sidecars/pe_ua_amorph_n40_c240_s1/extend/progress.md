@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-server, started 2026-10-23 19:05 UTC
 - progress: 97.7% of 40,000,000 MD steps; 0/1 segments done; current: 1 Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm
 - speed: 12.43 ns/day (71.9 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-29 11:30 UTC (29.8 h ago); report 2026-10-30 17:20 UTC on rdyu-server
+- log updated 2026-10-29 11:30 UTC (25.3 d ago); report 2026-11-23 18:50 UTC on rdyu-server
 - checks: D37 FAIL C_n 8.19 (vs 6.7); D47 PASS (ACF 0.16 at 49.1 ns; MSD/Rg2 2.28; 98.2 ns)
 
 ## Segments

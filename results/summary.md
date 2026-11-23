@@ -1,8 +1,8 @@
 # System summary: tested properties and equilibration checks
 
-- Generated: 2026-11-23 17:16 UTC
-- Git commit: e55e0f9
-- Inputs: runs `/home/rdyu/projects/che126_sims/results/runs`, `/home/rdyu/projects/che126_sims/results/run_sidecars`, `/home/rdyu/projects/che126_sims/results/progress/rdyu-rog`; analysis `/home/rdyu/projects/worktrees/fix-summarize-crystal/results/analysis`; systems `/home/rdyu/projects/worktrees/fix-summarize-crystal/systems`
+- Generated: 2026-11-23 18:56 UTC
+- Git commit: aacb540 (dirty)
+- Inputs: runs `/home/rdyu/projects/worktrees/refresh-sidecars/results/run_sidecars`; analysis `/home/rdyu/projects/worktrees/refresh-sidecars/results/analysis`; systems `/home/rdyu/projects/worktrees/refresh-sidecars/systems`
 - Regenerate: `uv run --frozen python scripts/summarize_systems.py`
 
 **Checks (legend)**
@@ -23,7 +23,7 @@
 
 | System | Res | Polymer | Kind | Chains × length | Sites | Stage now | Status | Equilibration (D47) | C<sub>n</sub> plateau (D37) | Analysis |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `pe_cg_crystal_7x10x27_s1` | CG | PE | crystal | 140 × C81 | 3,780 beads | done | finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C`, `tensile_90C`, `tensile_130C`, `tensile_160C`, `tensile_75C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_85C`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_140C`, `tensile_150C` | crystal (no 500 K melt): 15/15 holds stable, 25–160 °C | — | crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| `pe_cg_crystal_7x10x27_s1` | CG | PE | crystal | 140 × C81 | 3,780 beads | done | finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C`, `tensile_90C`, `tensile_130C`, `tensile_160C`, `tensile_75C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_85C`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_140C`, `tensile_150C`, `tensile_25C_r1e9`, `tensile_90C_r1e9`, `tensile_160C_r1e9`, `tensile_130C_r1e9` | crystal (no 500 K melt): 15/15 holds stable, 25–160 °C | — | crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_130C_r1e9`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_160C_r1e9`, `tensile_25C`, `tensile_25C_r1e9`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C`, `tensile_90C_r1e9` |
 | `pe_cg_amorph_n40_c240_s1` | CG | PE | bulk | 40 × C240 | 3,200 beads | done | finished: prep, extend, cool, sweep, `diffuse_25C` (interrupted, 92.5%), `diffuse_160C` (interrupted, 85.2%), `diffuse_90C` (interrupted, 58.7%), `diffuse_130C`, `tensile_160C_r1e9`, `tensile_90C_r1e9`, `tensile_25C_r1e9`, `tensile_130C_r1e9`, `tensile_25C`, `tensile_160C`, `tensile_90C`, `tensile_130C` | D47 PASS; ACF 0.14 at 40.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.56; 80.0 ns at 500 K; accepted | 9.11 vs 6.7 (outside band, info); no drift (Δ -0.62 ± 0.40) | `cavitation_compare`, `diffuse_130C`, `diffuse_160C`, `diffuse_25C`, `diffuse_90C`, extend, sweep, `tensile_130C`, `tensile_130C_r1e9`, `tensile_160C`, `tensile_160C_r1e9`, `tensile_25C`, `tensile_25C_r1e9`, `tensile_90C`, `tensile_90C_r1e9` |
 | `pe_cg_amorph_n40_c1500_s1` | CG | PE | bulk | 40 × C1500 | 20,000 beads | done | finished: prep, extend, cool, sweep | D47 n/a (long CG chain); ACF 0.68 at 250.0 ns, MSD/⟨R<sub>g</sub>²⟩ 0.12; 500.0 ns at 500 K; no C<sub>n</sub> drift: accepted | 7.43 vs 6.7 (outside band, info); no drift (Δ +0.21 ± 0.30) | extend, sweep |
 | `pe_cg_amorph_n320_c240_s1_rep222` | CG | PE | bulk (derived) | 320 × C240 | 25,600 beads | done | finished: extend (stopped after D47 PASS) | D47 PASS; ACF 0.09 at 36.3 ns, MSD/⟨R<sub>g</sub>²⟩ 2.65; 72.5 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 9.18 vs 6.7 (outside band, info); drift (Δ +0.47 ± 0.10) | extend |
@@ -55,11 +55,12 @@
 | `pe_ua_amorph_n40_c240_s1` | UA | PE | bulk | 40 × C240 | 9,600 | done | finished: prep, extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | extend, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, sweep |
 | `pe_ua_pore500k_w10nm_n40_c240_s1` | UA | PE | pore (wide, 10 nm) | 40 × C240 | 9,600 | done | finished: `pore_relax` | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | no |
 | `pe_ua_pore_w5nm_n40_c240_s1` | UA | PE | pore (narrow, 5 nm) | 40 × C240 | 9,600 | done | finished: pore | from `pe_ua_pore500k_w10nm_n40_c240_s1` ← `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | pore |
+| `pe_aa_crystal_5x7x12_s1` | AA | PE | bulk | — × C— | — | prep | not started (crystal done) | — | — | no |
 | `pe_aa_amorph_n40_c240_s1_from_ua` | AA | PE | bulk (derived) | 40 × C240 | 28,880 | done | finished: prep, `sweep_crashed_20261102` (cancelled/killed?, 0.1%), sweep | from `pe_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.16 at 49.1 ns, MSD/⟨R<sub>g</sub>²⟩ 2.28; 98.2 ns at 500 K; accepted | 8.19 vs 6.7 (outside band, info); no drift (Δ +0.79 ± 0.53) | sweep |
 | `ipp_ua_amorph_n40_c240_s1` | UA | iPP | bulk | 40 × C240 | 12,760 | done | finished: prep (cancelled/killed?, 60.8%), extend (stopped after D47 PASS), cool, sweep | D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | extend, `fine_100C`, `fine_110C`, `fine_120C`, `fine_140C`, `fine_150C`, `fine_35C`, `fine_45C`, `fine_55C`, `fine_65C`, `fine_75C`, `fine_85C`, sweep |
 | `ipp_ua_pore500k_w10nm_n40_c240_s1` | UA | iPP | pore (wide, 10 nm) | 40 × C240 | 12,760 | done | finished: `pore_relax` | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
 | `ipp_ua_pore_w5nm_n40_c240_s1` | UA | iPP | pore (narrow, 5 nm) | 40 × C240 | 12,760 | done | finished: pore | from `ipp_ua_pore500k_w10nm_n40_c240_s1` ← `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | pore |
-| `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | done | finished: prep, `sweep_failed_20261102` (failed, 0.0%), sweep | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | no |
+| `ipp_aa_amorph_n40_c240_s1_from_ua` | AA | iPP | bulk (derived) | 40 × C240 | 28,880 | done | finished: prep, `sweep_failed_20261102` (failed, 0.0%), sweep | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | 5.66 vs 6.15 (in band, info); drift (Δ +1.41 ± 0.25) | sweep |
 
 **Abbreviations:**
 
@@ -84,7 +85,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 
 | System | ρ(T) | α<sub>V</sub> | κ<sub>T</sub> | C<sub>p</sub> | R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K | R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T | P2, segment MSD | D<sub>COM</sub>, viscosity | γ, dγ/dT | film structure | tensile E/ν/yield | hole closure | puncture `F/d_break` | cavitation `σ_cav` |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `pe_cg_crystal_7x10x27_s1` | todo | todo | todo | no | todo | todo | todo | todo | n/a | n/a | trend | n/a | n/a | todo |
+| `pe_cg_crystal_7x10x27_s1` | comp | trend | n/a | no | n/a | n/a | n/a | n/a | n/a | n/a | trend | n/a | n/a | n/a |
 | `pe_cg_amorph_n40_c240_s1` | comp | comp | comp | no | comp | trend | corr | corr | n/a | n/a | trend | n/a | n/a | trend |
 | `pe_cg_amorph_n40_c1500_s1` | comp | comp | comp | no | trend | trend | corr | todo | n/a | n/a | todo | n/a | n/a | todo |
 | `pe_cg_amorph_n320_c240_s1_rep222` | todo | todo | todo | no | comp | todo | todo | todo | n/a | n/a | todo | n/a | n/a | todo |
@@ -112,15 +113,16 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 | `pe_cg_hole_r5nm_25C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_hole_r6nm_160C_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | trend | todo | n/a |
 | `pe_cg_pore_w5nm_n640_c240_s1_rep441` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo | todo | n/a |
-| `pe_ua_crystal_7x10x40_s1` | todo | todo | todo | no | todo | todo | todo | todo | n/a | n/a | trend | n/a | n/a | todo |
+| `pe_ua_crystal_7x10x40_s1` | comp | trend | n/a | no | n/a | n/a | n/a | n/a | n/a | n/a | trend | n/a | n/a | n/a |
 | `pe_ua_amorph_n40_c240_s1` | comp | comp | comp | no | comp | trend | corr | todo | n/a | n/a | todo | n/a | n/a | todo |
 | `pe_ua_pore500k_w10nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
 | `pe_ua_pore_w5nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo | todo | n/a |
+| `pe_aa_crystal_5x7x12_s1` | todo | todo | todo | todo | todo | todo | todo | todo | n/a | n/a | todo | n/a | n/a | todo |
 | `pe_aa_amorph_n40_c240_s1_from_ua` | comp | comp | comp | corr | trend | trend | comp | todo | n/a | n/a | todo | n/a | n/a | todo |
 | `ipp_ua_amorph_n40_c240_s1` | comp | comp | comp | no | comp | trend | corr | todo | n/a | n/a | todo | n/a | n/a | todo |
 | `ipp_ua_pore500k_w10nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | todo | todo | n/a | todo | todo | n/a | todo | todo | n/a |
 | `ipp_ua_pore_w5nm_n40_c240_s1` | n/a | n/a | n/a | n/a | n/a | trend | corr | n/a | comp | trend | n/a | todo | todo | n/a |
-| `ipp_aa_amorph_n40_c240_s1_from_ua` | todo | todo | todo | todo | trend | todo | todo | todo | n/a | n/a | todo | n/a | n/a | todo |
+| `ipp_aa_amorph_n40_c240_s1_from_ua` | comp | comp | comp | corr | trend | trend | comp | todo | n/a | n/a | todo | n/a | n/a | todo |
 
 **Abbreviations:**
 
@@ -152,12 +154,10 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 <details><summary>Reasons per system</summary>
 
 - `pe_cg_crystal_7x10x27_s1`
-  - C<sub>p</sub>: **not meaningful**: CG removes all motion inside a 3-CH<sub>2</sub> bead (a bead keeps 3 of 27 atomic degrees of freedom): classical C<sub>p</sub> per gram far too low. No principled correction (a hybrid vibrational add-on is only approximate): use AA; vs experiment: CG PE classical C<sub>p</sub> ≈ 65% low (`docs/experiment_comparison.md`)
-  - tensile E/ν/yield: **trend**: not comparable to separator data (their stiffness/yield come from crystallinity; MD rates ~10⁹× faster): amorphous response, T and rate trends; vs experiment: amorphous: compare with G<sub>e</sub> ≈ 2.6 MPa (E ≈ 8 MPa), not separator GPa moduli (`docs/experiment_comparison.md`)
-  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then needs correction): no sweep run yet
-  - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K (then comparable): no 500 K hold checks yet
-  - not yet computed: D<sub>COM</sub>, viscosity (then needs correction): no sweep run yet; needs a long D53 diffuse hold
-  - not yet computed: cavitation `σ_cav` (then trend): no cavitation run (D58)
+  - α<sub>V</sub>: **trend**: no in-repo reference for the thermal expansion of crystalline PE: model value of a perfect periodic crystal (anisotropic: `α_a`, `α_b`, `α_c`), T and resolution trends only; α<sub>V</sub> 5.5–6.8 ×10⁻⁴ K⁻¹ over the crystal analyses' T windows (25–160, 35–65, 75–110, 120–150 °C)
+  - C<sub>p</sub>: **not meaningful**: CG removes all motion inside a 3-CH<sub>2</sub> bead (a bead keeps 3 of 27 atomic degrees of freedom): classical C<sub>p</sub> per gram far too low. No principled correction (a hybrid vibrational add-on is only approximate): use AA
+  - tensile E/ν/yield: **trend**: perfect periodic single crystal pulled transverse to the chains (D59: x, y only) at MD rates: E is the interchain transverse modulus and the peak the ideal transverse strength of a defect-free crystal; not comparable to separator data (semicrystalline, defects, ~10⁹× slower tests): T and rate trends only
+  - **comparable**: ρ(T) (25 °C hold ρ 0.927 g/cm³ = 0.930 × the cell; 0.927 → 0.853 g/cm³ over 25–160 °C; no principled correction for the offset (model property))
 - `pe_cg_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: CG removes all motion inside a 3-CH<sub>2</sub> bead (a bead keeps 3 of 27 atomic degrees of freedom): classical C<sub>p</sub> per gram far too low. No principled correction (a hybrid vibrational add-on is only approximate): use AA; vs experiment: CG PE classical C<sub>p</sub> ≈ 65% low (`docs/experiment_comparison.md`)
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.18–0.60 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); C<sub>n</sub> 9.11 is outside the melt band (6.7 ±10%): a property of the CG force field, not of the equilibration; vs experiment: CG PE chains too stiff: C<sub>n</sub> +25–45% (C240), ≈ +10% (C1500); R<sub>g</sub> ≈ +20% (C240) (`docs/experiment_comparison.md`); no principled correction for the offset (model property): compare our UA/AA values
@@ -311,12 +311,10 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
   - **comparable**: γ, dγ/dT (vs experiment: CG PE γ within 1–3% at 25–160 °C; dγ/dT ≈ 20% shallower (`docs/experiment_comparison.md`))
 - `pe_ua_crystal_7x10x40_s1`
+  - α<sub>V</sub>: **trend**: no in-repo reference for the thermal expansion of crystalline PE: model value of a perfect periodic crystal (anisotropic: `α_a`, `α_b`, `α_c`), T and resolution trends only; α<sub>V</sub> 2.8–3.5 ×10⁻⁴ K⁻¹ over the crystal analyses' T windows (25–160, 35–65, 75–110, 120–150 °C)
   - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
-  - tensile E/ν/yield: **trend**: not comparable to separator data (their stiffness/yield come from crystallinity; MD rates ~10⁹× faster): amorphous response, T and rate trends
-  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then needs correction): no sweep run yet
-  - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K (then comparable): no 500 K hold checks yet
-  - not yet computed: D<sub>COM</sub>, viscosity (then needs correction): no sweep run yet; needs a long D53 diffuse hold
-  - not yet computed: cavitation `σ_cav` (then trend): no cavitation run (D58)
+  - tensile E/ν/yield: **trend**: perfect periodic single crystal pulled transverse to the chains (D59: x, y only) at MD rates: E is the interchain transverse modulus and the peak the ideal transverse strength of a defect-free crystal; not comparable to separator data (semicrystalline, defects, ~10⁹× slower tests): T and rate trends only
+  - **comparable**: ρ(T) (25 °C hold ρ 1.014 g/cm³ = 1.018 × the cell; 1.014 → 0.976 g/cm³ over 25–160 °C; no principled correction for the offset (model property))
 - `pe_ua_amorph_n40_c240_s1`
   - C<sub>p</sub>: **not meaningful**: UA removes the H atoms (their degrees of freedom), so classical C<sub>p</sub> is not the real one (close to experiment only by accident). No principled correction (a hybrid vibrational add-on is only approximate): use AA
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.01–0.14 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved); C<sub>n</sub> 8.19 is outside the melt band (6.7 ±10%): a property of the UA force field, not of the equilibration; no principled correction for the offset (model property): compare our UA/AA values
@@ -337,6 +335,12 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: hole closure (then trend): no hole run (D52)
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
   - **comparable**: γ, dγ/dT
+- `pe_aa_crystal_5x7x12_s1`
+  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep run yet
+  - not yet computed: R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K (then comparable): no 500 K hold checks yet
+  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep run yet; needs a long D53 diffuse hold
+  - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
+  - not yet computed: cavitation `σ_cav` (then trend): no cavitation run (D58)
 - `pe_aa_amorph_n40_c240_s1_from_ua`
   - C<sub>p</sub>: **needs correction**: classical C<sub>p</sub> gives every vibration k<sub>B</sub> T (fully flexible AA ≈ 2.4× experiment). Correction: the VDOS quantum correction (D12c), then compare with ATHAS melt C<sub>p</sub>
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K: **trend**: ua2aa box: the chain conformations were equilibrated with the UA force field (D32/D47) and only relaxed locally in AA; compare the UA row; C<sub>n</sub> 8.19 is outside the melt band (6.7 ±10%): a property of the UA (source box) force field, not of the equilibration
@@ -366,11 +370,13 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
   - not yet computed: puncture `F/d_break` (then trend): no puncture run (D57)
   - **comparable**: γ, dγ/dT
 - `ipp_aa_amorph_n40_c240_s1_from_ua`
+  - C<sub>p</sub>: **needs correction**: classical C<sub>p</sub> gives every vibration k<sub>B</sub> T (fully flexible AA ≈ 2.4× experiment). Correction: the VDOS quantum correction (D12c), then compare with ATHAS melt C<sub>p</sub>
   - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> 500 K: **trend**: ua2aa box: the chain conformations were equilibrated with the UA force field (D32/D47) and only relaxed locally in AA; compare the UA row
-  - not yet computed: ρ(T) (then comparable), α<sub>V</sub> (then comparable), κ<sub>T</sub> (then comparable), C<sub>p</sub> (then needs correction), R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T (then comparable), P2, segment MSD (then comparable): no sweep analysis yet (sweep finished 100%, `sweep_failed_20261102` failed 0%)
-  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): no sweep analysis yet (sweep finished 100%, `sweep_failed_20261102` failed 0%); needs a long D53 diffuse hold
+  - R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> sweep T: **trend**: inherited from the 500 K melt: hold COM MSD/⟨R<sub>g</sub>²⟩ 0.00–0.11 < 1 at 25, 90, 130, 160 °C, so chains did not move their own size and R<sub>g</sub>/R<sub>ee</sub>/C<sub>n</sub> were not re-equilibrated at that T (T dependence not resolved)
+  - not yet computed: D<sub>COM</sub>, viscosity (then comparable): sweep holds too short (COM MSD/⟨R<sub>g</sub>²⟩ ≤ 0.11, 4/4 not diffusive); needs a long D53 diffuse hold
   - not yet computed: tensile E/ν/yield (then trend): no tensile run (D54)
   - not yet computed: cavitation `σ_cav` (then trend): no cavitation run (D58)
+  - **comparable**: ρ(T); α<sub>V</sub> (V(T) curved (χ²<sub>red</sub> 17 over 25–160 °C): α<sub>V</sub> depends on T, quote the 25–90 / 90–160 °C windows); κ<sub>T</sub>; P2, segment MSD (P2 1/e not reached at 25 °C)
 
 </details>
 
@@ -381,7 +387,7 @@ Legend: **comp** = comparable to experiment (with the stated data and caveats); 
 - `pe_cg_film_25C_n640_c240_s1_rep441`: pore not started
 - `pe_cg_film_90C_n640_c240_s1_rep441`: pore not started
 - `pe_cg_hole_r4nm_160C_n640_c240_s1_rep441`: `hole_free`: cancelled/killed?, 77.2%
-- `ipp_aa_amorph_n40_c240_s1_from_ua`: sweep analysis not run
+- `pe_aa_crystal_5x7x12_s1`: prep not started; sweep not started; no equilibration verdict yet
 
 ## Superseded (kept, not used)
 
@@ -469,19 +475,25 @@ One subsection per system, in the overview order (superseded systems last). Each
 
 ### `pe_cg_crystal_7x10x27_s1`
 
-PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 chains × C81, 3,780 beads; provenance not recorded. Status: finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C`, `tensile_90C`, `tensile_130C`, `tensile_160C`, `tensile_75C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_85C`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_140C`, `tensile_150C`.
+PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 chains × C81, 3,780 beads; provenance not recorded. Status: finished: crystal, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c`, `tensile_25C`, `tensile_90C`, `tensile_130C`, `tensile_160C`, `tensile_75C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_85C`, `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_140C`, `tensile_150C`, `tensile_25C_r1e9`, `tensile_90C_r1e9`, `tensile_160C_r1e9`, `tensile_130C_r1e9`.
 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
-| ρ (g/cm³) | 0.92695 ± 0.00003 | 0.89377 ± 0.00004 | 0.87145 ± 0.00004 | 0.85323 ± 0.00005 | 35 °C: 0.92208 ± 0.00003; 45 °C: 0.91713 ± 0.00003; 55 °C: 0.91211 ± 0.00003; 65 °C: 0.90702 ± 0.00004; 75 °C: 0.90179 ± 0.00003; 85 °C: 0.89654 ± 0.00004; 100 °C: 0.88838 ± 0.00004; 110 °C: 0.88290 ± 0.00004; 120 °C: 0.87719 ± 0.00004; 140 °C: 0.86552 ± 0.00005; 150 °C: 0.85944 ± 0.00005 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
-| α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 6.106 ± 0.217; 35–65 °C: 5.482 ± 0.051; 75–110 °C: 6.064 ± 0.050; 120–150 °C: 6.810 ± 0.077 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| ρ (g/cm³) | 0.92695 ± 0.00003 | 0.89377 ± 0.00004 | 0.87145 ± 0.00004 | 0.85323 ± 0.00005 | 35 °C: 0.92208 ± 0.00003; 45 °C: 0.91713 ± 0.00003; 55 °C: 0.91211 ± 0.00003; 65 °C: 0.90702 ± 0.00004; 75 °C: 0.90179 ± 0.00003; 85 °C: 0.89654 ± 0.00004; 100 °C: 0.88838 ± 0.00004; 110 °C: 0.88290 ± 0.00004; 120 °C: 0.87719 ± 0.00004; 140 °C: 0.86552 ± 0.00005; 150 °C: 0.85944 ± 0.00005 | comp | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 6.106 ± 0.217; 35–65 °C: 5.482 ± 0.051; 75–110 °C: 6.064 ± 0.050; 120–150 °C: 6.810 ± 0.077 | trend | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
 | crystallinity (ordered-site fraction) | 1.000 | 0.999 | 0.996 | 0.987 | 35 °C: 1.000; 45 °C: 1.000; 55 °C: 1.000; 65 °C: 1.000; 75 °C: 1.000; 85 °C: 0.999; 100 °C: 0.999; 110 °C: 0.998; 120 °C: 0.997; 140 °C: 0.994; 150 °C: 0.991 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
 | E<sub>app</sub> (MPa), 10⁸ s⁻¹, mean ± SD | 1.91e+03 ± 18.6 | 1.1e+03 ± 6.15 | 885 ± 115 | 773 ± 235 | 1.13e+03 ± 185; 993 ± 498; 1.03e+03 ± 122; 1.09e+03 ± 16.1; 941 ± 181; 1.55e+03 ± 426; 1.56e+03 ± 236; 1.58e+03 ± 266; 1.22e+03 ± 419; 1.43e+03 ± 41.6; 1.4e+03 ± 104 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| E<sub>app</sub> (MPa), 10⁹ s⁻¹, mean ± SD | 2.05e+03 ± 302 | 1.48e+03 ± 243 | 1.06e+03 ± 368 | 1.01e+03 ± 0.0604 | — | trend | `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_90C_r1e9` |
 | ν, fit up to the E<sub>app</sub> strain, 10⁸ s⁻¹, mean ± SD | 0.18 ± 0.03 | 0.23 ± 0.03 | 0.22 ± 0.07 | 0.21 ± 0.08 | 0.21 ± 0.04; 0.25 ± 0.07; 0.19 ± 0.00; 0.20 ± 0.00; 0.22 ± 0.01; 0.21 ± 0.05; 0.20 ± 0.05; 0.20 ± 0.04; 0.23 ± 0.06; 0.19 ± 0.02; 0.19 ± 0.00 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| ν, fit up to the E<sub>app</sub> strain, 10⁹ s⁻¹, mean ± SD | 0.21 ± 0.08 | 0.18 ± 0.07 | 0.31 ± 0.10 | 0.20 ± 0.07 | — | trend | `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_90C_r1e9` |
 | ν, whole run, 10⁸ s⁻¹, mean ± SD | 0.45 ± 0.00 | 0.44 ± 0.00 | 0.47 ± 0.01 | 0.44 ± 0.03 | 0.44 ± 0.00; 0.44 ± 0.00; 0.45 ± 0.00; 0.47 ± 0.02; 0.45 ± 0.03; 0.45 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00; 0.44 ± 0.00 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| ν, whole run, 10⁹ s⁻¹, mean ± SD | 0.45 ± 0.00 | 0.44 ± 0.00 | 0.42 ± 0.01 | 0.42 ± 0.01 | — | trend | `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_90C_r1e9` |
 | σ<sub>peak</sub> (MPa), 10⁸ s⁻¹, mean ± SD | 48 ± 1.6 | 40 ± 1.8 | 35 ± 1.4 | 30 ± 1.4 | 39 ± 1.7; 37 ± 1.5; 36 ± 1.6; 33 ± 2; 32 ± 1.6; 47 ± 2; 46 ± 1.7; 45 ± 1.7; 43 ± 1.8; 42 ± 1.8; 41 ± 2 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| σ<sub>peak</sub> (MPa), 10⁹ s⁻¹, mean ± SD | 58 ± 1.2 | 43 ± 0.78 | 38 ± 1.3 | 34 ± 2.6 | — | trend | `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_90C_r1e9` |
 | ε<sub>peak</sub>, 10⁸ s⁻¹, mean ± SD | 0.368 ± 0.053 | 0.328 ± 0.011 | 0.321 ± 0.004 | 0.246 ± 0.024 | 0.349 ± 0.027; 0.359 ± 0.002; 0.336 ± 0.050; 0.295 ± 0.058; 0.288 ± 0.031; 0.331 ± 0.012; 0.374 ± 0.013; 0.336 ± 0.010; 0.365 ± 0.032; 0.358 ± 0.010; 0.327 ± 0.012 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| ε<sub>peak</sub>, 10⁹ s⁻¹, mean ± SD | 0.041 ± 0.003 | 0.205 ± 0.245 | 0.289 ± 0.019 | 0.256 ± 0.003 | — | trend | `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_90C_r1e9` |
 | flow σ (MPa), 10⁸ s⁻¹, mean ± SD | 46 ± 2.1 | 38 ± 2.1 | 26 ± 0.35 | 10 ± 14 | 35 ± 1.9; 33 ± 0.51; 28 ± 0.84; 24 ± 2.3; 12 ± 6.4; 45 ± 2.1; 44 ± 1.9; 43 ± 1.9; 42 ± 1.9; 41 ± 2.1; 39 ± 1.9 | trend | `tensile_100C`, `tensile_110C`, `tensile_120C`, `tensile_130C`, `tensile_140C`, `tensile_150C`, `tensile_160C`, `tensile_25C`, `tensile_35C`, `tensile_45C`, `tensile_55C`, `tensile_65C`, `tensile_75C`, `tensile_85C`, `tensile_90C` |
+| flow σ (MPa), 10⁹ s⁻¹, mean ± SD | 47 ± 1.7 | 39 ± 1.8 | 28 ± 1.4 | 15 ± 5.9 | — | trend | `tensile_130C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_90C_r1e9` |
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -530,10 +542,18 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
   - monitor flags: drift seg 1,2
 - **`tensile_150C`** (rdyu-server): finished; started 2026-11-22 02:33 UTC, ended 2026-11-22 05:43 UTC; reads `../crystal_fine_c/hold_150C.data`
   - monitor flags: drift seg 2
+- **`tensile_25C_r1e9`** (rdyu-server): finished; started 2026-11-23 17:30 UTC, ended 2026-11-23 17:39 UTC; reads `../crystal/hold_25C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_90C_r1e9`** (rdyu-server): finished; started 2026-11-23 17:30 UTC, ended 2026-11-23 17:44 UTC; reads `../crystal/hold_90C.data`
+  - monitor flags: drift seg 1,2
+- **`tensile_160C_r1e9`** (rdyu-server): finished; started 2026-11-23 17:30 UTC, ended 2026-11-23 17:44 UTC; reads `../crystal/hold_160C.data`
+  - monitor flags: drift seg 1
+- **`tensile_130C_r1e9`** (rdyu-server): finished; started 2026-11-23 17:30 UTC, ended 2026-11-23 17:44 UTC; reads `../crystal/hold_130C.data`
+  - monitor flags: drift seg 1,2
 
 **`crystal` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-17 07:24 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+`sepsim analyze crystal`, generated 2026-11-23 18:26 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -547,10 +567,12 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`crystal_fine_a` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-22 16:03 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+`sepsim analyze crystal`, generated 2026-11-23 18:26 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -564,10 +586,12 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`crystal_fine_b` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-22 16:03 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+`sepsim analyze crystal`, generated 2026-11-23 18:26 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -581,10 +605,12 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`crystal_fine_c` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-22 16:03 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
+`sepsim analyze crystal`, generated 2026-11-23 18:26 UTC on rdyu-server, run finished; crystallinity calibrated (`calibration_cg_pe.json`, 2026-11-17).
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -597,10 +623,12 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`tensile_100C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 100 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -609,15 +637,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1e+03 ± 68 | 0.24 | 0.44 | 40 | 0.330 | 37 | 373.2 |
 | y | 0.500 | 1.26e+03 ± 58 | 0.18 | 0.44 | 38 | 0.368 | 34 | 373.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_110C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 110 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -626,15 +656,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.35e+03 ± 50 | 0.20 | 0.45 | 39 | 0.357 | 33 | 383.2 |
 | y | 0.500 | 640 ± 58 | 0.30 | 0.44 | 36 | 0.360 | 32 | 383.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_120C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 120 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -643,15 +675,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.11e+03 ± 59 | 0.19 | 0.45 | 37 | 0.301 | 28 | 393.1 |
 | y | 0.500 | 942 ± 68 | 0.20 | 0.45 | 35 | 0.371 | 29 | 393.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_130C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 130 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -660,15 +694,36 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 804 ± 63 | 0.27 | 0.47 | 36 | 0.324 | 25 | 403.2 |
 | y | 0.500 | 967 ± 66 | 0.17 | 0.46 | 34 | 0.318 | 26 | 403.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
+
+**`tensile_130C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-23 17:45 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+130 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 804 ± 1.8e+02 | 0.38 | 0.42 | 39 | 0.276 | 29 | 403.1 |
+| y | 0.500 | 1.32e+03 ± 1.7e+02 | 0.24 | 0.43 | 37 | 0.303 | 27 | 403.1 |
+
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_140C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 140 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -677,15 +732,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.1e+03 ± 63 | 0.20 | 0.45 | 35 | 0.336 | 25 | 413.2 |
 | y | 0.500 | 1.07e+03 ± 53 | 0.21 | 0.48 | 32 | 0.254 | 22 | 413.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_150C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 150 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -694,15 +751,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 813 ± 62 | 0.23 | 0.43 | 33 | 0.310 | 7.2 | 423.2 |
 | y | 0.500 | 1.07e+03 ± 56 | 0.22 | 0.47 | 31 | 0.266 | 16 | 423.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_160C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 160 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -711,15 +770,36 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 939 ± 60 | 0.16 | 0.46 | 31 | 0.263 | 20 | 433.2 |
 | y | 0.500 | 607 ± 62 | 0.27 | 0.42 | 29 | 0.229 | 0.83 | 433.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
+
+**`tensile_160C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-23 17:45 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+160 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.01e+03 ± 2.1e+02 | 0.14 | 0.41 | 36 | 0.254 | 19 | 433.4 |
+| y | 0.500 | 1.01e+03 ± 1.8e+02 | 0.25 | 0.42 | 32 | 0.258 | 11 | 432.8 |
+
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_25C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 25 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -728,15 +808,36 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.92e+03 ± 52 | 0.16 | 0.44 | 49 | 0.330 | 48 | 298.2 |
 | y | 0.500 | 1.89e+03 ± 52 | 0.20 | 0.45 | 47 | 0.406 | 45 | 298.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
+
+**`tensile_25C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-23 17:45 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+25 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 2.26e+03 ± 1.8e+02 | 0.27 | 0.45 | 57 | 0.039 | 48 | 298.3 |
+| y | 0.500 | 1.83e+03 ± 1.3e+02 | 0.15 | 0.45 | 58 | 0.043 | 45 | 298.2 |
+
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_35C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 35 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -745,15 +846,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.25e+03 ± 65 | 0.25 | 0.44 | 48 | 0.340 | 47 | 308.1 |
 | y | 0.500 | 1.85e+03 ± 50 | 0.17 | 0.45 | 45 | 0.323 | 44 | 308.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_45C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 45 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -762,15 +865,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.39e+03 ± 58 | 0.24 | 0.44 | 47 | 0.383 | 45 | 318.1 |
 | y | 0.500 | 1.73e+03 ± 53 | 0.17 | 0.45 | 44 | 0.365 | 43 | 318.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_55C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 55 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -779,15 +884,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.77e+03 ± 53 | 0.17 | 0.44 | 46 | 0.343 | 44 | 328.2 |
 | y | 0.500 | 1.4e+03 ± 56 | 0.23 | 0.44 | 43 | 0.329 | 42 | 328.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_65C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 65 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -796,15 +903,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 928 ± 54 | 0.27 | 0.44 | 45 | 0.342 | 43 | 338.2 |
 | y | 0.500 | 1.52e+03 ± 61 | 0.19 | 0.44 | 42 | 0.387 | 40 | 338.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_75C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 75 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -813,15 +922,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.46e+03 ± 54 | 0.20 | 0.44 | 43 | 0.351 | 42 | 348.1 |
 | y | 0.500 | 1.4e+03 ± 62 | 0.17 | 0.44 | 41 | 0.364 | 39 | 348.3 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_85C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-22 16:03 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 85 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-server:
 
@@ -830,15 +941,17 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.48e+03 ± 60 | 0.18 | 0.44 | 42 | 0.318 | 40 | 358.1 |
 | y | 0.500 | 1.33e+03 ± 55 | 0.19 | 0.44 | 39 | 0.335 | 38 | 358.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_90C` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 90 °C, 10⁸ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -847,11 +960,32 @@ PE CG, periodic crystal of straight stems (7×10×27 cell repeats, D59), 140 cha
 | x | 0.500 | 1.1e+03 ± 62 | 0.21 | 0.43 | 42 | 0.335 | 40 | 363.2 |
 | y | 0.500 | 1.09e+03 ± 69 | 0.26 | 0.44 | 39 | 0.320 | 37 | 363.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
+
+**`tensile_90C_r1e9` analysis**
+
+`sepsim analyze tensile`, generated 2026-11-23 17:45 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+
+90 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-server:
+
+| pull axis | strain reached | E<sub>app</sub> (MPa) | ν, fit | ν, whole run | σ<sub>peak</sub> (MPa) | ε<sub>peak</sub> | flow σ (MPa) | T (K) |
+|---|---|---|---|---|---|---|---|---|
+| x | 0.500 | 1.65e+03 ± 1.5e+02 | 0.22 | 0.44 | 44 | 0.379 | 40 | 363.2 |
+| y | 0.500 | 1.31e+03 ± 1.5e+02 | 0.13 | 0.44 | 43 | 0.032 | 37 | 363.0 |
+
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
+- Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 </details>
 
@@ -26824,8 +26958,8 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 
 | Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
 |---|---|---|---|---|---|---|---|
-| ρ (g/cm³) | 1.01447 ± 0.00047 | 0.99779 ± 0.00028 | 0.98689 ± 0.00006 | 0.97640 ± 0.00020 | 35 °C: 1.01239 ± 0.00024; 45 °C: 1.00893 ± 0.00011; 55 °C: 1.00593 ± 0.00007; 65 °C: 1.00354 ± 0.00006; 75 °C: 1.00280 ± 0.00031; 85 °C: 0.99926 ± 0.00011; 100 °C: 0.99474 ± 0.00013; 110 °C: 0.99257 ± 0.00010; 120 °C: 0.99076 ± 0.00054; 140 °C: 0.98367 ± 0.00009; 150 °C: 0.98024 ± 0.00041 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
-| α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 2.791 ± 0.137; 35–65 °C: 2.948 ± 0.157; 75–110 °C: 2.936 ± 0.177; 120–150 °C: 3.537 ± 0.013 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| ρ (g/cm³) | 1.01447 ± 0.00047 | 0.99779 ± 0.00028 | 0.98689 ± 0.00006 | 0.97640 ± 0.00020 | 35 °C: 1.01239 ± 0.00024; 45 °C: 1.00893 ± 0.00011; 55 °C: 1.00593 ± 0.00007; 65 °C: 1.00354 ± 0.00006; 75 °C: 1.00280 ± 0.00031; 85 °C: 0.99926 ± 0.00011; 100 °C: 0.99474 ± 0.00013; 110 °C: 0.99257 ± 0.00010; 120 °C: 0.99076 ± 0.00054; 140 °C: 0.98367 ± 0.00009; 150 °C: 0.98024 ± 0.00041 | comp | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
+| α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 2.791 ± 0.137; 35–65 °C: 2.948 ± 0.157; 75–110 °C: 2.936 ± 0.177; 120–150 °C: 3.537 ± 0.013 | trend | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
 | crystallinity (ordered-site fraction) | 1.000 | 1.000 | 0.999 | 0.998 | 35 °C: 1.000; 45 °C: 1.000; 55 °C: 1.000; 65 °C: 1.000; 75 °C: 1.000; 85 °C: 1.000; 100 °C: 1.000; 110 °C: 1.000; 120 °C: 1.000; 140 °C: 0.999; 150 °C: 0.999 | — | `crystal`, `crystal_fine_a`, `crystal_fine_b`, `crystal_fine_c` |
 | E<sub>app</sub> (MPa), 10⁹ s⁻¹, mean ± SD | 4.11e+03 ± 276 | 3.17e+03 ± 242 | 3.03e+03 ± 343 | 2.58e+03 ± 125 | 3.13e+03 ± 224; 2.92e+03 ± 455; 2.84e+03 ± 506; 2.74e+03 ± 20; 2.68e+03 ± 14.5; 3.97e+03 ± 236; 3.61e+03 ± 455; 3.58e+03 ± 140; 3.38e+03 ± 32.3; 3.23e+03 ± 238; 3.21e+03 ± 367 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
 | ν, fit up to the E<sub>app</sub> strain, 10⁹ s⁻¹, mean ± SD | 0.25 ± 0.05 | 0.24 ± 0.13 | 0.27 ± 0.00 | 0.33 ± 0.04 | 0.26 ± 0.08; 0.24 ± 0.03; 0.29 ± 0.05; 0.22 ± 0.03; 0.28 ± 0.06; 0.26 ± 0.00; 0.31 ± 0.11; 0.23 ± 0.04; 0.31 ± 0.04; 0.24 ± 0.08; 0.19 ± 0.06 | trend | `tensile_100C_r1e9`, `tensile_110C_r1e9`, `tensile_120C_r1e9`, `tensile_130C_r1e9`, `tensile_140C_r1e9`, `tensile_150C_r1e9`, `tensile_160C_r1e9`, `tensile_25C_r1e9`, `tensile_35C_r1e9`, `tensile_45C_r1e9`, `tensile_55C_r1e9`, `tensile_65C_r1e9`, `tensile_75C_r1e9`, `tensile_85C_r1e9`, `tensile_90C_r1e9` |
@@ -26888,7 +27022,7 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 
 **`crystal` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-20 17:28 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+`sepsim analyze crystal`, generated 2026-11-23 18:26 UTC on rdyu-server, run finished; crystallinity uncalibrated, melt baseline.
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -26902,10 +27036,12 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`crystal_fine_a` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-21 18:25 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+`sepsim analyze crystal`, generated 2026-11-23 18:26 UTC on rdyu-server, run finished; crystallinity uncalibrated, melt baseline.
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -26919,10 +27055,12 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`crystal_fine_b` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-21 18:26 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+`sepsim analyze crystal`, generated 2026-11-23 18:27 UTC on rdyu-server, run finished; crystallinity uncalibrated, melt baseline.
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -26936,10 +27074,12 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`crystal_fine_c` analysis**
 
-`sepsim analyze crystal`, generated 2026-11-21 18:26 UTC on rdyu-rog, run finished; crystallinity uncalibrated, melt baseline.
+`sepsim analyze crystal`, generated 2026-11-23 18:27 UTC on rdyu-server, run finished; crystallinity uncalibrated, melt baseline.
 
 | T (°C) | stable | crystallinity | ρ (g/cm³) | a (Å) | b (Å) | c (Å) | drift |
 |---|---|---|---|---|---|---|---|
@@ -26952,10 +27092,12 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 - Note: A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
 - Note: CG (SDK) beads carry no setting angle: the stems pack as the model prefers (a/b = √3 is hexagonal); a, b and c of the CG crystal are not the orthorhombic PE cell.
 - Note: The barostat is anisotropic (x, y, z independent, couple none); the stems stay along z only while the crystal holds.
+- Note: Elastic constants from the box-length fluctuations of the NPT holds (Parrinello-Rahman/Ray strain-fluctuation formula, T = the set point): the box is orthogonal, so the shear strains are fixed and only the normal-normal block of the compliance is sampled; it equals the normal block of the full S only if the normal-shear couplings vanish, assumed here by the orthorhombic (or pseudo-hexagonal, stems along z) symmetry. They are static (zero-rate, isothermal) constants of the model crystal, to compare with the rate-dependent tensile E<sub>app</sub>; they rest on the MTK (Nose-Hoover) barostat sampling the NPT ensemble (Pdamp 1000 dt, frames 1 ps apart), and fluctuation estimates converge slowly: the halves check flags E that differ by more than 2 sigma between the first and second half of the hold.
+- Note: `E_z` is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems.
 
 **`tensile_100C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 100 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -26964,15 +27106,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.28e+03 ± 2.1e+02 | 0.21 | 0.47 | 2.5e+02 | 0.111 | 72 | 373.2 |
 | y | 0.500 | 2.97e+03 ± 2.2e+02 | 0.31 | 0.48 | 2.3e+02 | 0.127 | 62 | 373.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_110C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 110 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -26981,15 +27125,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.25e+03 ± 1.7e+02 | 0.22 | 0.46 | 2.5e+02 | 0.110 | 66 | 383.2 |
 | y | 0.500 | 2.6e+03 ± 2.3e+02 | 0.27 | 0.52 | 2.3e+02 | 0.126 | 24 | 383.3 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_120C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 120 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -26998,15 +27144,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.2e+03 ± 2.5e+02 | 0.26 | 0.46 | 2.6e+02 | 0.112 | 64 | 393.1 |
 | y | 0.500 | 2.48e+03 ± 2.6e+02 | 0.33 | 0.47 | 2.2e+02 | 0.121 | 56 | 393.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_130C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 130 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27015,15 +27163,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.27e+03 ± 2.5e+02 | 0.27 | 0.45 | 2.2e+02 | 0.095 | 60 | 403.1 |
 | y | 0.500 | 2.79e+03 ± 2.8e+02 | 0.27 | 0.46 | 2e+02 | 0.108 | 53 | 403.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_140C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 140 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27032,15 +27182,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 2.75e+03 ± 2.4e+02 | 0.20 | 0.45 | 2e+02 | 0.094 | 57 | 413.1 |
 | y | 0.500 | 2.73e+03 ± 2.4e+02 | 0.24 | 0.45 | 1.7e+02 | 0.086 | 48 | 413.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_150C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 150 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27049,15 +27201,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 2.67e+03 ± 2.2e+02 | 0.32 | 0.45 | 1.8e+02 | 0.093 | 51 | 423.1 |
 | y | 0.500 | 2.69e+03 ± 2.5e+02 | 0.24 | 0.45 | 1.5e+02 | 0.085 | 46 | 423.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_160C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 160 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27066,15 +27220,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 2.67e+03 ± 2.5e+02 | 0.36 | 0.43 | 1.5e+02 | 0.096 | 45 | 433.2 |
 | y | 0.500 | 2.49e+03 ± 2.9e+02 | 0.31 | 0.44 | 1.4e+02 | 0.087 | 40 | 433.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_25C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 25 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27083,15 +27239,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 4.3e+03 ± 1.3e+02 | 0.21 | 0.48 | 3.3e+02 | 0.147 | 1e+02 | 298.3 |
 | y | 0.500 | 3.91e+03 ± 1.8e+02 | 0.28 | 0.51 | 2.8e+02 | 0.128 | 89 | 298.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_35C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 35 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27100,15 +27258,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 4.14e+03 ± 2e+02 | 0.26 | 0.48 | 3e+02 | 0.119 | 99 | 308.1 |
 | y | 0.500 | 3.8e+03 ± 1.4e+02 | 0.26 | 0.49 | 2.9e+02 | 0.494 | 1.3e+02 | 308.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_45C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 45 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27117,15 +27277,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.93e+03 ± 2.6e+02 | 0.23 | 0.48 | 3e+02 | 0.122 | 94 | 318.1 |
 | y | 0.500 | 3.29e+03 ± 2.2e+02 | 0.38 | 0.51 | 2.6e+02 | 0.132 | 33 | 318.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_55C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 55 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27134,15 +27296,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.68e+03 ± 2.1e+02 | 0.20 | 0.48 | 3.1e+02 | 0.139 | 92 | 328.2 |
 | y | 0.500 | 3.48e+03 ± 1.6e+02 | 0.26 | 0.49 | 2.8e+02 | 0.475 | 1.5e+02 | 328.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_65C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 65 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27151,15 +27315,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.41e+03 ± 2.1e+02 | 0.34 | 0.48 | 3e+02 | 0.127 | 87 | 338.2 |
 | y | 0.500 | 3.36e+03 ± 2.2e+02 | 0.28 | 0.52 | 2.5e+02 | 0.124 | 31 | 338.3 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_75C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 75 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27168,15 +27334,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.4e+03 ± 2.3e+02 | 0.18 | 0.47 | 2.8e+02 | 0.114 | 81 | 348.1 |
 | y | 0.500 | 3.07e+03 ± 2.3e+02 | 0.30 | 0.50 | 2.5e+02 | 0.136 | 75 | 348.2 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_85C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-21 18:26 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:15 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 85 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27185,15 +27353,17 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.47e+03 ± 2.2e+02 | 0.15 | 0.47 | 2.8e+02 | 0.110 | 76 | 358.1 |
 | y | 0.500 | 2.95e+03 ± 2.1e+02 | 0.23 | 0.51 | 2.5e+02 | 0.135 | 76 | 358.3 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 **`tensile_90C_r1e9` analysis**
 
-`sepsim analyze tensile`, generated 2026-11-20 18:34 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
+`sepsim analyze tensile`, generated 2026-11-23 17:16 UTC; E<sub>app</sub> and ν fitted up to strain 0.02, flow σ = mean true stress over strain 0.3–0.5.
 
 90 °C, 10⁹ s⁻¹ to strain 0.5, run finished on rdyu-rog:
 
@@ -27202,11 +27372,13 @@ PE UA, periodic crystal of straight stems (7×10×40 cell repeats, D59), 140 cha
 | x | 0.500 | 3.34e+03 ± 1.7e+02 | 0.15 | 0.47 | 2.8e+02 | 0.114 | 74 | 363.1 |
 | y | 0.500 | 3e+03 ± 2e+02 | 0.34 | 0.48 | 2.3e+02 | 0.127 | 65 | 363.1 |
 
-- Note: The box is an amorphous melt above T<sub>g</sub> (T<sub>g</sub> is below 25 °C for PE, D14), so the response is viscoelastic and rate-dependent: these are not the moduli of a semicrystalline separator, whose stiffness and yield come from its crystallinity.
-- Note: E<sub>app</sub> is the apparent (high-frequency) modulus at the simulated strain rate, many orders of magnitude above experiment; it falls with the rate.
-- Note: There is no true yield in a melt: the peak or plateau is a viscous flow stress (≈ 3 η × rate for a Newtonian melt), again rate-dependent.
-- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt) lags the imposed strain, so the lateral contraction trails the axial extension (ν low at small strain); a fully relaxed melt approaches ν = 0.5.
+- Note: The box is a defect-free periodic single crystal (D59: straight stems along z, each bonded to its own periodic image; no chain ends, amorphous phase, grain boundaries or lamellar interfaces), so these are not the moduli of a semicrystalline separator.
+- Note: The load is transverse to the chain axis (x, y): E<sub>app</sub> is the transverse modulus of the crystal, governed by the interchain non-bonded (van der Waals) interactions, and much lower than the modulus along the covalent chain axis (z, not a default axis).
+- Note: E<sub>app</sub> is the apparent modulus at the simulated strain rate, many orders of magnitude above experiment; E<sub>app</sub> and the peak stress are rate-dependent.
+- Note: The peak is the transverse yield or failure of a perfect crystal (an ideal strength: no defects or interfaces to start it), not the yield stress of a separator; the flow stress after it is that of the yielded crystal, not a viscous melt flow.
+- Note: ν is biased at high rate: the lateral barostat (Pdamp = 1000 dt, the two lateral axes independent, couple none) lags the imposed strain. The two lateral axes are inequivalent (one transverse, one along the stems) and contract differently, so ν, their mean, is not an isotropic Poisson ratio (per-axis lateral strains in results.json).
 - Note: Stress is -(P<sub>axis</sub> - p<sub>atm</sub>) from the virial pressure tensor averaged over `avg_ps`; the axes of one run start from the same snapshot, so their spread is not a full independent-sample error.
+- Note: --fit steepest: E<sub>app</sub> comes from the steepest window before the peak, which skips a soft toe at small strain (e.g. the UA crystal at 1e9 /s); the maximum over windows biases E<sub>app</sub> up by about its noise.
 
 </details>
 
@@ -27616,6 +27788,31 @@ Per segment:
 - Note: Layers: surface = within 15 Å of either Gibbs surface on the film side (or outside it), interior = the rest, assigned at each time origin; sites leave their layer at long lags, so long-lag layer MSDs mix layers. MSDs are per dimension: in-plane (⟨Δx²⟩+⟨Δy²⟩)/2, normal ⟨Δz²⟩, bulk MSD/3 (isotropic).
 - Note: C<sub>v</sub> = dE/dT (total energy, NVT, per gram) and the surface excess energy are classical: C<sub>v</sub> is not comparable to experiment for the same reasons as the bulk C<sub>p</sub> (classical equipartition; UA/CG drop degrees of freedom). e<sub>s</sub> = (E<sub>pore</sub> − (M<sub>pore</sub>/M<sub>bulk</sub>) E<sub>bulk</sub>(T))/(2A) compares the NVT film with the NPT bulk at 1 atm (PV ≈ 0) at the same set T; the film's lateral box follows the bulk density (D48).
 - Note: bulk energies not available: /home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/sweep/in.sweep: bulk uses a tail correction, the pore does not (D48)
+
+</details>
+
+### `pe_aa_crystal_5x7x12_s1`
+
+PE AA, bulk amorphous box, — chains × C—; no manifest. Stage now: prep (not started (crystal done)).
+
+No analysed properties yet; pending: prep not started; sweep not started; no equilibration verdict yet. Equilibration: —.
+
+<details><summary>Full analysis tables and checks</summary>
+
+**Provenance**
+
+- Manifest: not found in the systems directory.
+
+**Equilibration**
+
+- Verdict: —
+- C<sub>n</sub> plateau (D37): —
+
+**Stages**
+
+- **crystal** (rdyu-server): running, 5.6% (1/2 segments, seg 01 hold 25 C); ETA 2026-11-23 21:36 UTC; started 2026-11-23 18:39 UTC; reads `../../../../../worktrees/aa-crystal-test/systems/pe_aa_crystal_5x7x12_s1/data.lmp`
+
+- Sweep analysis: not analysed yet.
 
 </details>
 
@@ -28104,7 +28301,25 @@ Per segment:
 
 iPP AA, bulk amorphous box, converted from the relaxed UA box (ua2aa), 40 chains × C240, 28,880 atoms; built from `ipp_ua_amorph_n40_c240_s1` (`hold_ext_40ns.data`). Status: finished: prep, `sweep_failed_20261102` (failed, 0.0%), sweep.
 
-No analysed properties yet; pending: sweep analysis not run. Equilibration: from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational).
+| Property | 25 °C | 90 °C | 130 °C | 160 °C | Other (500 K, fits) | Validity | Source |
+|---|---|---|---|---|---|---|---|
+| 500 K equilibration (D47) | — | — | — | — | from `ipp_ua_amorph_n40_c240_s1`: D47 PASS; ACF 0.19 at 30.0 ns, MSD/⟨R<sub>g</sub>²⟩ 2.06; 60.0 ns at 500 K; accepted (C<sub>n</sub> drift over prep + extension, informational) | — | `extend` progress of `ipp_ua_amorph_n40_c240_s1` |
+| ρ (g/cm³) | 0.86809 ± 0.00022 | 0.82739 ± 0.00055 | 0.80231 ± 0.00023 | 0.78281 ± 0.00036 | — | comp | `sweep` |
+| κ<sub>T</sub> (GPa⁻¹) | 0.468 ± 0.017 | 0.927 ± 0.081 | 0.967 ± 0.043 | 1.157 ± 0.063 | — | comp | `sweep` |
+| α<sub>V</sub> (10⁻⁴ K⁻¹) | — | — | — | — | 25–160 °C: 7.637 ± 0.110 (χ²<sub>red</sub> 17.2); 25–90 °C: 7.190 ± 0.268 (χ²<sub>red</sub> 13.8); 90–160 °C: 7.830 ± 0.235 (χ²<sub>red</sub> 6.45) | comp | `sweep` |
+| C<sub>p</sub>, classical (J g⁻¹ K⁻¹) | — | — | — | — | 25–160 °C: 5.927 ± 0.016 (χ²<sub>red</sub> 40.9); 25–90 °C: 5.968 ± 0.038 (χ²<sub>red</sub> 36.3); 90–160 °C: 5.886 ± 0.034 (χ²<sub>red</sub> 37.9) | corr | `sweep` |
+| C<sub>n</sub> plateau, 500 K (D37) | — | — | — | — | 500 K: 5.66 (melt 6.15) | trend | `extend` progress of `ipp_ua_amorph_n40_c240_s1` |
+| R<sub>g</sub> (Å) | 17.71 ± 0.01 | 18.19 ± 0.06 | 17.91 ± 0.08 | 17.41 ± 0.04 | — | trend | `sweep` |
+| R<sub>ee</sub> (Å) | 45.9 ± 0.1 | 48.2 ± 0.3 | 47.5 ± 0.6 | 43.2 ± 0.2 | — | trend | `sweep` |
+| C<sub>n</sub> | 5.47 ± 0.01 | 5.88 ± 0.04 | 5.59 ± 0.09 | 4.94 ± 0.02 | — | trend | `sweep` |
+| P2 1/e time (ps) | — | 238 | 69.4 | 35.8 | — | comp | `sweep` |
+| segment MSD at 1 ns lag (Å²) | 3.379 | 26.68 | 63.87 | 93.85 | — | comp | `sweep` |
+| max chain COM MSD (Å²) at lag | 0.4307 at 2.5 ns | 4.91 at 2.5 ns | 19.55 at 2.5 ns | 33.02 at 2.5 ns | — | todo | `sweep` |
+| chain COM MSD / ⟨R<sub>g</sub>²⟩ at the longest lag | 0.00 | 0.01 | 0.06 | 0.11 | — | todo | `sweep` |
+| D<sub>COM</sub> (cm²/s) | not diffusive (slope 0.46) | not diffusive (slope 0.85) | not diffusive (slope 0.58) | not diffusive (slope 0.68) | — | todo | `sweep` |
+| τ<sub>ee</sub>, end-to-end vector 1/e time (ns) | not reached | not reached | not reached | not reached (extrap. 18.4) | — | todo | `sweep` |
+| τ<sub>1</sub>, slowest Rouse mode 1/e time (ns) | not reached | not reached | not reached | not reached | — | todo | `sweep` |
+| ordered-site fraction (crystallinity monitor, uncalibrated) | 0.085 | 0.091 | 0.100 | 0.109 | — | — | `sweep` |
 
 <details><summary>Full analysis tables and checks</summary>
 
@@ -28130,7 +28345,26 @@ No analysed properties yet; pending: sweep analysis not run. Equilibration: from
   - monitor flags: drift seg 3,6,8; step!=hold 90 C,130 C,160 C; hyst max 0.33%
 - Superseded (not used): `sweep_cancelled_pe_first` (cancelled/killed?)
 
-- Sweep analysis: not analysed yet.
+**`sweep` analysis** (AA iPP C240, 60.0 ns at 500 K)
+
+`sepsim analyze sweep`, generated 2026-11-21 06:53 UTC on rdyu-server, run finished.
+
+| T (°C) | ρ (g/cm³) | κ<sub>T</sub> (GPa⁻¹) | R<sub>g</sub> (Å) | R<sub>ee</sub> (Å) | C<sub>n</sub> | P2 1/e time (ps) | max chain COM MSD (Å²) at lag | D<sub>COM</sub> (cm²/s) | trajectory analysed |
+|---|---|---|---|---|---|---|---|---|---|
+| 25 | 0.86809 ± 0.00022 | 0.468 ± 0.017 | 17.71 ± 0.01 | 45.9 ± 0.1 | 5.47 ± 0.01 | — | 0.4307 at 2.5 ns | not diffusive (slope 0.46) | yes |
+| 90 | 0.82739 ± 0.00055 | 0.927 ± 0.081 | 18.19 ± 0.06 | 48.2 ± 0.3 | 5.88 ± 0.04 | 238 | 4.91 at 2.5 ns | not diffusive (slope 0.85) | yes |
+| 130 | 0.80231 ± 0.00023 | 0.967 ± 0.043 | 17.91 ± 0.08 | 47.5 ± 0.6 | 5.59 ± 0.09 | 69.4 | 19.55 at 2.5 ns | not diffusive (slope 0.58) | yes |
+| 160 | 0.78281 ± 0.00036 | 1.157 ± 0.063 | 17.41 ± 0.04 | 43.2 ± 0.2 | 4.94 ± 0.02 | 35.8 | 33.02 at 2.5 ns | not diffusive (slope 0.68) | yes |
+
+| Fit window (°C) | α<sub>V</sub> (10⁻⁴ K⁻¹) | χ²<sub>red</sub> of the α<sub>V</sub> fit | C<sub>p</sub> classical (J g⁻¹ K⁻¹) | χ²<sub>red</sub> of the C<sub>p</sub> fit | points in the fit |
+|---|---|---|---|---|---|
+| 25–160 | 7.637 ± 0.110 | 17.2 | 5.927 ± 0.016 | 40.9 | 15 |
+| 90–160 | 7.830 ± 0.235 | 6.45 | 5.886 ± 0.034 | 37.9 | 8 |
+| 25–90 | 7.190 ± 0.268 | 13.8 | 5.968 ± 0.038 | 36.3 | 8 |
+
+- Note: C<sub>p</sub> is the classical dH/dT and is not comparable to experiment: classical MD gives every degree of freedom k<sub>B</sub>/2 per quadratic term, so the stiff C–H/C–C modes that are quantum-frozen at these T make AA C<sub>p</sub> too high; it needs the VDOS quantum correction (D12c), not done here.
+- Note: Chains may not be relaxed: the D47 criteria fail on the prep 500 K hold (prep/progress.json: end-to-end ACF 0.72 at 2.5 ns, needs < 1/e; COM MSD/<R<sub>g</sub>²> 0.25, needs >= 2).
+- Note: α<sub>V</sub> and C<sub>p</sub> are linear fits in T over each window with SEM weights; a reduced χ² > 1 (curvature over the window, or SEMs too small) inflates the quoted errors by √χ²<sub>red</sub>, and a large χ²<sub>red</sub> over 25–160 °C means α<sub>V</sub> or C<sub>p</sub> depends on T (compare the two half windows).
 
 </details>
 

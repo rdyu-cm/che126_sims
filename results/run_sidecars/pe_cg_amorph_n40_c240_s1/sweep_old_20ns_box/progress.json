@@ -8,7 +8,7 @@
   "step!=hold 130 C",
   "hyst max 0.10%"
  ],
- "generated": "2026-10-30T10:10:12-07:00",
+ "generated": "2026-11-23T10:50:03-08:00",
  "generated_on": "rdyu-rog",
  "hysteresis": [
   {
@@ -76,7 +76,7 @@
    "t_k": 298.15
   }
  ],
- "log_age_s": 698642.9367628098,
+ "log_age_s": 2778233.411400795,
  "log_mtime": "2026-10-22T08:06:09-07:00",
  "manifest_status": "finished",
  "n_done": 18,

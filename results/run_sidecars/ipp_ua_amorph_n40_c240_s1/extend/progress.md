@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-rog, started 2026-10-23 12:05 PDT
 - progress: 50.0% of 40,000,000 MD steps; 0/1 segments done; current: 1 Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm
 - speed: 20.61 ns/day (119.3 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-26 11:02 PDT (4.0 d ago); report 2026-10-30 10:10 PDT on rdyu-rog
+- log updated 2026-10-26 11:02 PDT (28.0 d ago); report 2026-11-23 10:50 PST on rdyu-rog
 - checks: D37 FAIL C_n 5.66 (drift); D47 PASS (ACF 0.19 at 30.0 ns; MSD/Rg2 2.06; 60.0 ns)
 
 ## Segments

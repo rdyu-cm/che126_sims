@@ -1,0 +1,131 @@
+{
+ "cache": {},
+ "current": {
+  "index": 1,
+  "name": "Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1209123.9729585648,
+ "log_mtime": "2026-11-09T10:58:00-08:00",
+ "manifest_status": "started",
+ "n_done": 0,
+ "n_segments": 3,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 14.825753840223646,
+ "percent": 18.2875,
+ "plots": {},
+ "protocol": "hole",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r5nm_160C_n640_c240_s1_rep441/hole_free_gap5nm",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0",
+   "run_steps": [
+    1000000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 731500,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 50 A",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd",
+    "hole_dense_s01.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000,
+    500
+   ],
+   "ensemble": "nvt",
+   "index": 3,
+   "name": "Stage 3: hold at 160 C",
+   "run_steps": [
+    200000,
+    1800000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3871,
+   1794208393050475835
+  ],
+  "log.lammps": [
+   2507749,
+   1794250680069644463
+  ],
+  "run_manifest.json": [
+   2447,
+   1794208394628771029
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "hole_free_gap5nm",
+ "start_time": "2026-11-09T07:13:14.628542+00:00",
+ "status": "cancelled/killed?",
+ "steps_done": 731500,
+ "steps_per_s": 17.159437315073664,
+ "steps_total": 4000000,
+ "system": "pe_cg_hole_r5nm_160C_n640_c240_s1_rep441",
+ "version": 2
+}

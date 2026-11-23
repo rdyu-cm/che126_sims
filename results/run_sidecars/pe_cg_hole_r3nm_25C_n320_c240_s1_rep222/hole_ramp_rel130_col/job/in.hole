@@ -1,0 +1,312 @@
+# sepsim 0.1.0 deck: hole
+# system pe_cg_hole_r3nm_25C_n320_c240_s1_rep222 (cg), seed 1
+# manifest.yaml sha256 0150fe35fda891e71ab47d41792c3100b0f67d82a99e9062af9466803a4aad09
+# data ../../../../systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp sha256 4399f6479565a0fe2481383a96972157db55a51a684bda0d9b051f26409d199b
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   chunk_ps = 25000.0
+#   dense_dump_ps = 5.0
+#   dense_ps = 2000.0
+#   dt_fs = 10.0
+#   hole_dump_ps = 50.0
+#   hole_grid_c = 25h,35,45,55,65,75,85,90h,100,110,120,130h,140,150,160h
+#   hole_hold_ps = 10000.0
+#   hole_step_ps = 2000.0
+#   inflate_ps = 20000.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   push_every = 1
+#   push_k = 0.5
+#   push_style = indent
+#   release_t_c = 130
+#   restart_ps = 1000.0
+#   rho_r = True
+#   rho_r_bin = 2.0
+#   scaffold = columns
+#   scaffold_col_r_nm = 1.0
+#   scaffold_d_nm = 2.5
+#   scaffold_hold_ps = 0.0
+#   scaffold_k = 5.0
+#   scaffold_n_col = 6
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+#   wall_hold_ps = 10000.0
+# Hole (D52): R 3 nm (30 A), axis x 79.0503 y 79.0503 A, built at 25 C; film 129.35 A (151.41 A with the hole), Lz 201.4109 A (fixed), ligament 68.8 A
+# Scaffold: columns, fix spring/self K 5 kcal/mol/A^2 on the beads inside 6 columns of radius 10 A (12 with periodic images) at the end of Stage 2 (static group)
+# Production grid (cumulative production ns at each segment end):
+#    1 hold 25     C 10000     ps -> 10 ns, scaffold held
+#    2 step 35     C 2000      ps -> 12 ns, box 129.0516 x 129.0516 A, scaffold held
+#    3 step 45     C 2000      ps -> 14 ns, box 129.3661 x 129.3661 A, scaffold held
+#    4 step 55     C 2000      ps -> 16 ns, box 129.6711 x 129.6711 A, scaffold held
+#    5 step 65     C 2000      ps -> 18 ns, box 129.9770 x 129.9770 A, scaffold held
+#    6 step 75     C 2000      ps -> 20 ns, box 130.2503 x 130.2503 A, scaffold held
+#    7 step 85     C 2000      ps -> 22 ns, box 130.5846 x 130.5846 A, scaffold held
+#    8 step 90     C 2000      ps -> 24 ns, box 130.7055 x 130.7055 A, scaffold held
+#    9 hold 90     C 10000     ps -> 34 ns, scaffold held
+#   10 step 100    C 2000      ps -> 36 ns, box 131.0119 x 131.0119 A, scaffold held
+#   11 step 110    C 2000      ps -> 38 ns, box 131.3203 x 131.3203 A, scaffold held
+#   12 step 120    C 2000      ps -> 40 ns, box 131.6270 x 131.6270 A, scaffold held
+#   13 step 130    C 2000      ps -> 42 ns, box 131.9454 x 131.9454 A, scaffold released here
+#   14 hold 130    C 10000     ps -> 52 ns, scaffold released
+#   15 step 140    C 2000      ps -> 54 ns, box 132.2790 x 132.2790 A, scaffold released
+#   16 step 150    C 2000      ps -> 56 ns, box 132.5293 x 132.5293 A, scaffold released
+#   17 step 160    C 2000      ps -> 58 ns, box 132.8715 x 132.8715 A, scaffold released
+#   18 hold 160    C 10000     ps -> 68 ns, scaffold released
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../systems/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/data.lmp nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_modify tail no
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+
+# rolling restart files (alternating restart.a / restart.b)
+restart 100000 restart.a restart.b
+thermo 100
+# velocities come from the data file (no velocity create)
+fix md all nvt temp 298.15 298.15 1000
+
+# ---- Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0 -> 30 A (indent, K 0.5) -> inflate.dcd
+variable r0 equal ramp(0.0,30)
+# cylindrical indenter about the axis: F = K (r0 - r)^2 outward on beads with r < r0 (minimum image)
+fix push all indent 0.5 cylinder z 79.0503366701 79.0503366701 v_r0 side out units box
+dump inflate all dcd 5000 inflate.dcd
+dump_modify inflate unwrap yes
+run 2000000
+
+# ---- Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A -> inflate.dcd, inflated.data
+variable r0 equal 30
+run 1000000
+undump inflate
+write_data inflated.data pair ij
+write_restart inflated.restart
+unfix push
+
+# scaffold group from the positions in inflated.data (static), tethered in place; the beads stay in fix md
+region scol1 cylinder z 15.2882293062 79.0503366701 10 INF INF units box
+region scol2 cylinder z 144.05033667 79.0503366701 10 INF INF units box
+region scol3 cylinder z 111.55033667 6.57988055214 10 INF INF units box
+region scol4 cylinder z 111.55033667 135.341987916 10 INF INF units box
+region scol5 cylinder z 46.5503366701 6.57988055214 10 INF INF units box
+region scol6 cylinder z 46.5503366701 135.341987916 10 INF INF units box
+region scol7 cylinder z 14.0503366701 79.0503366701 10 INF INF units box
+region scol8 cylinder z 142.812444034 79.0503366701 10 INF INF units box
+region scol9 cylinder z 46.55033667 22.7586854241 10 INF INF units box
+region scol10 cylinder z 46.55033667 151.520792788 10 INF INF units box
+region scol11 cylinder z 111.55033667 22.7586854241 10 INF INF units box
+region scol12 cylinder z 111.55033667 151.520792788 10 INF INF units box
+region scaffold union 12 scol1 scol2 scol3 scol4 scol5 scol6 scol7 scol8 scol9 scol10 scol11 scol12
+group scaffold region scaffold
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+
+# ---- Stage 3: hold at 25 C (hole segment 1/18, 10000 ps NVT, scaffold held) -> hole.dcd, hole_dense_s01.dcd, hole_10ns.data
+dump hole all dcd 5000 hole.dcd
+dump_modify hole unwrap yes
+# live diagnostic: radial bead mass density about the hole axis (whole film thickness)
+compute rbin all chunk/atom bin/cylinder z lower 201.410925802 79.0503366701 79.0503366701 0.0 64 32 units box
+fix rho_r all ave/chunk 100 50 5000 rbin density/mass file hole_rho_r.txt
+# dense frames: the first 2000 ps of this segment every 5 ps
+dump dense all dcd 500 hole_dense_s01.dcd
+dump_modify dense unwrap yes
+run 200000
+undump dense
+run 800000
+write_data hole_10ns.data pair ij
+
+# ---- Stage 4: step at 35 C (hole segment 2/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_12ns.data
+unfix scaffold
+# D48 lateral box at 308.15 K (bulk heating density 0.828999 g/cm3): Lx 129.0516, Ly 129.0516 A; z unchanged
+change_box all x final 14.5245311795 143.576142161 y final 14.5245311795 143.576142161 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 308.15 308.15 1000
+run 200000
+write_data hole_12ns.data pair ij
+
+# ---- Stage 5: step at 45 C (hole segment 3/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_14ns.data
+unfix scaffold
+# D48 lateral box at 318.15 K (bulk heating density 0.822968 g/cm3): Lx 129.3661, Ly 129.3661 A; z unchanged
+change_box all x final 14.3672918323 143.733381508 y final 14.3672918323 143.733381508 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 318.15 318.15 1000
+run 200000
+write_data hole_14ns.data pair ij
+
+# ---- Stage 6: step at 55 C (hole segment 4/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_16ns.data
+unfix scaffold
+# D48 lateral box at 328.15 K (bulk heating density 0.817175 g/cm3): Lx 129.6711, Ly 129.6711 A; z unchanged
+change_box all x final 14.214800394 143.885872946 y final 14.214800394 143.885872946 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 328.15 328.15 1000
+run 200000
+write_data hole_16ns.data pair ij
+
+# ---- Stage 7: step at 65 C (hole segment 5/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_18ns.data
+unfix scaffold
+# D48 lateral box at 338.15 K (bulk heating density 0.811418 g/cm3): Lx 129.9770, Ly 129.9770 A; z unchanged
+change_box all x final 14.0618134415 144.038859899 y final 14.0618134415 144.038859899 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 338.15 338.15 1000
+run 200000
+write_data hole_18ns.data pair ij
+
+# ---- Stage 8: step at 75 C (hole segment 6/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_20ns.data
+unfix scaffold
+# D48 lateral box at 348.15 K (bulk heating density 0.806322 g/cm3): Lx 130.2503, Ly 130.2503 A; z unchanged
+change_box all x final 13.9252003852 144.175472955 y final 13.9252003852 144.175472955 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 348.15 348.15 1000
+run 200000
+write_data hole_20ns.data pair ij
+
+# ---- Stage 9: step at 85 C (hole segment 7/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_22ns.data
+unfix scaffold
+# D48 lateral box at 358.15 K (bulk heating density 0.800146 g/cm3): Lx 130.5846, Ly 130.5846 A; z unchanged
+change_box all x final 13.7580560875 144.342617253 y final 13.7580560875 144.342617253 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 358.15 358.15 1000
+run 200000
+write_data hole_22ns.data pair ij
+
+# ---- Stage 10: step at 90 C (hole segment 8/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_24ns.data
+unfix scaffold
+# D48 lateral box at 363.15 K (bulk heating density 0.797927 g/cm3): Lx 130.7055, Ly 130.7055 A; z unchanged
+change_box all x final 13.6975847363 144.403088604 y final 13.6975847363 144.403088604 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 363.15 363.15 1000
+run 200000
+write_data hole_24ns.data pair ij
+
+# ---- Stage 11: hold at 90 C (hole segment 9/18, 10000 ps NVT, scaffold held) -> hole.dcd, hole_34ns.data
+run 1000000
+write_data hole_34ns.data pair ij
+
+# ---- Stage 12: step at 100 C (hole segment 10/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_36ns.data
+unfix scaffold
+# D48 lateral box at 373.15 K (bulk heating density 0.792342 g/cm3): Lx 131.0119, Ly 131.0119 A; z unchanged
+change_box all x final 13.5444054274 144.556267913 y final 13.5444054274 144.556267913 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 373.15 373.15 1000
+run 200000
+write_data hole_36ns.data pair ij
+
+# ---- Stage 13: step at 110 C (hole segment 11/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_38ns.data
+unfix scaffold
+# D48 lateral box at 383.15 K (bulk heating density 0.786772 g/cm3): Lx 131.3203, Ly 131.3203 A; z unchanged
+change_box all x final 13.3901728476 144.710500493 y final 13.3901728476 144.710500493 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 383.15 383.15 1000
+run 200000
+write_data hole_38ns.data pair ij
+
+# ---- Stage 14: step at 120 C (hole segment 12/18, 2000 ps NVT, scaffold held) -> hole.dcd, hole_40ns.data
+unfix scaffold
+# D48 lateral box at 393.15 K (bulk heating density 0.781285 g/cm3): Lx 131.6270, Ly 131.6270 A; z unchanged
+change_box all x final 13.2368416497 144.86383169 y final 13.2368416497 144.86383169 remap units box
+# re-anchor the scaffold at the remapped positions
+fix scaffold scaffold spring/self 5
+fix_modify scaffold energy yes
+unfix md
+fix md all nvt temp 393.15 393.15 1000
+run 200000
+write_data hole_40ns.data pair ij
+
+# ---- Stage 15: step at 130 C (hole segment 13/18, 2000 ps NVT, scaffold released here) -> hole.dcd, hole_dense_s13.dcd, hole_42ns.data
+unfix scaffold
+# D48 lateral box at 403.15 K (bulk heating density 0.775643 g/cm3): Lx 131.9454, Ly 131.9454 A; z unchanged
+change_box all x final 13.0776483713 145.023024969 y final 13.0776483713 145.023024969 remap units box
+unfix md
+fix md all nvt temp 403.15 403.15 1000
+# dense frames: the first 2000 ps of this segment every 5 ps
+dump dense all dcd 500 hole_dense_s13.dcd
+dump_modify dense unwrap yes
+run 200000
+undump dense
+write_data hole_42ns.data pair ij
+
+# ---- Stage 16: hold at 130 C (hole segment 14/18, 10000 ps NVT, scaffold released) -> hole.dcd, hole_52ns.data
+run 1000000
+write_data hole_52ns.data pair ij
+
+# ---- Stage 17: step at 140 C (hole segment 15/18, 2000 ps NVT, scaffold released) -> hole.dcd, hole_54ns.data
+# D48 lateral box at 413.15 K (bulk heating density 0.769789 g/cm3): Lx 132.2790, Ly 132.2790 A; z unchanged
+change_box all x final 12.9108154309 145.189857909 y final 12.9108154309 145.189857909 remap units box
+unfix md
+fix md all nvt temp 413.15 413.15 1000
+run 200000
+write_data hole_54ns.data pair ij
+
+# ---- Stage 18: step at 150 C (hole segment 16/18, 2000 ps NVT, scaffold released) -> hole.dcd, hole_56ns.data
+# D48 lateral box at 423.15 K (bulk heating density 0.765435 g/cm3): Lx 132.5293, Ly 132.5293 A; z unchanged
+change_box all x final 12.7856664477 145.315006892 y final 12.7856664477 145.315006892 remap units box
+unfix md
+fix md all nvt temp 423.15 423.15 1000
+run 200000
+write_data hole_56ns.data pair ij
+
+# ---- Stage 19: step at 160 C (hole segment 17/18, 2000 ps NVT, scaffold released) -> hole.dcd, hole_58ns.data
+# D48 lateral box at 433.15 K (bulk heating density 0.759537 g/cm3): Lx 132.8715, Ly 132.8715 A; z unchanged
+change_box all x final 12.61458327 145.48609007 y final 12.61458327 145.48609007 remap units box
+unfix md
+fix md all nvt temp 433.15 433.15 1000
+run 200000
+write_data hole_58ns.data pair ij
+
+# ---- Stage 20: hold at 160 C (hole segment 18/18, 10000 ps NVT, scaffold released) -> hole.dcd, hole_68ns.data
+run 1000000
+write_data hole_68ns.data pair ij
+undump hole
+unfix rho_r

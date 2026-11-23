@@ -3080,7 +3080,7 @@
   "MSD/Rg2 0.03",
   "drift seg 5,10,11,12"
  ],
- "generated": "2026-10-30T10:10:12-07:00",
+ "generated": "2026-11-23T10:50:03-08:00",
  "generated_on": "rdyu-rog",
  "hold": {
   "boundaries_ns": [],
@@ -6144,7 +6144,7 @@
   "segment": 5,
   "state": "done"
  },
- "log_age_s": 532397.3268694878,
+ "log_age_s": 2611987.7916195393,
  "log_mtime": "2026-10-24T06:16:55-07:00",
  "manifest_status": "finished",
  "n_done": 13,

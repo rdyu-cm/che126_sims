@@ -1,0 +1,102 @@
+{
+ "cache": {},
+ "current": {
+  "index": 1,
+  "name": "Stage 1: settle 200 ps NVT at 363.15 K, indenter clear of the film"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1045857.1617844105,
+ "log_mtime": "2026-11-11T08:19:06-08:00",
+ "manifest_status": "started",
+ "n_done": 0,
+ "n_segments": 2,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 8.061510068256919,
+ "percent": 0.04061119853799685,
+ "plots": {},
+ "protocol": "puncture",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_90C_n640_c240_s1_rep441/puncture_90C_v3_R2nm_p1",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "settle.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    2000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: settle 200 ps NVT at 363.15 K, indenter clear of the film",
+   "run_steps": [
+    20000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 20000,
+   "steps_done": 200,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "puncture.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    2000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: indent at 3 m/s, R 2 nm, travel 14.17425 nm",
+   "run_steps": [
+    472475
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 472475,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3861,
+   1794413921640693955
+  ],
+  "log.lammps": [
+   7258,
+   1794413946867584669
+  ],
+  "run_manifest.json": [
+   2483,
+   1794413923557796050
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "puncture_90C_v3_R2nm_p1",
+ "start_time": "2026-11-11T16:18:43.557549+00:00",
+ "status": "cancelled/killed?",
+ "steps_done": 200,
+ "steps_per_s": 9.33045146788995,
+ "steps_total": 492475,
+ "system": "pe_cg_film_90C_n640_c240_s1_rep441",
+ "version": 2
+}

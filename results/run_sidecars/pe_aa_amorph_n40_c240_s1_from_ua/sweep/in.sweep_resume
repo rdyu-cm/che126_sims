@@ -1,0 +1,290 @@
+# Hand resume of the AA PE sweep after the rdyu-rog power-off of 2026-11-03 (job 186).
+# restart.a = step 5,000,000 = end of segment 1. Replays the VDOS NVE run without the dump
+# (vdos_25C.dump.gz from job 186 is complete and kept), then appends to log.lammps from segment 2 on.
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+read_restart restart.a
+special_bonds lj 0 0 0.5 coul 0 0 0.5
+
+mass 1 12.011  # CT_CH3
+mass 2 12.011  # CT_CH2
+mass 3 1.008  # HC
+pair_style lj/cut/coul/long 12
+pair_modify mix geometric tail yes
+pair_coeff 1 1 0.066 3.55  # CT_CH3
+pair_coeff 2 2 0.066 3.51  # CT_CH2
+pair_coeff 3 3 0.026 2.48  # HC
+kspace_style pppm 1e-05
+bond_coeff 1 268 1.529  # CT-CT
+bond_coeff 2 340 1.09  # CT-HC
+angle_coeff 1 58.35 112.7  # CT-CT-CT
+angle_coeff 2 37.5 110.7  # CT-CT-HC
+angle_coeff 3 33 107.8  # HC-CT-HC
+dihedral_coeff 1 0.85 -0.2 0.2 0  # CT-CT-CT-CT
+dihedral_coeff 2 0 0 0.3 0  # HC-CT-CT-CT
+dihedral_coeff 3 0 0 0.3 0  # HC-CT-CT-HC
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 1
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 1000
+restart 1000000 restart.a restart.b
+fix vdos all nve
+run 10000
+unfix vdos
+log log.lammps append
+thermo 1000
+
+# ---- Segment 2: step at 35 C (308.15 K), 1000 ps, frames every 100 ps -> seg02_step_35C.dcd
+fix md all npt temp 308.15 308.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg02_step_35C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 3: step at 45 C (318.15 K), 1000 ps, frames every 100 ps -> seg03_step_45C.dcd
+fix md all npt temp 318.15 318.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg03_step_45C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 4: step at 55 C (328.15 K), 1000 ps, frames every 100 ps -> seg04_step_55C.dcd
+fix md all npt temp 328.15 328.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg04_step_55C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 5: step at 65 C (338.15 K), 1000 ps, frames every 100 ps -> seg05_step_65C.dcd
+fix md all npt temp 338.15 338.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg05_step_65C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 6: step at 75 C (348.15 K), 1000 ps, frames every 100 ps -> seg06_step_75C.dcd
+fix md all npt temp 348.15 348.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg06_step_75C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 7: step at 85 C (358.15 K), 1000 ps, frames every 100 ps -> seg07_step_85C.dcd
+fix md all npt temp 358.15 358.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg07_step_85C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 8: step at 90 C (363.15 K), 1000 ps, frames every 100 ps -> seg08_step_90C.dcd
+fix md all npt temp 363.15 363.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg08_step_90C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+
+# ---- Segment 9: hold at 90 C (363.15 K), 5000 ps, frames every 10 ps -> seg09_hold_90C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 10000 seg09_hold_90C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 5 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 100 seg09_hold_90C_burst01.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg09_hold_90C_burst02.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg09_hold_90C_burst03.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg09_hold_90C_burst04.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg09_hold_90C_burst05.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+undump traj
+unfix md
+write_data hold_90C.data
+write_restart hold_90C.restart
+# VDOS (D12c, D39): NVE 10 ps at dt 1 fs, velocities every 4 fs -> vdos_90C.dump.gz
+timestep 1
+thermo 1000
+fix vdos all nve
+dump vel all custom 4 vdos_90C.dump.gz id type vx vy vz
+dump_modify vel sort id
+run 10000
+undump vel
+unfix vdos
+timestep 1
+thermo 1000
+
+# ---- Segment 10: step at 100 C (373.15 K), 1000 ps, frames every 100 ps -> seg10_step_100C.dcd
+fix md all npt temp 373.15 373.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg10_step_100C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 11: step at 110 C (383.15 K), 1000 ps, frames every 100 ps -> seg11_step_110C.dcd
+fix md all npt temp 383.15 383.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg11_step_110C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 12: step at 120 C (393.15 K), 1000 ps, frames every 100 ps -> seg12_step_120C.dcd
+fix md all npt temp 393.15 393.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg12_step_120C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 13: step at 130 C (403.15 K), 1000 ps, frames every 100 ps -> seg13_step_130C.dcd
+fix md all npt temp 403.15 403.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg13_step_130C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+
+# ---- Segment 14: hold at 130 C (403.15 K), 5000 ps, frames every 10 ps -> seg14_hold_130C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 10000 seg14_hold_130C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 5 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 100 seg14_hold_130C_burst01.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg14_hold_130C_burst02.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg14_hold_130C_burst03.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg14_hold_130C_burst04.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg14_hold_130C_burst05.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+undump traj
+unfix md
+write_data hold_130C.data
+write_restart hold_130C.restart
+# VDOS (D12c, D39): NVE 10 ps at dt 1 fs, velocities every 4 fs -> vdos_130C.dump.gz
+timestep 1
+thermo 1000
+fix vdos all nve
+dump vel all custom 4 vdos_130C.dump.gz id type vx vy vz
+dump_modify vel sort id
+run 10000
+undump vel
+unfix vdos
+timestep 1
+thermo 1000
+
+# ---- Segment 15: step at 140 C (413.15 K), 1000 ps, frames every 100 ps -> seg15_step_140C.dcd
+fix md all npt temp 413.15 413.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg15_step_140C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 16: step at 150 C (423.15 K), 1000 ps, frames every 100 ps -> seg16_step_150C.dcd
+fix md all npt temp 423.15 423.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg16_step_150C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 17: step at 160 C (433.15 K), 1000 ps, frames every 100 ps -> seg17_step_160C.dcd
+fix md all npt temp 433.15 433.15 100 iso 1 1 1000
+dump traj all dcd 100000 seg17_step_160C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+
+# ---- Segment 18: hold at 160 C (433.15 K), 5000 ps, frames every 10 ps -> seg18_hold_160C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 10000 seg18_hold_160C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 5 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 100 seg18_hold_160C_burst01.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg18_hold_160C_burst02.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg18_hold_160C_burst03.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg18_hold_160C_burst04.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+dump burst all dcd 100 seg18_hold_160C_burst05.dcd
+dump_modify burst unwrap yes
+run 10000
+undump burst
+run 990000
+undump traj
+unfix md
+write_data hold_160C.data
+write_restart hold_160C.restart
+# VDOS (D12c, D39): NVE 10 ps at dt 1 fs, velocities every 4 fs -> vdos_160C.dump.gz
+timestep 1
+thermo 1000
+fix vdos all nve
+dump vel all custom 4 vdos_160C.dump.gz id type vx vy vz
+dump_modify vel sort id
+run 10000
+undump vel
+unfix vdos
+timestep 1
+thermo 1000

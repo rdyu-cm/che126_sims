@@ -1,0 +1,112 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-10T03:22:55.919229+00:00",
+ "errors": [],
+ "flags": [
+  "drift seg 1"
+ ],
+ "generated": "2026-11-23T10:50:03-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1178827.4593958855,
+ "log_mtime": "2026-11-09T19:22:55-08:00",
+ "manifest_status": "finished",
+ "n_done": 1,
+ "n_segments": 1,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 135.800928,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "cavitation",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/cavitation_25C_r1e9",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "cavitation.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Segment 1: triaxial tension at 25 C, 1e9 /s per axis",
+   "run_steps": [
+    26000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.4916933154961832,
+     "sem": 0.028872706773138076,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.08028259338461524,
+     "drift": true,
+     "first": 0.5324096412307691,
+     "second": 0.4521270478461538,
+     "sem": 0.019170822220048178
+    },
+    "enthalpy": {
+     "mean": -5537.722581679389,
+     "sem": 43.912162390464964,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": -18.04806754424746,
+     "sem": 3.40793185778372,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -9.419642210543536,
+     "drift": true,
+     "first": -13.388967885778573,
+     "second": -22.80861009632211,
+     "sem": 4.207167207695528
+    },
+    "rows": 261,
+    "t_c": {
+     "mean": 24.916497404580184,
+     "sem": 0.49334604554720507,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 26000,
+   "steps_done": 26000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   2579,
+   1794280807962949295
+  ],
+  "log.lammps": [
+   96010,
+   1794280975796398041
+  ],
+  "run_manifest.json": [
+   2430,
+   1794280975919452460
+  ]
+ },
+ "speed_source": "Performance line of segment 1",
+ "stage": "cavitation_25C_r1e9",
+ "start_time": "2026-11-10T03:20:09.238956+00:00",
+ "status": "finished",
+ "steps_done": 26000,
+ "steps_per_s": 157.177,
+ "steps_total": 26000,
+ "system": "pe_cg_amorph_n40_c240_s1",
+ "version": 2
+}

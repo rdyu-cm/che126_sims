@@ -1,0 +1,99 @@
+{
+ "cache": {},
+ "current": {
+  "index": 1,
+  "name": "Stage 1: settle 200 ps NVT at 363.15 K, indenter clear of the film"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T18:50:02+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 867729.8361358643,
+ "log_mtime": "2026-11-13T17:47:52+00:00",
+ "manifest_status": "started",
+ "n_done": 0,
+ "n_segments": 2,
+ "node": "rdyu-server",
+ "notes": [],
+ "percent": 0.0,
+ "plots": {},
+ "protocol": "puncture",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_film_90C_n640_c240_s1_rep441/puncture_90C_v1_R2nm_p1",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "settle.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    2000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: settle 200 ps NVT at 363.15 K, indenter clear of the film",
+   "run_steps": [
+    20000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 20000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "puncture.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    2000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: indent at 1 m/s, R 2 nm, travel 14.17426 nm",
+   "run_steps": [
+    1417426
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1417426,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3863,
+   1794592069027256656
+  ],
+  "log.lammps": [
+   6578,
+   1794592072600292072
+  ],
+  "run_manifest.json": [
+   2486,
+   1794592070424471976
+  ]
+ },
+ "stage": "puncture_90C_v1_R2nm_p1",
+ "start_time": "2026-11-13T17:47:50.424123+00:00",
+ "status": "cancelled/killed?",
+ "steps_done": 0,
+ "steps_total": 1437426,
+ "system": "pe_cg_film_90C_n640_c240_s1_rep441",
+ "version": 2
+}

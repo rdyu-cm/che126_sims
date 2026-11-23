@@ -2232,7 +2232,7 @@
   "MSD/Rg2 0.77",
   "drift seg 5"
  ],
- "generated": "2026-10-30T17:20:02+00:00",
+ "generated": "2026-11-23T18:50:02+00:00",
  "generated_on": "rdyu-server",
  "hold": {
   "cached": true,
@@ -4449,7 +4449,7 @@
   "segment": 5,
   "state": "done"
  },
- "log_age_s": 796947.251789093,
+ "log_age_s": 2875947.125970125,
  "log_mtime": "2026-10-21T11:57:35+00:00",
  "manifest_status": "started",
  "n_done": 7,

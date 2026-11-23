@@ -3089,7 +3089,7 @@
   "D47 FAIL (ACF 0.68 at 250.0 ns; MSD/Rg2 0.12; 500.0 ns)",
   "drift seg 1"
  ],
- "generated": "2026-10-30T10:10:12-07:00",
+ "generated": "2026-11-23T10:50:03-08:00",
  "generated_on": "rdyu-rog",
  "hold": {
   "boundaries_ns": [],
@@ -6161,7 +6161,7 @@
   "segment": 1,
   "state": "done"
  },
- "log_age_s": 400139.95791721344,
+ "log_age_s": 2479730.424908161,
  "log_mtime": "2026-10-25T19:01:12-07:00",
  "manifest_status": "finished",
  "n_done": 1,

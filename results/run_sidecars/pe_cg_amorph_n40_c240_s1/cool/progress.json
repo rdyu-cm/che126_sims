@@ -7,7 +7,7 @@
   "drift seg 4,5,6,8",
   "hyst max 0.11%"
  ],
- "generated": "2026-10-30T10:10:12-07:00",
+ "generated": "2026-11-23T10:50:03-08:00",
  "generated_on": "rdyu-rog",
  "hysteresis": [
   {
@@ -75,7 +75,7 @@
    "t_k": 298.15
   }
  ],
- "log_age_s": 307093.4756448269,
+ "log_age_s": 2386683.9490299225,
  "log_mtime": "2026-10-26T20:51:59-07:00",
  "manifest_status": "finished",
  "n_done": 8,

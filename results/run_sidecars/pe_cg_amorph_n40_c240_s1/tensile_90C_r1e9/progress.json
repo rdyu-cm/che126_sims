@@ -1,0 +1,188 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-10-30T18:01:12.594585+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:03-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 2076530.903265953,
+ "log_mtime": "2026-10-30T11:01:12-07:00",
+ "manifest_status": "finished",
+ "n_done": 3,
+ "n_segments": 3,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 61.735392,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "tensile",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/tensile_90C_r1e9",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_x.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 1,
+   "name": "Segment 1: tensile along x at 90 C, 1e9 /s",
+   "run_steps": [
+    50000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7974646559760956,
+     "sem": 0.0005175319624524602
+    },
+    "drift": {
+     "delta": 0.0004679925600001855,
+     "drift": false,
+     "first": 0.79722604712,
+     "second": 0.7976940396800002,
+     "sem": 0.0010394544035529057
+    },
+    "enthalpy": {
+     "mean": -3170.2314430278884,
+     "sem": 19.721280895192024
+    },
+    "rows": 501,
+    "t_c": {
+     "mean": 90.38082414342625,
+     "sem": 0.3222612249366819
+    }
+   },
+   "steps": 50000,
+   "steps_done": 50000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_y.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 2,
+   "name": "Segment 2: tensile along y at 90 C, 1e9 /s",
+   "run_steps": [
+    50000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.797685307689243,
+     "sem": 0.00045226162526070825
+    },
+    "drift": {
+     "delta": 0.00041715648000006933,
+     "drift": false,
+     "first": 0.79745055536,
+     "second": 0.79786771184,
+     "sem": 0.0008883133673611783
+    },
+    "enthalpy": {
+     "mean": -3171.637778884462,
+     "sem": 19.368615775645907
+    },
+    "rows": 501,
+    "t_c": {
+     "mean": 90.39118657370523,
+     "sem": 0.3546594914495028
+    }
+   },
+   "steps": 50000,
+   "steps_done": 50000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_z.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 3,
+   "name": "Segment 3: tensile along z at 90 C, 1e9 /s",
+   "run_steps": [
+    50000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7978755732270917,
+     "sem": 0.0005924310163328159
+    },
+    "drift": {
+     "delta": 0.0010944697600001607,
+     "drift": false,
+     "first": 0.7973473193599999,
+     "second": 0.7984417891200001,
+     "sem": 0.001171030470703694
+    },
+    "enthalpy": {
+     "mean": -3177.7120537848605,
+     "sem": 20.709571280723484
+    },
+    "rows": 501,
+    "t_c": {
+     "mean": 90.11569609561758,
+     "sem": 0.3341415590484183
+    }
+   },
+   "steps": 50000,
+   "steps_done": 50000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   5800,
+   1793381206069756740
+  ],
+  "log.lammps": [
+   531644,
+   1793383272375697161
+  ],
+  "run_manifest.json": [
+   2408,
+   1793383272595034721
+  ]
+ },
+ "speed_source": "Performance line of segment 3",
+ "stage": "tensile_90C_r1e9",
+ "start_time": "2026-10-30T17:26:48.157395+00:00",
+ "status": "finished",
+ "steps_done": 150000,
+ "steps_per_s": 71.453,
+ "steps_total": 150000,
+ "system": "pe_cg_amorph_n40_c240_s1",
+ "version": 2
+}

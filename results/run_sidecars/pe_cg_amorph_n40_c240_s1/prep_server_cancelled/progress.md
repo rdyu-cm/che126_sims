@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-server, started 2026-10-21 19:55 UTC
 - progress: 2.6% of 6,210,000 MD steps; 3/13 segments done; current: 4 Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 2/2)
 - speed: 127.65 ns/day (147.7 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-21 20:12 UTC (8.9 d ago); report 2026-10-30 17:20 UTC on rdyu-server
+- log updated 2026-10-21 20:12 UTC (32.9 d ago); report 2026-11-23 18:50 UTC on rdyu-server
 
 ## Segments
 

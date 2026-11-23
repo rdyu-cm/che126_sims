@@ -3,7 +3,7 @@
 - status: **finished** (manifest: finished), node rdyu-rog, started 2026-10-26 16:47 PDT, ended 2026-10-26 20:51 PDT
 - progress: 100.0% of 4,000,000 MD steps; 8/8 segments done
 - speed: 230.92 ns/day (267.3 steps/s, Performance line of segment 8)
-- log updated 2026-10-26 20:51 PDT (3.6 d ago); report 2026-10-30 10:10 PDT on rdyu-rog
+- log updated 2026-10-26 20:51 PDT (27.6 d ago); report 2026-11-23 10:50 PST on rdyu-rog
 - checks: drift seg 4,5,6,8; hyst max 0.11%
 
 ## Segments

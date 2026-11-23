@@ -1,0 +1,78 @@
+{
+  "command": [
+    "apptainer",
+    "exec",
+    "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+    "mpirun",
+    "-np",
+    "2",
+    "--bind-to",
+    "none",
+    "lmp",
+    "-sf",
+    "omp",
+    "-pk",
+    "omp",
+    "2",
+    "-in",
+    "/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/fine_85C/in.sweep"
+  ],
+  "cwd": "/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/fine_85C",
+  "deck": {
+    "path": "in.sweep",
+    "resolved": "/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/fine_85C/in.sweep",
+    "sha256": "dd5cfefe3d6ba5dbe194ca4d473da1a5da6dab51a969bf6d9bd27e81438cd868"
+  },
+  "deck_git": null,
+  "end_time": null,
+  "exit_code": null,
+  "git": {
+    "branch": "main",
+    "commit": "b969a5e8c3bedfc091e6717d0770264196948822",
+    "dirty": true
+  },
+  "hostname": "rdyu-server",
+  "inputs": {
+    "files": [
+      {
+        "arg": "../sweep/hold_90C.data",
+        "command": "read_data",
+        "from": "/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/fine_85C/in.sweep",
+        "path": "/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/sweep/hold_90C.data",
+        "sha256": "296b28ce86482730f5e43908eeb9dfda2b75e82a9634c675eab04b8f16c777f6"
+      }
+    ],
+    "missing": [],
+    "unresolved": []
+  },
+  "lammps": {
+    "executable": "apptainer exec /home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif lmp",
+    "git": "HEAD / stable_22Jul2025_update6 / 9c5ab448c78a14fd534619622162ba418d6a1fb1",
+    "info_file": "lmp_info.txt",
+    "info_sha256": "044318ff8b72f9b98fb20d2832304514e622ca31dbc5be55a3b1e474aa18e216",
+    "packages": [
+      "CG-SPICA",
+      "EXTRA-DUMP",
+      "EXTRA-MOLECULE",
+      "GPU",
+      "KOKKOS",
+      "KSPACE",
+      "MOLECULE",
+      "OPENMP",
+      "RIGID"
+    ],
+    "probe": [
+      "apptainer",
+      "exec",
+      "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+      "lmp"
+    ],
+    "version": "LAMMPS (22 Jul 2025 - Update 6)"
+  },
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+  "python": "3.13.14 (main, Jul 18 2026, 17:02:37) [Clang 22.1.3 ]",
+  "sepsim_version": "0.1.0",
+  "start_time": "2026-11-22T05:43:45.394152+00:00",
+  "status": "started",
+  "wall_time_s": null
+}

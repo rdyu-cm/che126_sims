@@ -2229,7 +2229,7 @@
   "MSD/Rg2 0.90",
   "drift seg 6,10,12,13"
  ],
- "generated": "2026-10-30T10:10:12-07:00",
+ "generated": "2026-11-23T10:50:03-08:00",
  "generated_on": "rdyu-rog",
  "hold": {
   "cached": true,
@@ -4446,7 +4446,7 @@
   "segment": 5,
   "state": "done"
  },
- "log_age_s": 748948.0713195801,
+ "log_age_s": 2828538.549081564,
  "log_mtime": "2026-10-21T18:07:44-07:00",
  "manifest_status": "finished",
  "n_done": 13,

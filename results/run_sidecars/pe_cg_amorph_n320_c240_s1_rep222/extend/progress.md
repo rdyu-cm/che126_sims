@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-rog, started 2026-10-29 04:25 PDT
 - progress: 90.7% of 8,000,000 MD steps; 0/1 segments done; current: 1 Stage 1: NPT hold extension 80000 ps at 500 K, 1 atm
 - speed: 280.32 ns/day (324.4 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-29 10:34 PDT (23.6 h ago); report 2026-10-30 10:10 PDT on rdyu-rog
+- log updated 2026-10-29 10:34 PDT (25.1 d ago); report 2026-11-23 10:50 PST on rdyu-rog
 - checks: D37 FAIL C_n 9.18 (vs 6.7, drift); D47 PASS (ACF 0.09 at 36.3 ns; MSD/Rg2 2.65; 72.5 ns)
 - note: ../prep/hold.dcd not found: chain checks use the extension alone
 

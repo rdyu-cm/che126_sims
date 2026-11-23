@@ -1,0 +1,570 @@
+{
+ "cache": {},
+ "current": {
+  "index": 1,
+  "name": "Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0"
+ },
+ "end_time": "2026-11-02T18:40:39.780404+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1814964.2815144062,
+ "log_mtime": "2026-11-02T10:40:39-08:00",
+ "manifest_status": "failed",
+ "n_done": 0,
+ "n_segments": 20,
+ "node": "rdyu-rog",
+ "notes": [],
+ "percent": 0.0,
+ "plots": {},
+ "protocol": "hole",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r3nm_25C_n320_c240_s1_rep222/hole_ramp_held",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: inflate 20000 ps NVT at 298.15 K, radial push r0 0",
+   "run_steps": [
+    2000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd",
+    "hole_dense_s01.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000,
+    500
+   ],
+   "ensemble": "nvt",
+   "index": 3,
+   "name": "Stage 3: hold at 25 C",
+   "run_steps": [
+    200000,
+    800000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 4,
+   "name": "Stage 4: step at 35 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 308.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 5,
+   "name": "Stage 5: step at 45 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 318.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 6,
+   "name": "Stage 6: step at 55 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 328.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 7,
+   "name": "Stage 7: step at 65 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 338.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 8,
+   "name": "Stage 8: step at 75 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 348.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 9,
+   "name": "Stage 9: step at 85 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 358.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 10,
+   "name": "Stage 10: step at 90 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 11,
+   "name": "Stage 11: hold at 90 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 12,
+   "name": "Stage 12: step at 100 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 373.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 13,
+   "name": "Stage 13: step at 110 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 383.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 14,
+   "name": "Stage 14: step at 120 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 393.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 15,
+   "name": "Stage 15: step at 130 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 16,
+   "name": "Stage 16: hold at 130 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 17,
+   "name": "Stage 17: step at 140 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 413.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 18,
+   "name": "Stage 18: step at 150 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 423.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 19,
+   "name": "Stage 19: step at 160 C",
+   "run_steps": [
+    200000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 200000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 20,
+   "name": "Stage 20: hold at 160 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   13824,
+   1793644838009496819
+  ],
+  "log.lammps": [
+   32,
+   1793644839754675749
+  ],
+  "run_manifest.json": [
+   2605,
+   1793644839780582875
+  ]
+ },
+ "stage": "hole_ramp_held",
+ "start_time": "2026-11-02T18:40:38.967756+00:00",
+ "status": "failed",
+ "steps_done": 0,
+ "steps_total": 9800000,
+ "system": "pe_cg_hole_r3nm_25C_n320_c240_s1_rep222",
+ "version": 2
+}

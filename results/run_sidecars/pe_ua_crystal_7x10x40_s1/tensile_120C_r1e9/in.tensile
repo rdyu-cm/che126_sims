@@ -1,0 +1,116 @@
+# sepsim 0.1.0 deck: tensile
+# system pe_ua_crystal_7x10x40_s1 (ua), seed 1
+# manifest.yaml sha256 0f1dcd6a40d8045af4417cb7a983c918fbb08edf29c58ee614f0437fe1a6957b
+# data ../crystal_fine_c/hold_120C.data sha256 n/a: not present at render time (made by an earlier stage; run_manifest.json hashes it)
+# forcefield trappe_ua.yaml sha256 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   avg_ps = 1.0
+#   axes = x,y
+#   dt_fs = 2.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 14.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   rate_per_s = 1000000000.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   strain_max = 0.5
+#   t_c = 120.0
+#   tail = True
+#   tdamp_dt = 100
+#   tensile_dump_ps = 100.0
+#   thermo_ps = 1.0
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../crystal_fine_c/hold_120C.data nocoeff
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 14.027  # CH2
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.0914113978 3.95  # CH2
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 500
+restart 500000 restart.a restart.b
+
+# ---- Segment 1: tensile along x at 120 C, 1e9 /s (D54) -> tensile_x.txt, tensile_x.dcd
+# engineering strain rate 1e-06 1/fs, 250000 steps (500 ps) to strain 0.5; y and z at 1 atm, independent (crystal, D59)
+variable tx_l0 equal $(lx)
+variable tx_e equal (lx-v_tx_l0)/v_tx_l0
+variable tx_lx equal lx
+variable tx_ly equal ly
+variable tx_lz equal lz
+fix md all npt temp 393.15 393.15 200 y 1 1 2000 z 1 1 2000 couple none
+fix pull all deform 1 x erate 1e-06 remap x
+fix tx_avg all ave/time 1 500 500 v_tx_e c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] v_tx_lx v_tx_ly v_tx_lz c_thermo_temp file tensile_x.txt
+dump tx all dcd 50000 tensile_x.dcd
+dump_modify tx unwrap yes
+run 250000
+undump tx
+unfix tx_avg
+unfix pull
+unfix md
+
+# next axis from the same start snapshot: reset everything except variables
+clear
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../crystal_fine_c/hold_120C.data nocoeff
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 14.027  # CH2
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.0914113978 3.95  # CH2
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 500
+restart 500000 restart.a restart.b
+
+# ---- Segment 2: tensile along y at 120 C, 1e9 /s (D54) -> tensile_y.txt, tensile_y.dcd
+# engineering strain rate 1e-06 1/fs, 250000 steps (500 ps) to strain 0.5; x and z at 1 atm, independent (crystal, D59)
+variable ty_l0 equal $(ly)
+variable ty_e equal (ly-v_ty_l0)/v_ty_l0
+variable ty_lx equal lx
+variable ty_ly equal ly
+variable ty_lz equal lz
+fix md all npt temp 393.15 393.15 200 x 1 1 2000 z 1 1 2000 couple none
+fix pull all deform 1 y erate 1e-06 remap x
+fix ty_avg all ave/time 1 500 500 v_ty_e c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] v_ty_lx v_ty_ly v_ty_lz c_thermo_temp file tensile_y.txt
+dump ty all dcd 50000 tensile_y.dcd
+dump_modify ty unwrap yes
+run 250000
+undump ty
+unfix ty_avg
+unfix pull
+unfix md

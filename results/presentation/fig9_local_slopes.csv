@@ -503,6 +503,132 @@ ipp_ua_amorph_n40_c240_s1,ipp,ua,dln_rg_dT,slope_central3,120,110,130,0.147017,0
 ipp_ua_amorph_n40_c240_s1,ipp,ua,dln_rg_dT,slope_central3,130,120,140,0.776169,0.079071,3.72139,0.294254,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
 ipp_ua_amorph_n40_c240_s1,ipp,ua,dln_rg_dT,slope_central3,140,130,150,-0.231866,0.220831,3.72139,0.821797,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
 ipp_ua_amorph_n40_c240_s1,ipp,ua,dln_rg_dT,slope_central3,150,140,160,0.634743,0.206511,3.72139,0.768509,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,25,25,25,0.868087,0.000217928,2.75774,0.00060099,g cm^-3,hold,sweep,hold (no step at this T); quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,35,35,35,0.864075,0.000626824,2.75774,0.00172862,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,45,45,45,0.857144,0.000352479,2.75774,0.000972045,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,55,55,55,0.851536,0.000412326,2.75774,0.00113709,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,65,65,65,0.84663,0.000719587,2.75774,0.00198443,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,75,75,75,0.838454,0.000432332,2.75774,0.00119226,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,85,85,85,0.829693,0.000537569,2.75774,0.00148248,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,90,90,90,0.827668,0.000570536,2.75774,0.00157339,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,100,100,100,0.819862,0.000634874,2.75774,0.00175082,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,110,110,110,0.813043,0.000425232,2.75774,0.00117268,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,120,120,120,0.809962,0.000545981,2.75774,0.00150567,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,130,130,130,0.802537,0.000521323,2.75774,0.00143767,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,140,140,140,0.794725,0.000569777,2.75774,0.0015713,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,150,150,150,0.788459,0.000665691,2.75774,0.0018358,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,density,value,160,160,160,0.781395,0.000413208,2.75774,0.00113952,g cm^-3,step,sweep,quadratic chi2_red 7.61
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,30,25,35,4.63197,0.767638,2.75774,2.11695,1e-4 K^-1,hold+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,40,35,45,8.054,0.833877,2.75774,2.29962,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,50,45,55,6.56339,0.635271,2.75774,1.75191,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,60,55,65,5.77803,0.978194,2.75774,2.69761,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,70,65,75,9.70411,0.99412,2.75774,2.74153,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,80,75,85,10.5049,0.82805,2.75774,2.28355,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,87.5,85,90,4.88515,1.89205,2.75774,5.21779,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,95,90,100,9.47653,1.03674,2.75774,2.85905,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,105,100,110,8.35185,0.934445,2.75774,2.57696,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,115,110,120,3.79715,0.853187,2.75774,2.35287,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,125,120,130,9.20931,0.936141,2.75774,2.58163,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,135,130,140,9.78228,0.967465,2.75774,2.66802,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,145,140,150,7.91519,1.10763,2.75774,3.05456,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_adjacent,155,150,160,8.99972,0.996228,2.75774,2.74734,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,35,25,45,6.34298,0.240899,2.75774,0.664337,1e-4 K^-1,hold+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,45,35,55,7.3087,0.436093,2.75774,1.20263,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,55,45,65,6.17071,0.472098,2.75774,1.30192,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,65,55,75,7.74107,0.353673,2.75774,0.975337,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,75,65,85,10.1045,0.534367,2.75774,1.47365,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,85,75,90,8.63167,0.573895,2.75774,1.58265,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,90,85,100,7.94607,0.673114,2.75774,1.85627,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,100,90,110,8.91419,0.432642,2.75774,1.19312,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,110,100,120,6.0745,0.51333,2.75774,1.41563,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,120,110,130,6.50323,0.416988,2.75774,1.14994,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,130,120,140,9.4958,0.492037,2.75774,1.35691,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,140,130,150,8.84874,0.532636,2.75774,1.46887,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,alpha_V,slope_central3,150,140,160,8.45746,0.445437,2.75774,1.2284,1e-4 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,25,25,25,0.467611,0.017146,1,0.017146,GPa^-1,hold,sweep,hold (no step at this T); quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,35,35,35,0.453389,0.0345347,1,0.0345347,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,45,45,45,0.478151,0.0312031,1,0.0312031,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,55,55,55,0.582458,0.0493255,1,0.0493255,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,65,65,65,0.65492,0.0646578,1,0.0646578,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,75,75,75,0.62519,0.064719,1,0.064719,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,85,85,85,0.592247,0.0595473,1,0.0595473,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,90,90,90,0.702335,0.0763175,1,0.0763175,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,100,100,100,0.891539,0.10927,1,0.10927,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,110,110,110,0.7139,0.0769948,1,0.0769948,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,120,120,120,0.9516,0.100448,1,0.100448,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,130,130,130,0.826025,0.0968205,1,0.0968205,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,140,140,140,0.969025,0.102422,1,0.102422,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,150,150,150,1.00924,0.0658327,1,0.0658327,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,kappa_T,value,160,160,160,1.04162,0.128053,1,0.128053,GPa^-1,step,sweep,quadratic chi2_red 0.873
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,30,25,35,-1.42219,3.85568,1,3.85568,1e-3 GPa^-1 K^-1,hold+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,40,35,45,2.47614,4.65433,1,4.65433,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,50,45,55,10.4308,5.83664,1,5.83664,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,60,55,65,7.24613,8.13242,1,8.13242,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,70,65,75,-2.97292,9.14832,1,9.14832,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,80,75,85,-3.2943,8.79456,1,8.79456,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,87.5,85,90,22.0175,19.36,1,19.36,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,95,90,100,18.9204,13.3282,1,13.3282,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,105,100,110,-17.7639,13.3671,1,13.3671,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,115,110,120,23.7701,12.6562,1,12.6562,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,125,120,130,-12.5575,13.9513,1,13.9513,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,135,130,140,14.3,14.0942,1,14.0942,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,145,140,150,4.02146,12.1755,1,12.1755,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_adjacent,155,150,160,3.23846,14.3984,1,14.3984,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,35,25,45,0.526973,1.78018,1,1.78018,1e-3 GPa^-1 K^-1,hold+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,45,35,55,6.45345,3.01067,1,3.01067,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,55,45,65,8.83845,3.58966,1,3.58966,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,65,55,75,2.1366,4.06865,1,4.06865,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,75,65,85,-3.13361,4.39503,1,4.39503,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,85,75,90,5.14297,6.67097,1,6.67097,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,90,85,100,19.9528,8.29611,1,8.29611,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,100,90,110,0.578233,5.42046,1,5.42046,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,110,100,120,3.00306,7.42119,1,7.42119,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,120,110,130,5.60626,6.18515,1,6.18515,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,130,120,140,0.871222,7.17288,1,7.17288,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,140,130,150,9.16073,5.85409,1,5.85409,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dkappa_T_dT,slope_central3,150,140,160,3.62996,8.19876,1,8.19876,1e-3 GPa^-1 K^-1,step+step,sweep,
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,25,25,25,17.7053,0.0114165,8.08912,0.0923493,A,hold,sweep,"hold (no step at this T); quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,35,35,35,17.7304,0.00830956,8.08912,0.067217,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,45,45,45,17.7672,0.00640385,8.08912,0.0518015,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,55,55,55,17.7929,0.019799,8.08912,0.160157,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,65,65,65,17.7753,0.0171654,8.08912,0.138853,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,75,75,75,17.8966,0.0354865,8.08912,0.287055,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,85,85,85,17.9205,0.0224944,8.08912,0.18196,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,90,90,90,18.0088,0.0344723,8.08912,0.278851,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,100,100,100,18.1743,0.0263383,8.08912,0.213053,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,110,110,110,18.1959,0.0193787,8.08912,0.156757,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,120,120,120,18.3795,0.027474,8.08912,0.22224,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,130,130,130,18.241,0.0330808,8.08912,0.267594,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,140,140,140,17.5976,0.0434602,8.08912,0.351555,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,150,150,150,17.6198,0.0637922,8.08912,0.516022,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,rg,value,160,160,160,17.3137,0.0406686,8.08912,0.328973,A,step,sweep,"quadratic chi2_red 65.4; chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,30,25,35,0.142018,0.0797133,8.08912,0.64481,1e-3 K^-1,hold+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,40,35,45,0.207087,0.0591231,8.08912,0.478254,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,50,45,55,0.144667,0.116967,8.08912,0.946157,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,60,55,65,-0.0989225,0.147335,8.08912,1.19181,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,70,65,75,0.679918,0.220552,8.08912,1.78407,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,80,75,85,0.133644,0.234678,8.08912,1.89834,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,87.5,85,90,0.983456,0.457809,8.08912,3.70327,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,95,90,100,0.914494,0.24009,8.08912,1.94212,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,105,100,110,0.119045,0.179845,8.08912,1.45479,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,115,110,120,1.00404,0.18354,8.08912,1.48468,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,125,120,130,-0.756426,0.235019,8.08912,1.90109,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,135,130,140,-3.59095,0.306401,8.08912,2.47851,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,145,140,150,0.125792,0.438259,8.08912,3.54513,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_adjacent,155,150,160,-1.7522,0.431571,8.08912,3.49103,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,35,25,45,0.174552,0.0369354,8.08912,0.298774,1e-3 K^-1,hold+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,45,35,55,0.175877,0.0603708,8.08912,0.488346,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,55,45,65,0.0228721,0.0515379,8.08912,0.416896,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,65,55,75,0.290498,0.113688,8.08912,0.919635,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,75,65,85,0.406781,0.0791859,8.08912,0.640544,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,85,75,90,0.416915,0.183738,8.08912,1.48627,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,90,85,100,0.937481,0.127816,8.08912,1.03392,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,100,90,110,0.516769,0.109526,8.08912,0.885967,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,110,100,120,0.561544,0.104099,8.08912,0.842071,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,120,110,130,0.123809,0.105156,8.08912,0.850622,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,130,120,140,-2.17369,0.144341,8.08912,1.16759,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,140,130,150,-1.73258,0.202465,8.08912,1.63776,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
+ipp_aa_amorph_n40_c240_s1_from_ua,ipp,aa,dln_rg_dT,slope_central3,150,140,160,-0.813203,0.170416,8.08912,1.37852,1e-3 K^-1,step+step,sweep,"chains not relaxed within a step (tau_1 >> step, D56): history, not equilibrium"
 pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,value,25,25,25,34.8013,0.391981,1.88942,0.740618,mN m^-1,hold,sweep,hold (no step at this T); quadratic chi2_red 3.57
 pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,value,35,35,35,31.2235,0.852524,1.88942,1.61078,mN m^-1,step,sweep,quadratic chi2_red 3.57
 pe_cg_pore_w5nm_n40_c240_s1,pe,cg,gamma,value,45,45,45,30.9735,0.823651,1.88942,1.55623,mN m^-1,step,sweep,quadratic chi2_red 3.57

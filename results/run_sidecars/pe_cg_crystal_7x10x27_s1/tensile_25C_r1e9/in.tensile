@@ -1,0 +1,110 @@
+# sepsim 0.1.0 deck: tensile
+# system pe_cg_crystal_7x10x27_s1 (cg), seed 1
+# manifest.yaml sha256 1f1cf22da14daca4482a74436db6fd6c74f75f2b3cc80e7fbc0a5031135933fe
+# data ../crystal/hold_25C.data sha256 0905280480f590a8c09a313c89785ac4a9456f1cfce74ea9dc21cd7d38bb7bcb
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   avg_ps = 1.0
+#   axes = x,y
+#   dt_fs = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   rate_per_s = 1000000000.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   strain_max = 0.5
+#   t_c = 25.0
+#   tail = False
+#   tdamp_dt = 100
+#   tensile_dump_ps = 100.0
+#   thermo_ps = 1.0
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../crystal/hold_25C.data nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+pair_style lj/spica 15
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+bond_coeff 1 6.16 3.64  # CM-CM
+angle_coeff 1 1.19 173  # CM-CM-CM
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 100
+restart 100000 restart.a restart.b
+
+# ---- Segment 1: tensile along x at 25 C, 1e9 /s (D54) -> tensile_x.txt, tensile_x.dcd
+# engineering strain rate 1e-06 1/fs, 50000 steps (500 ps) to strain 0.5; y and z at 1 atm, independent (crystal, D59)
+variable tx_l0 equal $(lx)
+variable tx_e equal (lx-v_tx_l0)/v_tx_l0
+variable tx_lx equal lx
+variable tx_ly equal ly
+variable tx_lz equal lz
+fix md all npt temp 298.15 298.15 1000 y 1 1 10000 z 1 1 10000 couple none
+fix pull all deform 1 x erate 1e-06 remap x
+fix tx_avg all ave/time 1 100 100 v_tx_e c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] v_tx_lx v_tx_ly v_tx_lz c_thermo_temp file tensile_x.txt
+dump tx all dcd 10000 tensile_x.dcd
+dump_modify tx unwrap yes
+run 50000
+undump tx
+unfix tx_avg
+unfix pull
+unfix md
+
+# next axis from the same start snapshot: reset everything except variables
+clear
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../crystal/hold_25C.data nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+pair_style lj/spica 15
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+bond_coeff 1 6.16 3.64  # CM-CM
+angle_coeff 1 1.19 173  # CM-CM-CM
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 100
+restart 100000 restart.a restart.b
+
+# ---- Segment 2: tensile along y at 25 C, 1e9 /s (D54) -> tensile_y.txt, tensile_y.dcd
+# engineering strain rate 1e-06 1/fs, 50000 steps (500 ps) to strain 0.5; x and z at 1 atm, independent (crystal, D59)
+variable ty_l0 equal $(ly)
+variable ty_e equal (ly-v_ty_l0)/v_ty_l0
+variable ty_lx equal lx
+variable ty_ly equal ly
+variable ty_lz equal lz
+fix md all npt temp 298.15 298.15 1000 x 1 1 10000 z 1 1 10000 couple none
+fix pull all deform 1 y erate 1e-06 remap x
+fix ty_avg all ave/time 1 100 100 v_ty_e c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] v_ty_lx v_ty_ly v_ty_lz c_thermo_temp file tensile_y.txt
+dump ty all dcd 10000 tensile_y.dcd
+dump_modify ty unwrap yes
+run 50000
+undump ty
+unfix ty_avg
+unfix pull
+unfix md

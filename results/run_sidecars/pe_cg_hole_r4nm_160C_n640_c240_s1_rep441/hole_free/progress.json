@@ -1,0 +1,189 @@
+{
+ "cache": {},
+ "current": {
+  "index": 3,
+  "name": "Stage 3: hold at 160 C"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T18:50:02+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 868164.2346093655,
+ "log_mtime": "2026-11-13T17:40:38+00:00",
+ "manifest_status": "started",
+ "n_done": 2,
+ "n_segments": 3,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 9.945384575389603,
+ "percent": 77.1675,
+ "plots": {},
+ "protocol": "hole",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r4nm_160C_n640_c240_s1_rep441/hole_free",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: inflate 10000 ps NVT at 433.15 K, radial push r0 0",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.18641538,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -11328.401861387723,
+     "sem": 100.05631357907863,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 21.99219903932201,
+     "sem": 0.9202028700688872,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -2.657064800143999,
+     "drift": true,
+     "first": 23.317725330086073,
+     "second": 20.660660529942074,
+     "sem": 0.6522276614610134
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 159.96177106578688,
+     "sem": 0.02540802312026167,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: hold at R 10000 ps NVT at 433.15 K, push at r0 = 40 A",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.18641538,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -11124.265756968607,
+     "sem": 40.4374596100933,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 15.232074714382376,
+     "sem": 0.36301368693424735,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -1.13317447496914,
+     "drift": true,
+     "first": 15.798417901238805,
+     "second": 14.665243426269665,
+     "sem": 0.22922304666894158
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 159.99050090781844,
+     "sem": 0.029824108142273337,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd",
+    "hole_dense_s01.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000,
+    500
+   ],
+   "ensemble": "nvt",
+   "index": 3,
+   "name": "Stage 3: hold at 160 C",
+   "run_steps": [
+    200000,
+    1800000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 2000000,
+   "steps_done": 1086700,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 433.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3872,
+   1794250930041867235
+  ],
+  "log.lammps": [
+   10569922,
+   1794591638237986591
+  ],
+  "run_manifest.json": [
+   2450,
+   1794250931713803172
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "hole_free",
+ "start_time": "2026-11-09T19:02:11.713466+00:00",
+ "status": "cancelled/killed?",
+ "steps_done": 3086700,
+ "steps_per_s": 11.5108617770713,
+ "steps_total": 4000000,
+ "system": "pe_cg_hole_r4nm_160C_n640_c240_s1_rep441",
+ "version": 2
+}

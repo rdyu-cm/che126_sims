@@ -1,0 +1,88 @@
+# sepsim 0.1.0 deck: crystal
+# system pe_aa_crystal_5x7x12_s1 (aa), seed 1
+# manifest.yaml sha256 d08b53c9dfb9004d48b1262301d12ea80cfdd27732eeb301e56e69d43eeccd1a
+# data ../../../../../worktrees/aa-crystal-test/systems/pe_aa_crystal_5x7x12_s1/data.lmp sha256 9fcc41f916e7ef72f96479e88a66fc2eedad2e1041c78b76b0fe9d264c470d7d
+# forcefield opls2020_aa.yaml sha256 d689069854bb4591e1020c7b5fb67c6c84b17dee88b85771c9e53545060c3151
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   crystal_dump_ps = 10.0
+#   crystal_grid_c = 25
+#   crystal_hold_ps = 500.0
+#   dt_fs = 1.0
+#   kspace_accuracy = 1e-05
+#   lj_cutoff = 12.0
+#   min_box_relax = True
+#   min_etol = 1e-08
+#   min_ftol = 1e-06
+#   min_maxeval = 100000
+#   min_maxiter = 10000
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   ramp = False
+#   ramp_dump_ps = 100.0
+#   ramp_ps = 2000.0
+#   ramp_to_c = 200.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   tail = True
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+# Crystal (D59): 70 stems x 24 sites, 5 x 7 cells of pe_orthorhombic_busing (a 7.4069, b 4.9491 A), stems along z, box 37.0345 x 34.6437 x 30.6132 A
+#   seg  kind   T/C            ps        frame/ps  outputs
+#   1    hold   25             500       10        seg01_hold_25C.dcd hold_25C.data
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../../worktrees/aa-crystal-test/systems/pe_aa_crystal_5x7x12_s1/data.lmp nocoeff
+special_bonds lj 0 0 0.5 coul 0 0 0.5
+
+mass 1 12.011  # CT_CH2
+mass 2 1.008  # HC
+pair_style lj/cut/coul/long 12
+pair_modify mix geometric tail yes
+pair_coeff 1 1 0.066 3.51  # CT_CH2
+pair_coeff 2 2 0.026 2.48  # HC
+kspace_style pppm 1e-05
+bond_coeff 1 268 1.529  # CT-CT
+bond_coeff 2 340 1.09  # CT-HC
+angle_coeff 1 58.35 112.7  # CT-CT-CT
+angle_coeff 2 37.5 110.7  # CT-CT-HC
+angle_coeff 3 33 107.8  # HC-CT-HC
+dihedral_coeff 1 0.85 -0.2 0.2 0  # CT-CT-CT-CT
+dihedral_coeff 2 0 0 0.3 0  # HC-CT-CT-CT
+dihedral_coeff 3 0 0 0.3 0  # HC-CT-CT-HC
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 1
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart 1000000 restart.a restart.b
+
+# ---- Stage 1: minimize the lattice with the box relaxed (aniso 1 atm, couple none) -> minimized.data
+thermo 100
+fix relax all box/relax aniso 1 couple none vmax 0.001
+minimize 1e-08 1e-06 10000 100000
+unfix relax
+write_data minimized.data
+# the minimizer advanced the step counter: restart it so dump intervals line up with segment starts
+reset_timestep 0
+thermo 1000
+velocity all create 298.15 1 mom yes rot no dist gaussian
+
+# ---- Segment 1: hold at 25 C (298.15 K), 500 ps, frames every 10 ps -> seg01_hold_25C.dcd, hold_25C.data
+fix md all npt temp 298.15 298.15 100 aniso 1 1 1000 couple none
+dump traj all dcd 10000 seg01_hold_25C.dcd
+dump_modify traj unwrap yes
+run 500000
+undump traj
+unfix md
+write_data hold_25C.data
+write_restart hold_25C.restart

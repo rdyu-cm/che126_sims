@@ -1,27 +1,98 @@
 {
  "cache": {},
- "current": {
-  "index": 1,
-  "name": "seg 01 hold 25 C"
- },
- "end_time": null,
+ "current": null,
+ "end_time": "2026-11-04T22:09:32.121070+00:00",
  "errors": [],
- "eta": "2026-11-07T04:21:43+00:00",
- "flags": [],
- "generated": "2026-10-30T17:20:07+00:00",
+ "flags": [
+  "drift seg 2,5,11,13,16",
+  "step!=hold 90 C,130 C",
+  "hyst max 0.36%"
+ ],
+ "generated": "2026-11-23T18:50:02+00:00",
  "generated_on": "rdyu-server",
- "log_age_s": 19.381155967712402,
- "log_mtime": "2026-10-30T17:19:48+00:00",
- "manifest_status": "started",
- "n_done": 0,
+ "hysteresis": [
+  {
+   "cool_step": 1,
+   "delta_pct": null,
+   "rho_cool": 0.7593189432167834,
+   "rho_cool_sem": 0.0005593712323230329,
+   "rho_sweep": null,
+   "t_k": 474.76875
+  },
+  {
+   "cool_step": 2,
+   "delta_pct": null,
+   "rho_cool": 0.7728014113186813,
+   "rho_cool_sem": 0.0002505678555321652,
+   "rho_sweep": null,
+   "t_k": 449.5375
+  },
+  {
+   "cool_step": 3,
+   "delta_pct": -0.20739169472183105,
+   "rho_cool": 0.7870376210389611,
+   "rho_cool_sem": 0.0005078009269907442,
+   "rho_sweep": 0.7886732638867539,
+   "t_k": 424.30625
+  },
+  {
+   "cool_step": 4,
+   "delta_pct": -0.09422913988773707,
+   "rho_cool": 0.8016392837962037,
+   "rho_cool_sem": 0.0003962548757734954,
+   "rho_sweep": 0.8023953740556754,
+   "t_k": 399.075
+  },
+  {
+   "cool_step": 5,
+   "delta_pct": -0.12076668049484883,
+   "rho_cool": 0.8161882654345655,
+   "rho_cool_sem": 0.0002479146137050469,
+   "rho_sweep": 0.8171751407258492,
+   "t_k": 373.84375
+  },
+  {
+   "cool_step": 6,
+   "delta_pct": -0.35732317016518234,
+   "rho_cool": 0.8295998655944057,
+   "rho_cool_sem": 0.00049104718732798,
+   "rho_sweep": 0.8325748484368382,
+   "t_k": 348.6125
+  },
+  {
+   "cool_step": 7,
+   "delta_pct": -0.15157393279230483,
+   "rho_cool": 0.8460073940959042,
+   "rho_cool_sem": 0.0004462441162784815,
+   "rho_sweep": 0.8472916673984014,
+   "t_k": 323.38125
+  },
+  {
+   "cool_step": 8,
+   "delta_pct": -0.21240052420975677,
+   "rho_cool": 0.8601267784815184,
+   "rho_cool_sem": 0.0001904616478319578,
+   "rho_sweep": 0.8619575809018196,
+   "t_k": 298.15
+  }
+ ],
+ "log_age_s": 1629630.6658959389,
+ "log_mtime": "2026-11-04T22:09:31+00:00",
+ "manifest_status": "finished",
+ "n_done": 18,
  "n_segments": 18,
  "node": "rdyu-server",
  "notes": [],
- "ns_per_day": 9.031105473094998,
- "percent": 0.9279411764705883,
- "plots": {},
+ "ns_per_day": 10.907308800000001,
+ "percent": 100.0,
+ "plots": {
+  "sweep_vs_T": {
+   "file": "progress_sweep_vs_T.png",
+   "key": "947b30606d248b13",
+   "title": "sweep density and enthalpy vs T (prep step-cool overlaid)"
+  }
+ },
  "protocol": "sweep",
- "remaining_h": 179.03190310608747,
  "resolution": "ua",
  "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_ua_amorph_n40_c240_s1/sweep",
  "segments": [
@@ -80,10 +151,35 @@
     5000,
     495000
    ],
-   "state": "running",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8619575809018196,
+     "sem": 0.00047012473635304477,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0010246532879998327,
+     "drift": false,
+     "first": 0.8614443458440001,
+     "second": 0.8624689991319999,
+     "sem": 0.0005710148528492742
+    },
+    "enthalpy": {
+     "mean": 8210.48329690062,
+     "sem": 17.633301101653338,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 25.03359515896824,
+     "sem": 0.050821325672000754,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 5000000,
-   "steps_done": 315500,
+   "steps_done": 5000000,
    "sweep_index": 1,
    "sweep_kind": "hold",
    "t_c": 25.0,
@@ -106,10 +202,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8560895145554445,
+     "sem": 0.0008498061536739704,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.002657306519999958,
+     "drift": true,
+     "first": 0.85741716112,
+     "second": 0.8547598546,
+     "sem": 0.00035491247158386146
+    },
+    "enthalpy": {
+     "mean": 8935.579075624375,
+     "sem": 22.541554084709396,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 34.90608175824178,
+     "sem": 0.1363787802100084,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 2,
    "sweep_kind": "step",
    "t_c": 35.0,
@@ -132,10 +253,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8498926274225773,
+     "sem": 0.00041451850642570536,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -1.170960000074217e-06,
+     "drift": false,
+     "first": 0.84988990814,
+     "second": 0.8498887371799999,
+     "sem": 0.0009712988504033973
+    },
+    "enthalpy": {
+     "mean": 9784.40821038961,
+     "sem": 15.151361740706628,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 45.044045084915126,
+     "sem": 0.0834504297014429,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 3,
    "sweep_kind": "step",
    "t_c": 45.0,
@@ -158,10 +304,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8449206608291707,
+     "sem": 0.0003079316772004981,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.00015502372000009146,
+     "drift": false,
+     "first": 0.8448486078399999,
+     "second": 0.84500363156,
+     "sem": 0.0006399506407534376
+    },
+    "enthalpy": {
+     "mean": 10591.653006593406,
+     "sem": 13.344198344214085,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 55.08288813186812,
+     "sem": 0.08690274535022358,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 4,
    "sweep_kind": "step",
    "t_c": 55.0,
@@ -184,10 +355,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8378927532767233,
+     "sem": 0.00041843022676145013,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.001145996899999946,
+     "drift": true,
+     "first": 0.83732134264,
+     "second": 0.83846733954,
+     "sem": 0.00044899821154972347
+    },
+    "enthalpy": {
+     "mean": 11439.906792807193,
+     "sem": 19.747796965802348,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 64.96044094905096,
+     "sem": 0.1046846879428022,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 5,
    "sweep_kind": "step",
    "t_c": 65.0,
@@ -210,10 +406,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8327819307992008,
+     "sem": 0.00025073059758998206,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.00016837751999998485,
+     "drift": false,
+     "first": 0.83269860466,
+     "second": 0.83286698218,
+     "sem": 0.00046780809544980827
+    },
+    "enthalpy": {
+     "mean": 12058.606673726274,
+     "sem": 7.699275608492643,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 74.80466101898111,
+     "sem": 0.09092776604532944,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 6,
    "sweep_kind": "step",
    "t_c": 75.0,
@@ -236,10 +457,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8283044743156843,
+     "sem": 0.00045633420963472524,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.00069937271999998,
+     "drift": false,
+     "first": 0.82865330384,
+     "second": 0.82795393112,
+     "sem": 0.0008670660345549173
+    },
+    "enthalpy": {
+     "mean": 12935.876674825175,
+     "sem": 14.603781540965004,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 85.16881981018986,
+     "sem": 0.0904122734852315,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 7,
    "sweep_kind": "step",
    "t_c": 85.0,
@@ -262,10 +508,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8229170291908092,
+     "sem": 0.00033978139812607203,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0009167421800000408,
+     "drift": false,
+     "first": 0.8224600009399999,
+     "second": 0.82337674312,
+     "sem": 0.000683634274286307
+    },
+    "enthalpy": {
+     "mean": 13285.341898101899,
+     "sem": 9.442304723375395,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 90.06437365634366,
+     "sem": 0.09710226347307678,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 8,
    "sweep_kind": "step",
    "t_c": 90.0,
@@ -327,10 +598,35 @@
     5000,
     495000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8226273098260346,
+     "sem": 0.0004437510320534298,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.0011918985520001923,
+     "drift": false,
+     "first": 0.82322229296,
+     "second": 0.8220303944079999,
+     "sem": 0.000606365804846108
+    },
+    "enthalpy": {
+     "mean": 13371.73999460108,
+     "sem": 17.39759624203661,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 90.07204456308739,
+     "sem": 0.042982822287811924,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 5000000,
-   "steps_done": 0,
+   "steps_done": 5000000,
    "sweep_index": 9,
    "sweep_kind": "hold",
    "t_c": 90.0,
@@ -353,10 +649,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8176584635764237,
+     "sem": 0.0003754379105696689,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0008635992999999065,
+     "drift": false,
+     "first": 0.8172322890400001,
+     "second": 0.81809588834,
+     "sem": 0.0004845312893647801
+    },
+    "enthalpy": {
+     "mean": 14131.16007122877,
+     "sem": 14.075512276646391,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 100.05867931068929,
+     "sem": 0.09573126916631801,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 10,
    "sweep_kind": "step",
    "t_c": 100.0,
@@ -379,10 +700,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8106916477122876,
+     "sem": 0.0007671801668386663,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.0020034611400000513,
+     "drift": true,
+     "first": 0.81169775276,
+     "second": 0.80969429162,
+     "sem": 0.00081709258427383
+    },
+    "enthalpy": {
+     "mean": 14989.20322107892,
+     "sem": 29.356366897054457,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 109.99209483516489,
+     "sem": 0.10162784640176993,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 11,
    "sweep_kind": "step",
    "t_c": 110.0,
@@ -405,10 +751,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8058050212987014,
+     "sem": 0.00038326840091046485,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.00040564424000000265,
+     "drift": false,
+     "first": 0.8055995695,
+     "second": 0.80600521374,
+     "sem": 0.0006573608202438021
+    },
+    "enthalpy": {
+     "mean": 15629.41168931069,
+     "sem": 10.854553398466592,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 119.8859588111888,
+     "sem": 0.10820729615177231,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 12,
    "sweep_kind": "step",
    "t_c": 120.0,
@@ -431,10 +802,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.800949974045954,
+     "sem": 0.00037352403742774837,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.0009401978599999916,
+     "drift": true,
+     "first": 0.80142361352,
+     "second": 0.80048341566,
+     "sem": 0.000468518482318978
+    },
+    "enthalpy": {
+     "mean": 16440.988236763238,
+     "sem": 7.446006197428881,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 129.8994181718282,
+     "sem": 0.11559007239849718,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 13,
    "sweep_kind": "step",
    "t_c": 130.0,
@@ -496,10 +892,35 @@
     5000,
     495000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8000503424075184,
+     "sem": 0.0002386488432247545,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0002508906439999681,
+     "drift": false,
+     "first": 0.7999256076360001,
+     "second": 0.80017649828,
+     "sem": 0.0005041884973018288
+    },
+    "enthalpy": {
+     "mean": 16488.035658668265,
+     "sem": 9.173928275569127,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 129.9858186922616,
+     "sem": 0.04831068340563008,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 5000000,
-   "steps_done": 0,
+   "steps_done": 5000000,
    "sweep_index": 14,
    "sweep_kind": "hold",
    "t_c": 130.0,
@@ -522,10 +943,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7947437462037962,
+     "sem": 0.0002333989476370214,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0004243233599999785,
+     "drift": false,
+     "first": 0.79453756596,
+     "second": 0.79496188932,
+     "sem": 0.000500789045529908
+    },
+    "enthalpy": {
+     "mean": 17213.29495704296,
+     "sem": 9.009505631198342,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 140.19496806193803,
+     "sem": 0.1172654461789572,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 15,
    "sweep_kind": "step",
    "t_c": 140.0,
@@ -548,10 +994,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7894183972527473,
+     "sem": 0.00033067679631495193,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.0014177621400000007,
+     "drift": true,
+     "first": 0.79012258364,
+     "second": 0.7887048215,
+     "sem": 0.0006632412255281869
+    },
+    "enthalpy": {
+     "mean": 18015.733915084915,
+     "sem": 8.931111116830543,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 150.14074351648355,
+     "sem": 0.18293681332805625,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 16,
    "sweep_kind": "step",
    "t_c": 150.0,
@@ -574,10 +1045,35 @@
    "run_steps": [
     1000000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7833187653546453,
+     "sem": 0.00044363519216704633,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.00010939409999988214,
+     "drift": false,
+     "first": 0.78336788032,
+     "second": 0.7832584862200002,
+     "sem": 0.0008734987875128963
+    },
+    "enthalpy": {
+     "mean": 18710.119722277723,
+     "sem": 11.454549623255934,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 159.90251592407594,
+     "sem": 0.1580963497678558,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 1000000,
-   "steps_done": 0,
+   "steps_done": 1000000,
    "sweep_index": 17,
    "sweep_kind": "step",
    "t_c": 160.0,
@@ -639,10 +1135,35 @@
     5000,
     495000
    ],
-   "state": "pending",
-   "stats": null,
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7829740005738852,
+     "sem": 0.0002228202221836368,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0002457257440000582,
+     "drift": false,
+     "first": 0.782850221564,
+     "second": 0.783095947308,
+     "sem": 0.0004494431494157858
+    },
+    "enthalpy": {
+     "mean": 18715.363402719453,
+     "sem": 7.288753820368719,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 159.94117501099788,
+     "sem": 0.0822819580136285,
+     "sem_lower_bound": true
+    }
+   },
    "steps": 5000000,
-   "steps_done": 0,
+   "steps_done": 5000000,
    "sweep_index": 18,
    "sweep_kind": "hold",
    "t_c": 160.0,
@@ -660,21 +1181,76 @@
    1793375418037896568
   ],
   "log.lammps": [
-   196211,
-   1793380788536740099
+   20400270,
+   1793830171848664989
   ],
   "run_manifest.json": [
-   2384,
-   1793375419155358236
+   2418,
+   1793830172121284613
   ]
  },
- "speed_source": "running segment (last hour of thermo)",
+ "speed_source": "Performance line of segment 18",
  "stage": "sweep",
  "start_time": "2026-10-30T15:50:19.155221+00:00",
- "status": "running",
- "step_vs_hold": [],
- "steps_done": 315500,
- "steps_per_s": 52.263341858188646,
+ "status": "finished",
+ "step_vs_hold": [
+  {
+   "density": {
+    "delta": -0.000289719364774621,
+    "hold": 0.8226273098260346,
+    "sem": 0.0005588974655167013,
+    "step": 0.8229170291908092
+   },
+   "enthalpy": {
+    "delta": 86.39809649918061,
+    "hold": 13371.73999460108,
+    "sem": 19.794783997053457,
+    "step": 13285.341898101899
+   },
+   "flag": true,
+   "hold": 9,
+   "step": 8,
+   "t_c": 90.0
+  },
+  {
+   "density": {
+    "delta": -0.0008996316384356495,
+    "hold": 0.8000503424075184,
+    "sem": 0.0004432532875330305,
+    "step": 0.800949974045954
+   },
+   "enthalpy": {
+    "delta": 47.04742190502657,
+    "hold": 16488.035658668265,
+    "sem": 11.815412320246638,
+    "step": 16440.988236763238
+   },
+   "flag": true,
+   "hold": 14,
+   "step": 13,
+   "t_c": 130.0
+  },
+  {
+   "density": {
+    "delta": -0.0003447647807600651,
+    "hold": 0.7829740005738852,
+    "sem": 0.0004964484214327379,
+    "step": 0.7833187653546453
+   },
+   "enthalpy": {
+    "delta": 5.243680441730248,
+    "hold": 18715.363402719453,
+    "sem": 13.57691567792819,
+    "step": 18710.119722277723
+   },
+   "flag": false,
+   "hold": 18,
+   "step": 17,
+   "t_c": 160.0
+  }
+ ],
+ "steps_done": 34000000,
+ "steps_per_s": 63.121,
  "steps_total": 34000000,
  "system": "pe_ua_amorph_n40_c240_s1",
  "version": 2

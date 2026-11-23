@@ -1,0 +1,123 @@
+# sepsim 0.1.0 deck: sweep
+# system pe_ua_amorph_n40_c240_s1 (ua), seed 1
+# manifest.yaml sha256 8ec8f0c6884e41f6fcf79fdb45d61bc3a036e70492adea9d48a5e42aafb9775b
+# data ../sweep/hold_130C.data sha256 cc1bf985b734388b70d5b910f64038235ea0a123828cc39048fd2c1a9dedf63f
+# forcefield trappe_ua.yaml sha256 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   burst_dt_ps = 0.1
+#   burst_len_ps = 10.0
+#   burst_period_ps = 1000.0
+#   dt_fs = 2.0
+#   hold_dump_ps = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 14.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   step_dump_ps = 100.0
+#   step_ps = 2000.0
+#   sweep_grid_c = 140h
+#   sweep_hold_ps = 10000.0
+#   tail = True
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+#   vdos = False
+#   vdos_dt_fs = 1.0
+#   vdos_dump_fs = 4.0
+#   vdos_gzip = True
+#   vdos_ps = 10.0
+# Sweep grid (140h; h = hold): 0 steps + 1 holds at 1 atm
+#   seg  kind   T/C     T/K       ps        frame/ps  outputs
+#   1    hold   140     413.15    10000     10        seg01_hold_140C.dcd hold_140C.data seg01_hold_140C_burst01-10.dcd
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../sweep/hold_130C.data nocoeff
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 15.035  # CH3
+mass 2 14.027  # CH2
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.1947460214 3.75  # CH3
+pair_coeff 2 2 0.0914113978 3.95  # CH2
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 500
+restart 500000 restart.a restart.b
+
+# ---- Segment 1: hold at 140 C (413.15 K), 10000 ps, frames every 10 ps -> seg01_hold_140C.dcd
+fix md all npt temp 413.15 413.15 200 iso 1 1 2000
+dump traj all dcd 5000 seg01_hold_140C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 10 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 50 seg01_hold_140C_burst01.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst02.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst03.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst04.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst05.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst06.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst07.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst08.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst09.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg01_hold_140C_burst10.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+undump traj
+unfix md
+write_data hold_140C.data
+write_restart hold_140C.restart

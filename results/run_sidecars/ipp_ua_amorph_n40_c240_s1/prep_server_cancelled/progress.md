@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-server, started 2026-10-20 23:57 UTC
 - progress: 14.7% of 18,570,000 MD steps; 5/14 segments done; current: 6 Stage 6: NPT hold 20000 ps at 500 K, 1 atm
 - speed: 6.33 ns/day (36.6 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-21 20:12 UTC (8.9 d ago); report 2026-10-30 17:20 UTC on rdyu-server
+- log updated 2026-10-21 20:12 UTC (32.9 d ago); report 2026-11-23 18:50 UTC on rdyu-server
 
 ## Segments
 
@@ -11,11 +11,11 @@ Means ± SEM over the second half of each completed segment; drift = density hal
 
 | # | segment | state | steps | T set (°C) | T (°C) | density (g/cm³) | H (kcal/mol) | drift |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Stage 1: soft-core push-off | done | 20,000 | 226.9 | 226.7 | 0.3000 ± 0.0000 | 99936.7 ± 2051.4 |  |
+| 1 | Stage 1: soft-core push-off | done | 20,000 | 226.9 | 226.7 | 0.3000 ± 0.0000 | 99936.7 ± 1559.1 |  |
 | 2 | Stage 2: minimize with the full force field | done | min |  |  |  |  |  |
-| 3 | Stage 4: NVT 100 ps at 500 K | done | 50,000 | 226.9 | 226.2 | 0.3000 ± 0.0000 | 36376.7 ± 327.5 |  |
-| 4 | Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2) | done | 100,000 | 226.9 | 227.4 | 0.7720 ± 0.0007 | 35755.6 ± 193.5 | no |
-| 5 | Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 2/2) | done | 400,000 | 226.9 | 226.9 | 0.7627 ± 0.0006 | 35526.6 ± 105.8 | no |
+| 3 | Stage 4: NVT 100 ps at 500 K | done | 50,000 | 226.9 | 226.2 | 0.3000 ± 0.0000 | 36376.7 ± 94.3 |  |
+| 4 | Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 1/2) | done | 100,000 | 226.9 | 227.4 | 0.7720 ± 0.0007 | 35755.6 ± 22.6 | no |
+| 5 | Stage 5: NPT compression at 500 K: 100 atm, then 1 atm (run 2/2) | done | 400,000 | 226.9 | 226.9 | 0.7627 ± 0.0005 | 35526.6 ± 14.8 | no |
 | 6 | Stage 6: NPT hold 20000 ps at 500 K, 1 atm | running | 2,155,935/10,000,000 | 226.9 |  |  |  |  |
 | 7 | Stage 7 cool 1/8 (474.8 K) | pending | 1,000,000 | 201.6 |  |  |  |  |
 | 8 | Stage 7 cool 2/8 (449.5 K) | pending | 1,000,000 | 176.4 |  |  |  |  |

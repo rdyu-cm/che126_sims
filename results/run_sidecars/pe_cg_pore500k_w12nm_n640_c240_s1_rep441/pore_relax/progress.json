@@ -1,0 +1,124 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-06T14:36:51.947948+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1483992.2138514519,
+ "log_mtime": "2026-11-06T06:36:51-08:00",
+ "manifest_status": "finished",
+ "n_done": 2,
+ "n_segments": 2,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 28.452384,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "pore_relax",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_pore500k_w12nm_n640_c240_s1_rep441/pore_relax",
+ "segments": [
+  {
+   "command": "minimize",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 10.0,
+   "dump_every": [],
+   "ensemble": null,
+   "index": 1,
+   "name": "Stage 1: minimize the opened slab",
+   "run_steps": [
+    0
+   ],
+   "state": "done",
+   "stats": null,
+   "steps": 0,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": null,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "relax.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: surface relaxation 5000 ps NVT at 500 K, box fixed",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.26103951,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": 15609.781142343061,
+     "sem": 97.67115058210797,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 22.94296705342792,
+     "sem": 0.2079600369116305,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.19497617810770507,
+     "drift": false,
+     "first": 23.03819577816425,
+     "second": 22.843219600056546,
+     "sem": 0.4198662324269291
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 226.8722973530588,
+     "sem": 0.0361501579899068,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 500.0,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   2633,
+   1793960581129906686
+  ],
+  "log.lammps": [
+   1723289,
+   1793975811831373444
+  ],
+  "run_manifest.json": [
+   2508,
+   1793975811948146120
+  ]
+ },
+ "speed_source": "Performance line of segment 2",
+ "stage": "pore_relax",
+ "start_time": "2026-11-06T10:23:02.746164+00:00",
+ "status": "finished",
+ "steps_done": 500000,
+ "steps_per_s": 32.931,
+ "steps_total": 500000,
+ "system": "pe_cg_pore500k_w12nm_n640_c240_s1_rep441",
+ "version": 2
+}

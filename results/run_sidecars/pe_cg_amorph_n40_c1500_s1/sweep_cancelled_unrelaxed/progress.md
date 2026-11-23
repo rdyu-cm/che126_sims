@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-rog, started 2026-10-24 06:16 PDT
 - progress: 0.1% of 17,000,000 MD steps; 0/18 segments done; current: 1 seg 01 hold 25 C
 - speed: 318.35 ns/day (368.5 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-24 06:18 PDT (6.2 d ago); report 2026-10-30 10:10 PDT on rdyu-rog
+- log updated 2026-10-24 06:18 PDT (30.2 d ago); report 2026-11-23 10:50 PST on rdyu-rog
 
 ## Segments
 

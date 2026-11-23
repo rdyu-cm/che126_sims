@@ -7,14 +7,14 @@
  "end_time": null,
  "errors": [],
  "flags": [],
- "generated": "2026-10-30T17:20:02+00:00",
+ "generated": "2026-11-23T18:50:02+00:00",
  "generated_on": "rdyu-server",
  "hold": {
   "extend": false,
   "segment": 5,
   "state": "pending"
  },
- "log_age_s": 767228.6425130367,
+ "log_age_s": 2846228.5243639946,
  "log_mtime": "2026-10-21T20:12:53+00:00",
  "manifest_status": "started",
  "n_done": 3,

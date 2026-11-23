@@ -1,0 +1,100 @@
+{
+ "cache": {},
+ "current": {
+  "index": 2,
+  "name": "seg 01 hold 25 C"
+ },
+ "end_time": null,
+ "errors": [],
+ "eta": "2026-11-23T21:36:25+00:00",
+ "flags": [],
+ "generated": "2026-11-23T18:50:01+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 37.15982627868652,
+ "log_mtime": "2026-11-23T18:49:24+00:00",
+ "manifest_status": "started",
+ "n_done": 1,
+ "n_segments": 2,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 4.069656668811738,
+ "percent": 5.6,
+ "plots": {},
+ "protocol": "crystal",
+ "remaining_h": 2.783527192063492,
+ "resolution": "aa",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_aa_crystal_5x7x12_s1/crystal",
+ "segments": [
+  {
+   "command": "minimize",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 1.0,
+   "dump_every": [],
+   "ensemble": null,
+   "index": 1,
+   "name": "Stage 1: minimize the lattice with the box relaxed",
+   "run_steps": [
+    0
+   ],
+   "state": "done",
+   "stats": null,
+   "steps": 0,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": null,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg01_hold_25C.dcd"
+   ],
+   "dt_fs": 1.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 2,
+   "name": "seg 01 hold 25 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 500000,
+   "steps_done": 28000,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 25.0,
+   "t_target_k": 298.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3273,
+   1795459166021941967
+  ],
+  "log.lammps": [
+   19960,
+   1795459764699409661
+  ],
+  "run_manifest.json": [
+   2395,
+   1795459167206571361
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "crystal",
+ "start_time": "2026-11-23T18:39:27.206455+00:00",
+ "status": "running",
+ "steps_done": 28000,
+ "steps_per_s": 47.10250774087659,
+ "steps_total": 500000,
+ "system": "pe_aa_crystal_5x7x12_s1",
+ "version": 2
+}

@@ -1,9 +1,9 @@
 # ipp_aa_amorph_n40_c240_s1_from_ua / sweep_cancelled_pe_first
 
-- status: **stalled?** (manifest: started), node rdyu-rog, started 2026-10-30 05:05 PDT
+- status: **cancelled/killed?** (manifest: started), node rdyu-rog, started 2026-10-30 05:05 PDT
 - progress: 2.3% of 34,040,000 MD steps; 0/22 segments done; current: 1 seg 01 hold 25 C
 - speed: 4.53 ns/day (52.5 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-30 09:16 PDT (54 min ago); report 2026-10-30 10:10 PDT on rdyu-rog
+- log updated 2026-10-30 09:16 PDT (24.1 d ago); report 2026-11-23 10:50 PST on rdyu-rog
 
 ## Segments
 

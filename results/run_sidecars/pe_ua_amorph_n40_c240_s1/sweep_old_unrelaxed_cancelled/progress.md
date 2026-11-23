@@ -3,7 +3,7 @@
 - status: **cancelled/killed?** (manifest: started), node rdyu-server, started 2026-10-23 17:30 UTC
 - progress: 1.0% of 34,000,000 MD steps; 0/18 segments done; current: 1 seg 01 hold 25 C
 - speed: 11.92 ns/day (69.0 steps/s, running segment (last hour of thermo))
-- log updated 2026-10-23 18:47 UTC (6.9 d ago); report 2026-10-30 17:20 UTC on rdyu-server
+- log updated 2026-10-23 18:47 UTC (31.0 d ago); report 2026-11-23 18:50 UTC on rdyu-server
 
 ## Segments
 

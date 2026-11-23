@@ -1,0 +1,107 @@
+# sepsim 0.1.0 deck: hole
+# system pe_cg_hole_r3nm_25C_n640_c240_s1_rep441 (cg), seed 1
+# manifest.yaml sha256 fbeb0884463a126c9873e5b6f455a04487e712265eccbc23bb2e0aac61a77919
+# data ../../../../systems/pe_cg_hole_r3nm_25C_n640_c240_s1_rep441/data.lmp sha256 50ec3dfc124c2e0fe0dfc98f46d5c00c19b6a800f915fb8c642a1cf7e6e39ac7
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   chunk_ps = 25000.0
+#   dense_dump_ps = 5.0
+#   dense_ps = 2000.0
+#   dt_fs = 10.0
+#   hole_dump_ps = 50.0
+#   hole_grid_c = 
+#   hole_hold_ps = 20000.0
+#   hole_step_ps = 2000.0
+#   inflate_ps = 10000.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   push_every = 1
+#   push_k = 0.5
+#   push_style = indent
+#   release_t_c = none
+#   restart_ps = 1000.0
+#   rho_r = True
+#   rho_r_bin = 2.0
+#   scaffold = none
+#   scaffold_col_r_nm = 1.0
+#   scaffold_d_nm = 2.5
+#   scaffold_hold_ps = 0.0
+#   scaffold_k = 5.0
+#   scaffold_n_col = 6
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+#   wall_hold_ps = 10000.0
+# Hole (D52): R 3 nm (30 A), axis x 146.4652 y 146.4652 A, built at 25 C; film 64.53 A (67.28 A with the hole), Lz 267.2765 A (fixed), ligament 197.8 A
+# Production grid (cumulative production ns at each segment end):
+#    1 hold 25     C 20000     ps -> 20 ns
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../systems/pe_cg_hole_r3nm_25C_n640_c240_s1_rep441/data.lmp nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_modify tail no
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+
+# rolling restart files (alternating restart.a / restart.b)
+restart 100000 restart.a restart.b
+thermo 100
+# velocities come from the data file (no velocity create)
+fix md all nvt temp 298.15 298.15 1000
+
+# ---- Stage 1: inflate 10000 ps NVT at 298.15 K, radial push r0 0 -> 30 A (indent, K 0.5) -> inflate.dcd
+variable r0 equal ramp(0.0,30)
+# cylindrical indenter about the axis: F = K (r0 - r)^2 outward on beads with r < r0 (minimum image)
+fix push all indent 0.5 cylinder z 146.46522462 146.46522462 v_r0 side out units box
+dump inflate all dcd 5000 inflate.dcd
+dump_modify inflate unwrap yes
+run 1000000
+
+# ---- Stage 2: hold at R 10000 ps NVT at 298.15 K, push at r0 = 30 A -> inflate.dcd, inflated.data
+variable r0 equal 30
+run 1000000
+undump inflate
+write_data inflated.data pair ij
+write_restart inflated.restart
+unfix push
+
+# ---- Stage 3: hold at 25 C (hole segment 1/1, 20000 ps NVT) -> hole.dcd, hole_dense_s01.dcd, hole_20ns.data
+dump hole all dcd 5000 hole.dcd
+dump_modify hole unwrap yes
+# live diagnostic: radial bead mass density about the hole axis (whole film thickness)
+compute rbin all chunk/atom bin/cylinder z lower 267.276473109 146.46522462 146.46522462 0.0 128 64 units box
+fix rho_r all ave/chunk 100 50 5000 rbin density/mass file hole_rho_r.txt
+# dense frames: the first 2000 ps of this segment every 5 ps
+dump dense all dcd 500 hole_dense_s01.dcd
+dump_modify dense unwrap yes
+run 200000
+undump dense
+run 1800000
+write_data hole_20ns.data pair ij
+undump hole
+unfix rho_r

@@ -3216,6 +3216,72 @@ pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Segm
 pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Segment MSD,MSD(1000 ps),533.7544261481036,,,Å²,,traj.segment_msd.msd_1000ps_A2
 pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Segment MSD,MSD(longest lag),4266.878297483146,,,Å²,,traj.segment_msd.msd_at_max_A2
 pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Bulk modulus K,K = 1/kappa_T,0.4721553986128791,0.004963867595728688,sem,GPa,,kappa.kappa_T_GPa (1/x)
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Apparent Young's modulus E_app,E_app,1000.7587482802036,68.45358501482586,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Flow stress,flow stress,36.69711417435,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2385241630906825,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.43534899066948995,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Peak stress and peak strain,peak stress,39.998455069307354,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Peak stress and peak strain,peak strain,0.330051,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.46459686147130735,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Apparent Young's modulus E_app,E_app,1261.9183472584593,57.705266162933285,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Flow stress,flow stress,33.95048009303999,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.18257184720602088,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.44160868778358775,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Peak stress and peak strain,peak stress,37.57136417376261,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Peak stress and peak strain,peak strain,0.36815,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4541022994352133,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1131.3385477693314,184.667723409484,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,mean ± SD over axes,Flow stress,flow stress,35.323797133694995,1.9421635843323883,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2105480051483517,0.03956426198513602,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.43847883922653885,0.0044262742775524125,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,38.78490962153498,1.7162124307958189,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_100C,tensile,,100,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.3491005,0.02694006125642627,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Apparent Young's modulus E_app,E_app,1345.0341164502854,49.683340213283856,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Flow stress,flow stress,33.0443350864725,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2008636749698116,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.44727070521480483,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Peak stress and peak strain,peak stress,38.52809388490133,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Peak stress and peak strain,peak strain,0.357351,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4448791169708867,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Apparent Young's modulus E_app,E_app,640.1839151359525,57.504799947785344,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Flow stress,flow stress,32.323817601495,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.29544940276030396,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.44245507267006096,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Peak stress and peak strain,peak stress,36.38840182128752,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Peak stress and peak strain,peak strain,0.36045,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4593843743574889,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,992.6090157931189,498.404357070068,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,mean ± SD over axes,Flow stress,flow stress,32.68407634398375,0.509482799591066,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.24815653886505779,0.06688220952412202,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.44486288894243287,0.0034051664280910247,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,37.45824785309443,1.512990767832361,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_110C,tensile,,110,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.35890049999999996,0.002191323914897124,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Apparent Young's modulus E_app,E_app,1114.2938021661598,59.49366279692352,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Flow stress,flow stress,27.840716980894122,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.19006678073359534,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4498510291727954,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Peak stress and peak strain,peak stress,37.416610802228,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Peak stress and peak strain,peak strain,0.30085,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4680377342917201,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Apparent Young's modulus E_app,E_app,941.8075324749392,68.03266652563418,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Flow stress,flow stress,29.02570068118875,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.19713440221295067,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.45312388454374897,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Peak stress and peak strain,peak stress,35.215331196534564,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Peak stress and peak strain,peak strain,0.37115,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.45689787440358054,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1028.0506673205496,121.96621096023377,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,mean ± SD over axes,Flow stress,flow stress,28.433208831041433,0.8379100100738579,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.19360059147327302,0.004997563074911852,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4514874568582722,0.002314258226644079,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,36.31597099938128,1.5565397364734783,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_120C,tensile,,120,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.33599999999999997,0.04970960671741427,sd,,,runs[0].summary.peak_strain.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Apparent Young's modulus E_app,E_app,803.5853077082559,62.726094183275364,fit_err,MPa,,runs[0].axes[0].E_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Flow stress,flow stress,25.32057845606625,,,MPa,,runs[0].axes[0].flow_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2749800347327152,,,,,runs[0].axes[0].nu_fit
@@ -3238,6 +3304,72 @@ pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ±
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4671997371929293,0.006219792782888228,sd,,,runs[0].summary.nu_run.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,34.63738944802054,1.438408459378603,sd,MPa,,runs[0].summary.peak_MPa.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.32085050000000004,0.004241933580338121,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Apparent Young's modulus E_app,E_app,803.7218456842102,175.70186696525312,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Flow stress,flow stress,29.236555944225003,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.384038687583489,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4204036422450427,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Peak stress and peak strain,peak stress,38.99936612727279,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Peak stress and peak strain,peak strain,0.275505,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42282703413958317,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Apparent Young's modulus E_app,E_app,1323.9183768268422,172.127837716193,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Flow stress,flow stress,27.247044635475003,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2420697530373902,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4280633189140999,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Peak stress and peak strain,peak stress,37.13599016590913,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Peak stress and peak strain,peak strain,0.302505,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42482823359063326,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1063.8201112555262,367.8344947206742,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Flow stress,flow stress,28.241800289850005,1.406796937664448,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3130542203104396,0.10038719633537559,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4242334805795713,0.0054162093143867345,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,38.067678146590964,1.3176057781802502,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.289005,0.019091883092036802,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Apparent Young's modulus E_app,E_app,1096.7814230147173,63.4899823140156,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Flow stress,flow stress,25.15729345161375,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20152932898798462,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4527423182792804,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Peak stress and peak strain,peak stress,34.743932183910886,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Peak stress and peak strain,peak strain,0.33565,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4413861512028805,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Apparent Young's modulus E_app,E_app,1074.0826760935624,53.498401004136234,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Flow stress,flow stress,21.90928515136725,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20580368769978968,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.47771492979415514,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Peak stress and peak strain,peak stress,31.86240720074973,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Peak stress and peak strain,peak strain,0.254051,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4835764410373434,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1085.43204955414,16.050437872385903,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,mean ± SD over axes,Flow stress,flow stress,23.5332893014905,2.296688694454492,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20366650834388716,0.0030224280303411573,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4652286240367178,0.017658302946105184,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,33.30316969233031,2.037545855751706,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_140C,tensile,,140,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.2948505,0.057699206238041076,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Apparent Young's modulus E_app,E_app,812.9223099893782,61.943445836568806,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Flow stress,flow stress,7.158296653850055,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.23290540802280874,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4273929597877083,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Peak stress and peak strain,peak stress,32.94786630148566,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Peak stress and peak strain,peak strain,0.30985,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.44136877681772196,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Apparent Young's modulus E_app,E_app,1068.3677083928483,55.82137199484054,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Flow stress,flow stress,16.195644188363588,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.21621965577859578,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4681649143211198,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Peak stress and peak strain,peak stress,30.740336648762394,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Peak stress and peak strain,peak strain,0.26595,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.46029870070702583,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,940.6450091911132,180.627173433993,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,mean ± SD over axes,Flow stress,flow stress,11.676970421106821,6.390369725594045,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.22456253190070224,0.011798608561081633,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4477789370544141,0.028830125532804857,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,31.844101475124027,1.560959187111006,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_150C,tensile,,150,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.28790000000000004,0.031041987694089432,sd,,,runs[0].summary.peak_strain.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Apparent Young's modulus E_app,E_app,938.627319193915,59.58688695782547,fit_err,MPa,,runs[0].axes[0].E_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Flow stress,flow stress,19.96265141165138,,,MPa,,runs[0].axes[0].flow_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.15630063085295137,,,,,runs[0].axes[0].nu_fit
@@ -3260,6 +3392,28 @@ pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ±
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4393394761559825,0.030840591919756348,sd,,,runs[0].summary.nu_run.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,29.764476075371462,1.4434571319605645,sd,MPa,,runs[0].summary.peak_MPa.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.24605100000000002,0.023617366491630695,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Apparent Young's modulus E_app,E_app,1005.2754939473673,210.85841796102756,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Flow stress,flow stress,19.453918493467498,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.14303276002915088,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4102294071860747,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Peak stress and peak strain,peak stress,35.72864118409102,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Peak stress and peak strain,peak strain,0.253505,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.40608865958492446,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Apparent Young's modulus E_app,E_app,1005.3609573947367,178.60444252123133,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Flow stress,flow stress,11.100407599522498,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.24870959825059685,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4214729477031913,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Peak stress and peak strain,peak stress,32.00508560454554,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Peak stress and peak strain,peak strain,0.257505,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4170518514926512,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1005.318225671052,0.06043178317849682,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Flow stress,flow stress,15.277163046494998,5.906824199824208,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.19587117913987387,0.07472480892073818,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.415851177444633,0.007950383744198866,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,33.86686339431828,2.632951400421611,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.255505,0.0028284271247461927,sd,,,runs[0].summary.peak_strain.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Apparent Young's modulus E_app,E_app,1919.5883470874694,51.5589966394286,fit_err,MPa,,runs[0].axes[0].E_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Flow stress,flow stress,47.90017724205,,,MPa,,runs[0].axes[0].flow_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1645976010726145,,,,,runs[0].axes[0].nu_fit
@@ -3282,6 +3436,160 @@ pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± S
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4459491957328001,0.0025622055537116092,sd,,,runs[0].summary.nu_run.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,47.868193761015505,1.6238033495451223,sd,MPa,,runs[0].summary.peak_MPa.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.36805049999999995,0.05331655840824687,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Apparent Young's modulus E_app,E_app,2259.735713092105,181.0761842987479,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Flow stress,flow stress,47.906221379625,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2670511444020666,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.44647818635245107,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Peak stress and peak strain,peak stress,56.707053007499994,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Peak stress and peak strain,peak strain,0.038505,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4456542684144483,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Apparent Young's modulus E_app,E_app,1832.6549901315786,127.76589845394948,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Flow stress,flow stress,45.46270770300001,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.14758178887443177,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.45043535761699216,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Peak stress and peak strain,peak stress,58.37980716749998,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Peak stress and peak strain,peak strain,0.042505,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4328749624752165,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,2046.195351611842,301.99167531944147,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Flow stress,flow stress,46.68446454131251,1.727825090663607,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2073164666382492,0.08447759143757715,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4484567719847216,0.002798142635473552,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,57.543430087499985,1.1828158097939998,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.040505,0.0028284271247461927,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Apparent Young's modulus E_app,E_app,1246.3377627233003,65.02362648100616,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Flow stress,flow stress,46.78175746492499,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2492294702456591,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.44374307683456216,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Peak stress and peak strain,peak stress,48.15694141930553,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Peak stress and peak strain,peak strain,0.34025,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4394006336950448,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Apparent Young's modulus E_app,E_app,1848.6365202263767,50.46014962475406,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Flow stress,flow stress,43.815468849862505,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.17194950129034547,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4468484346566731,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Peak stress and peak strain,peak stress,45.367552452474904,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Peak stress and peak strain,peak strain,0.322651,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.43488591736440746,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1547.4871414748386,425.88953573065726,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,mean ± SD over axes,Flow stress,flow stress,45.298613157393746,2.097482794667138,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2105894857680023,0.05464519009818815,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.44529575574561764,0.0021958195740253523,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,46.76224693589022,1.9723958538128752,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_35C,tensile,,35,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.3314505,0.012444372242102032,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Apparent Young's modulus E_app,E_app,1392.7307320789023,58.242993818340025,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Flow stress,flow stress,45.4680109015125,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.23652944119849456,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.44148186324340816,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Peak stress and peak strain,peak stress,46.75654464579155,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Peak stress and peak strain,peak strain,0.382951,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4378098772439505,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Apparent Young's modulus E_app,E_app,1726.1324711707612,53.41551402256869,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Flow stress,flow stress,42.783309983662505,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.172641045990488,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.44503592144106957,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Peak stress and peak strain,peak stress,44.32852477054495,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Peak stress and peak strain,peak strain,0.36525,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.43837174588616146,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1559.4316016248317,235.75063057124146,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,mean ± SD over axes,Flow stress,flow stress,44.1256604425875,1.8983702244694793,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20458524359449126,0.045175917490707575,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.44325889234223886,0.0025130986522980247,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,45.54253470816825,1.7168693186425845,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_45C,tensile,,45,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.3741005,0.012516497133783054,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Apparent Young's modulus E_app,E_app,1771.2821979270434,52.995769348091876,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Flow stress,flow stress,44.413694942925005,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.17100404514825118,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.44049892046134714,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Peak stress and peak strain,peak stress,45.79042080296999,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Peak stress and peak strain,peak strain,0.342651,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4407823404776755,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Apparent Young's modulus E_app,E_app,1395.1257454110685,56.41733938565915,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Flow stress,flow stress,41.712765610424995,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.23414521908700123,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.44385629982584,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Peak stress and peak strain,peak stress,43.397634940841876,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Peak stress and peak strain,peak strain,0.329051,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.44013771271141694,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1583.203971669056,265.98277836112146,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,mean ± SD over axes,Flow stress,flow stress,43.063230276675,1.9098454465164125,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20257463211762622,0.044647552264169464,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4421776101435936,0.0023740257156486927,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,44.594027871905936,1.691955109038089,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_55C,tensile,,55,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.335851,0.009616652224137047,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Apparent Young's modulus E_app,E_app,928.215771846978,54.17294064959518,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Flow stress,flow stress,43.199453126550004,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.27292532677596554,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.43889650687132115,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Peak stress and peak strain,peak stress,44.56629943292104,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Peak stress and peak strain,peak strain,0.342351,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4316647450201324,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Apparent Young's modulus E_app,E_app,1520.8905300587262,60.63597798036415,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Flow stress,flow stress,40.463874291749995,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.19239186052951063,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4422266734321776,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Peak stress and peak strain,peak stress,41.97129294802023,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Peak stress and peak strain,peak strain,0.38745,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.44068699726315597,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1224.553150952852,419.0843405696246,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,mean ± SD over axes,Flow stress,flow stress,41.83166370915,1.9343463445574804,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.23265859365273808,0.0569457600953262,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.44056159015174934,0.0023547833576622722,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,43.26879619047064,1.834946682696432,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_65C,tensile,,65,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.3649005,0.031889808724732106,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Apparent Young's modulus E_app,E_app,1457.0258383585958,54.24437267038856,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Flow stress,flow stress,42.11525095391249,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2049107515580565,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.43646785480514444,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Peak stress and peak strain,peak stress,43.27844062499964,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Peak stress and peak strain,peak strain,0.35065,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4200273972261464,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Apparent Young's modulus E_app,E_app,1398.2424745822204,61.648837072700495,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Flow stress,flow stress,39.1384217524125,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.17047834615946414,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4418823366842558,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Peak stress and peak strain,peak stress,40.70515179950548,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Peak stress and peak strain,peak strain,0.364351,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4324129329861783,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1427.634156470408,41.56611514723069,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,mean ± SD over axes,Flow stress,flow stress,40.626836353162496,2.1049361148147825,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1876945488587603,0.02434738734990894,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.43917509574470015,0.003828616853331327,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,41.99179621225256,1.8195899784584868,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_75C,tensile,,75,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.3575005,0.009688070009036862,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Apparent Young's modulus E_app,E_app,1475.0065929407244,60.02570923134108,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Flow stress,flow stress,40.3480883397375,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.18486771093953647,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.43510122964857834,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Peak stress and peak strain,peak stress,42.20503266831649,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Peak stress and peak strain,peak strain,0.317851,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4272397038102776,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Apparent Young's modulus E_app,E_app,1327.334499984957,55.081212518541285,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Flow stress,flow stress,37.7037666502875,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.18735696515471034,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4396666879931414,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Peak stress and peak strain,peak stress,39.41503976435631,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Peak stress and peak strain,peak strain,0.335451,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4344653159388143,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1401.1705464628408,104.41993832103343,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,mean ± SD over axes,Flow stress,flow stress,39.025927495012496,1.8698177982487647,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1861123380471234,0.0017601685356466443,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4373839588208599,0.003228266554665254,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,40.8100362163364,1.9728229018525933,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_85C,tensile,,85,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.326651,0.01244507934888324,sd,,,runs[0].summary.peak_strain.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Apparent Young's modulus E_app,E_app,1103.167102389376,61.641890487246506,fit_err,MPa,,runs[0].axes[0].E_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Flow stress,flow stress,39.539654921549996,,,MPa,,runs[0].axes[0].flow_MPa
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20752800223954515,,,,,runs[0].axes[0].nu_fit
@@ -3304,6 +3612,28 @@ pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± S
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4354705248433697,0.0026361988746614,sd,,,runs[0].summary.nu_run.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,40.237280100742446,1.8386886734047052,sd,MPa,,runs[0].summary.peak_MPa.mean
 pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.32755049999999997,0.011172994249528645,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Apparent Young's modulus E_app,E_app,1650.6164302105262,154.93436476224474,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Flow stress,flow stress,39.927336631874994,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.22245308524787114,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.43597833825745996,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Peak stress and peak strain,peak stress,43.72610368636362,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Peak stress and peak strain,peak strain,0.378505,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4341801627245515,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Apparent Young's modulus E_app,E_app,1306.5246990789467,145.07911305684868,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Flow stress,flow stress,37.32252166125,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.12856199123069012,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4416657229257697,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Peak stress and peak strain,peak stress,42.62526927750001,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Peak stress and peak strain,peak strain,0.031505,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499505,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42708587414571825,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1478.5705646447364,243.30959643335817,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Flow stress,flow stress,38.62492914656249,1.84188232946517,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1755075382392806,0.06639102927257239,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.43882203059161484,0.0040215882661782335,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,43.17568648193182,0.7784074754709447,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.205005,0.24536605307173198,sd,,,runs[0].summary.peak_strain.mean
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.8527213504050375,,,,,free_shell.areal_density_ratio
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,7102.0,,,beads,,free_shell.beads
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),467.3982453145065,,,Å²,,free_shell.msd.1 ns
@@ -6229,6 +6559,72 @@ pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/h
 pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/heating hysteresis,rho (sweep),0.8619575809018196,,,g/cm³,,progress.json:hysteresis[7].rho_sweep
 pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,-0.21240052420975677,,,%,,progress.json:hysteresis[7].delta_pct
 pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,,,,,,Cooling/heating hysteresis,max |delta_pct|,0.35732317016518234,,,%,"at 75.463 C, delta_pct -0.3573",max |progress.json:hysteresis[].delta_pct| (hysteresis[5])
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Apparent Young's modulus E_app,E_app,3284.385956447367,212.04545491737457,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Flow stress,flow stress,71.61254717925,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20540861445633826,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.46599633998395873,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Peak stress and peak strain,peak stress,251.8789354772727,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Peak stress and peak strain,peak strain,0.110501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.41960677898794707,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Apparent Young's modulus E_app,E_app,2968.2753449999996,217.61100224944633,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Flow stress,flow stress,62.02997240475,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3123679739167296,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4758604730670562,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Peak stress and peak strain,peak stress,234.0266679545457,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Peak stress and peak strain,peak strain,0.126501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4403160025304543,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3126.330650723683,223.5239569594593,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,mean ± SD over axes,Flow stress,flow stress,66.821259792,6.775903604276103,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2588882941865339,0.07563168838581222,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4709284065255075,0.0069749953935847875,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,242.9528017159092,12.623459424876634,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_100C_r1e9,tensile,,100,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.118501,0.011313708498984762,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Apparent Young's modulus E_app,E_app,3246.2623871052624,167.01462801258424,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Flow stress,flow stress,66.2785286415,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.21844652179418333,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4623231488264959,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Peak stress and peak strain,peak stress,250.10408993181807,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Peak stress and peak strain,peak strain,0.109501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.416210726016393,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Apparent Young's modulus E_app,E_app,2602.3406407894736,225.1865799774838,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Flow stress,flow stress,24.237536611732498,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.26604803299773827,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.518230163430945,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Peak stress and peak strain,peak stress,230.15328954545427,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Peak stress and peak strain,peak strain,0.125501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.477190189673252,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,2924.301513947368,455.32143337337806,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,mean ± SD over axes,Flow stress,flow stress,45.25803262661625,29.7274705520582,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2422472773959608,0.03365935136676111,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4902766561287204,0.03953222914270129,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,240.12868973863618,14.107346243297032,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_110C_r1e9,tensile,,110,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.117501,0.011313708498984762,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Apparent Young's modulus E_app,E_app,3198.057970657895,248.63945038950848,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Flow stress,flow stress,64.489203615375,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.25704465940940824,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4610034978036784,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Peak stress and peak strain,peak stress,257.6483809772728,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Peak stress and peak strain,peak strain,0.111501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.422378931938269,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Apparent Young's modulus E_app,E_app,2482.8593435526313,260.5852762672853,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Flow stress,flow stress,55.946903231624994,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3321494430452348,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4658329940710944,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Peak stress and peak strain,peak stress,222.0704100681818,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Peak stress and peak strain,peak strain,0.120501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.44071022508748786,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,2840.4586571052632,505.72179912144094,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,mean ± SD over axes,Flow stress,flow stress,60.218053423499995,6.0403185282820795,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2945970512273215,0.053107101808441415,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4634182459373864,0.0034149695604049892,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,239.85939552272728,25.157424490675957,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_120C_r1e9,tensile,,120,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.11600099999999999,0.006363961030678923,sd,,,runs[0].summary.peak_strain.mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Apparent Young's modulus E_app,E_app,3271.788440131577,245.412334805439,fit_err,MPa,,runs[0].axes[0].E_MPa
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Flow stress,flow stress,59.834972476125,,,MPa,,runs[0].axes[0].flow_MPa
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2676845297422717,,,,,runs[0].axes[0].nu_fit
@@ -6251,6 +6647,50 @@ pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,me
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4565874984806182,0.008244695777001095,sd,,,runs[0].summary.nu_run.mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,211.6802221704545,13.246923766283054,sd,MPa,,runs[0].summary.peak_MPa.mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.10100100000000001,0.009192388155425116,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Apparent Young's modulus E_app,E_app,2753.4207106578942,237.0844315378352,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Flow stress,flow stress,57.07052300775,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.19693148266852978,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.44984012506419224,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Peak stress and peak strain,peak stress,199.72308920454552,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Peak stress and peak strain,peak strain,0.093501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4162119467172267,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Apparent Young's modulus E_app,E_app,2725.0926023684206,238.36433532177224,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Flow stress,flow stress,47.979255426375005,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.24228754819216194,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4532425458382074,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Peak stress and peak strain,peak stress,173.4770586818179,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Peak stress and peak strain,peak strain,0.085501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4228245028131003,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,2739.2566565131574,20.030997469673686,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,mean ± SD over axes,Flow stress,flow stress,52.5248892170625,6.4284969563716805,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.21960951543034585,0.03207158149970168,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4515413354511998,0.002405874801756092,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,186.6000739431817,18.558746161849797,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_140C_r1e9,tensile,,140,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.089501,0.005656854249492385,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Apparent Young's modulus E_app,E_app,2667.728497342106,218.84870763733167,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Flow stress,flow stress,50.71480092525,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3151346684078915,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4452034608439962,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Peak stress and peak strain,peak stress,181.37488186363655,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Peak stress and peak strain,peak strain,0.092501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42014037144978417,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Apparent Young's modulus E_app,E_app,2688.302561447368,250.95668570802283,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Flow stress,flow stress,45.732624837375,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.23679926928313513,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.45359650189556977,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Peak stress and peak strain,peak stress,147.11146465909084,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Peak stress and peak strain,peak strain,0.084501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.43384249759570115,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,2678.0155293947373,14.548060245397567,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,mean ± SD over axes,Flow stress,flow stress,48.2237128813125,3.5229304968018798,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2759669688455133,0.05539149192806997,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.449399981369783,0.0059347762423447425,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,164.2431732613637,24.227894651958085,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_150C_r1e9,tensile,,150,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.088501,0.005656854249492376,sd,,,runs[0].summary.peak_strain.mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Apparent Young's modulus E_app,E_app,2667.116646710527,248.35971101870368,fit_err,MPa,,runs[0].axes[0].E_MPa
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Flow stress,flow stress,45.17424657375,,,MPa,,runs[0].axes[0].flow_MPa
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3624559047990421,,,,,runs[0].axes[0].nu_fit
@@ -6295,6 +6735,138 @@ pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.49081239768432017,0.020584733749007864,sd,,,runs[0].summary.nu_run.mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,305.6825104772726,39.79359511632525,sd,MPa,,runs[0].summary.peak_MPa.mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.13700099999999998,0.013435028842544395,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Apparent Young's modulus E_app,E_app,4138.822198815789,197.7226987699185,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Flow stress,flow stress,99.241393736625,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2626858460839527,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.47785531429305117,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Peak stress and peak strain,peak stress,301.35749890909096,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Peak stress and peak strain,peak strain,0.118501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42998542547741153,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Apparent Young's modulus E_app,E_app,3804.9464198684195,136.61716063821805,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Flow stress,flow stress,132.38909447819998,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.26468750431931704,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4858972770773159,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Peak stress and peak strain,peak stress,288.0834633409097,,,MPa,peak at the end,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Peak stress and peak strain,peak strain,0.493501,,,,peak at the end,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4120612556085013,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3971.8843093421046,236.0858273676259,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,mean ± SD over axes,Flow stress,flow stress,115.8152441074125,23.438963975110017,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.26368667520163486,0.001415386111844035,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.48187629568518353,0.005686526418803434,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,294.72048112500033,9.386160563972396,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_35C_r1e9,tensile,,35,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.306001,0.26516504294495535,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Apparent Young's modulus E_app,E_app,3934.864039736841,259.01586050567727,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Flow stress,flow stress,93.59862880462501,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.22857993894494374,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.47940236057221686,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Peak stress and peak strain,peak stress,303.418265181819,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Peak stress and peak strain,peak strain,0.121501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42875864810625663,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Apparent Young's modulus E_app,E_app,3291.8901011842104,224.26309255910564,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Flow stress,flow stress,32.84401031790375,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.38499694839397797,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.5120947144980732,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Peak stress and peak strain,peak stress,262.6021602272727,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Peak stress and peak strain,peak strain,0.131501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.48817955764338145,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3613.377070460526,454.6512320767875,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,mean ± SD over axes,Flow stress,flow stress,63.22131956126438,42.96000272036218,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.30678844366946084,0.11060352807433238,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.49574853753514503,0.02311698515392367,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,283.01021270454584,28.86134459498152,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_45C_r1e9,tensile,,45,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.126501,0.007071067811865481,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Apparent Young's modulus E_app,E_app,3680.05924342105,211.14427140181323,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Flow stress,flow stress,91.541843775375,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2002572661648807,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.475607736848064,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Peak stress and peak strain,peak stress,308.34312075000014,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Peak stress and peak strain,peak strain,0.138501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.41570004522429777,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Apparent Young's modulus E_app,E_app,3481.861143947367,156.24742453790654,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Flow stress,flow stress,148.08140036185125,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.26083978347195563,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.48532763847690247,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Peak stress and peak strain,peak stress,281.58696490909045,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Peak stress and peak strain,peak strain,0.474501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.432101587862385,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3580.960193684208,140.14722015612696,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,mean ± SD over axes,Flow stress,flow stress,119.81162206861313,39.97950386757788,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.23054852481841817,0.04283830880918406,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.48046768766248327,0.006873008354217842,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,294.96504282954527,18.91945923359129,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_55C_r1e9,tensile,,55,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.306501,0.23758787847867996,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Apparent Young's modulus E_app,E_app,3406.634264210526,208.7750679652141,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Flow stress,flow stress,87.15395705099999,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.34416039956240846,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.47548371949298274,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Peak stress and peak strain,peak stress,295.4777933863636,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Peak stress and peak strain,peak strain,0.126501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4438083204992745,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Apparent Young's modulus E_app,E_app,3360.9338703947355,217.4597539244789,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Flow stress,flow stress,31.036350649045875,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.28114728104710307,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.5181863493673023,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Peak stress and peak strain,peak stress,253.87531431818206,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Peak stress and peak strain,peak strain,0.123501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.47889266672703956,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3383.784067302631,32.315058370041186,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,mean ± SD over axes,Flow stress,flow stress,59.09515385002293,39.68114003077937,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.31265384030475574,0.04455700340588403,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.49683503443014254,0.03019531915863064,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,274.67655385227283,29.417395063282566,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_65C_r1e9,tensile,,65,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.125001,0.0021213203435596446,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Apparent Young's modulus E_app,E_app,3402.308372368422,233.25390107163182,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Flow stress,flow stress,81.02662101187501,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1849098697627157,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4749107568007219,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Peak stress and peak strain,peak stress,279.6792915000004,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Peak stress and peak strain,peak strain,0.113501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42219841597257307,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Apparent Young's modulus E_app,E_app,3066.0475705263166,227.0338076547274,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Flow stress,flow stress,75.48452633292374,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.29827306858149516,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.5039051513071793,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Peak stress and peak strain,peak stress,249.65144352272745,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Peak stress and peak strain,peak strain,0.135501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.45391184081769353,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3234.1779714473696,237.77229322977877,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,mean ± SD over axes,Flow stress,flow stress,78.25557367239938,3.918852729464327,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.24159146917210544,0.08015988662175777,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4894079540539506,0.020502132971913976,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,264.6653675113639,21.23289492916844,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_75C_r1e9,tensile,,75,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.124501,0.01555634918610405,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Apparent Young's modulus E_app,E_app,3466.684411184209,219.0953723398357,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Flow stress,flow stress,76.26394223175001,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1549801500888093,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4732609292382602,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Peak stress and peak strain,peak stress,279.8621370681816,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Peak stress and peak strain,peak strain,0.109501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4243271910832711,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Apparent Young's modulus E_app,E_app,2947.889135921052,205.18623244062357,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Flow stress,flow stress,75.96242864803425,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2330297370125777,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.5069699972632717,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Peak stress and peak strain,peak stress,245.1627460227266,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Peak stress and peak strain,peak strain,0.134501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.44875019790024767,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3207.2867735526306,366.8436571861197,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,mean ± SD over axes,Flow stress,flow stress,76.11318543989213,0.21320229966527177,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1940049435506935,0.055189392182605525,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.49011546325076594,0.02383591058796429,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,262.51244154545407,24.536174711284996,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_85C_r1e9,tensile,,85,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.122001,0.01767766952966369,sd,,,runs[0].summary.peak_strain.mean
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Apparent Young's modulus E_app,E_app,3343.598534210524,167.0703658306567,fit_err,MPa,,runs[0].axes[0].E_MPa
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Flow stress,flow stress,73.602390834,,,MPa,,runs[0].axes[0].flow_MPa
 pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.149689736872862,,,,,runs[0].axes[0].nu_fit

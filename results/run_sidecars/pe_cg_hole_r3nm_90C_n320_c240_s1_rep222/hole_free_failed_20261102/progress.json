@@ -1,0 +1,128 @@
+{
+ "cache": {},
+ "current": {
+  "index": 1,
+  "name": "Stage 1: inflate 10000 ps NVT at 363.15 K, radial push r0 0"
+ },
+ "end_time": "2026-11-02T18:40:46.945435+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1814957.1252408028,
+ "log_mtime": "2026-11-02T10:40:46-08:00",
+ "manifest_status": "failed",
+ "n_done": 0,
+ "n_segments": 3,
+ "node": "rdyu-rog",
+ "notes": [],
+ "percent": 0.0,
+ "plots": {},
+ "protocol": "hole",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r3nm_90C_n320_c240_s1_rep222/hole_free",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 1,
+   "name": "Stage 1: inflate 10000 ps NVT at 363.15 K, radial push r0 0",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "inflate.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: hold at R 10000 ps NVT at 363.15 K, push at r0 = 30 A",
+   "run_steps": [
+    1000000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 1000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "hole.dcd",
+    "hole_dense_s01.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    5000,
+    500
+   ],
+   "ensemble": "nvt",
+   "index": 3,
+   "name": "Stage 3: hold at 90 C",
+   "run_steps": [
+    200000,
+    1800000
+   ],
+   "state": "pending",
+   "stats": null,
+   "steps": 2000000,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 363.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   3869,
+   1793644845056700842
+  ],
+  "log.lammps": [
+   32,
+   1793644846916169123
+  ],
+  "run_manifest.json": [
+   2585,
+   1793644846945625405
+  ]
+ },
+ "stage": "hole_free",
+ "start_time": "2026-11-02T18:40:46.151404+00:00",
+ "status": "failed",
+ "steps_done": 0,
+ "steps_total": 4000000,
+ "system": "pe_cg_hole_r3nm_90C_n320_c240_s1_rep222",
+ "version": 2
+}

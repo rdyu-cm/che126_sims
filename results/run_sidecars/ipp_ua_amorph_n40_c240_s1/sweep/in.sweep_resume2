@@ -1,0 +1,110 @@
+# Second resume of the ipp_ua_amorph_n40_c240_s1 sweep after the rdyu-rog reboot of 2026-11-02 10:39 PST
+# (job 136 killed at step ~27.2M in segment 16). Starts from restart.a (step 27,000,000 = end of
+# segment 15) and runs in.sweep from the segment 16 header on, unchanged.
+log log.lammps append
+units real
+read_restart restart.a
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 15.035  # CH3
+mass 2 14.027  # CH2
+mass 3 12.011  # CH
+mass 4 1.008  # H
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.1947460214 3.75  # CH3
+pair_coeff 2 2 0.0914113978 3.95  # CH2
+pair_coeff 3 3 0.019872043 4.68  # CH
+pair_coeff 4 4 0 0  # H
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+bond_coeff 2 340 1.09  # CH-H
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+angle_coeff 2 62.100134375 112  # CHx-CH-CHy
+angle_coeff 3 37.5 110.7  # H-CH-CHx
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+dihedral_coeff 2 1.70394819908 -0.44453760191 1.75378728292 0  # CHx-CH2-CH-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+fix shake all shake 0.0001 20 0 b 2
+# velocities come from the data file (no velocity create)
+thermo 500
+restart 500000 restart.a restart.b
+
+# ---- Segment 16: step at 150 C (423.15 K), 2000 ps, frames every 100 ps -> seg16_step_150C.dcd
+fix md all npt temp 423.15 423.15 200 iso 1 1 2000
+dump traj all dcd 50000 seg16_step_150C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+
+# ---- Segment 17: step at 160 C (433.15 K), 2000 ps, frames every 100 ps -> seg17_step_160C.dcd
+fix md all npt temp 433.15 433.15 200 iso 1 1 2000
+dump traj all dcd 50000 seg17_step_160C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+
+# ---- Segment 18: hold at 160 C (433.15 K), 10000 ps, frames every 10 ps -> seg18_hold_160C.dcd
+# same target as the previous segment: fix md continues
+dump traj all dcd 5000 seg18_hold_160C.dcd
+dump_modify traj unwrap yes
+# D46: the hold runs in 10 chunk(s) of 1000 ps; each starts with a dense burst (10 ps, frames every 0.1 ps, own file); fix md and dump traj carry on across the runs
+dump burst all dcd 50 seg18_hold_160C_burst01.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst02.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst03.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst04.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst05.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst06.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst07.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst08.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst09.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+dump burst all dcd 50 seg18_hold_160C_burst10.dcd
+dump_modify burst unwrap yes
+run 5000
+undump burst
+run 495000
+undump traj
+unfix md
+write_data hold_160C.data
+write_restart hold_160C.restart

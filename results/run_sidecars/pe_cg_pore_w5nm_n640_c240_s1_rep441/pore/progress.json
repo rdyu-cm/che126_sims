@@ -1,0 +1,1025 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-09T07:03:27.220625+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1251996.9217879772,
+ "log_mtime": "2026-11-08T23:03:27-08:00",
+ "manifest_status": "finished",
+ "n_done": 17,
+ "n_segments": 17,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 33.485184000000004,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "pore",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_pore_w5nm_n640_c240_s1_rep441/pore",
+ "segments": [
+  {
+   "command": "minimize",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 10.0,
+   "dump_every": [],
+   "ensemble": null,
+   "index": 1,
+   "name": "Stage 1: minimize the narrowed slab",
+   "run_steps": [
+    0
+   ],
+   "state": "done",
+   "stats": null,
+   "steps": 0,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": null,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "relax.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000
+   ],
+   "ensemble": "nvt",
+   "index": 2,
+   "name": "Stage 2: surface re-relaxation 2000 ps NVT at 500 K after narrowing",
+   "run_steps": [
+    200000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.42756315,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": 15370.153825174826,
+     "sem": 20.068036368300433,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 23.105120366787123,
+     "sem": 0.46502455283650995,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.6448414983629434,
+     "drift": false,
+     "first": 23.427029052256476,
+     "second": 22.782187553893532,
+     "sem": 0.8010972784887674
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 226.85609099900103,
+     "sem": 0.05576069159133569,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 200000,
+   "steps_done": 200000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 500.0,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 1,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 3,
+   "name": "Stage 3 cool 1/8 (474.8 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.43271802,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": 5337.604770211916,
+     "sem": 31.73194076234148,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 24.39362832762464,
+     "sem": 0.19510271173119317,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 0.013281514655712812,
+     "drift": false,
+     "first": 24.39086403293342,
+     "second": 24.40414554758913,
+     "sem": 0.3907187664740256
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 201.57092257097167,
+     "sem": 0.03527675311177428,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 474.76875,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 2,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 4,
+   "name": "Stage 3 cool 2/8 (449.5 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.43810156,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -5075.762182087165,
+     "sem": 55.76662153364545,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 25.602980950783834,
+     "sem": 0.18208805994691046,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.15632381798172545,
+     "drift": false,
+     "first": 25.691251189706833,
+     "second": 25.534927371725107,
+     "sem": 0.3213999153879399
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 176.35373055977618,
+     "sem": 0.04006422810662558,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 449.5375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 3,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 5,
+   "name": "Stage 3 cool 3/8 (424.3 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.44329903,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -15366.627159936024,
+     "sem": 34.87159559258821,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 27.005243081605425,
+     "sem": 0.18098199611418908,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 0.40773100961447284,
+     "drift": false,
+     "first": 26.800955344979453,
+     "second": 27.208686354593926,
+     "sem": 0.3845112136748593
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 151.16927909236313,
+     "sem": 0.03232934113336613,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 424.30625,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 4,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 6,
+   "name": "Stage 3 cool 4/8 (399.1 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.44861348,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -25816.558043982404,
+     "sem": 34.35693470732607,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 28.770953989803193,
+     "sem": 0.21998005207195456,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 0.32916860677799775,
+     "drift": false,
+     "first": 28.607300050478585,
+     "second": 28.936468657256583,
+     "sem": 0.61401925858812
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 125.91221381447417,
+     "sem": 0.02920996391631932,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 399.075,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 5,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 7,
+   "name": "Stage 3 cool 5/8 (373.8 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.45399349,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -36566.25569492203,
+     "sem": 43.588154355712334,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 29.53612083663347,
+     "sem": 0.284461316564227,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.619047263460466,
+     "drift": false,
+     "first": 29.84059651359599,
+     "second": 29.221549250135524,
+     "sem": 0.5366086034630819
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 100.68677389444224,
+     "sem": 0.02633360721297999,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 373.84375,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 6,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 8,
+   "name": "Stage 3 cool 6/8 (348.6 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.45928839,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -47480.90212794882,
+     "sem": 41.16636727086686,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 31.392630207074184,
+     "sem": 0.1898713491116485,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.21413583080478205,
+     "drift": false,
+     "first": 31.50150076323313,
+     "second": 31.287364932428346,
+     "sem": 0.3521415738178605
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 75.456926297481,
+     "sem": 0.030105420063709,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 348.6125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 7,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 9,
+   "name": "Stage 3 cool 7/8 (323.4 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.4645702,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -58279.49084246302,
+     "sem": 16.99962514076758,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 32.126935668587656,
+     "sem": 0.5000934946079876,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 1.5194849320214168,
+     "drift": true,
+     "first": 31.362424419223085,
+     "second": 32.8819093512445,
+     "sem": 0.40147795655292373
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 50.24752799280287,
+     "sem": 0.02728503202805874,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 323.38125,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": 8,
+   "dcd": [
+    "cool.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 10,
+   "name": "Stage 3 cool 8/8 (298.1 K)",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.47038601,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -69523.18735505798,
+     "sem": 12.523899110917649,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 34.13629937493936,
+     "sem": 0.14635248007201082,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.3070416680017445,
+     "drift": false,
+     "first": 34.28722748774106,
+     "second": 33.98018581973932,
+     "sem": 0.304641291786607
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 24.96404207516997,
+     "sem": 0.04085848466312701,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg01_hold_25C.dcd",
+    "seg01_hold_25C_burst01.dcd",
+    "seg01_hold_25C_burst02.dcd",
+    "seg01_hold_25C_burst03.dcd",
+    "seg01_hold_25C_burst04.dcd",
+    "seg01_hold_25C_burst05.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 11,
+   "name": "seg 01 hold 25 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.4702478,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -69736.24383846461,
+     "sem": 33.68633679912378,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 34.29163824252433,
+     "sem": 0.5328714409838797,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -1.1739743354210432,
+     "drift": false,
+     "first": 34.884844319571265,
+     "second": 33.71086998415022,
+     "sem": 0.6685902776419297
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 24.97865915633747,
+     "sem": 0.03110285884111656,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 25.0,
+   "t_target_k": 298.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg02_step_90C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 12,
+   "name": "seg 02 step 90 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.45636799,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -41728.349070371856,
+     "sem": 22.63753432660775,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 30.593266642592738,
+     "sem": 0.20303544313344882,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.22407660818180375,
+     "drift": false,
+     "first": 30.704838365128985,
+     "second": 30.48076175694718,
+     "sem": 0.4216906099577113
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 89.94359874450225,
+     "sem": 0.02755326728413823,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": 2,
+   "sweep_kind": "step",
+   "t_c": 90.0,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg03_hold_90C.dcd",
+    "seg03_hold_90C_burst01.dcd",
+    "seg03_hold_90C_burst02.dcd",
+    "seg03_hold_90C_burst03.dcd",
+    "seg03_hold_90C_burst04.dcd",
+    "seg03_hold_90C_burst05.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 13,
+   "name": "seg 03 hold 90 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.45636799,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -41490.870511795285,
+     "sem": 50.36246951307521,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 30.542760636712416,
+     "sem": 0.3564273820027583,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 1.121365149050174,
+     "drift": true,
+     "first": 29.979605756918325,
+     "second": 31.1009709059685,
+     "sem": 0.42124004231933965
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 89.97587267892845,
+     "sem": 0.029713559914897252,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": 3,
+   "sweep_kind": "hold",
+   "t_c": 90.0,
+   "t_target_k": 363.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg04_step_130C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 14,
+   "name": "seg 04 step 130 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.44783143,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -24459.599975209916,
+     "sem": 13.845300042036792,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 28.271790109165398,
+     "sem": 0.21157517174354074,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 0.6535506329732144,
+     "drift": false,
+     "first": 27.945455561853002,
+     "second": 28.599006194826217,
+     "sem": 0.42383885573038155
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 130.00593916033586,
+     "sem": 0.029786075780836935,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": 4,
+   "sweep_kind": "step",
+   "t_c": 130.0,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg05_hold_130C.dcd",
+    "seg05_hold_130C_burst01.dcd",
+    "seg05_hold_130C_burst02.dcd",
+    "seg05_hold_130C_burst03.dcd",
+    "seg05_hold_130C_burst04.dcd",
+    "seg05_hold_130C_burst05.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 15,
+   "name": "seg 05 hold 130 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.44783143,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -24276.69744462215,
+     "sem": 39.22079388444575,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 27.97971607453888,
+     "sem": 0.14393709738723956,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 0.12660042877497446,
+     "drift": false,
+     "first": 27.912391994253326,
+     "second": 28.0389924230283,
+     "sem": 0.35184094552764617
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 130.0465766813275,
+     "sem": 0.035685888332719226,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": 5,
+   "sweep_kind": "hold",
+   "t_c": 130.0,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg06_step_160C.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "nvt",
+   "index": 16,
+   "name": "seg 06 step 160 C",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.44161031,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -11839.433195361855,
+     "sem": 33.24338804709921,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 26.627939246126534,
+     "sem": 0.20798837934973122,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.5004218079437344,
+     "drift": false,
+     "first": 26.872919007325756,
+     "second": 26.37249719938202,
+     "sem": 0.39079399210385124
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 160.0876220431827,
+     "sem": 0.03246258683267191,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": 6,
+   "sweep_kind": "step",
+   "t_c": 160.0,
+   "t_target_k": 433.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg07_hold_160C.dcd",
+    "seg07_hold_160C_burst01.dcd",
+    "seg07_hold_160C_burst02.dcd",
+    "seg07_hold_160C_burst03.dcd",
+    "seg07_hold_160C_burst04.dcd",
+    "seg07_hold_160C_burst05.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    1000,
+    10,
+    10,
+    10,
+    10,
+    10
+   ],
+   "ensemble": "nvt",
+   "index": 17,
+   "name": "seg 07 hold 160 C",
+   "run_steps": [
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000,
+    1000,
+    99000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.44161031,
+     "sem": 0.0
+    },
+    "enthalpy": {
+     "mean": -11775.588829708116,
+     "sem": 42.036226488672575,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma": {
+     "mean": 26.329859888009004,
+     "sem": 0.2016196443739059,
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -0.7033746105996741,
+     "drift": false,
+     "first": 26.678917048416448,
+     "second": 25.975542437816774,
+     "sem": 0.37359170566859196
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 160.01457938824473,
+     "sem": 0.030927786913014052,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": 7,
+   "sweep_kind": "hold",
+   "t_c": 160.0,
+   "t_target_k": 433.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   14573,
+   1793976191085928124
+  ],
+  "log.lammps": [
+   26467978,
+   1794207807126809131
+  ],
+  "run_manifest.json": [
+   2431,
+   1794207807220822919
+  ]
+ },
+ "speed_source": "Performance line of segment 17",
+ "stage": "pore",
+ "start_time": "2026-11-06T14:43:12.529151+00:00",
+ "status": "finished",
+ "steps_done": 7700000,
+ "steps_per_s": 38.756,
+ "steps_total": 7700000,
+ "system": "pe_cg_pore_w5nm_n640_c240_s1_rep441",
+ "version": 2
+}

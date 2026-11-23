@@ -2424,7 +2424,7 @@
   "D37 FAIL C_n 5.66 (drift)",
   "D47 PASS (ACF 0.19 at 30.0 ns; MSD/Rg2 2.06; 60.0 ns)"
  ],
- "generated": "2026-10-30T10:10:11-07:00",
+ "generated": "2026-11-23T10:50:03-08:00",
  "generated_on": "rdyu-rog",
  "hold": {
   "boundaries_ns": [
@@ -4824,7 +4824,7 @@
   "segment": 1,
   "state": "running"
  },
- "log_age_s": 342464.6341969967,
+ "log_age_s": 2422056.052936077,
  "log_mtime": "2026-10-26T11:02:27-07:00",
  "manifest_status": "started",
  "n_done": 0,

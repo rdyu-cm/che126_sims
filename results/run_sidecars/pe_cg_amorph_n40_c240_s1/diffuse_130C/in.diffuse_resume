@@ -1,0 +1,41 @@
+# Resume of the pe_cg_amorph_n40_c240_s1 diffuse_130C hold after the rdyu-rog power-off of 2026-11-03
+# ~21:40 PST (job 180 killed at step ~16.87M in chunk 7). Starts from restart.b (step 16,800,000) and
+# runs the rest of in.diffuse unchanged; the trajectory continues in hold_resume.dcd (merged afterwards).
+log log.lammps append
+units real
+read_restart restart.b
+special_bonds lj 0 0 1 angle yes
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+thermo 100
+restart 100000 restart.a restart.b
+fix md all npt temp 403.15 403.15 1000 iso 1 1 10000
+dump hold all dcd 10000 hold_resume.dcd
+dump_modify hold unwrap yes
+run 17500000 upto
+write_data hold_175ns.data pair ij
+run 2500000
+write_data hold_200ns.data pair ij
+run 2500000
+write_data hold_225ns.data pair ij
+run 2500000
+write_data hold_250ns.data pair ij
+run 2500000
+write_data hold_275ns.data pair ij
+run 2500000
+write_data hold_300ns.data pair ij
+undump hold
+unfix md

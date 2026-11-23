@@ -1,0 +1,303 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-21T03:40:05.202401+00:00",
+ "errors": [],
+ "flags": [
+  "drift seg 2"
+ ],
+ "generated": "2026-11-23T10:50:04-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 227398.99934959412,
+ "log_mtime": "2026-11-20T19:40:05-08:00",
+ "manifest_status": "finished",
+ "n_done": 5,
+ "n_segments": 5,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 52.629177600000006,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "crystal",
+ "resolution": "ua",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_ua_crystal_7x10x40_s1/crystal_fine_a",
+ "segments": [
+  {
+   "command": "minimize",
+   "cool_step": null,
+   "dcd": [],
+   "dt_fs": 2.0,
+   "dump_every": [],
+   "ensemble": null,
+   "index": 1,
+   "name": "Stage 1: minimize the lattice with the box relaxed",
+   "run_steps": [
+    0
+   ],
+   "state": "done",
+   "stats": null,
+   "steps": 0,
+   "steps_done": 0,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": null,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg01_hold_35C.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "npt",
+   "index": 2,
+   "name": "seg 01 hold 35 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 1.0121039266733267,
+     "sem": 0.00021774086050985086,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.0006875371999999214,
+     "drift": true,
+     "first": 1.012450816,
+     "second": 1.0117632788000002,
+     "sem": 0.00014063925457357098
+    },
+    "enthalpy": {
+     "mean": 2527.4002944395606,
+     "sem": 3.6809972280384553,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -3.229807231592781,
+     "drift": false,
+     "first": 4.517451275006242,
+     "second": 1.287644043413461,
+     "sem": 24.215702110423127
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 35.07721091908098,
+     "sem": 0.07461750884590014,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 35.0,
+   "t_target_k": 308.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg02_hold_45C.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "npt",
+   "index": 3,
+   "name": "seg 02 hold 45 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 1.0088131467532466,
+     "sem": 0.0001194474548535124,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.000285667200000006,
+     "drift": false,
+     "first": 1.00895764,
+     "second": 1.0086719728,
+     "sem": 0.00014974531940117975
+    },
+    "enthalpy": {
+     "mean": 3234.908054808192,
+     "sem": 3.8838861872482893,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -8.147817564819773,
+     "drift": false,
+     "first": 3.284986193579192,
+     "second": -4.86283137124058,
+     "sem": 23.703431085809434
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 45.01159378621378,
+     "sem": 0.08769496493241546,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": 2,
+   "sweep_kind": "hold",
+   "t_c": 45.0,
+   "t_target_k": 318.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg03_hold_55C.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "npt",
+   "index": 4,
+   "name": "seg 03 hold 55 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 1.0060295780919082,
+     "sem": 6.355346828915687e-05,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.00012337553999985928,
+     "drift": false,
+     "first": 1.0059691522,
+     "second": 1.00609252774,
+     "sem": 0.0001290570754964704
+    },
+    "enthalpy": {
+     "mean": 3981.346355594406,
+     "sem": 4.438997968414174,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -2.6304365074969556,
+     "drift": false,
+     "first": 0.035686129135453486,
+     "second": -2.594750378361502,
+     "sem": 25.15857870098881
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 55.02195260739262,
+     "sem": 0.09089866233102825,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": 3,
+   "sweep_kind": "hold",
+   "t_c": 55.0,
+   "t_target_k": 328.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg04_hold_65C.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    5000
+   ],
+   "ensemble": "npt",
+   "index": 5,
+   "name": "seg 04 hold 65 C",
+   "run_steps": [
+    1000000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 1.0035989932967033,
+     "sem": 6.64718152427859e-05,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0001394859799999093,
+     "drift": false,
+     "first": 1.0035321716,
+     "second": 1.00367165758,
+     "sem": 0.00012519060611656144
+    },
+    "enthalpy": {
+     "mean": 4686.329022697302,
+     "sem": 4.1185383330455165,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": 2.602335242159523,
+     "drift": false,
+     "first": -4.86863224570295,
+     "second": -2.266297003543427,
+     "sem": 25.60619455857663
+    },
+    "rows": 2001,
+    "t_c": {
+     "mean": 64.76760748251752,
+     "sem": 0.08100526942231887,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 1000000,
+   "steps_done": 1000000,
+   "sweep_index": 4,
+   "sweep_kind": "hold",
+   "t_c": 65.0,
+   "t_target_k": 338.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   4254,
+   1795219286164924420
+  ],
+  "log.lammps": [
+   2755097,
+   1795232405051234648
+  ],
+  "run_manifest.json": [
+   2510,
+   1795232405202234106
+  ]
+ },
+ "speed_source": "Performance line of segment 5",
+ "stage": "crystal_fine_a",
+ "start_time": "2026-11-21T00:01:27.356428+00:00",
+ "status": "finished",
+ "steps_done": 4000000,
+ "steps_per_s": 304.567,
+ "steps_total": 4000000,
+ "system": "pe_ua_crystal_7x10x40_s1",
+ "version": 2
+}

@@ -1,0 +1,120 @@
+{
+ "cache": {},
+ "current": {
+  "index": 1,
+  "name": "seg 01 hold 85 C"
+ },
+ "end_time": null,
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T18:50:01+00:00",
+ "generated_on": "rdyu-server",
+ "log_age_s": 96428.17384958267,
+ "log_mtime": "2026-11-22T16:02:53+00:00",
+ "manifest_status": "started",
+ "n_done": 0,
+ "n_segments": 1,
+ "node": "rdyu-server",
+ "notes": [],
+ "ns_per_day": 6.171672316463639,
+ "percent": 25.04,
+ "plots": {},
+ "protocol": "sweep",
+ "resolution": "ua",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/fine_85C_cpu_cancelled",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg01_hold_85C.dcd",
+    "seg01_hold_85C_burst01.dcd",
+    "seg01_hold_85C_burst02.dcd",
+    "seg01_hold_85C_burst03.dcd",
+    "seg01_hold_85C_burst04.dcd",
+    "seg01_hold_85C_burst05.dcd",
+    "seg01_hold_85C_burst06.dcd",
+    "seg01_hold_85C_burst07.dcd",
+    "seg01_hold_85C_burst08.dcd",
+    "seg01_hold_85C_burst09.dcd",
+    "seg01_hold_85C_burst10.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    5000,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50
+   ],
+   "ensemble": "npt",
+   "index": 1,
+   "name": "seg 01 hold 85 C",
+   "run_steps": [
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000
+   ],
+   "state": "running",
+   "stats": null,
+   "steps": 5000000,
+   "steps_done": 1252000,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 85.0,
+   "t_target_k": 358.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "../sweep/log.lammps": [
+   20406871,
+   1793770390610235708
+  ],
+  "deck": [
+   4070,
+   1795326224030273441
+  ],
+  "log.lammps": [
+   759736,
+   1795363373654168386
+  ],
+  "run_manifest.json": [
+   2407,
+   1795326225394404365
+  ]
+ },
+ "speed_source": "running segment (last hour of thermo)",
+ "stage": "fine_85C_cpu_cancelled",
+ "start_time": "2026-11-22T05:43:45.394152+00:00",
+ "status": "cancelled/killed?",
+ "step_vs_hold": [],
+ "steps_done": 1252000,
+ "steps_per_s": 35.71569627583124,
+ "steps_total": 5000000,
+ "system": "ipp_ua_amorph_n40_c240_s1",
+ "version": 2
+}

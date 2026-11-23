@@ -1,0 +1,73 @@
+# sepsim 0.1.0 deck: cavitation
+# system pe_cg_amorph_n40_c240_s1 (cg), seed 1
+# manifest.yaml sha256 be94805b7ab7d340773f4aac950d8c88ba3106377c963af80451fabc5b7ef4b3
+# data ../sweep/hold_160C.data sha256 ab8df4abfa77fcf58bff0840f71fe4701f3c4329cf0c5826009d7515cac67196
+# forcefield sdk_cg.yaml sha256 9dfe149f91ae1128a039d35e984256101e7e4c4660811a41cff0b252bdb797ba
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   avg_ps = 1.0
+#   cav_dump_ps = 10.0
+#   cav_mode = triaxial
+#   dt_fs = 10.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 15.0
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   rate_per_s = 100000000.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   strain_max = 0.26
+#   t_c = 160.0
+#   tag = 
+#   tail = False
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style spica
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../sweep/hold_160C.data nocoeff
+special_bonds lj 0 0 1 angle yes
+
+mass 1 42.0804  # CM
+mass 2 43.0883  # CT
+pair_style lj/spica 15
+pair_coeff 1 1 lj9_6 0.42 4.506  # CM-CM
+pair_coeff 1 2 lj9_6 0.444 4.5455  # CM-CT
+pair_coeff 2 2 lj9_6 0.469 4.585  # CT-CT
+bond_coeff 1 6.16 3.64  # CM-CM
+bond_coeff 2 6.16 3.65  # CM-CT
+angle_coeff 1 1.19 173  # CM-CM-CM
+angle_coeff 2 1.19 175  # CM-CM-CT
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 10
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# velocities come from the data file (no velocity create)
+thermo 100
+restart 100000 restart.a restart.b
+
+# ---- Segment 1: triaxial tension at 160 C, 1e8 /s per axis (D58) -> cavitation.txt, cavitation.dcd
+# engineering strain rate 1e-07 1/fs, 260000 steps (2600 ps) to strain 0.26 per axis
+variable cav_l0 equal $(lx)
+variable cav_v0 equal $(vol)
+variable cav_e equal (lx-v_cav_l0)/v_cav_l0
+variable cav_ev equal vol/v_cav_v0-1
+variable cav_lx equal lx
+variable cav_ly equal ly
+variable cav_lz equal lz
+fix md all nvt temp 433.15 433.15 1000
+fix pull all deform 1 x erate 1e-07 y erate 1e-07 z erate 1e-07 remap x
+fix cave all ave/time 1 100 100 v_cav_e v_cav_ev c_thermo_press c_thermo_press[1] c_thermo_press[2] c_thermo_press[3] v_cav_lx v_cav_ly v_cav_lz c_thermo_temp c_thermo_pe file cavitation.txt
+dump cav all dcd 1000 cavitation.dcd
+dump_modify cav unwrap yes
+run 260000
+undump cav
+unfix cave
+write_data cavitated.data pair ij

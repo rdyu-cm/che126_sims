@@ -1,0 +1,73 @@
+{
+  "command": [
+    "apptainer",
+    "exec",
+    "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+    "lmp",
+    "-sf",
+    "omp",
+    "-pk",
+    "omp",
+    "2",
+    "-in",
+    "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/hole_free/in.hole"
+  ],
+  "cwd": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/hole_free",
+  "deck": {
+    "path": "in.hole",
+    "resolved": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/hole_free/in.hole",
+    "sha256": "03b1ddf78742d776e2af05b38cea77c789c6aebbd7ea711da2193f6bdaae0463"
+  },
+  "deck_git": null,
+  "end_time": "2026-11-14T15:02:06.545060+00:00",
+  "exit_code": 0,
+  "git": {
+    "branch": "main",
+    "commit": "bac5d71c0df7efb3b4ce14283952b8d9689ab474",
+    "dirty": true
+  },
+  "hostname": "rdyu-server",
+  "inputs": {
+    "files": [
+      {
+        "arg": "../../../../systems/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/data.lmp",
+        "command": "read_data",
+        "from": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/hole_free/in.hole",
+        "path": "/home/rdyu/projects/che126_sims/systems/pe_cg_hole_r4nm_160C_n320_c240_s1_rep222/data.lmp",
+        "sha256": "fcaa85f9490a95f5b797d9336da94da7b4a99235c1e38c8a676854c263fcb620"
+      }
+    ],
+    "missing": [],
+    "unresolved": []
+  },
+  "lammps": {
+    "executable": "apptainer exec /home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif lmp",
+    "git": "HEAD / stable_22Jul2025_update6 / 9c5ab448c78a14fd534619622162ba418d6a1fb1",
+    "info_file": "lmp_info.txt",
+    "info_sha256": "130a1efdaaa506929fed4487070fd18ff747adeb6774193669025a1ad4d90a7f",
+    "packages": [
+      "CG-SPICA",
+      "EXTRA-DUMP",
+      "EXTRA-MOLECULE",
+      "GPU",
+      "KOKKOS",
+      "KSPACE",
+      "MOLECULE",
+      "OPENMP",
+      "RIGID"
+    ],
+    "probe": [
+      "apptainer",
+      "exec",
+      "/home/rdyu/projects/installations/lammps/stable_22Jul2025_update6/lammps-rocm6.4.4-gfx1030.sif",
+      "lmp"
+    ],
+    "version": "LAMMPS (22 Jul 2025 - Update 6)"
+  },
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+  "python": "3.13.14 (main, Jul 18 2026, 17:02:37) [Clang 22.1.3 ]",
+  "sepsim_version": "0.1.0",
+  "start_time": "2026-11-12T02:07:24.522398+00:00",
+  "status": "finished",
+  "wall_time_s": 219282.022
+}

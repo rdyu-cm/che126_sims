@@ -1,0 +1,223 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-10-31T17:54:31.902092+00:00",
+ "errors": [],
+ "flags": [
+  "drift seg 2"
+ ],
+ "generated": "2026-11-23T10:50:03-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 1990531.5955283642,
+ "log_mtime": "2026-10-31T10:54:31-07:00",
+ "manifest_status": "finished",
+ "n_done": 3,
+ "n_segments": 3,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 60.650208000000006,
+ "percent": 100.0,
+ "plots": {},
+ "protocol": "tensile",
+ "resolution": "cg",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/pe_cg_amorph_n40_c240_s1/tensile_130C",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_x.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 1,
+   "name": "Segment 1: tensile along x at 130 C, 1e8 /s",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7751222669052379,
+     "sem": 0.0001492520749366274,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.00011763879199988558,
+     "drift": false,
+     "first": 0.775182414664,
+     "second": 0.7750647758720001,
+     "sem": 0.0003095334484373147
+    },
+    "enthalpy": {
+     "mean": -1988.5437063574568,
+     "sem": 7.725280628079064,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -1.513193157611488,
+     "drift": false,
+     "first": 3.8716168578820906,
+     "second": 2.3584237002706026,
+     "sem": 1.1437000338605103
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 129.99477649740106,
+     "sem": 0.18330215599575378,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_y.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 2,
+   "name": "Segment 2: tensile along y at 130 C, 1e8 /s",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7761236940743703,
+     "sem": 0.00015445068870992035,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.0005798265599998853,
+     "drift": true,
+     "first": 0.775835017752,
+     "second": 0.7764148443119999,
+     "sem": 0.000270438059874044
+    },
+    "enthalpy": {
+     "mean": -2057.2431937584965,
+     "sem": 6.2115197913070865,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -2.3306060649230247,
+     "drift": false,
+     "first": 6.873568500686974,
+     "second": 4.5429624357639495,
+     "sem": 1.5910622571061774
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 129.99872262295088,
+     "sem": 0.11708519979222504,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  },
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "tensile_z.dcd"
+   ],
+   "dt_fs": 10.0,
+   "dump_every": [
+    10000
+   ],
+   "ensemble": "npt",
+   "index": 3,
+   "name": "Segment 3: tensile along z at 130 C, 1e8 /s",
+   "run_steps": [
+    500000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.7747143084766094,
+     "sem": 0.00014696351948611253,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": 0.00034637144799998243,
+     "drift": false,
+     "first": 0.774542288072,
+     "second": 0.77488865952,
+     "sem": 0.00030774571914943857
+    },
+    "enthalpy": {
+     "mean": -2003.2269771291485,
+     "sem": 13.146717301522171,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "gamma_drift": {
+     "delta": -5.783880844171437,
+     "drift": true,
+     "first": -12.884637430650203,
+     "second": -18.66851827482164,
+     "sem": 1.7993384184837296
+    },
+    "rows": 5001,
+    "t_c": {
+     "mean": 130.01831180327872,
+     "sem": 0.1140139650875242,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 500000,
+   "steps_done": 500000,
+   "sweep_index": null,
+   "sweep_kind": null,
+   "t_c": null,
+   "t_target_k": 403.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "deck": [
+   5816,
+   1793447423141099045
+  ],
+  "log.lammps": [
+   5148668,
+   1793469271679312545
+  ],
+  "run_manifest.json": [
+   2395,
+   1793469271902510949
+  ]
+ },
+ "speed_source": "Performance line of segment 3",
+ "stage": "tensile_130C",
+ "start_time": "2026-10-31T11:50:25.135931+00:00",
+ "status": "finished",
+ "steps_done": 1500000,
+ "steps_per_s": 70.197,
+ "steps_total": 1500000,
+ "system": "pe_cg_amorph_n40_c240_s1",
+ "version": 2
+}

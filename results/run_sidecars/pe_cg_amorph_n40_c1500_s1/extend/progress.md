@@ -3,7 +3,7 @@
 - status: **finished** (manifest: finished), node rdyu-rog, started 2026-10-24 06:18 PDT, ended 2026-10-25 19:01 PDT
 - progress: 100.0% of 50,000,000 MD steps; 1/1 segments done
 - speed: 324.99 ns/day (376.1 steps/s, Performance line of segment 1)
-- log updated 2026-10-25 19:01 PDT (4.6 d ago); report 2026-10-30 10:10 PDT on rdyu-rog
+- log updated 2026-10-25 19:01 PDT (28.7 d ago); report 2026-11-23 10:50 PST on rdyu-rog
 - checks: D37 FAIL C_n 7.43 (vs 6.7); D47 FAIL (ACF 0.68 at 250.0 ns; MSD/Rg2 0.12; 500.0 ns); drift seg 1
 - note: ../prep/hold.dcd has frames every 10 ps, the extension 100 ps: chain checks use the extension alone
 

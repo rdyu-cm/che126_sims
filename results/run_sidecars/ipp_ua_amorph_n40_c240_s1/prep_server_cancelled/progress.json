@@ -7,14 +7,14 @@
  "end_time": null,
  "errors": [],
  "flags": [],
- "generated": "2026-10-30T17:20:02+00:00",
+ "generated": "2026-11-23T18:50:01+00:00",
  "generated_on": "rdyu-server",
  "hold": {
   "extend": false,
   "segment": 6,
   "state": "running"
  },
- "log_age_s": 767229.9562847614,
+ "log_age_s": 2846229.4179718494,
  "log_mtime": "2026-10-21T20:12:52+00:00",
  "manifest_status": "started",
  "n_done": 5,
@@ -54,12 +54,15 @@
     },
     "enthalpy": {
      "mean": 99936.74100000001,
-     "sem": 2051.396727437624
+     "sem": 1559.1224532671301,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
     },
     "rows": 21,
     "t_c": {
      "mean": 226.6709590909091,
-     "sem": 1.3233219481636838
+     "sem": 1.3233219481636838,
+     "sem_lower_bound": true
     }
    },
    "steps": 20000,
@@ -112,12 +115,15 @@
     },
     "enthalpy": {
      "mean": 36376.69239215687,
-     "sem": 327.5476205374749
+     "sem": 94.26024382554395,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
     },
     "rows": 102,
     "t_c": {
      "mean": 226.21970862745104,
-     "sem": 0.5658874408874948
+     "sem": 0.5681441160819302,
+     "sem_lower_bound": true
     }
    },
    "steps": 50000,
@@ -144,23 +150,27 @@
    "stats": {
     "density": {
      "mean": 0.7720036569306931,
-     "sem": 0.0006895618632502603
+     "sem": 0.0006550990887239821,
+     "sem_lower_bound": true
     },
     "drift": {
      "delta": -0.0005460237999999062,
      "drift": false,
      "first": 0.7722620718000001,
      "second": 0.7717160480000002,
-     "sem": 0.001352438355092601
+     "sem": 0.0011309797244806264
     },
     "enthalpy": {
      "mean": 35755.63874257426,
-     "sem": 193.52136364822343
+     "sem": 22.587941802548418,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
     },
     "rows": 202,
     "t_c": {
      "mean": 227.3540115841585,
-     "sem": 0.40155392814367846
+     "sem": 0.4015539281436785,
+     "sem_lower_bound": true
     }
    },
    "steps": 100000,
@@ -187,23 +197,27 @@
    "stats": {
     "density": {
      "mean": 0.7626924008229427,
-     "sem": 0.0005632746972443856
+     "sem": 0.0005445864127476401,
+     "sem_lower_bound": true
     },
     "drift": {
      "delta": 0.001250216450000119,
      "drift": false,
      "first": 0.7620585602,
      "second": 0.7633087766500001,
-     "sem": 0.0010572822712203614
+     "sem": 0.00106324737874307
     },
     "enthalpy": {
      "mean": 35526.61963341646,
-     "sem": 105.80871041236475
+     "sem": 14.844587247161227,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
     },
     "rows": 802,
     "t_c": {
      "mean": 226.88472753117202,
-     "sem": 0.22185251716051993
+     "sem": 0.2025104765627076,
+     "sem_lower_bound": true
     }
    },
    "steps": 400000,
@@ -450,7 +464,10 @@
   }
  ],
  "signature": {
-  "../sweep/log.lammps": null,
+  "../sweep/log.lammps": [
+   20406871,
+   1793770390610235708
+  ],
   "deck": [
    5504,
    1792540652329840237

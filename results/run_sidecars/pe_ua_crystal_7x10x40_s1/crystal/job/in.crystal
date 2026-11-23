@@ -1,0 +1,113 @@
+# sepsim 0.1.0 deck: crystal
+# system pe_ua_crystal_7x10x40_s1 (ua), seed 1
+# manifest.yaml sha256 0f1dcd6a40d8045af4417cb7a983c918fbb08edf29c58ee614f0437fe1a6957b
+# data ../../../../systems/pe_ua_crystal_7x10x40_s1/data.lmp sha256 34b4ccdde1654af4419e9c438700d8e19cc2d3c2d35c9d915a6702f0369484b7
+# forcefield trappe_ua.yaml sha256 465094dd1509bcbbfcb46219e79a5cb521771793893c664cb62b4c88bfdbff4b
+# Units: ps, fs (dt), K, atm, angstrom. Accelerators come from the command line (-sf/-pk).
+# Resolved parameters:
+#   crystal_dump_ps = 10.0
+#   crystal_grid_c = 25,90,130,160
+#   crystal_hold_ps = 2000.0
+#   dt_fs = 2.0
+#   kspace_accuracy = 0.0
+#   lj_cutoff = 14.0
+#   min_box_relax = True
+#   min_etol = 1e-08
+#   min_ftol = 1e-06
+#   min_maxeval = 100000
+#   min_maxiter = 10000
+#   neighbor_skin = 2.0
+#   p_atm = 1.0
+#   pdamp_dt = 1000
+#   ramp = False
+#   ramp_dump_ps = 100.0
+#   ramp_ps = 4000.0
+#   ramp_to_c = 200.0
+#   restart_ps = 1000.0
+#   shake_iter = 20
+#   shake_tol = 0.0001
+#   tail = True
+#   tdamp_dt = 100
+#   thermo_ps = 1.0
+# Crystal (D59): 140 stems x 80 sites, 7 x 10 cells of pe_orthorhombic_busing (a 7.4069, b 4.9491 A), stems along z, box 51.8483 x 49.491 x 102.044 A
+#   seg  kind   T/C            ps        frame/ps  outputs
+#   1    hold   25             2000      10        seg01_hold_25C.dcd hold_25C.data
+#   2    hold   90             2000      10        seg02_hold_90C.dcd hold_90C.data
+#   3    hold   130            2000      10        seg03_hold_130C.dcd hold_130C.data
+#   4    hold   160            2000      10        seg04_hold_160C.dcd hold_160C.data
+units real
+atom_style full
+boundary p p p
+bond_style harmonic
+angle_style harmonic
+dihedral_style opls
+# nocoeff: every coefficient is set below from the force-field YAML
+read_data ../../../../systems/pe_ua_crystal_7x10x40_s1/data.lmp nocoeff
+special_bonds lj 0 0 0 coul 0 0 0
+
+mass 1 14.027  # CH2
+pair_style lj/cut 14
+pair_modify mix arithmetic tail yes
+pair_coeff 1 1 0.0914113978 3.95  # CH2
+bond_coeff 1 600.401529637 1.54  # CHx-CHy
+angle_coeff 1 62.100134375 114  # CHx-CH2-CHy
+dihedral_coeff 1 1.41103428526 -0.271014922434 3.14502901335 0  # CHx-CH2-CH2-CHy
+
+neighbor 2 bin
+neigh_modify delay 0 every 1 check yes
+timestep 2
+thermo_style custom step time temp press pe ke etotal enthalpy vol density lx ly lz pxx pyy pzz evdwl ecoul elong ebond eangle edihed cpu
+thermo_modify flush yes
+# rolling restart files from here on (alternating restart.a / restart.b)
+restart 500000 restart.a restart.b
+
+# ---- Stage 1: minimize the lattice with the box relaxed (aniso 1 atm, couple none) -> minimized.data
+thermo 100
+fix relax all box/relax aniso 1 couple none vmax 0.001
+minimize 1e-08 1e-06 10000 100000
+unfix relax
+write_data minimized.data
+# the minimizer advanced the step counter: restart it so dump intervals line up with segment starts
+reset_timestep 0
+thermo 500
+velocity all create 298.15 1 mom yes rot no dist gaussian
+
+# ---- Segment 1: hold at 25 C (298.15 K), 2000 ps, frames every 10 ps -> seg01_hold_25C.dcd, hold_25C.data
+fix md all npt temp 298.15 298.15 200 aniso 1 1 2000 couple none
+dump traj all dcd 5000 seg01_hold_25C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+write_data hold_25C.data
+write_restart hold_25C.restart
+
+# ---- Segment 2: hold at 90 C (363.15 K), 2000 ps, frames every 10 ps -> seg02_hold_90C.dcd, hold_90C.data
+fix md all npt temp 363.15 363.15 200 aniso 1 1 2000 couple none
+dump traj all dcd 5000 seg02_hold_90C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+write_data hold_90C.data
+write_restart hold_90C.restart
+
+# ---- Segment 3: hold at 130 C (403.15 K), 2000 ps, frames every 10 ps -> seg03_hold_130C.dcd, hold_130C.data
+fix md all npt temp 403.15 403.15 200 aniso 1 1 2000 couple none
+dump traj all dcd 5000 seg03_hold_130C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+write_data hold_130C.data
+write_restart hold_130C.restart
+
+# ---- Segment 4: hold at 160 C (433.15 K), 2000 ps, frames every 10 ps -> seg04_hold_160C.dcd, hold_160C.data
+fix md all npt temp 433.15 433.15 200 aniso 1 1 2000 couple none
+dump traj all dcd 5000 seg04_hold_160C.dcd
+dump_modify traj unwrap yes
+run 1000000
+undump traj
+unfix md
+write_data hold_160C.data
+write_restart hold_160C.restart

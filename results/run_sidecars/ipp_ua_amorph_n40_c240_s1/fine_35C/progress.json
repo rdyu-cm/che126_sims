@@ -1,0 +1,148 @@
+{
+ "cache": {},
+ "current": null,
+ "end_time": "2026-11-17T13:48:34.422970+00:00",
+ "errors": [],
+ "flags": [],
+ "generated": "2026-11-23T10:50:03-08:00",
+ "generated_on": "rdyu-rog",
+ "log_age_s": 536488.9731509686,
+ "log_mtime": "2026-11-17T05:48:34-08:00",
+ "manifest_status": "finished",
+ "n_done": 1,
+ "n_segments": 1,
+ "node": "rdyu-rog",
+ "notes": [],
+ "ns_per_day": 8.464089600000001,
+ "percent": 100.0,
+ "plots": {
+  "sweep_vs_T": {
+   "file": "progress_sweep_vs_T.png",
+   "key": "ea02c1d4d04b534f",
+   "title": "sweep density and enthalpy vs T (prep step-cool overlaid)"
+  }
+ },
+ "protocol": "sweep",
+ "resolution": "ua",
+ "run_dir": "/home/rdyu/projects/che126_sims/results/runs/ipp_ua_amorph_n40_c240_s1/fine_35C",
+ "segments": [
+  {
+   "command": "run",
+   "cool_step": null,
+   "dcd": [
+    "seg01_hold_35C.dcd",
+    "seg01_hold_35C_burst01.dcd",
+    "seg01_hold_35C_burst02.dcd",
+    "seg01_hold_35C_burst03.dcd",
+    "seg01_hold_35C_burst04.dcd",
+    "seg01_hold_35C_burst05.dcd",
+    "seg01_hold_35C_burst06.dcd",
+    "seg01_hold_35C_burst07.dcd",
+    "seg01_hold_35C_burst08.dcd",
+    "seg01_hold_35C_burst09.dcd",
+    "seg01_hold_35C_burst10.dcd"
+   ],
+   "dt_fs": 2.0,
+   "dump_every": [
+    5000,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50
+   ],
+   "ensemble": "npt",
+   "index": 1,
+   "name": "seg 01 hold 35 C",
+   "run_steps": [
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000,
+    5000,
+    495000
+   ],
+   "state": "done",
+   "stats": {
+    "density": {
+     "mean": 0.8591236998860227,
+     "sem": 0.000422982667516619,
+     "sem_lower_bound": true
+    },
+    "drift": {
+     "delta": -0.000530458015999824,
+     "drift": false,
+     "first": 0.8593883277839999,
+     "second": 0.858857869768,
+     "sem": 0.0006654306370381783
+    },
+    "enthalpy": {
+     "mean": 19365.425057988403,
+     "sem": 10.663481909747711,
+     "sem_from": "E+p_ext*V",
+     "sem_lower_bound": true
+    },
+    "rows": 10001,
+    "t_c": {
+     "mean": 34.99965955009003,
+     "sem": 0.03283402261338675,
+     "sem_lower_bound": true
+    }
+   },
+   "steps": 5000000,
+   "steps_done": 5000000,
+   "sweep_index": 1,
+   "sweep_kind": "hold",
+   "t_c": 35.0,
+   "t_target_k": 308.15,
+   "vdos": false
+  }
+ ],
+ "signature": {
+  "../sweep/log.lammps": [
+   20406871,
+   1793770390610235708
+  ],
+  "deck": [
+   4070,
+   1794821711056983672
+  ],
+  "log.lammps": [
+   3016471,
+   1794923314249800862
+  ],
+  "run_manifest.json": [
+   2438,
+   1794923314423183428
+  ]
+ },
+ "speed_source": "Performance line of segment 1",
+ "stage": "fine_35C",
+ "start_time": "2026-11-16T09:35:12.794211+00:00",
+ "status": "finished",
+ "step_vs_hold": [],
+ "steps_done": 5000000,
+ "steps_per_s": 48.982,
+ "steps_total": 5000000,
+ "system": "ipp_ua_amorph_n40_c240_s1",
+ "version": 2
+}
