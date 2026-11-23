@@ -1,4 +1,374 @@
 system,resolution,polymer,kind,stage,stage_kind,segment,T_C,T_lo_C,T_hi_C,strain_rate_per_s,axis_or_layer,property,quantity,value,err,err_kind,unit,note,source_key
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Density ρ(T),density,0.8680867999022439,0.00021792837028842906,sem,g/cm³,SEM is a lower bound,segments[0].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Enthalpy H(T),H (whole system),50019.05848766941,17.02572057684334,sem,kcal/mol,SEM is a lower bound,segments[0].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Volume V(T), box lengths",V,257741.9899111309,64.71700816474721,sem,Å³,SEM is a lower bound,segments[0].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Density ρ(T),density,0.8640751483233534,0.0006268237794993209,sem,g/cm³,SEM is a lower bound,segments[1].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Enthalpy H(T),H (whole system),51818.44264670659,12.989225345251068,sem,kcal/mol,SEM is a lower bound,segments[1].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,"Volume V(T), box lengths",V,258938.60666666666,187.85475058959574,sem,Å³,SEM is a lower bound,segments[1].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Density ρ(T),density,0.8571438382634731,0.00035247897344946094,sem,g/cm³,SEM is a lower bound,segments[2].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Enthalpy H(T),H (whole system),53690.548159680635,12.020002161195736,sem,kcal/mol,SEM is a lower bound,segments[2].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,"Volume V(T), box lengths",V,261032.67562874252,107.37323857797121,sem,Å³,SEM is a lower bound,segments[2].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Density ρ(T),density,0.8515364886427146,0.00041232584979944425,sem,g/cm³,SEM is a lower bound,segments[3].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Enthalpy H(T),H (whole system),55572.27988223553,10.891348909490661,sem,kcal/mol,SEM is a lower bound,segments[3].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,"Volume V(T), box lengths",V,262752.09301397204,127.15952293619854,sem,Å³,SEM is a lower bound,segments[3].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Density ρ(T),density,0.8466304700399201,0.0007195865959457497,sem,g/cm³,SEM is a lower bound,segments[4].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Enthalpy H(T),H (whole system),57538.889716566875,29.792453817530806,sem,kcal/mol,SEM is a lower bound,segments[4].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,"Volume V(T), box lengths",V,264275.08249501,224.52853995457292,sem,Å³,SEM is a lower bound,segments[4].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Density ρ(T),density,0.838454408003992,0.0004323321029461208,sem,g/cm³,SEM is a lower bound,segments[5].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Enthalpy H(T),H (whole system),59420.17891616767,13.59775128717351,sem,kcal/mol,SEM is a lower bound,segments[5].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,"Volume V(T), box lengths",V,266852.03754491016,137.58797722385177,sem,Å³,SEM is a lower bound,segments[5].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Density ρ(T),density,0.8296926024750498,0.0005375690376967394,sem,g/cm³,SEM is a lower bound,segments[6].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Enthalpy H(T),H (whole system),61505.49038722555,11.286950906198676,sem,kcal/mol,SEM is a lower bound,segments[6].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,"Volume V(T), box lengths",V,269669.96832335327,174.67472721204894,sem,Å³,SEM is a lower bound,segments[6].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Density ρ(T),density,0.8276684898203592,0.0005705363406575273,sem,g/cm³,SEM is a lower bound,segments[7].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Enthalpy H(T),H (whole system),62186.59193213573,20.593482825440937,sem,kcal/mol,SEM is a lower bound,segments[7].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,"Volume V(T), box lengths",V,270330.0465069861,186.2723185249827,sem,Å³,SEM is a lower bound,segments[7].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Density ρ(T),density,0.8273933511641858,0.000547852840458861,sem,g/cm³,SEM is a lower bound,segments[8].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Enthalpy H(T),H (whole system),62374.69632481671,10.243091263037664,sem,kcal/mol,SEM is a lower bound,segments[8].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Volume V(T), box lengths",V,270421.06801377475,178.95840776130174,sem,Å³,SEM is a lower bound,segments[8].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Density ρ(T),density,0.8198621137325349,0.0006348743652503533,sem,g/cm³,SEM is a lower bound,segments[9].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Enthalpy H(T),H (whole system),64258.83756886228,14.737612904902889,sem,kcal/mol,SEM is a lower bound,segments[9].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,"Volume V(T), box lengths",V,272905.0504790419,211.55581751915926,sem,Å³,SEM is a lower bound,segments[9].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Density ρ(T),density,0.8130432645708584,0.0004252319797992878,sem,g/cm³,SEM is a lower bound,segments[10].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Enthalpy H(T),H (whole system),66282.84643912176,18.570001078176784,sem,kcal/mol,SEM is a lower bound,segments[10].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,"Volume V(T), box lengths",V,275193.0034331337,143.78777324181033,sem,Å³,SEM is a lower bound,segments[10].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Density ρ(T),density,0.8099618741516966,0.0005459806830062664,sem,g/cm³,SEM is a lower bound,segments[11].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Enthalpy H(T),H (whole system),68084.85669061876,10.837585151050465,sem,kcal/mol,SEM is a lower bound,segments[11].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,"Volume V(T), box lengths",V,276241.3076247505,186.51862553986348,sem,Å³,SEM is a lower bound,segments[11].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Density ρ(T),density,0.802536923512974,0.0005213232951396079,sem,g/cm³,SEM is a lower bound,segments[12].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Enthalpy H(T),H (whole system),70061.94439321358,12.877293454341432,sem,kcal/mol,SEM is a lower bound,segments[12].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,"Volume V(T), box lengths",V,278796.443512974,180.6482923324986,sem,Å³,SEM is a lower bound,segments[12].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Density ρ(T),density,0.8023088040479893,0.0002339178218398758,sem,g/cm³,SEM is a lower bound,segments[13].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Enthalpy H(T),H (whole system),69947.22673272606,8.545067641334587,sem,kcal/mol,SEM is a lower bound,segments[13].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Volume V(T), box lengths",V,278876.49351699627,81.31536031102189,sem,Å³,SEM is a lower bound,segments[13].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Density ρ(T),density,0.7947245529141717,0.0005697774184994855,sem,g/cm³,SEM is a lower bound,segments[14].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Enthalpy H(T),H (whole system),71932.49794411178,18.61199650324632,sem,kcal/mol,SEM is a lower bound,segments[14].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,"Volume V(T), box lengths",V,281537.9695209581,202.32906266880218,sem,Å³,SEM is a lower bound,segments[14].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Density ρ(T),density,0.7884589831936127,0.0006656911762798849,sem,g/cm³,SEM is a lower bound,segments[15].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Enthalpy H(T),H (whole system),73886.45126546906,11.888717170532077,sem,kcal/mol,SEM is a lower bound,segments[15].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,"Volume V(T), box lengths",V,283775.5691417166,239.4269064431745,sem,Å³,SEM is a lower bound,segments[15].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Density ρ(T),density,0.781394905728543,0.00041320842773288126,sem,g/cm³,SEM is a lower bound,segments[16].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Enthalpy H(T),H (whole system),75746.5498982036,16.003970385809687,sem,kcal/mol,SEM is a lower bound,segments[16].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,"Volume V(T), box lengths",V,286341.28081836324,151.5966375362304,sem,Å³,SEM is a lower bound,segments[16].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Density ρ(T),density,0.7828126573828038,0.00036183134600295015,sem,g/cm³,SEM is a lower bound,segments[17].stats.density.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Enthalpy H(T),H (whole system),75574.22424883359,10.60690993653483,sem,kcal/mol,SEM is a lower bound,segments[17].stats.enthalpy.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Volume V(T), box lengths",V,285823.3816418574,132.2340380924078,sem,Å³,SEM is a lower bound,segments[17].stats.volume.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Isothermal compressibility κ_T,kappa_T,0.46761122265118793,0.017145960057675352,sem,1/GPa,SEM is a lower bound,holds[0].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.472590574097418,0.012720548800872913,sem,,,holds[0].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD(longest lag),0.43069359496123205,,,Å²,,holds[0].traj.com_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD/<Rg²> (longest lag),0.0013739285506785643,,,,,holds[0].traj.com_msd.msd_rg2_end
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.0852516129032258,0.004271138287209903,sd,,,holds[0].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Crystallinity (local P2 order),largest cluster (max),69.0,,,sites,,holds[0].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Crystallinity (local P2 order),largest cluster (mean),37.22,,,sites,,holds[0].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Mean local order ⟨p2⟩,<p2>,0.0693334650007953,,,,,holds[0].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,End-to-end distance R_ee,<R_ee²>,2110.7510826821876,5.441451207383188,sem,Å²,,holds[0].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,End-to-end distance R_ee,R_ee,45.942911125462956,0.05921970412936426,sem,Å,,holds[0].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=1,110.70183739113818,,,Å²,,holds[0].traj.relaxation.rouse[0].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=1,110.70183739113818,,,Å²,,holds[0].traj.relaxation.rouse[0].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=2,19.411713647333947,,,Å²,,holds[0].traj.relaxation.rouse[1].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=2,77.64685458933579,,,Å²,,holds[0].traj.relaxation.rouse[1].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=3,8.410264750507997,,,Å²,,holds[0].traj.relaxation.rouse[2].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=3,75.69238275457197,,,Å²,,holds[0].traj.relaxation.rouse[2].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=4,4.682038806538212,,,Å²,,holds[0].traj.relaxation.rouse[3].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=4,74.91262090461139,,,Å²,,holds[0].traj.relaxation.rouse[3].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=5,2.7261530598874963,,,Å²,,holds[0].traj.relaxation.rouse[4].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=5,68.15382649718741,,,Å²,,holds[0].traj.relaxation.rouse[4].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Radius of gyration Rg,<Rg²>,313.4759771521732,0.40426367567387617,sem,Å²,,holds[0].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Radius of gyration Rg,Rg,17.705252812433184,0.01141648978290752,sem,Å,,holds[0].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Segment MSD,longest lag,2500.0,,,ps,,holds[0].traj.segment_msd.lag_max_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Segment MSD,MSD(1000 ps),3.3791071463661084,,,Å²,,holds[0].traj.segment_msd.msd_1000ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Segment MSD,MSD(10 ps),1.071014535795795,,,Å²,,holds[0].traj.segment_msd.msd_10ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Segment MSD,MSD(1 ps),0.7086647104151911,,,Å²,,holds[0].traj.segment_msd.msd_1ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Segment MSD,MSD(longest lag),5.004183170352212,,,Å²,,holds[0].traj.segment_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 01 hold 25 C,25,,,,,Bulk modulus K,K = 1/kappa_T,2.1385286570548043,0.07841370172462143,sem,GPa,SEM is a lower bound,holds[0].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Isothermal compressibility κ_T,kappa_T,0.9271213620732461,0.08069253163770591,sem,1/GPa,SEM is a lower bound,holds[1].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.880134551247158,0.03699304794603458,sem,,,holds[1].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD(longest lag),4.9099570670793415,,,Å²,,holds[1].traj.com_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD/<Rg²> (longest lag),0.014837770174890968,,,,,holds[1].traj.com_msd.msd_rg2_end
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.0912,0.00709018462397709,sd,,,holds[1].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Crystallinity (local P2 order),largest cluster (max),97.0,,,sites,,holds[1].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Crystallinity (local P2 order),largest cluster (mean),41.3,,,sites,,holds[1].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Mean local order ⟨p2⟩,<p2>,0.0658524344798738,,,,,holds[1].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Bond reorientation ACF / τ_P2,tau_P2 (1/e),237.89658931621435,,,ps,,holds[1].traj.p2.t_1e_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,End-to-end distance R_ee,<R_ee²>,2318.5470725981904,27.908197495552923,sem,Å²,,holds[1].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,End-to-end distance R_ee,R_ee,48.15129357139007,0.28979696520692294,sem,Å,,holds[1].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=1,115.93842817019875,,,Å²,,holds[1].traj.relaxation.rouse[0].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=1,115.93842817019875,,,Å²,,holds[1].traj.relaxation.rouse[0].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=2,21.76512623690101,,,Å²,,holds[1].traj.relaxation.rouse[1].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=2,87.06050494760404,,,Å²,,holds[1].traj.relaxation.rouse[1].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=3,9.317064796107289,,,Å²,,holds[1].traj.relaxation.rouse[2].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=3,83.8535831649656,,,Å²,,holds[1].traj.relaxation.rouse[2].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=3 (exp. fit),35391.036127042156,,,ps,extrapolated (exp. fit beyond the data),holds[1].traj.relaxation.rouse[2].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=4,5.348721066707801,,,Å²,,holds[1].traj.relaxation.rouse[3].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=4,85.57953706732482,,,Å²,,holds[1].traj.relaxation.rouse[3].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=4 (exp. fit),16775.878968581746,,,ps,extrapolated (exp. fit beyond the data),holds[1].traj.relaxation.rouse[3].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=5,2.827491462938407,,,Å²,,holds[1].traj.relaxation.rouse[4].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=5,70.68728657346017,,,Å²,,holds[1].traj.relaxation.rouse[4].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=5 (exp. fit),10752.877067938005,,,ps,extrapolated (exp. fit beyond the data),holds[1].traj.relaxation.rouse[4].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Radius of gyration Rg,<Rg²>,330.9093623372166,2.074261148388169,sem,Å²,,holds[1].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Radius of gyration Rg,Rg,18.19091427986006,0.057013658480175256,sem,Å,,holds[1].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Segment MSD,longest lag,2500.0,,,ps,,holds[1].traj.segment_msd.lag_max_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Segment MSD,MSD(1000 ps),26.67632972663418,,,Å²,,holds[1].traj.segment_msd.msd_1000ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Segment MSD,MSD(10 ps),2.601232173780482,,,Å²,,holds[1].traj.segment_msd.msd_10ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Segment MSD,MSD(1 ps),1.1238957331628554,,,Å²,,holds[1].traj.segment_msd.msd_1ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Segment MSD,MSD(longest lag),46.29943172902438,,,Å²,,holds[1].traj.segment_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 09 hold 90 C,90,,,,,Bulk modulus K,K = 1/kappa_T,1.0786074411701412,0.0938772081323378,sem,GPa,SEM is a lower bound,holds[1].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Isothermal compressibility κ_T,kappa_T,0.9673576934084877,0.04264288273607216,sem,1/GPa,SEM is a lower bound,holds[2].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.592289298639477,0.08555475602740308,sem,,,holds[2].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD(longest lag),19.55352866972205,,,Å²,,holds[2].traj.com_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD/<Rg²> (longest lag),0.06098464282699094,,,,,holds[2].traj.com_msd.msd_rg2_end
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.10009354838709678,0.006759591789853338,sd,,,holds[2].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Crystallinity (local P2 order),largest cluster (max),100.0,,,sites,,holds[2].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Crystallinity (local P2 order),largest cluster (mean),45.48,,,sites,,holds[2].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Mean local order ⟨p2⟩,<p2>,0.06691571268035436,,,,,holds[2].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Bond reorientation ACF / τ_P2,tau_P2 (1/e),69.43833642956193,,,ps,,holds[2].traj.p2.t_1e_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,End-to-end distance R_ee,<R_ee²>,2253.9189268957903,55.25007256214195,sem,Å²,,holds[2].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,End-to-end distance R_ee,R_ee,47.47545604726499,0.5818803773800173,sem,Å,,holds[2].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=1,111.23113049284234,,,Å²,,holds[2].traj.relaxation.rouse[0].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=1,111.23113049284234,,,Å²,,holds[2].traj.relaxation.rouse[0].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=2,20.981586067424836,,,Å²,,holds[2].traj.relaxation.rouse[1].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=2,83.92634426969934,,,Å²,,holds[2].traj.relaxation.rouse[1].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=2 (exp. fit),14105.711472103483,,,ps,extrapolated (exp. fit beyond the data),holds[2].traj.relaxation.rouse[1].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=3,10.403359694554329,,,Å²,,holds[2].traj.relaxation.rouse[2].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=3,93.63023725098896,,,Å²,,holds[2].traj.relaxation.rouse[2].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=3 (exp. fit),7985.981357589322,,,ps,extrapolated (exp. fit beyond the data),holds[2].traj.relaxation.rouse[2].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=4,3.865061821280648,,,Å²,,holds[2].traj.relaxation.rouse[3].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=4,61.840989140490365,,,Å²,,holds[2].traj.relaxation.rouse[3].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=4 (exp. fit),3086.3313354729594,,,ps,extrapolated (exp. fit beyond the data),holds[2].traj.relaxation.rouse[3].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=5,3.1839204392627987,,,Å²,,holds[2].traj.relaxation.rouse[4].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=5,79.59801098156997,,,Å²,,holds[2].traj.relaxation.rouse[4].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=5 (exp. fit),3131.8410559769477,,,ps,extrapolated (exp. fit beyond the data),holds[2].traj.relaxation.rouse[4].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Radius of gyration Rg,<Rg²>,320.63037124270795,2.723091802600571,sem,Å²,,holds[2].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Radius of gyration Rg,Rg,17.906154563241877,0.07603787270413129,sem,Å,,holds[2].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Segment MSD,longest lag,2500.0,,,ps,,holds[2].traj.segment_msd.lag_max_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Segment MSD,MSD(1000 ps),63.86675672953379,,,Å²,,holds[2].traj.segment_msd.msd_1000ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Segment MSD,MSD(10 ps),4.217606488609927,,,Å²,,holds[2].traj.segment_msd.msd_10ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Segment MSD,MSD(1 ps),1.410788443328989,,,Å²,,holds[2].traj.segment_msd.msd_1ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Segment MSD,MSD(longest lag),113.91719245415297,,,Å²,,holds[2].traj.segment_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 14 hold 130 C,130,,,,,Bulk modulus K,K = 1/kappa_T,1.0337437814511994,0.04556930197789083,sem,GPa,SEM is a lower bound,holds[2].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Isothermal compressibility κ_T,kappa_T,1.1567022906328812,0.0633388908426741,sem,1/GPa,SEM is a lower bound,holds[3].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",4.941595478210828,0.024364363100629664,sem,,,holds[3].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD(longest lag),33.02086900026676,,,Å²,,holds[3].traj.com_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Chain COM MSD and MSD/⟨Rg²⟩,COM MSD/<Rg²> (longest lag),0.10891004345728467,,,,,holds[3].traj.com_msd.msd_rg2_end
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.10949354838709677,0.0073367781931842095,sd,,,holds[3].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Crystallinity (local P2 order),largest cluster (max),82.0,,,sites,,holds[3].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Crystallinity (local P2 order),largest cluster (mean),45.48,,,sites,,holds[3].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Mean local order ⟨p2⟩,<p2>,0.07144064593771443,,,,,holds[3].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Bond reorientation ACF / τ_P2,tau_P2 (1/e),35.846683834004466,,,ps,,holds[3].traj.p2.t_1e_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,End-to-end distance R_ee,<R_ee²>,1866.791584713015,18.09242407331575,sem,Å²,,holds[3].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,End-to-end distance R_ee,R_ee,43.20638361067743,0.2093721177447103,sem,Å,,holds[3].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,End-to-end relaxation time τ_ee,tau_ee (exp. fit),18369.19954110071,,,ps,extrapolated (exp. fit beyond the data),holds[3].traj.relaxation.ree.tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=1,101.09465511890832,,,Å²,,holds[3].traj.relaxation.rouse[0].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=1,101.09465511890832,,,Å²,,holds[3].traj.relaxation.rouse[0].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=2,22.983327779839442,,,Å²,,holds[3].traj.relaxation.rouse[1].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=2,91.93331111935777,,,Å²,,holds[3].traj.relaxation.rouse[1].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=2 (exp. fit),10853.96753097484,,,ps,extrapolated (exp. fit beyond the data),holds[3].traj.relaxation.rouse[1].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=3,8.816936792418788,,,Å²,,holds[3].traj.relaxation.rouse[2].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=3,79.3524311317691,,,Å²,,holds[3].traj.relaxation.rouse[2].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=3 (exp. fit),4072.8367400084708,,,ps,extrapolated (exp. fit beyond the data),holds[3].traj.relaxation.rouse[2].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=4,4.743407250400017,,,Å²,,holds[3].traj.relaxation.rouse[3].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=4,75.89451600640027,,,Å²,,holds[3].traj.relaxation.rouse[3].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=4 (1/e),2116.8959080857776,,,ps,,holds[3].traj.relaxation.rouse[3].t_1e_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=4 (exp. fit),2277.739059362756,,,ps,,holds[3].traj.relaxation.rouse[3].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",<X_p²> p=5,3.0632658145393283,,,Å²,,holds[3].traj.relaxation.rouse[4].amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,"Rouse modes X_p, amplitudes ⟨X_p²⟩",p²<X_p²> p=5,76.5816453634832,,,Å²,,holds[3].traj.relaxation.rouse[4].p2_amp_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=5 (1/e),1807.1243086612094,,,ps,,holds[3].traj.relaxation.rouse[4].t_1e_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_p p=5 (exp. fit),2198.4837738702645,,,ps,,holds[3].traj.relaxation.rouse[4].tau_fit_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_1 = p²tau_p from p=4,33870.33452937244,,,ps,,holds[3].traj.relaxation.tau1_from_p.4
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Rouse times τ_p and τ_1 from p²τ_p,tau_1 = p²tau_p from p=5,45178.107716530234,,,ps,,holds[3].traj.relaxation.tau1_from_p.5
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Radius of gyration Rg,<Rg²>,303.1939750645475,1.2627831934607676,sem,Å²,,holds[3].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Radius of gyration Rg,Rg,17.41246608222246,0.03626089456536047,sem,Å,,holds[3].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Segment MSD,longest lag,2500.0,,,ps,,holds[3].traj.segment_msd.lag_max_ps
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Segment MSD,MSD(1000 ps),93.84577783481465,,,Å²,,holds[3].traj.segment_msd.msd_1000ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Segment MSD,MSD(10 ps),5.845157951083006,,,Å²,,holds[3].traj.segment_msd.msd_10ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Segment MSD,MSD(1 ps),1.6996433070501809,,,Å²,,holds[3].traj.segment_msd.msd_1ps_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Segment MSD,MSD(longest lag),160.24565442421746,,,Å²,,holds[3].traj.segment_msd.msd_at_max_A2
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 18 hold 160 C,160,,,,,Bulk modulus K,K = 1/kappa_T,0.8645266877208805,0.04733989199085179,sem,GPa,SEM is a lower bound,holds[3].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Isothermal compressibility κ_T,kappa_T,0.45338930457126286,0.034534653661681604,sem,1/GPa,SEM is a lower bound,steps[0].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.469676590415352,0.007792253799883443,sem,,,steps[0].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.08948387096774194,0.00537016849618514,sd,,,steps[0].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Crystallinity (local P2 order),largest cluster (max),52.0,,,sites,,steps[0].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Crystallinity (local P2 order),largest cluster (mean),42.2,,,sites,,steps[0].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Mean local order ⟨p2⟩,<p2>,0.07083403354620893,,,,,steps[0].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,End-to-end distance R_ee,<R_ee²>,2101.2928676833026,8.471777529795009,sem,Å²,,steps[0].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,End-to-end distance R_ee,R_ee,45.8398611219897,0.09240623032484536,sem,Å,,steps[0].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Radius of gyration Rg,<Rg²>,314.3676256563993,0.2946640377252405,sem,Å²,,steps[0].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Radius of gyration Rg,Rg,17.730415270274953,0.008309563911321493,sem,Å,,steps[0].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 02 step 35 C,35,,,,,Bulk modulus K,K = 1/kappa_T,2.2056100351675187,0.16800126934901569,sem,GPa,SEM is a lower bound,steps[0].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Isothermal compressibility κ_T,kappa_T,0.4781506760644833,0.031203111294845348,sem,1/GPa,SEM is a lower bound,steps[1].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.523685291109704,0.0071658896979832675,sem,,,steps[1].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.09235483870967742,0.006873768927712955,sd,,,steps[1].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Crystallinity (local P2 order),largest cluster (max),55.0,,,sites,,steps[1].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Crystallinity (local P2 order),largest cluster (mean),36.8,,,sites,,steps[1].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Mean local order ⟨p2⟩,<p2>,0.07275427113814012,,,,,steps[1].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,End-to-end distance R_ee,<R_ee²>,2124.912745442381,5.735940144848524,sem,Å²,,steps[1].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,End-to-end distance R_ee,R_ee,46.09677586819257,0.06221628342565281,sem,Å,,steps[1].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Radius of gyration Rg,<Rg²>,315.67235468807064,0.2275566505676138,sem,Å²,,steps[1].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Radius of gyration Rg,Rg,17.76717070014443,0.006403851643237828,sem,Å,,steps[1].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 03 step 45 C,45,,,,,Bulk modulus K,K = 1/kappa_T,2.0913909569901774,0.1364797919541098,sem,GPa,SEM is a lower bound,steps[1].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Isothermal compressibility κ_T,kappa_T,0.5824583205273476,0.04932549066736206,sem,1/GPa,SEM is a lower bound,steps[2].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.488728399634839,0.017463472987055063,sem,,,steps[2].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.08761290322580646,0.004910648032581438,sd,,,steps[2].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Crystallinity (local P2 order),largest cluster (max),55.0,,,sites,,steps[2].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Crystallinity (local P2 order),largest cluster (mean),36.4,,,sites,,steps[2].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Mean local order ⟨p2⟩,<p2>,0.06574423484703724,,,,,steps[2].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,End-to-end distance R_ee,<R_ee²>,2107.77693865219,14.006282322525644,sem,Å²,,steps[2].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,End-to-end distance R_ee,R_ee,45.91053189249924,0.15253888100579768,sem,Å,,steps[2].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Radius of gyration Rg,<Rg²>,316.5870227449755,0.7045634465639269,sem,Å²,,steps[2].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Radius of gyration Rg,Rg,17.792892478317725,0.019799013775374134,sem,Å,,steps[2].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 04 step 55 C,55,,,,,Bulk modulus K,K = 1/kappa_T,1.7168610435414804,0.1453924004445339,sem,GPa,SEM is a lower bound,steps[2].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Isothermal compressibility κ_T,kappa_T,0.6549195784514892,0.06465775706942475,sem,1/GPa,SEM is a lower bound,steps[3].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.484715461481001,0.008923722400081132,sem,,,steps[3].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.09506451612903226,0.0035711877427349833,sd,,,steps[3].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Crystallinity (local P2 order),largest cluster (max),94.0,,,sites,,steps[3].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Crystallinity (local P2 order),largest cluster (mean),55.4,,,sites,,steps[3].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Mean local order ⟨p2⟩,<p2>,0.07312115670216021,,,,,steps[3].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,End-to-end distance R_ee,<R_ee²>,2104.773742885467,16.165083576552906,sem,Å²,,steps[3].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,End-to-end distance R_ee,R_ee,45.877813187699644,0.17617539343491362,sem,Å,,steps[3].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Radius of gyration Rg,<Rg²>,315.96129025748087,0.6102387329709028,sem,Å²,,steps[3].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Radius of gyration Rg,Rg,17.775300004711056,0.017165356781859348,sem,Å,,steps[3].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 05 step 65 C,65,,,,,Bulk modulus K,K = 1/kappa_T,1.5269050321635351,0.1507456150129811,sem,GPa,SEM is a lower bound,steps[3].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Isothermal compressibility κ_T,kappa_T,0.6251903536414454,0.06471901226235222,sem,1/GPa,SEM is a lower bound,steps[4].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.584532256250327,0.02006098485050477,sem,,,steps[4].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.08738709677419354,0.006284447214752082,sd,,,steps[4].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Crystallinity (local P2 order),largest cluster (max),46.0,,,sites,,steps[4].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Crystallinity (local P2 order),largest cluster (mean),40.4,,,sites,,steps[4].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Mean local order ⟨p2⟩,<p2>,0.06404412516458574,,,,,steps[4].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,End-to-end distance R_ee,<R_ee²>,2152.63537273693,14.864893947628454,sem,Å²,,steps[4].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,End-to-end distance R_ee,R_ee,46.39650172951545,0.16019412448689047,sem,Å,,steps[4].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Radius of gyration Rg,<Rg²>,320.28719432323226,1.2701745937456745,sem,Å²,,steps[4].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Radius of gyration Rg,Rg,17.896569345079303,0.03548653848830842,sem,Å,,steps[4].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 06 step 75 C,75,,,,,Bulk modulus K,K = 1/kappa_T,1.5995128430492591,0.16557979613752047,sem,GPa,SEM is a lower bound,steps[4].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Isothermal compressibility κ_T,kappa_T,0.5922473796579454,0.05954730038390156,sem,1/GPa,SEM is a lower bound,steps[5].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.663167688003147,0.021467732507440898,sem,,,steps[5].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.08974193548387097,0.002829898348317589,sd,,,steps[5].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Crystallinity (local P2 order),largest cluster (max),82.0,,,sites,,steps[5].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Crystallinity (local P2 order),largest cluster (mean),48.6,,,sites,,steps[5].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Mean local order ⟨p2⟩,<p2>,0.06427175962550352,,,,,steps[5].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,End-to-end distance R_ee,<R_ee²>,2154.9170704925955,7.214840273379372,sem,Å²,,steps[5].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,End-to-end distance R_ee,R_ee,46.42108433128846,0.07771081155590832,sem,Å,,steps[5].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Radius of gyration Rg,<Rg²>,321.144428192428,0.8062227477771297,sem,Å²,,steps[5].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Radius of gyration Rg,Rg,17.92050301170221,0.02249442293139486,sem,Å,,steps[5].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 07 step 85 C,85,,,,,Bulk modulus K,K = 1/kappa_T,1.6884836207760912,0.16976798009257812,sem,GPa,SEM is a lower bound,steps[5].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Isothermal compressibility κ_T,kappa_T,0.7023349730606913,0.07631745382865036,sem,1/GPa,SEM is a lower bound,steps[6].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.771025936107941,0.02726114222051758,sem,,,steps[6].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.0912258064516129,0.004410752163906378,sd,,,steps[6].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Crystallinity (local P2 order),largest cluster (max),33.0,,,sites,,steps[6].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Crystallinity (local P2 order),largest cluster (mean),28.2,,,sites,,steps[6].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Mean local order ⟨p2⟩,<p2>,0.06961457336439593,,,,,steps[6].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,End-to-end distance R_ee,<R_ee²>,2289.7472438421114,33.19868877399424,sem,Å²,,steps[6].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,End-to-end distance R_ee,R_ee,47.85130347066955,0.3468942992780058,sem,Å,,steps[6].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Radius of gyration Rg,<Rg²>,324.31832409472645,1.2416138569016246,sem,Å²,,steps[6].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Radius of gyration Rg,Rg,18.008840165172394,0.034472343735461736,sem,Å,,steps[6].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 08 step 90 C,90,,,,,Bulk modulus K,K = 1/kappa_T,1.423822019914686,0.15471601932553178,sem,GPa,SEM is a lower bound,steps[6].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Isothermal compressibility κ_T,kappa_T,0.8915390264151959,0.10926963564086026,sem,1/GPa,SEM is a lower bound,steps[7].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.924694432162008,0.012023186320062692,sem,,,steps[7].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.09548387096774194,0.0032642866169480026,sd,,,steps[7].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Crystallinity (local P2 order),largest cluster (max),55.0,,,sites,,steps[7].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Crystallinity (local P2 order),largest cluster (mean),36.8,,,sites,,steps[7].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Mean local order ⟨p2⟩,<p2>,0.07374333393417871,,,,,steps[7].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,End-to-end distance R_ee,<R_ee²>,2462.503894763499,14.74874709480193,sem,Å²,,steps[7].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,End-to-end distance R_ee,R_ee,49.62362234625259,0.14860611133838061,sem,Å,,steps[7].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Radius of gyration Rg,<Rg²>,330.30464564510476,0.9573578801014503,sem,Å²,,steps[7].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Radius of gyration Rg,Rg,18.174285285675055,0.026338253886001185,sem,Å,,steps[7].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 10 step 100 C,100,,,,,Bulk modulus K,K = 1/kappa_T,1.121655889839076,0.13747343275588964,sem,GPa,SEM is a lower bound,steps[7].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Isothermal compressibility κ_T,kappa_T,0.7138996256995661,0.07699483210370373,sem,1/GPa,SEM is a lower bound,steps[8].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.753301268728698,0.018670687510020555,sem,,,steps[8].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.09929032258064516,0.009854614326150443,sd,,,steps[8].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Crystallinity (local P2 order),largest cluster (max),56.0,,,sites,,steps[8].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Crystallinity (local P2 order),largest cluster (mean),40.8,,,sites,,steps[8].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Mean local order ⟨p2⟩,<p2>,0.06896629012570217,,,,,steps[8].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,End-to-end distance R_ee,<R_ee²>,2303.8685353112633,18.344178159787024,sem,Å²,,steps[8].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,End-to-end distance R_ee,R_ee,47.99863055662384,0.1910906409938764,sem,Å,,steps[8].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Radius of gyration Rg,<Rg²>,331.09200207538703,0.7052288237098708,sem,Å²,,steps[8].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Radius of gyration Rg,Rg,18.195933668690568,0.019378747926613572,sem,Å,,steps[8].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 11 step 110 C,110,,,,,Bulk modulus K,K = 1/kappa_T,1.4007571428827656,0.15107314411131204,sem,GPa,SEM is a lower bound,steps[8].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Isothermal compressibility κ_T,kappa_T,0.9516002821001165,0.10044771428661514,sem,1/GPa,SEM is a lower bound,steps[9].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.836198780294873,0.02808320242216857,sem,,,steps[9].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.099,0.008537972962600294,sd,,,steps[9].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Crystallinity (local P2 order),largest cluster (max),64.0,,,sites,,steps[9].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Crystallinity (local P2 order),largest cluster (mean),46.8,,,sites,,steps[9].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Mean local order ⟨p2⟩,<p2>,0.06504962524112497,,,,,steps[9].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,End-to-end distance R_ee,<R_ee²>,2244.926641074749,23.98061548122989,sem,Å²,,steps[9].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,End-to-end distance R_ee,R_ee,47.38065682401152,0.2530633499900852,sem,Å,,steps[9].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Radius of gyration Rg,<Rg²>,337.8078202198909,1.0099197807552853,sem,Å²,,steps[9].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Radius of gyration Rg,Rg,18.379548966715447,0.027474008817740998,sem,Å,,steps[9].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 12 step 120 C,120,,,,,Bulk modulus K,K = 1/kappa_T,1.0508613950734322,0.11092538238241555,sem,GPa,SEM is a lower bound,steps[9].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Isothermal compressibility κ_T,kappa_T,0.8260248252000331,0.09682054794122692,sem,1/GPa,SEM is a lower bound,steps[10].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.904643205320975,0.03309909465972457,sem,,,steps[10].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.10212903225806451,0.007268737672148724,sd,,,steps[10].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Crystallinity (local P2 order),largest cluster (max),72.0,,,sites,,steps[10].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Crystallinity (local P2 order),largest cluster (mean),52.8,,,sites,,steps[10].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Mean local order ⟨p2⟩,<p2>,0.06762547448582415,,,,,steps[10].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,End-to-end distance R_ee,<R_ee²>,2404.9725754914107,19.092299376418406,sem,Å²,,steps[10].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,End-to-end distance R_ee,R_ee,49.040519731049045,0.1946584118717087,sem,Å,,steps[10].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Radius of gyration Rg,<Rg²>,332.7357542931827,1.2068571282532141,sem,Å²,,steps[10].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Radius of gyration Rg,Rg,18.241045866210158,0.03308080954088287,sem,Å,,steps[10].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 13 step 130 C,130,,,,,Bulk modulus K,K = 1/kappa_T,1.2106173682586798,0.14189965406134963,sem,GPa,SEM is a lower bound,steps[10].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Isothermal compressibility κ_T,kappa_T,0.9690247192122945,0.10242222478136746,sem,1/GPa,SEM is a lower bound,steps[11].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.185904198481934,0.0419706215838468,sem,,,steps[11].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.10525806451612904,0.006664706614396719,sd,,,steps[11].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Crystallinity (local P2 order),largest cluster (max),80.0,,,sites,,steps[11].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Crystallinity (local P2 order),largest cluster (mean),47.6,,,sites,,steps[11].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Mean local order ⟨p2⟩,<p2>,0.07186994160206503,,,,,steps[11].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,End-to-end distance R_ee,<R_ee²>,2056.21318836013,22.014874531485948,sem,Å²,,steps[11].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,End-to-end distance R_ee,R_ee,45.34548696794566,0.24274603718610493,sem,Å,,steps[11].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Radius of gyration Rg,<Rg²>,309.676929339261,1.5295940333913738,sem,Å²,,steps[11].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Radius of gyration Rg,Rg,17.597639879803797,0.043460203863667994,sem,Å,,steps[11].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 15 step 140 C,140,,,,,Bulk modulus K,K = 1/kappa_T,1.0319654186044758,0.10907481715928198,sem,GPa,SEM is a lower bound,steps[11].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Isothermal compressibility κ_T,kappa_T,1.0092393528043542,0.06583273026370061,sem,1/GPa,SEM is a lower bound,steps[12].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.084759918690108,0.04793936876131966,sem,,,steps[12].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.10812903225806451,0.00665611374272461,sd,,,steps[12].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Crystallinity (local P2 order),largest cluster (max),62.0,,,sites,,steps[12].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Crystallinity (local P2 order),largest cluster (mean),48.6,,,sites,,steps[12].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Mean local order ⟨p2⟩,<p2>,0.07348983267320569,,,,,steps[12].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,End-to-end distance R_ee,<R_ee²>,1856.4575790783026,28.940243802759586,sem,Å²,,steps[12].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,End-to-end distance R_ee,R_ee,43.08662877364975,0.3358378762329441,sem,Å,,steps[12].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Radius of gyration Rg,<Rg²>,310.45700741244644,2.2480086200823157,sem,Å²,,steps[12].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Radius of gyration Rg,Rg,17.619790220443786,0.06379215052952247,sem,Å,,steps[12].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 16 step 150 C,150,,,,,Bulk modulus K,K = 1/kappa_T,0.9908452313332007,0.06463288085841991,sem,GPa,SEM is a lower bound,steps[12].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Isothermal compressibility κ_T,kappa_T,1.0416239846188144,0.12805281088075066,sem,1/GPa,SEM is a lower bound,steps[13].kappa.kappa_T_GPa
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Characteristic ratio C_n / C∞,"C_inf (C_n plateau, n >= n_min)",5.043812383034952,0.03856680838121163,sem,,,steps[13].traj.c_n.plateau.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Crystallinity (local P2 order),ordered fraction (p2 >= threshold),0.10364516129032257,0.006689641300429189,sd,,,steps[13].traj.crystallinity.fraction.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Crystallinity (local P2 order),largest cluster (max),47.0,,,sites,,steps[13].traj.crystallinity.largest_cluster.max
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Crystallinity (local P2 order),largest cluster (mean),40.0,,,sites,,steps[13].traj.crystallinity.largest_cluster.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Mean local order ⟨p2⟩,<p2>,0.06741680825807192,,,,,steps[13].traj.crystallinity.p2_mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,End-to-end distance R_ee,<R_ee²>,1968.336417950942,31.809264514059773,sem,Å²,,steps[13].traj.ree.ree2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,End-to-end distance R_ee,R_ee,44.36593758674488,0.3584874595726268,sem,Å,,steps[13].traj.ree.ree_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Radius of gyration Rg,<Rg²>,299.76579437147814,1.4082527596347283,sem,Å²,,steps[13].traj.rg.rg2_A2.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Radius of gyration Rg,Rg,17.31374582149912,0.04066863329730903,sem,Å,,steps[13].traj.rg.rg_A.mean
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,seg 17 step 160 C,160,,,,,Bulk modulus K,K = 1/kappa_T,0.9600393373871409,0.11802314225080507,sem,GPa,SEM is a lower bound,steps[13].kappa.kappa_T_GPa (1/x)
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,160,,,Linear thermal expansion α_L,alpha_L = alpha_V/3,0.0002545694714198193,3.6567646863995784e-06,fit_err,1/K,,fits.alpha_V[0].alpha_L_per_K
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,160,,,Volumetric thermal expansion α_V,alpha_V,0.000763708414259458,1.0970294059198735e-05,fit_err,1/K,,fits.alpha_V[0].alpha_V_per_K
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,90,,,Linear thermal expansion α_L,alpha_L = alpha_V/3,0.00023967073471069448,8.925095368130287e-06,fit_err,1/K,,fits.alpha_V[1].alpha_L_per_K
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,90,,,Volumetric thermal expansion α_V,alpha_V,0.0007190122041320834,2.6775286104390864e-05,fit_err,1/K,,fits.alpha_V[1].alpha_V_per_K
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,90,160,,,Linear thermal expansion α_L,alpha_L = alpha_V/3,0.0002609969157979015,7.829283196683908e-06,fit_err,1/K,,fits.alpha_V[2].alpha_L_per_K
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,90,160,,,Volumetric thermal expansion α_V,alpha_V,0.0007829907473937044,2.3487849590051726e-05,fit_err,1/K,,fits.alpha_V[2].alpha_V_per_K
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,160,,,Classical heat capacity Cp,Cp (classical),5.927183231887521,0.015709753711138672,fit_err,J/(g K),,fits.cp[0].cp_J_gK
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,160,,,Classical heat capacity Cp,"Cp (classical, whole system)",190.87659146899975,,,kcal/(mol K),,fits.cp[0].cp_kcal_molK
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,90,,,Classical heat capacity Cp,Cp (classical),5.968479522667661,0.03823273195762439,fit_err,J/(g K),,fits.cp[1].cp_J_gK
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,25,90,,,Classical heat capacity Cp,"Cp (classical, whole system)",192.20648037508568,,,kcal/(mol K),,fits.cp[1].cp_kcal_molK
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,90,160,,,Classical heat capacity Cp,Cp (classical),5.886033834874819,0.03400016939117114,fit_err,J/(g K),,fits.cp[2].cp_J_gK
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,fit,,90,160,,,Classical heat capacity Cp,"Cp (classical, whole system)",189.55143306989154,,,kcal/(mol K),,fits.cp[2].cp_kcal_molK
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,151.156,,,,,Cooling/heating hysteresis,rho (cooling),0.7875676415169661,0.0010882316164682441,sem,g/cm³,,progress.json:hysteresis[2].rho_cool
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,151.156,,,,,Cooling/heating hysteresis,rho (sweep),0.7878390345397276,,,g/cm³,,progress.json:hysteresis[2].rho_sweep
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,151.156,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,-0.034447775606856246,,,%,,progress.json:hysteresis[2].delta_pct
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,125.925,,,,,Cooling/heating hysteresis,rho (cooling),0.8050039389620758,0.0005833926542093759,sem,g/cm³,,progress.json:hysteresis[3].rho_cool
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,125.925,,,,,Cooling/heating hysteresis,rho (sweep),0.8052649882769123,,,g/cm³,,progress.json:hysteresis[3].rho_sweep
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,125.925,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,-0.03241781508408689,,,%,,progress.json:hysteresis[3].delta_pct
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,100.694,,,,,Cooling/heating hysteresis,rho (cooling),0.8207275869061876,0.0003812897878340546,sem,g/cm³,,progress.json:hysteresis[4].rho_cool
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,100.694,,,,,Cooling/heating hysteresis,rho (sweep),0.8193890560719436,,,g/cm³,,progress.json:hysteresis[4].rho_sweep
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,100.694,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,0.1633571774391068,,,%,,progress.json:hysteresis[4].delta_pct
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,75.463,,,,,Cooling/heating hysteresis,rho (cooling),0.8361641815968063,0.0006542616629485699,sem,g/cm³,,progress.json:hysteresis[5].rho_cool
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,75.463,,,,,Cooling/heating hysteresis,rho (sweep),0.8380491744982783,,,g/cm³,,progress.json:hysteresis[5].rho_sweep
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,75.463,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,-0.2249262881978903,,,%,,progress.json:hysteresis[5].delta_pct
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,50.231,,,,,Cooling/heating hysteresis,rho (cooling),0.8518589910778444,0.0002927221950060634,sem,g/cm³,,progress.json:hysteresis[6].rho_cool
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,50.231,,,,,Cooling/heating hysteresis,rho (sweep),0.8542104934931137,,,g/cm³,,progress.json:hysteresis[6].rho_sweep
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,50.231,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,-0.2752837190811607,,,%,,progress.json:hysteresis[6].delta_pct
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/heating hysteresis,rho (cooling),0.8653917051297405,0.0002365065407112668,sem,g/cm³,,progress.json:hysteresis[7].rho_cool
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/heating hysteresis,rho (sweep),0.8682283127189123,,,g/cm³,,progress.json:hysteresis[7].rho_sweep
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,-0.32671217324033075,,,%,,progress.json:hysteresis[7].delta_pct
+ipp_aa_amorph_n40_c240_s1_from_ua,aa,ipp,amorph,sweep,sweep,cool vs sweep,,,,,,Cooling/heating hysteresis,max |delta_pct|,0.32671217324033075,,,%,"at 25 C, delta_pct -0.3267",max |progress.json:hysteresis[].delta_pct| (hysteresis[7])
 ipp_ua_amorph_n40_c240_s1,ua,ipp,amorph,extend,extend,hold,226.85,,,,,Isothermal compressibility κ_T,kappa_T,1.6201476394318857,0.019796133519977093,sem,1/GPa,,kappa.kappa_T_GPa
 ipp_ua_amorph_n40_c240_s1,ua,ipp,amorph,extend,extend,hold,226.85,,,,,Density ρ(T),density,0.7632526070041374,9.487387959223685e-05,sem,g/cm³,,stats.density.mean
 ipp_ua_amorph_n40_c240_s1,ua,ipp,amorph,extend,extend,hold,226.85,,,,,Enthalpy H(T),H (whole system),35395.687912892565,4.202900561186748,sem,kcal/mol,,stats.enthalpy.mean
@@ -2846,6 +3216,94 @@ pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Segm
 pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Segment MSD,MSD(1000 ps),533.7544261481036,,,Å²,,traj.segment_msd.msd_1000ps_A2
 pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Segment MSD,MSD(longest lag),4266.878297483146,,,Å²,,traj.segment_msd.msd_at_max_A2
 pe_cg_amorph_n640_c240_s1_rep441,cg,pe,amorph,extend,extend,hold,226.85,,,,,Bulk modulus K,K = 1/kappa_T,0.4721553986128791,0.004963867595728688,sem,GPa,,kappa.kappa_T_GPa (1/x)
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Apparent Young's modulus E_app,E_app,803.5853077082559,62.726094183275364,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Flow stress,flow stress,25.32057845606625,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2749800347327152,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4715977948472847,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Peak stress and peak strain,peak stress,35.65449782376325,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Peak stress and peak strain,peak strain,0.32385,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.48088001062674296,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Apparent Young's modulus E_app,E_app,966.5302395150813,65.91897131097149,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Flow stress,flow stress,25.812415285098748,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.16910775485149443,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4628016795385739,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Peak stress and peak strain,peak stress,33.62028107227784,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Peak stress and peak strain,peak strain,0.317851,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.46727049672913507,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,885.0577736116686,115.21946624058585,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Flow stress,flow stress,25.566496870582498,0.34778115704616724,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.22204389479210482,0.0748630070436913,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4671997371929293,0.006219792782888228,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,34.63738944802054,1.438408459378603,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_130C,tensile,,130,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.32085050000000004,0.004241933580338121,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Apparent Young's modulus E_app,E_app,938.627319193915,59.58688695782547,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Flow stress,flow stress,19.96265141165138,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.15630063085295137,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.46114706783824927,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Peak stress and peak strain,peak stress,30.785154401732864,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Peak stress and peak strain,peak strain,0.262751,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.44013402749604835,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Apparent Young's modulus E_app,E_app,606.6685882623534,61.843291090964996,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Flow stress,flow stress,0.8340517150168272,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.26720933250299683,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.41753188447371575,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Peak stress and peak strain,peak stress,28.743797749010064,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Peak stress and peak strain,peak strain,0.229351,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42419982125930755,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,772.6479537281342,234.73026971578773,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Flow stress,flow stress,10.398351563334103,13.525962560093229,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2117549816779741,0.07842429502934278,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4393394761559825,0.030840591919756348,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,29.764476075371462,1.4434571319605645,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_160C,tensile,,160,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.24605100000000002,0.023617366491630695,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Apparent Young's modulus E_app,E_app,1919.5883470874694,51.5589966394286,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Flow stress,flow stress,47.90017724205,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.1645976010726145,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.44413744281097683,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Peak stress and peak strain,peak stress,49.016396120792294,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Peak stress and peak strain,peak strain,0.33035,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.42759709976788707,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Apparent Young's modulus E_app,E_app,1893.2756313332902,52.34329260625108,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Flow stress,flow stress,44.9550346478625,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20167763749154702,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.44776094865462346,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Peak stress and peak strain,peak stress,46.71999140123872,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Peak stress and peak strain,peak strain,0.405751,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4372245604236092,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1906.43198921038,18.6058997412142,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Flow stress,flow stress,46.42760594495625,2.0825302999113227,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.18313761928208078,0.026219545198471323,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4459491957328001,0.0025622055537116092,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,47.868193761015505,1.6238033495451223,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_25C,tensile,,25,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.36805049999999995,0.05331655840824687,sd,,,runs[0].summary.peak_strain.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Apparent Young's modulus E_app,E_app,1103.167102389376,61.641890487246506,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Flow stress,flow stress,39.539654921549996,,,MPa,,runs[0].axes[0].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.20752800223954515,,,,,runs[0].axes[0].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4336064507425403,,,,,runs[0].axes[0].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Peak stress and peak strain,peak stress,41.53742933019781,,,MPa,,runs[0].axes[0].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Peak stress and peak strain,peak strain,0.335451,,,,,runs[0].axes[0].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Stress–strain curve (true and engineering),max strain reached,0.499951,,,,,runs[0].axes[0].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4132833924081833,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Apparent Young's modulus E_app,E_app,1094.465546437081,69.42341401621093,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Flow stress,flow stress,36.6081308126625,,,MPa,,runs[0].axes[1].flow_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.25570444206197857,,,,,runs[0].axes[1].nu_fit
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4373345989441991,,,,,runs[0].axes[1].nu_run
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Peak stress and peak strain,peak stress,38.93713087128708,,,MPa,,runs[0].axes[1].peak_MPa
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Peak stress and peak strain,peak strain,0.31965,,,,,runs[0].axes[1].peak_strain
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Stress–strain curve (true and engineering),max strain reached,0.49995,,,,,runs[0].axes[1].strain_max
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.43445730382186143,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[1666]
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Apparent Young's modulus E_app,E_app,1098.8163244132284,6.1529292207419175,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Flow stress,flow stress,38.07389286710625,2.072900576606198,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.23161622215076186,0.034065887291868296,sd,,,runs[0].summary.nu_fit.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4354705248433697,0.0026361988746614,sd,,,runs[0].summary.nu_run.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak stress,40.237280100742446,1.8386886734047052,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_cg_crystal_7x10x27_s1,cg,pe,crystal,tensile_90C,tensile,,90,,,1e+08,mean ± SD over axes,Peak stress and peak strain,peak strain,0.32755049999999997,0.011172994249528645,sd,,,runs[0].summary.peak_strain.mean
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.8527213504050375,,,,,free_shell.areal_density_ratio
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,7102.0,,,beads,,free_shell.beads
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),467.3982453145065,,,Å²,,free_shell.msd.1 ns
@@ -2870,6 +3328,58 @@ pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,16
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift (max),4.025481695636541,,,Å,,max over production frames[].drift (frames[408])
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
 pe_cg_hole_r2nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Free-shell rim build-up,shell / far-film areal density,0.8565263595364775,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Free-shell rim build-up,beads in the shell at t0,10693.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Free-shell MSD,MSD(1 ns),576.2460331236124,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Free-shell MSD,MSD(10 ns),1517.448081067267,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Free-shell MSD,MSD(end of run),2181.1334736518033,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Free-shell MSD,end of run,20.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",71.9453765977,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Hole radius R_eff(t),R_eff after inflation,31.16648743639604,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Slab radii R(z) and R_min,R_min after inflation,29.35219078022184,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Plateau / final radius,final R_eff,0.0,,,Å,,r_final
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Hole radius R_eff(t),R_eff at t0,31.21689329345227,,,Å,,r_t0
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-138.49653754099432,4.952017486091509,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Closure speed dR/dt,dR_eff/dt (open period),-138.49653754099432,4.952017486091509,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Closure time t_close,t_close,0.12,,,ns,,t_close_ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Film thickness over time,final thickness,133.67243416030746,,,Å,,thickness_final
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Film thickness over time,thickness at t0,166.01023812526495,,,Å,,thickness_t0
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Hole area A(t),A at t0,3061.464532496853,,,Å²,,frames[400].area
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Centroid drift,centre drift at t0,0.2739931587191616,,,Å,,frames[400].drift
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Hole area A(t),A at the end,0.0,,,Å²,,frames[1160].area
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Centroid drift,centre drift at the end,15.599859847427176,,,Å,,frames[1160].drift
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,130,,,,,Centroid drift,centre drift (max),15.599859847427176,,,Å,,max over production frames[].drift (frames[1160])
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Free-shell rim build-up,shell / far-film areal density,0.7586237698067144,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Free-shell rim build-up,beads in the shell at t0,9686.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Free-shell MSD,MSD(1 ns),543.4593076451997,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Free-shell MSD,MSD(10 ns),1357.5460986007313,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Free-shell MSD,MSD(end of run),1951.2154862651428,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Free-shell MSD,end of run,20.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",71.9453765977,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Hole radius R_eff(t),R_eff after inflation,31.265433905472896,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Slab radii R(z) and R_min,R_min after inflation,29.385699556321047,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Plateau / final radius,final R_eff,0.0,,,Å,,r_final
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Hole radius R_eff(t),R_eff at t0,31.21689329345227,,,Å,,r_t0
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-253.9649358681964,11.525955597395035,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Closure speed dR/dt,dR_eff/dt (open period),-253.9649358681964,11.525955597395035,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Scaffold tether stats,"nearest tethered r (held, min)",53.65167542201118,,,Å,,scaffold.nearest_tethered_r_held_min
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Scaffold tether stats,nearest tethered bead r at t0,55.00119098608612,,,Å,,scaffold.nearest_tethered_r_t0
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Scaffold tether stats,tethered beads,14922.0,,,beads,,scaffold.tethered
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Scaffold tether stats,tethered fraction,0.582890625,,,,,scaffold.tethered_fraction
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Closure time t_close,t_close,0.05,,,ns,,t_close_ns
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Film thickness over time,final thickness,132.5299220518088,,,Å,,thickness_final
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Film thickness over time,thickness at t0,168.79960430206006,,,Å,,thickness_t0
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Hole area A(t),A at t0,3061.464532496853,,,Å²,,frames[600].area
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Centroid drift,centre drift at t0,2.0816182902064932,,,Å,,frames[600].drift
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Hole area A(t),A at the end,0.0,,,Å²,,frames[1360].area
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Centroid drift,centre drift at the end,6.7660627167727805,,,Å,,frames[1360].drift
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,130,,,,,Centroid drift,centre drift (max),9.677211051475265,,,Å,,max over production frames[].drift (frames[629])
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,seg 1 hold,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_130C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,seg 1 hold,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
 pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.8489418866465518,,,,,free_shell.areal_density_ratio
 pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,10447.0,,,beads,,free_shell.beads
 pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),642.1867087464301,,,Å²,,free_shell.msd.1 ns
@@ -2894,6 +3404,59 @@ pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,16
 pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift (max),8.333187669339642,,,Å,,max over production frames[].drift (frames[433])
 pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
 pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.7648916235359345,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,9496.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),597.8974224918927,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Free-shell MSD,MSD(10 ns),1476.0811870959624,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Free-shell MSD,MSD(end of run),2281.9982420593733,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Free-shell MSD,end of run,20.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",72.87150679999999,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Hole radius R_eff(t),R_eff after inflation,31.531656559471152,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Slab radii R(z) and R_min,R_min after inflation,29.591541642262854,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Plateau / final radius,final R_eff,0.0,,,Å,,r_final
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Hole radius R_eff(t),R_eff at t0,30.751405635800154,,,Å,,r_t0
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-241.33635808106104,5.800408737833489,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (open period),-241.33635808106104,5.800408737833489,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Scaffold tether stats,"nearest tethered r (held, min)",53.12447365674182,,,Å,,scaffold.nearest_tethered_r_held_min
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Scaffold tether stats,nearest tethered bead r at t0,55.0004060378453,,,Å,,scaffold.nearest_tethered_r_t0
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Scaffold tether stats,tethered beads,14980.0,,,beads,,scaffold.tethered
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Scaffold tether stats,tethered fraction,0.58515625,,,,,scaffold.tethered_fraction
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Closure time t_close,t_close,0.05,,,ns,,t_close_ns
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Film thickness over time,final thickness,134.48606653675273,,,Å,,thickness_final
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Film thickness over time,thickness at t0,166.86723418462844,,,Å,,thickness_t0
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Hole area A(t),A at t0,2970.8437897260537,,,Å²,,frames[600].area
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Centroid drift,centre drift at t0,2.30676689979363,,,Å,,frames[600].drift
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Hole area A(t),A at the end,0.0,,,Å²,,frames[1360].area
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Centroid drift,centre drift at the end,7.290491615455272,,,Å,,frames[1360].drift
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,production,160,,,,,Centroid drift,centre drift (max),7.290491615455272,,,Å,,max over production frames[].drift (frames[1360])
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,seg 1 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_scaf_rel0,hole,seg 1 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.16552680289134852,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,907.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),527.7060816406888,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(10 ns),2149.03092874824,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(end of run),3633.2152951755106,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,end of run,20.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",206.04038242759998,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,plateau R_eff (last quarter),85.83816744983972,0.7368817986933808,sd,Å,,plateau.r_eff
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,plateau R_min (last quarter),76.48466575907759,,,Å,,plateau.r_min
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole radius R_eff(t),R_eff after inflation,73.36926750838907,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Slab radii R(z) and R_min,R_min after inflation,64.20417083013497,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,final R_eff,85.5244680773803,,,Å,,r_final
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,final R_min,75.93224159347477,,,Å,,r_min_final
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole radius R_eff(t),R_eff at t0,75.39358887593531,,,Å,,r_t0
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),1.1739139285426836,0.03563739152089241,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (open period),0.6158860120847157,0.0075129655070408745,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Film thickness over time,final thickness,103.30853787827084,,,Å,,thickness_final
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Film thickness over time,thickness at t0,92.70927213600655,,,Å,,thickness_t0
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole area A(t),A at t0,17857.41973565825,,,Å²,,frames[400].area
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift at t0,29.365641149257954,,,Å,,frames[400].drift
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole area A(t),A at the end,22978.97412993174,,,Å²,,frames[1160].area
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift at the end,98.86118537057308,,,Å,,frames[1160].drift
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift (max),135.53703713531377,,,Å,,max over production frames[].drift (frames[1037])
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),85.01685321193588,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),75.65725020959681,,,Å,,per_segment[0].r_min
 pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,25,,,,,Free-shell rim build-up,shell / far-film areal density,0.887922398131433,,,,,free_shell.areal_density_ratio
 pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,25,,,,,Free-shell rim build-up,beads in the shell at t0,11585.0,,,beads,,free_shell.beads
 pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,25,,,,,Free-shell MSD,MSD(1 ns),386.40012026792886,,,Å²,,free_shell.msd.1 ns
@@ -2918,6 +3481,278 @@ pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,25,
 pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,25,,,,,Centroid drift,centre drift (max),3.486604957575304,,,Å,,max over production frames[].drift (frames[452])
 pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,25,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
 pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,25,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Free-shell rim build-up,shell / far-film areal density,0.8890300414368416,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Free-shell rim build-up,beads in the shell at t0,11581.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Free-shell MSD,MSD(1 ns),66.8260214576114,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Free-shell MSD,MSD(10 ns),273.8383771076954,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Free-shell MSD,MSD(end of run),844.9559309961934,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Free-shell MSD,end of run,68.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",68.76210736389999,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Hole radius R_eff(t),R_eff after inflation,30.283693274147936,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Slab radii R(z) and R_min,R_min after inflation,28.678179864531618,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Plateau / final radius,final R_eff,33.63665349372829,,,Å,,r_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Hole radius R_eff(t),R_eff at t0,30.457860250126057,,,Å,,r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-0.1711699307694371,0.011006242853173445,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (open period),0.038966413669031454,0.0017378575586904366,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Scaffold tether stats,"nearest tethered r (held, min)",53.076651904946615,,,Å,,scaffold.nearest_tethered_r_held_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Scaffold tether stats,nearest tethered bead r at t0,55.00091799053394,,,Å,,scaffold.nearest_tethered_r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Scaffold tether stats,tethered beads,13808.0,,,beads,,scaffold.tethered
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Scaffold tether stats,tethered fraction,0.539375,,,,,scaffold.tethered_fraction
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Closure time t_close,t_close,25.6,,,ns,,t_close_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Film thickness over time,final thickness,162.30624379001097,,,Å,,thickness_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Film thickness over time,thickness at t0,162.3859621563162,,,Å,,thickness_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Hole area A(t),A at t0,2914.396603065511,,,Å²,,frames[600].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Centroid drift,centre drift at t0,0.4626875628734611,,,Å,,frames[600].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Hole area A(t),A at the end,3554.4747661524543,,,Å²,,frames[2320].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Centroid drift,centre drift at the end,1.9724899294093794,,,Å,,frames[2320].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,production,25,,,,,Centroid drift,centre drift (max),3.5047227139574524,,,Å,,max over production frames[].drift (frames[2231])
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 1 hold,25,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.24428505104224,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 1 hold,25,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),21.92894548388346,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 2 step,35,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.234008341395874,,,Å,,per_segment[1].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 2 step,35,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),19.841360934240125,,,Å,,per_segment[1].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 3 step,45,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.384396813216387,,,Å,,per_segment[2].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 3 step,45,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),19.537908078244556,,,Å,,per_segment[2].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 4 step,55,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.392799998014517,,,Å,,per_segment[3].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 4 step,55,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),19.10585203508111,,,Å,,per_segment[3].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 5 step,65,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.68447978067001,,,Å,,per_segment[4].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 5 step,65,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),18.000488459898207,,,Å,,per_segment[4].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 6 step,75,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),30.14683287336956,,,Å,,per_segment[5].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 6 step,75,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),18.04510114808786,,,Å,,per_segment[5].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 7 step,85,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.818839866066064,,,Å,,per_segment[6].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 7 step,85,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),18.19922544065094,,,Å,,per_segment[6].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 8 step,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),30.921169652222385,,,Å,,per_segment[7].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 8 step,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),14.359273752774996,,,Å,,per_segment[7].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 9 hold,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.11647588178777,,,Å,,per_segment[8].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 9 hold,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[8].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 10 step,100,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.15702866438629,,,Å,,per_segment[9].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 10 step,100,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[9].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 11 step,110,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.24474455947105,,,Å,,per_segment[10].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 11 step,110,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[10].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 12 step,120,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.27760024957943,,,Å,,per_segment[11].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 12 step,120,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[11].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 13 step,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.647772696627875,,,Å,,per_segment[12].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 13 step,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[12].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 14 hold,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.265167586338954,,,Å,,per_segment[13].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 14 hold,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[13].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 15 step,140,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.621743092962525,,,Å,,per_segment[14].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 15 step,140,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[14].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 16 step,150,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.85525924970218,,,Å,,per_segment[15].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 16 step,150,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[15].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 17 step,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.68359841567921,,,Å,,per_segment[16].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 17 step,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[16].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 18 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.54040580375521,,,Å,,per_segment[17].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_held,hole,seg 18 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[17].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Free-shell rim build-up,shell / far-film areal density,0.8759606024507225,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Free-shell rim build-up,beads in the shell at t0,11500.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Free-shell MSD,MSD(1 ns),57.53461840720894,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Free-shell MSD,MSD(10 ns),220.99412931077353,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Free-shell MSD,MSD(end of run),3158.532910758273,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Free-shell MSD,end of run,68.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",68.76210736389999,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Hole radius R_eff(t),R_eff after inflation,30.360497307941902,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Slab radii R(z) and R_min,R_min after inflation,28.80489040355869,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Plateau / final radius,final R_eff,0.0,,,Å,,r_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Hole radius R_eff(t),R_eff at t0,30.35191954566258,,,Å,,r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-0.12332217043095958,0.009062239261898974,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (open period),0.04271139380533108,0.001348263126333413,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Scaffold tether stats,"nearest tethered r (held, min)",53.100782260840354,,,Å,,scaffold.nearest_tethered_r_held_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Scaffold tether stats,nearest tethered bead r at t0,55.00134091778901,,,Å,,scaffold.nearest_tethered_r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Scaffold tether stats,tethered beads,13916.0,,,beads,,scaffold.tethered
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Scaffold tether stats,tethered fraction,0.54359375,,,,,scaffold.tethered_fraction
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Closure time t_close,t_close,33.25,,,ns,,t_close_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Film thickness over time,final thickness,134.1954411487636,,,Å,,thickness_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Film thickness over time,thickness at t0,163.4017747319571,,,Å,,thickness_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Hole area A(t),A at t0,2894.157737766445,,,Å²,,frames[600].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Centroid drift,centre drift at t0,0.1348502167209086,,,Å,,frames[600].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Hole area A(t),A at the end,0.0,,,Å²,,frames[2680].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Centroid drift,centre drift at the end,3.1693645160861967,,,Å,,frames[2680].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,production,25,,,,,Centroid drift,centre drift (max),5.84693419345308,,,Å,,max over production frames[].drift (frames[1771])
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 1 hold,25,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.183874097350902,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 1 hold,25,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),23.209268746711754,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 2 step,35,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.126034664229927,,,Å,,per_segment[1].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 2 step,35,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),22.01163382852174,,,Å,,per_segment[1].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 3 step,45,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.364786115846208,,,Å,,per_segment[2].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 3 step,45,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),20.96921624206436,,,Å,,per_segment[2].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 4 step,55,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.23208053341296,,,Å,,per_segment[3].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 4 step,55,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),20.502214621847042,,,Å,,per_segment[3].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 5 step,65,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.529590056166946,,,Å,,per_segment[4].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 5 step,65,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),20.677033257086816,,,Å,,per_segment[4].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 6 step,75,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),29.77981967913389,,,Å,,per_segment[5].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 6 step,75,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),18.670083518856327,,,Å,,per_segment[5].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 7 step,85,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),30.657515171730108,,,Å,,per_segment[6].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 7 step,85,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),16.499791719930084,,,Å,,per_segment[6].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 8 step,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),30.543156405686403,,,Å,,per_segment[7].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 8 step,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),15.783915479869231,,,Å,,per_segment[7].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 9 hold,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),31.367081332817925,,,Å,,per_segment[8].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 9 hold,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),11.889215053641475,,,Å,,per_segment[8].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 10 step,100,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.652871599968,,,Å,,per_segment[9].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 10 step,100,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[9].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 11 step,110,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.76426645454649,,,Å,,per_segment[10].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 11 step,110,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[10].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 12 step,120,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),33.913849541723756,,,Å,,per_segment[11].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 12 step,120,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[11].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 13 step,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[12].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 13 step,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[12].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 14 hold,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[13].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 14 hold,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[13].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 15 step,140,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[14].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 15 step,140,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[14].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 16 step,150,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[15].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 16 step,150,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[15].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 17 step,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[16].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 17 step,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[16].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 18 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[17].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130,hole,seg 18 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[17].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Free-shell rim build-up,shell / far-film areal density,0.8912910838276646,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Free-shell rim build-up,beads in the shell at t0,11597.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Free-shell MSD,MSD(1 ns),189.8611570133445,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Free-shell MSD,MSD(10 ns),649.4508982169357,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Free-shell MSD,MSD(end of run),3166.186382838599,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Free-shell MSD,end of run,68.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",68.76210736389999,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Hole radius R_eff(t),R_eff after inflation,30.34288279752802,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Slab radii R(z) and R_min,R_min after inflation,28.705361845167435,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Plateau / final radius,final R_eff,0.0,,,Å,,r_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Hole radius R_eff(t),R_eff at t0,30.096140382493747,,,Å,,r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-4.913700723418467,0.07542903477485703,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (open period),-4.913700723418467,0.07542903477485703,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Scaffold tether stats,"nearest tethered r (held, min)",52.10988551088712,,,Å,,scaffold.nearest_tethered_r_held_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Scaffold tether stats,nearest tethered bead r at t0,53.8372995279624,,,Å,,scaffold.nearest_tethered_r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Scaffold tether stats,tethered beads,2968.0,,,beads,,scaffold.tethered
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Scaffold tether stats,tethered fraction,0.1159375,,,,,scaffold.tethered_fraction
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Closure time t_close,t_close,1.37,,,ns,,t_close_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Film thickness over time,final thickness,134.67633770494038,,,Å,,thickness_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Film thickness over time,thickness at t0,161.43175299824838,,,Å,,thickness_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Hole area A(t),A at t0,2845.5844610486865,,,Å²,,frames[600].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Centroid drift,centre drift at t0,0.35610481285932016,,,Å,,frames[600].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Hole area A(t),A at the end,0.0,,,Å²,,frames[2680].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Centroid drift,centre drift at the end,10.952370426874865,,,Å,,frames[2680].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,production,25,,,,,Centroid drift,centre drift (max),11.301382698247917,,,Å,,max over production frames[].drift (frames[1015])
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 1 hold,25,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 1 hold,25,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 2 step,35,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[1].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 2 step,35,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[1].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 3 step,45,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[2].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 3 step,45,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[2].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 4 step,55,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[3].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 4 step,55,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[3].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 5 step,65,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[4].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 5 step,65,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[4].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 6 step,75,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[5].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 6 step,75,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[5].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 7 step,85,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[6].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 7 step,85,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[6].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 8 step,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[7].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 8 step,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[7].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 9 hold,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[8].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 9 hold,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[8].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 10 step,100,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[9].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 10 step,100,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[9].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 11 step,110,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[10].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 11 step,110,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[10].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 12 step,120,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[11].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 12 step,120,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[11].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 13 step,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[12].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 13 step,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[12].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 14 hold,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[13].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 14 hold,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[13].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 15 step,140,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[14].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 15 step,140,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[14].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 16 step,150,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[15].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 16 step,150,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[15].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 17 step,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[16].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 17 step,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[16].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 18 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[17].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_col,hole,seg 18 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[17].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Free-shell rim build-up,shell / far-film areal density,0.4928692853261518,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Free-shell rim build-up,beads in the shell at t0,21309.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Free-shell MSD,MSD(1 ns),252.86690567204982,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Free-shell MSD,MSD(10 ns),665.9123528690166,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Free-shell MSD,MSD(end of run),3535.6653724007265,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Free-shell MSD,end of run,68.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",68.76210736389999,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Hole radius R_eff(t),R_eff after inflation,30.34288279752802,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Slab radii R(z) and R_min,R_min after inflation,28.705361845167435,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Plateau / final radius,final R_eff,0.0,,,Å,,r_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Hole radius R_eff(t),R_eff at t0,30.096140382493747,,,Å,,r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-18.379263544683003,0.2637843510494641,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Closure speed dR/dt,dR_eff/dt (open period),-18.379263544683003,0.2637843510494641,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Scaffold tether stats,"nearest tethered r (held, min)",68.28887202349085,,,Å,,scaffold.nearest_tethered_r_held_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Scaffold tether stats,nearest tethered bead r at t0,70.00157401006764,,,Å,,scaffold.nearest_tethered_r_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Scaffold tether stats,tethered beads,4080.0,,,beads,,scaffold.tethered
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Scaffold tether stats,tethered fraction,0.159375,,,,,scaffold.tethered_fraction
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Closure time t_close,t_close,0.5,,,ns,,t_close_ns
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Film thickness over time,final thickness,134.13746928336985,,,Å,,thickness_final
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Film thickness over time,thickness at t0,161.43175299824838,,,Å,,thickness_t0
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Hole area A(t),A at t0,2845.5844610486865,,,Å²,,frames[600].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Centroid drift,centre drift at t0,0.35610481285932016,,,Å,,frames[600].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Hole area A(t),A at the end,0.0,,,Å²,,frames[2680].area
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Centroid drift,centre drift at the end,5.620422281573023,,,Å,,frames[2680].drift
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,production,25,,,,,Centroid drift,centre drift (max),5.620422281573023,,,Å,,max over production frames[].drift (frames[2680])
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 1 hold,25,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 1 hold,25,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 2 step,35,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[1].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 2 step,35,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[1].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 3 step,45,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[2].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 3 step,45,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[2].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 4 step,55,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[3].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 4 step,55,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[3].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 5 step,65,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[4].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 5 step,65,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[4].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 6 step,75,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[5].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 6 step,75,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[5].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 7 step,85,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[6].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 7 step,85,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[6].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 8 step,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[7].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 8 step,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[7].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 9 hold,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[8].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 9 hold,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[8].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 10 step,100,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[9].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 10 step,100,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[9].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 11 step,110,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[10].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 11 step,110,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[10].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 12 step,120,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[11].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 12 step,120,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[11].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 13 step,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[12].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 13 step,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[12].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 14 hold,130,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[13].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 14 hold,130,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[13].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 15 step,140,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[14].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 15 step,140,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[14].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 16 step,150,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[15].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 16 step,150,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[15].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 17 step,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[16].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 17 step,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[16].r_min
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 18 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[17].r_eff
+pe_cg_hole_r3nm_25C_n320_c240_s1_rep222,cg,pe,hole,hole_ramp_rel130_d4,hole,seg 18 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[17].r_min
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Free-shell rim build-up,shell / far-film areal density,0.8547517846993503,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Free-shell rim build-up,beads in the shell at t0,10923.0,,,beads,,free_shell.beads
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Free-shell MSD,MSD(1 ns),488.4566068512455,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Free-shell MSD,MSD(10 ns),1239.5946570037142,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Free-shell MSD,MSD(end of run),1754.6924995647657,,,Å²,,free_shell.msd.end
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Free-shell MSD,end of run,20.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",70.7055038677,,,Å,,ligament_angstrom
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Hole radius R_eff(t),R_eff after inflation,30.75796538299665,,,Å,,r_after_inflation.mean
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Slab radii R(z) and R_min,R_min after inflation,29.096340753887638,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Plateau / final radius,final R_eff,0.0,,,Å,,r_final
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Plateau / final radius,final R_min,0.0,,,Å,,r_min_final
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Hole radius R_eff(t),R_eff at t0,31.06963986908117,,,Å,,r_t0
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),-130.65311582972043,2.221262791030248,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Closure speed dR/dt,dR_eff/dt (open period),-130.65311582972043,2.221262791030248,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Closure time t_close,t_close,0.13,,,ns,,t_close_ns
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Film thickness over time,final thickness,131.83199014207148,,,Å,,thickness_final
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Film thickness over time,thickness at t0,166.8407424906298,,,Å,,thickness_t0
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Hole area A(t),A at t0,3032.650142185735,,,Å²,,frames[400].area
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Centroid drift,centre drift at t0,0.32688002382031456,,,Å,,frames[400].drift
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Hole area A(t),A at the end,0.0,,,Å²,,frames[1160].area
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Centroid drift,centre drift at the end,7.037584775069928,,,Å,,frames[1160].drift
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,90,,,,,Centroid drift,centre drift (max),7.037584775069928,,,Å,,max over production frames[].drift (frames[1160])
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,90,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r3nm_90C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,90,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
 pe_cg_hole_r4nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.7985668147272341,,,,,free_shell.areal_density_ratio
 pe_cg_hole_r4nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,15317.0,,,beads,,free_shell.beads
 pe_cg_hole_r4nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),572.7566553997502,,,Å²,,free_shell.msd.1 ns
@@ -2942,6 +3777,56 @@ pe_cg_hole_r4nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,16
 pe_cg_hole_r4nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift (max),66.71583451107605,,,Å,,max over production frames[].drift (frames[685])
 pe_cg_hole_r4nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),0.0,,,Å,,per_segment[0].r_eff
 pe_cg_hole_r4nm_160C_n320_c240_s1_rep222,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),0.0,,,Å,,per_segment[0].r_min
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.1570995698227293,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,1445.0,,,beads,,free_shell.beads
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),606.2754462223677,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(10 ns),2023.7046394348247,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(end of run),2664.879324878635,,,Å²,,free_shell.msd.end
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,end of run,20.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",166.04038242759998,,,Å,,ligament_angstrom
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,plateau R_eff (last quarter),85.44155438979442,0.992570768506574,sd,Å,,plateau.r_eff
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,plateau R_min (last quarter),75.92526105072267,,,Å,,plateau.r_min
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole radius R_eff(t),R_eff after inflation,76.67074417178691,,,Å,,r_after_inflation.mean
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Slab radii R(z) and R_min,R_min after inflation,67.25164030291998,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,final R_eff,87.19832431043847,,,Å,,r_final
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,final R_min,78.04152719279652,,,Å,,r_min_final
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole radius R_eff(t),R_eff at t0,79.22391921542604,,,Å,,r_t0
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),0.7293854314186555,0.027707420287502015,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (open period),0.4135563357965745,0.004639316235986563,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Film thickness over time,final thickness,104.67566474411524,,,Å,,thickness_final
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Film thickness over time,thickness at t0,95.68138869281685,,,Å,,thickness_t0
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole area A(t),A at t0,19717.984417952917,,,Å²,,frames[400].area
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift at t0,10.871073013569767,,,Å,,frames[400].drift
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole area A(t),A at the end,23887.249792041177,,,Å²,,frames[1160].area
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift at the end,94.26830434278274,,,Å,,frames[1160].drift
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift (max),95.07838111181503,,,Å,,max over production frames[].drift (frames[1159])
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),84.66843682198007,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r5nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),75.23780311843373,,,Å,,per_segment[0].r_min
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,shell / far-film areal density,0.24839491899688215,,,,,free_shell.areal_density_ratio
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell rim build-up,beads in the shell at t0,2845.0,,,beads,,free_shell.beads
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(1 ns),565.2501742916946,,,Å²,,free_shell.msd.1 ns
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(10 ns),1620.4225516415681,,,Å²,,free_shell.msd.10 ns
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,MSD(end of run),2862.209950511264,,,Å²,,free_shell.msd.end
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Free-shell MSD,end of run,20.0,,,ns,,free_shell.msd.end_ns
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Ligament,"ligament min(Lx,Ly) - 2R (nominal)",146.04038242759998,,,Å,,ligament_angstrom
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,plateau R_eff (last quarter),87.57999177907766,1.1062236475609242,sd,Å,,plateau.r_eff
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,plateau R_min (last quarter),77.95977628505872,,,Å,,plateau.r_min
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole radius R_eff(t),R_eff after inflation,80.51515375508737,,,Å,,r_after_inflation.mean
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Slab radii R(z) and R_min,R_min after inflation,71.60186221813538,,,Å,,r_after_inflation.r_min_mean
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,final R_eff,89.05543031115138,,,Å,,r_final
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Plateau / final radius,final R_min,80.02369639638164,,,Å,,r_min_final
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole radius R_eff(t),R_eff at t0,81.3261353436601,,,Å,,r_t0
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (first 5 ns),0.4584039568637571,0.027004385152339414,fit_err,Å/ns,,rate_initial.slope
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Closure speed dR/dt,dR_eff/dt (open period),0.41040962515094725,0.003926282262634052,fit_err,Å/ns,,rate_open.slope
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Film thickness over time,final thickness,106.83250091868578,,,Å,,thickness_final
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Film thickness over time,thickness at t0,98.19708787290341,,,Å,,thickness_t0
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole area A(t),A at t0,20778.30622614235,,,Å²,,frames[400].area
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift at t0,3.9140304573139857,,,Å,,frames[400].drift
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Hole area A(t),A at the end,24915.5618852664,,,Å²,,frames[1160].area
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift at the end,125.59130207443668,,,Å,,frames[1160].drift
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,production,160,,,,,Centroid drift,centre drift (max),126.40274555277196,,,Å,,max over production frames[].drift (frames[1155])
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Hole radius R_eff(t),R_eff (2nd-half mean),86.41211804584039,,,Å,,per_segment[0].r_eff
+pe_cg_hole_r6nm_160C_n640_c240_s1_rep441,cg,pe,hole,hole_free,hole,seg 1 hold,160,,,,,Slab radii R(z) and R_min,R_min (2nd-half mean),76.90804565089981,,,Å,,per_segment[0].r_min
 pe_cg_pore_w5nm_n320_c240_s1_rep222,cg,pe,pore,pore,pore,Stage 2: surface re-relaxation 2000 ps NVT at 500 K after narrowing,226.85,,,,,Potential / total energy,E_total (whole system),6659.646061038961,25.80828896551389,sem,kcal/mol,SEM is a lower bound,segments[0].stats.etotal.mean
 pe_cg_pore_w5nm_n320_c240_s1_rep222,cg,pe,pore,pore,pore,Stage 2: surface re-relaxation 2000 ps NVT at 500 K after narrowing,226.85,,,,,Surface tension γ(T),gamma,21.346490754282247,0.7542387360084771,sem,mN/m,SEM is a lower bound,segments[0].stats.gamma.mean
 pe_cg_pore_w5nm_n320_c240_s1_rep222,cg,pe,pore,pore,pore,Stage 2: surface re-relaxation 2000 ps NVT at 500 K after narrowing,226.85,,,,,"Volume V(T), box lengths",Lx,135.03655,0.0,sem,Å,,segments[0].stats.lx.mean
@@ -5344,6 +6229,94 @@ pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/h
 pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/heating hysteresis,rho (sweep),0.8619575809018196,,,g/cm³,,progress.json:hysteresis[7].rho_sweep
 pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,25,,,,,Cooling/heating hysteresis,delta_pct = (rho_cool - rho_sweep)/rho_sweep,-0.21240052420975677,,,%,,progress.json:hysteresis[7].delta_pct
 pe_ua_amorph_n40_c240_s1,ua,pe,amorph,sweep,sweep,cool vs sweep,,,,,,Cooling/heating hysteresis,max |delta_pct|,0.35732317016518234,,,%,"at 75.463 C, delta_pct -0.3573",max |progress.json:hysteresis[].delta_pct| (hysteresis[5])
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Apparent Young's modulus E_app,E_app,3271.788440131577,245.412334805439,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Flow stress,flow stress,59.834972476125,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2676845297422717,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4507576181878806,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Peak stress and peak strain,peak stress,221.04721179545447,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Peak stress and peak strain,peak strain,0.094501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.426424781305298,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Apparent Young's modulus E_app,E_app,2786.6128760526312,276.02055504917854,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Flow stress,flow stress,52.987747643249996,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2734601955738949,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.46241737877335576,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Peak stress and peak strain,peak stress,202.3132325454545,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Peak stress and peak strain,peak strain,0.107501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.43325112228175805,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3029.2006580921043,343.0709314262308,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Flow stress,flow stress,56.411360059687496,4.841719111634842,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.27057236265808327,0.004084012475408206,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.4565874984806182,0.008244695777001095,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,211.6802221704545,13.246923766283054,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_130C_r1e9,tensile,,130,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.10100100000000001,0.009192388155425116,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Apparent Young's modulus E_app,E_app,2667.116646710527,248.35971101870368,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Flow stress,flow stress,45.17424657375,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3624559047990421,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4288865081120746,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Peak stress and peak strain,peak stress,152.1790042500002,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Peak stress and peak strain,peak strain,0.095501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4049581881699899,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Apparent Young's modulus E_app,E_app,2490.345737368421,294.4948978221644,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Flow stress,flow stress,40.46414989575,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3070686042647595,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.44069756695548196,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Peak stress and peak strain,peak stress,135.8893524545455,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Peak stress and peak strain,peak strain,0.086501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.412063947756969,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,2578.731192039474,124.99590871231577,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Flow stress,flow stress,42.81919823475,3.33054130105803,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3347622545319008,0.039164735799408504,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.43479203753377826,0.008351679801166663,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,144.03417835227285,11.51852324773363,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_160C_r1e9,tensile,,160,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.091001,0.006363961030678933,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Apparent Young's modulus E_app,E_app,4302.905694473689,131.35590176557807,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Flow stress,flow stress,103.93580277149998,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.21334097511790864,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.4762567928614771,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Peak stress and peak strain,peak stress,333.8208314318181,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Peak stress and peak strain,peak strain,0.146501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.4103344075459953,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Apparent Young's modulus E_app,E_app,3911.9475244736823,181.88910479634671,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Flow stress,flow stress,88.61377601422501,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2832169416592888,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.5053680025071632,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Peak stress and peak strain,peak stress,277.54418952272715,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Peak stress and peak strain,peak strain,0.127501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.44659524960824903,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,4107.426609473686,276.4491731672881,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Flow stress,flow stress,96.27478939286249,10.834309021590858,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.2482789583885987,0.049409769783374205,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.49081239768432017,0.020584733749007864,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,305.6825104772726,39.79359511632525,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_25C_r1e9,tensile,,25,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.13700099999999998,0.013435028842544395,sd,,,runs[0].summary.peak_strain.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Apparent Young's modulus E_app,E_app,3343.598534210524,167.0703658306567,fit_err,MPa,,runs[0].axes[0].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Flow stress,flow stress,73.602390834,,,MPa,,runs[0].axes[0].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.149689736872862,,,,,runs[0].axes[0].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Poisson ratio ν (fit and whole run),nu (whole run),0.46978231479247967,,,,,runs[0].axes[0].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Peak stress and peak strain,peak stress,278.526949909091,,,MPa,,runs[0].axes[0].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Peak stress and peak strain,peak strain,0.113501,,,,,runs[0].axes[0].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[0].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,x,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.40931144778567413,,,,strain 0.5,runs[0].axes[0].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Apparent Young's modulus E_app,E_app,3000.695611973684,203.99971923522864,fit_err,MPa,,runs[0].axes[1].E_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Flow stress,flow stress,64.81877786999999,,,MPa,,runs[0].axes[1].flow_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.3387450368272455,,,,,runs[0].axes[1].nu_fit
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Poisson ratio ν (fit and whole run),nu (whole run),0.4759147509871923,,,,,runs[0].axes[1].nu_run
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Peak stress and peak strain,peak stress,232.32274990909107,,,MPa,,runs[0].axes[1].peak_MPa
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Peak stress and peak strain,peak strain,0.126501,,,,,runs[0].axes[1].peak_strain
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Stress–strain curve (true and engineering),max strain reached,0.499501,,,,,runs[0].axes[1].strain_max
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,y,Secant Poisson ratio ν(ε),nu_secant at the last strain,0.45125563129298196,,,,strain 0.5,runs[0].axes[1].curves.nu_secant[499]
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Apparent Young's modulus E_app,E_app,3172.147073092104,242.46898160235287,sd,MPa,,runs[0].summary.E_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Flow stress,flow stress,69.210584352,6.21095229016248,sd,MPa,,runs[0].summary.flow_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),"nu (fit, strain <= fit_max)",0.24421738685005373,0.13368228461700138,sd,,,runs[0].summary.nu_fit.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Poisson ratio ν (fit and whole run),nu (whole run),0.47284853288983597,0.0043362872184751445,sd,,,runs[0].summary.nu_run.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak stress,255.42484990909105,32.67130313929943,sd,MPa,,runs[0].summary.peak_MPa.mean
+pe_ua_crystal_7x10x40_s1,ua,pe,crystal,tensile_90C_r1e9,tensile,,90,,,1e+09,mean ± SD over axes,Peak stress and peak strain,peak strain,0.120001,0.009192388155425116,sd,,,runs[0].summary.peak_strain.mean
 pe_ua_pore_w5nm_n40_c240_s1,ua,pe,pore,pore,pore,Stage 2: surface re-relaxation 1000 ps NVT at 500 K after narrowing,226.85,,,,,Potential / total energy,E_total (whole system),24899.613724550898,13.036928923431748,sem,kcal/mol,SEM is a lower bound,segments[0].stats.etotal.mean
 pe_ua_pore_w5nm_n40_c240_s1,ua,pe,pore,pore,pore,Stage 2: surface re-relaxation 1000 ps NVT at 500 K after narrowing,226.85,,,,,Surface tension γ(T),gamma,14.154502183684999,8.870249986084415,sem,mN/m,SEM is a lower bound,segments[0].stats.gamma.mean
 pe_ua_pore_w5nm_n40_c240_s1,ua,pe,pore,pore,pore,Stage 2: surface re-relaxation 1000 ps NVT at 500 K after narrowing,226.85,,,,,"Volume V(T), box lengths",Lx,66.960238,0.0,sem,Å,,segments[0].stats.lx.mean
