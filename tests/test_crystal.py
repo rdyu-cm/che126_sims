@@ -19,6 +19,9 @@ from sepsim.analyze_crystal import (
     elastic_constants,
     elastic_markdown,
     equal_error,
+    setting_markdown,
+    setting_summary,
+    stem_setting,
     write_calibration,
 )
 from sepsim.build.crystal import CrystalError, build_crystal, crystal_id
@@ -683,3 +686,66 @@ def test_elastic_constants_recover_known_compliance():
     assert elastic_constants(lx, ly, np.full(len(lz), 90.0), t_k, block=100) is None
     md = "\n".join(elastic_markdown({"holds": [{"t_set_c": 25.0, "stable": True, "elastic": r}]}))
     assert "## Elastic constants (strain fluctuations)" in md and "| 25 | 400 |" in md
+
+
+# --------------------------------------------------------------------------- setting angle
+
+
+def _setting(arr, x, box):
+    phi, within = stem_setting(x, [*box, 90.0, 90.0, 90.0], arr["chains"])
+    return setting_summary(phi[None], within[None], arr["sublattice"]), phi
+
+
+def _rotate_stems(arr, x, box, angles):
+    """Each stem's xy offsets from its axis rotated by its angle (rad) about the axis."""
+    y = x.copy()
+    for c, t in zip(arr["chains"], angles, strict=True):
+        d = x[c, :2] - x[c[0], :2]
+        d -= box[:2] * np.round(d / box[:2])
+        d -= d.mean(0)
+        rot = np.array([[math.cos(t), -math.sin(t)], [math.sin(t), math.cos(t)]])
+        y[c, :2] = x[c, :2] - d + d @ rot.T
+    return y
+
+
+def test_setting_angle_perfect_parallel_random(built):
+    arr, x, box = _frame(built["ua"])
+    assert arr["sublattice"].tolist() == [1, -1] * 70  # the builder's alternating order
+    s, _ = _setting(arr, x, box)
+    assert s["phi_A_deg"] == pytest.approx(41.0, abs=1e-3)
+    assert s["phi_B_deg"] == pytest.approx(-41.0, abs=1e-3)
+    assert s["herringbone_deg"] == pytest.approx(41.0, abs=1e-3)
+    assert s["H"] == pytest.approx(math.sin(math.radians(82.0)), abs=1e-5)
+    assert s["abs_phi_deg"] == pytest.approx(41.0, abs=1e-3)
+    for k in ("across_sd_A_deg", "across_sd_B_deg", "within_sd_deg"):
+        assert s[k] == pytest.approx(0.0, abs=1e-3)
+    # every stem at +41: centre stems rotated by +82 deg about their axes
+    par = _rotate_stems(arr, x, box, np.where(arr["sublattice"] < 0, math.radians(-82.0), 0.0))
+    p, phi_par = _setting(arr, par, box)
+    assert phi_par == pytest.approx(np.full(140, 41.0), abs=1e-3)
+    assert p["H"] == pytest.approx(0.0, abs=1e-5) and p["herringbone_deg"] == pytest.approx(
+        0.0, abs=1e-3
+    )
+    # hold convention: frame 0 (the herringbone start) is dropped from the hold values
+    f0 = stem_setting(x, [*box, 90.0, 90.0, 90.0], arr["chains"])
+    fp = stem_setting(par, [*box, 90.0, 90.0, 90.0], arr["chains"])
+    h = setting_summary(
+        np.array([f0[0]] + [fp[0]] * 4), np.array([f0[1]] + [fp[1]] * 4), arr["sublattice"]
+    )
+    assert h["frames"] == 5 and h["frames_used"] == 4
+    assert h["H"] == pytest.approx(0.0, abs=1e-5) and sum(h["hist_A"]) == 4 * 70
+    assert h["first"]["H"] == pytest.approx(math.sin(math.radians(82.0)), abs=1e-5)
+    assert h["series_H"][0] == pytest.approx(h["first"]["H"]) and len(h["series_H"]) == 5
+    rng = np.random.default_rng(3)
+    rnd = _rotate_stems(arr, x, box, rng.uniform(0, 2 * math.pi, 140))
+    assert abs(_setting(arr, rnd, box)[0]["H"]) < 0.1
+
+
+def test_setting_angle_cg_not_available(built, tmp_path):
+    run, systems = _fake_run(built, tmp_path)
+    r, _ = analyze_crystal(run, out=tmp_path / "out", systems=systems, plots=False)
+    assert all(
+        h["setting_angle"] == {"available": False, "notes": ["no setting angle at CG"]}
+        for h in r["holds"]
+    )
+    assert "No setting angle at CG" in "\n".join(setting_markdown(r))

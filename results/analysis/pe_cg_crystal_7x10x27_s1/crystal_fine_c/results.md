@@ -1,7 +1,7 @@
 # Crystal analysis: pe_cg_crystal_7x10x27_s1 / crystal_fine_c
 
 - system: `pe_cg_crystal_7x10x27_s1` (cg); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_cg_crystal_7x10x27_s1/crystal_fine_c` (status finished, node rdyu-server, run code commit b969a5e8c3)
-- analysis: `sepsim analyze crystal` (D59), code commit 8b68bd2293 (dirty), 2026-11-23 17:44 on rdyu-server
+- analysis: `sepsim analyze crystal` (D59), code commit dfacaa42f9 (dirty), 2026-11-23 18:26 on rdyu-server
 - 140 stems x 27 sites, 7 x 10 x 27 repeats of pe_orthorhombic_busing (a 7.4069, b 4.9491, c 2.5511 Å at 23 °C, 0.9963 g/cm³, 18.33 Å² per chain)
 - crystallinity: D26 local P2 with ring chords, r_c 6.31 Å, threshold 0.745 (**calibrated (calibration_cg_pe.json, 2026-11-17)**); stable hold: last frame fraction ≥ 0.8 and stem P2 ≥ 0.8
 
@@ -43,6 +43,10 @@ Halves check: E from the first vs the second half of the window (each with its o
 | 120 | 1.24 ± 0.06 → 1.33 ± 0.06 | 1.35 ± 0.07 → 1.30 ± 0.08 | 4.03 ± 0.23 → 3.78 ± 0.18 | none |
 | 140 | 1.18 ± 0.05 → 1.17 ± 0.06 | 1.15 ± 0.07 → 1.30 ± 0.05 | 3.13 ± 0.20 → 3.44 ± 0.14 | none |
 | 150 | 1.14 ± 0.05 → 1.11 ± 0.06 | 1.12 ± 0.06 → 1.24 ± 0.05 | 3.02 ± 0.19 → 3.17 ± 0.16 | none |
+
+## Setting angle (herringbone)
+
+No setting angle at CG: the beads carry no zigzag plane.
 
 ## Caveats
 

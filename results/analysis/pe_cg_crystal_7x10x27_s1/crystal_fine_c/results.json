@@ -7,8 +7,8 @@
   "E_z is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems."
  ],
  "code_git": {
-  "branch": "crystal-elastic",
-  "commit": "8b68bd2293b02e593b26f34f55290d0125b89368",
+  "branch": "setting-angle",
+  "commit": "dfacaa42f9be30004ce540fccfd021924097e90f",
   "dirty": true
  },
  "crystal": {
@@ -59,7 +59,7 @@
    "se": 7.656007055348297e-06
   }
  },
- "generated": "2026-11-23T17:44:50+00:00",
+ "generated": "2026-11-23T18:26:40+00:00",
  "generated_on": "rdyu-server",
  "holds": [
   {
@@ -454,6 +454,12 @@
      "last": 0.9477326499634968,
      "mean": 0.9490035233833748
     }
+   },
+   "setting_angle": {
+    "available": false,
+    "notes": [
+     "no setting angle at CG"
+    ]
    },
    "stable": true,
    "t_set_c": 120.0
@@ -853,6 +859,12 @@
      "mean": 0.9405507484168507
     }
    },
+   "setting_angle": {
+    "available": false,
+    "notes": [
+     "no setting angle at CG"
+    ]
+   },
    "stable": true,
    "t_set_c": 140.0
   },
@@ -1248,6 +1260,12 @@
      "last": 0.9374130017940944,
      "mean": 0.9376442264060378
     }
+   },
+   "setting_angle": {
+    "available": false,
+    "notes": [
+     "no setting angle at CG"
+    ]
    },
    "stable": true,
    "t_set_c": 150.0

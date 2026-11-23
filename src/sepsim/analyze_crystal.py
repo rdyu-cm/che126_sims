@@ -21,6 +21,10 @@ For a ``crystal`` run directory ``results/runs/<crystal id>/crystal/`` (deck
 - per hold, the static elastic constants from the box-length fluctuations
   (:func:`elastic_constants`: E_x, E_y, E_z, Poisson ratios, the normal 3x3 stiffness,
   block-bootstrap errors and a halves check), with a plot of E vs T;
+- per hold (UA; same frames as the crystallinity), the setting angle phi of each stem's
+  zigzag plane to b (:func:`stem_setting`), per sublattice (ideal +41 deg corner, -41
+  deg centre, Bunn), the herringbone angle and the order H = <s_i sin 2 phi_i>
+  (:func:`setting_summary`); CG beads carry no zigzag plane;
 - the optional ramp (``ramp=true``): crystallinity per frame vs T (linear in time) and the
   T where the fraction first drops below half its starting value (a stability bound of
   a superheated periodic crystal, not Tm).
@@ -42,6 +46,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import math
 import warnings
 from pathlib import Path
 
@@ -84,6 +89,9 @@ EXP_DENSITY = 0.9963  # g/cm3, Busing 23 C cell (data/crystals/pe_orthorhombic_b
 KB_J = 1.380649e-23  # J/K
 N_BOOT = 1000  # block bootstrap draws of the elastic constants
 ELASTIC_MIN_BLOCKS = 4  # blocks per half (of the hold window) for the elastic constants
+SETTING_EDGES = np.linspace(-90.0, 90.0, 37)  # phi histogram bins (deg)
+SETTING_IDEAL_DEG = 41.0  # Bunn setting angle (data/crystals/pe_orthorhombic_busing.yaml)
+CG_SETTING_NOTE = "no setting angle at CG"
 ELASTIC_NU_IJ = ((0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1))  # nu_xy, yx, xz, zx, yz, zy
 
 CAVEATS = [
@@ -143,7 +151,29 @@ def crystal_arrays(system_dir: Path) -> dict:
         raise CrystalAnalysisError(f"{system_dir}: stems are not contiguous in atom id order")
     starts = np.flatnonzero(np.r_[True, mol[1:] != mol[:-1]])
     chains = np.split(np.arange(len(atoms)), starts[1:])
-    return {"manifest": man, "n_atoms": len(atoms), "rows": np.arange(len(atoms)), "chains": chains}
+    return {
+        "manifest": man,
+        "n_atoms": len(atoms),
+        "rows": np.arange(len(atoms)),
+        "chains": chains,
+        "sublattice": sublattice(atoms[:, 4:6], chains, man["crystal"]["lattice"]),
+    }
+
+
+def sublattice(xy, chains, lattice: dict) -> np.ndarray:
+    """+1 for stems whose axis (mean xy of the built stem, minimum image about its first
+    site) sits on the corner (0, 0) sublattice of the a x b cell, -1 for the centre
+    (1/2, 1/2) one; the builder writes them alternately, corner first."""
+    ab = np.array([lattice["a_A"], lattice["b_A"]], dtype=float)
+    out = []
+    for c in chains:
+        p = xy[c] / ab  # fractional; the stem's sites lie within 0.1 cell of its axis
+        f = (p[0] + np.mean(p - p[0] - np.round(p - p[0]), axis=0)) % 1.0
+        half = np.round(2 * f).astype(int) % 2  # 0: on the corner, 1: half a cell off
+        if half[0] != half[1]:
+            raise CrystalAnalysisError("stem axis on neither the corner nor the centre sublattice")
+        out.append(1 if half[0] == 0 else -1)
+    return np.array(out)
 
 
 def dcd_frames(path: Path, rows, n_pick: int, n_atoms: int):
@@ -223,6 +253,90 @@ def hold_order(path: Path, arr: dict, settings: dict, n_pick: int) -> dict:
         "p2_mean": float(np.nanmean(np.concatenate(p2))),
         "series": {"fraction": frac.tolist(), "stem_p2": stem.tolist()},
     }
+
+
+# --------------------------------------------------------------------------- setting angle
+
+
+def _circ(phi_deg) -> tuple[float, float]:
+    """(mean, spread) in degrees of axial angles (period 180) by the double angle:
+    0.5 atan2(<sin 2phi>, <cos 2phi>) in (-90, 90] and the circular SD of 2phi, halved."""
+    t = np.radians(2.0 * np.asarray(phi_deg, dtype=float))
+    s, c = np.mean(np.sin(t)), np.mean(np.cos(t))
+    mean = 0.5 * math.degrees(math.atan2(s, c))
+    r = min(math.hypot(s, c), 1.0)
+    sd = 0.5 * math.degrees(math.sqrt(-2.0 * math.log(r))) if r > 0 else 90.0
+    return (90.0 if mean <= -90.0 else mean), sd
+
+
+def stem_setting(pos, box, chains) -> tuple[np.ndarray, np.ndarray]:
+    """Per stem of one frame: the setting angle phi (deg, to b = y, in (-90, 90]) and the
+    within-stem spread (deg). Site k (ring neighbours k -+ 1, minimum image): bisector
+    w_k = -(u_{k-1} + u_{k+1}), u the bond vectors from k, projected on xy, phi_k =
+    atan2(w_x, w_y); w alternates sides along the zigzag, so phi folds by the double angle
+    (:func:`_circ`)."""
+    from MDAnalysis.lib.distances import minimize_vectors
+
+    box = np.asarray(box, dtype=float)
+    phi, sd = [], []
+    for ch in chains:
+        c = pos[ch]
+        w = -(minimize_vectors(np.roll(c, 1, axis=0) - c, box))
+        w -= minimize_vectors(np.roll(c, -1, axis=0) - c, box)
+        m, s = _circ(np.degrees(np.arctan2(w[:, 0], w[:, 1])))
+        phi.append(m)
+        sd.append(s)
+    return np.array(phi), np.array(sd)
+
+
+def setting_summary(phi, within, sub) -> dict:
+    """Setting-angle statistics of frames x stems ``phi`` (deg) with the within-stem
+    spreads ``within``, sublattice signs ``sub`` (+1 corner A, -1 centre B): circular mean
+    phi per sublattice (ideal +41 / -41), herringbone angle (phi_A - phi_B)/2 with the
+    difference wrapped to (-90, 90] (41 ideal, ~0 when parallel), H = <s_i sin 2phi_i>
+    (sin 82 deg = 0.990 ideal, 0 for parallel or random), <|phi|>, the spread across the
+    stems of each sublattice and the mean within-stem spread, over the frames after the
+    first ``HOLD_SKIP`` of the hold (at least frame 0, the minimized lattice, when there
+    is more than one frame); first and last frame and H per frame over all frames."""
+    phi, within, sub = np.atleast_2d(phi), np.atleast_2d(within), np.asarray(sub)
+    skip = max(1, int(np.floor(HOLD_SKIP * len(phi)))) if len(phi) > 1 else 0
+    a, b = sub > 0, sub < 0
+
+    def one(p, w) -> dict:
+        ma, sa = _circ(p[:, a])
+        mb, sb = _circ(p[:, b])
+        d = (ma - mb + 90.0) % 180.0 - 90.0
+        return {
+            "phi_A_deg": ma,
+            "phi_B_deg": mb,
+            "herringbone_deg": 0.5 * (90.0 if d == -90.0 else d),
+            "H": float(np.mean(sub * np.sin(np.radians(2.0 * p)))),
+            "abs_phi_deg": float(np.mean(np.abs(p))),
+            "across_sd_A_deg": sa,
+            "across_sd_B_deg": sb,
+            "within_sd_deg": float(np.mean(w)),
+        }
+
+    out = one(phi[skip:], within[skip:])
+    out |= {
+        "frames": len(phi),
+        "frames_used": len(phi) - skip,
+        "first": one(phi[:1], within[:1]),
+        "last": one(phi[-1:], within[-1:]),
+        "series_H": [float(np.mean(sub * np.sin(np.radians(2.0 * p)))) for p in phi],
+        "hist_edges_deg": SETTING_EDGES.tolist(),
+        "hist_A": np.histogram(phi[skip:, a], SETTING_EDGES)[0].tolist(),
+        "hist_B": np.histogram(phi[skip:, b], SETTING_EDGES)[0].tolist(),
+    }
+    return out
+
+
+def hold_setting(path: Path, arr: dict, n_pick: int) -> dict:
+    """:func:`setting_summary` of the same <= ``n_pick`` frames as :func:`hold_order`."""
+    _, pos, box, _ = dcd_frames(path, arr["rows"], n_pick, arr["n_atoms"])
+    per = [stem_setting(x, b, arr["chains"]) for x, b in zip(pos, box, strict=True)]
+    phi, within = np.array([p for p, _ in per]), np.array([w for _, w in per])
+    return {"available": True} | setting_summary(phi, within, arr["sublattice"])
 
 
 # --------------------------------------------------------------------------- thermo
@@ -676,6 +790,12 @@ def analyze_crystal(
                 row["order"] = hold_order(run_dir / dcd, arr, settings, max_frames)
             except (OSError, ValueError) as exc:
                 row["order"] = {"available": False, "notes": [f"trajectory failed: {exc}"]}
+        if arr["manifest"]["resolution"] == "cg":
+            row["setting_angle"] = {"available": False, "notes": [CG_SETTING_NOTE]}
+        elif row["order"].get("available"):
+            row["setting_angle"] = hold_setting(run_dir / dcd, arr, max_frames)
+        else:
+            row["setting_angle"] = {"available": False, "notes": row["order"]["notes"]}
         o = row["order"]
         row["stable"] = (
             o["fraction_last"] >= STABLE_FRACTION and o["stem_p2"]["last"] >= STABLE_STEM_P2
@@ -725,7 +845,8 @@ def _ramp(run_dir: Path, ramp, arr, settings, max_frames) -> dict:
 def make_plots(report: dict, out_dir: Path) -> dict:
     """cell.png (a, b, c and density vs T), order.png (crystalline fraction and stem P2
     per hold over its frames, ramp), elastic.png (E_x, E_y, E_z vs T of the holds not
-    marked unstable), calibration.png (p2 histograms and threshold)."""
+    marked unstable), setting_angle.png (UA: phi histograms by sublattice, H vs T),
+    calibration.png (p2 histograms and threshold)."""
     from sepsim.progress_plots import _save, plt
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -792,6 +913,43 @@ def make_plots(report: dict, out_dir: Path) -> dict:
         plots["elastic"] = {
             "file": "elastic.png",
             "title": "elastic moduli from strain fluctuations",
+        }
+    rows = [r for r in report["holds"] if (r.get("setting_angle") or {}).get("available")]
+    if rows:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.2))
+        e = np.asarray(rows[0]["setting_angle"]["hist_edges_deg"])
+        mid = 0.5 * (e[1:] + e[:-1])
+        for r in rows:
+            sa = r["setting_angle"]
+            ax1.plot(mid, sa["hist_A"], label=f"{r['t_set_c']:g} °C corner (A)")
+            ax1.plot(mid, sa["hist_B"], ls="--", color=ax1.lines[-1].get_color())
+        for v in (SETTING_IDEAL_DEG, -SETTING_IDEAL_DEG):
+            ax1.axvline(v, color="0.5", ls=":")
+        ax1.set(
+            xlabel="setting angle φ to b (°)",
+            ylabel="stems × frames",
+            title="φ per stem: corner (—), centre (--); ideal ±41° (:)",
+        )
+        ax1.legend(fontsize=7)
+        t = [r["t_set_c"] for r in rows]
+        ax2.plot(
+            t, [r["setting_angle"]["H"] for r in rows], "o-", label="H (hold, first 10% dropped)"
+        )
+        ax2.plot(t, [r["setting_angle"]["last"]["H"] for r in rows], "s--", label="H (last frame)")
+        ax2.axhline(
+            math.sin(math.radians(2 * SETTING_IDEAL_DEG)), color="0.5", ls=":", label="ideal"
+        )
+        ax2.set(
+            xlabel="T (°C)",
+            ylabel="H = ⟨s_i sin 2φ_i⟩",
+            title="herringbone order",
+            ylim=(-1.05, 1.05),
+        )
+        ax2.legend(fontsize=7)
+        _save(fig, out_dir / "setting_angle.png")
+        plots["setting_angle"] = {
+            "file": "setting_angle.png",
+            "title": "setting angle (herringbone)",
         }
     cal = report.get("calibration")
     if cal:
@@ -927,6 +1085,7 @@ def render_markdown(r: dict) -> str:
             for h in cal["per_hold"]
         ]
     lines += elastic_markdown(r)
+    lines += setting_markdown(r)
     lines += ["", "## Caveats", ""] + [f"- {c}" for c in r["caveats"]]
     lines += plots_markdown(r.get("plots"))
     return "\n".join(lines) + "\n"
@@ -988,6 +1147,62 @@ def elastic_markdown(r: dict) -> list[str]:
             cells.append(f"{_pm(hv['first'], fmt)} → {_pm(hv['second'], fmt)}")
         flag = ", ".join(f"E_{a}" for a in e["halves_disagree"]) or "none"
         lines.append(f"| {h['t_set_c']:g} | {' | '.join(cells)} | {flag} |")
+    return lines
+
+
+def setting_markdown(r: dict) -> list[str]:
+    """The "## Setting angle (herringbone)" section."""
+    holds = [h for h in r["holds"] if h.get("setting_angle")]
+    if not holds:
+        return []
+    lines = ["", "## Setting angle (herringbone)", ""]
+    rows = [h for h in holds if h["setting_angle"].get("available")]
+    if not rows:
+        notes = {n for h in holds for n in h["setting_angle"].get("notes", [])}
+        if CG_SETTING_NOTE in notes:
+            return lines + ["No setting angle at CG: the beads carry no zigzag plane."]
+        return lines + ["No hold trajectories."]
+    ideal_h = math.sin(math.radians(2 * SETTING_IDEAL_DEG))
+    lines += [
+        (
+            "Per stem and frame: at each site the bisector w = −(u₋ + u₊) of its two ring"
+            " bonds, projected on xy, φ = atan2(w_x, w_y) (angle of the zigzag plane to b);"
+            " folded over the stem by the double angle (w alternates sides). Corner stems"
+            f" (A) ideally +{SETTING_IDEAL_DEG:g}°, centre stems (B) −{SETTING_IDEAL_DEG:g}°;"
+            " herringbone angle (φ_A − φ_B)/2 (≈ 0 if parallel); H = ⟨s_i sin 2φ_i⟩, s = ±1"
+            f" per sublattice ({ideal_h:.3f} ideal, 0 parallel or random). Spreads are"
+            f" circular SDs. Hold values over {rows[0]['setting_angle']['frames_used']} of"
+            f" {rows[0]['setting_angle']['frames']} frames (the first 10% of the hold, at"
+            " least the starting frame, dropped); first and last frame over the whole hold."
+        ),
+        "",
+        (
+            "| T (°C) | a/b | φ_A (°) | φ_B (°) | herringbone (°) | H (first → last) |"
+            " ⟨abs φ⟩ (°) | across SD A / B (°) | within SD (°) |"
+        ),
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for h in rows:
+        s, c = h["setting_angle"], h["cell"]
+        ab = f"{c['a_over_b']['mean']:.3f}" if c.get("a_over_b") else "n/a"
+        lines.append(
+            f"| {h['t_set_c']:g} | {ab} | {s['phi_A_deg']:.1f} | {s['phi_B_deg']:.1f} |"
+            f" {s['herringbone_deg']:.1f} | {s['H']:.3f} ({s['first']['H']:.3f} →"
+            f" {s['last']['H']:.3f}) | {s['abs_phi_deg']:.1f} | {s['across_sd_A_deg']:.1f} /"
+            f" {s['across_sd_B_deg']:.1f} | {s['within_sd_deg']:.1f} |"
+        )
+    hs = [h["setting_angle"]["last"]["H"] for h in rows]  # the hold's end, as for stable
+    lo, hi = min(hs), max(hs)
+    mag = min(abs(v) for v in hs)
+    if mag >= 0.5 and (lo > 0 or hi < 0):
+        verdict = "the alternating (herringbone) setting is kept"
+        if hi < 0:
+            verdict += ", mirrored (A and B swapped)"
+    elif max(abs(v) for v in hs) <= 0.2:
+        verdict = "no herringbone: the zigzag planes are parallel or disordered"
+    else:
+        verdict = "the herringbone order is partial or changes between holds"
+    lines += ["", f"Reading: last-frame H {lo:.3f} to {hi:.3f} over the holds; {verdict}."]
     return lines
 
 

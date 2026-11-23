@@ -7,8 +7,8 @@
   "E_z is along the covalent stems, each bonded to its own periodic image (infinite chains with no ends or folds): a model property, an upper bound for real crystalline stems."
  ],
  "code_git": {
-  "branch": "crystal-elastic",
-  "commit": "8b68bd2293b02e593b26f34f55290d0125b89368",
+  "branch": "setting-angle",
+  "commit": "dfacaa42f9be30004ce540fccfd021924097e90f",
   "dirty": true
  },
  "crystal": {
@@ -61,7 +61,7 @@
    "se": 5.0530375155121834e-06
   }
  },
- "generated": "2026-11-23T17:44:43+00:00",
+ "generated": "2026-11-23T18:26:33+00:00",
  "generated_on": "rdyu-server",
  "holds": [
   {
@@ -460,6 +460,12 @@
      "mean": 0.9705588957427174
     }
    },
+   "setting_angle": {
+    "available": false,
+    "notes": [
+     "no setting angle at CG"
+    ]
+   },
    "stable": true,
    "t_set_c": 35.0
   },
@@ -855,6 +861,12 @@
      "last": 0.9702344402072872,
      "mean": 0.9678803306664352
     }
+   },
+   "setting_angle": {
+    "available": false,
+    "notes": [
+     "no setting angle at CG"
+    ]
    },
    "stable": true,
    "t_set_c": 45.0
@@ -1254,6 +1266,12 @@
      "mean": 0.9660367715634725
     }
    },
+   "setting_angle": {
+    "available": false,
+    "notes": [
+     "no setting angle at CG"
+    ]
+   },
    "stable": true,
    "t_set_c": 55.0
   },
@@ -1649,6 +1667,12 @@
      "last": 0.9638607944050872,
      "mean": 0.9634077685672483
     }
+   },
+   "setting_angle": {
+    "available": false,
+    "notes": [
+     "no setting angle at CG"
+    ]
    },
    "stable": true,
    "t_set_c": 65.0

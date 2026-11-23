@@ -1,7 +1,7 @@
 # Crystal analysis: pe_ua_crystal_7x10x40_s1 / crystal_fine_b
 
 - system: `pe_ua_crystal_7x10x40_s1` (ua); source run directory `/home/rdyu/projects/che126_sims/results/runs/pe_ua_crystal_7x10x40_s1/crystal_fine_b` (status finished, node rdyu-rog, run code commit b969a5e8c3)
-- analysis: `sepsim analyze crystal` (D59), code commit 8b68bd2293 (dirty), 2026-11-23 17:45 on rdyu-server
+- analysis: `sepsim analyze crystal` (D59), code commit dfacaa42f9 (dirty), 2026-11-23 18:27 on rdyu-server
 - 140 stems x 80 sites, 7 x 10 x 40 repeats of pe_orthorhombic_busing (a 7.4069, b 4.9491, c 2.5511 Å at 23 °C, 0.9963 g/cm³, 18.33 Å² per chain)
 - crystallinity: D26 local P2 with ring chords, r_c 6.50 Å, threshold 0.4 (**uncalibrated, melt baseline**); stable hold: last frame fraction ≥ 0.8 and stem P2 ≥ 0.8
 
@@ -47,6 +47,19 @@ Halves check: E from the first vs the second half of the window (each with its o
 | 100 | 1.59 ± 0.09 → 1.60 ± 0.09 | 1.49 ± 0.07 → 1.64 ± 0.06 | 153.1 ± 9.1 → 157.8 ± 9.1 | none |
 | 110 | 1.61 ± 0.09 → 1.78 ± 0.10 | 1.63 ± 0.13 → 1.82 ± 0.09 | 159.7 ± 9.0 → 146.6 ± 11.0 | none |
 
+## Setting angle (herringbone)
+
+Per stem and frame: at each site the bisector w = −(u₋ + u₊) of its two ring bonds, projected on xy, φ = atan2(w_x, w_y) (angle of the zigzag plane to b); folded over the stem by the double angle (w alternates sides). Corner stems (A) ideally +41°, centre stems (B) −41°; herringbone angle (φ_A − φ_B)/2 (≈ 0 if parallel); H = ⟨s_i sin 2φ_i⟩, s = ±1 per sublattice (0.990 ideal, 0 parallel or random). Spreads are circular SDs. Hold values over 45 of 50 frames (the first 10% of the hold, at least the starting frame, dropped); first and last frame over the whole hold.
+
+| T (°C) | a/b | φ_A (°) | φ_B (°) | herringbone (°) | H (first → last) | ⟨abs φ⟩ (°) | across SD A / B (°) | within SD (°) |
+|---|---|---|---|---|---|---|---|---|
+| 75 | 1.731 | -38.6 | 46.7 | -42.6 | -0.019 (1.000 → -0.077) | 45.0 | 85.1 / 77.3 | 27.5 |
+| 85 | 1.732 | -22.9 | 20.3 | -21.6 | -0.022 (-0.077 → -0.012) | 44.1 | 74.9 / 75.6 | 28.7 |
+| 100 | 1.732 | 49.0 | -18.7 | 33.9 | 0.013 (-0.012 → 0.079) | 44.7 | 83.0 / 81.1 | 30.3 |
+| 110 | 1.732 | -88.3 | 68.6 | 11.6 | -0.003 (0.079 → -0.043) | 45.6 | 77.0 / 89.7 | 30.8 |
+
+Reading: last-frame H -0.077 to 0.079 over the holds; no herringbone: the zigzag planes are parallel or disordered.
+
 ## Caveats
 
 - A periodic perfect crystal of infinite stems has no surfaces, ends or defects to nucleate melting: it superheats, so a hold or ramp that stays crystalline bounds its stability from above; it is not the melting point.
@@ -68,4 +81,8 @@ Halves check: E from the first vs the second half of the window (each with its o
 **elastic moduli from strain fluctuations**
 
 ![elastic moduli from strain fluctuations](elastic.png)
+
+**setting angle (herringbone)**
+
+![setting angle (herringbone)](setting_angle.png)
 
